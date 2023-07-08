@@ -1,6 +1,6 @@
 using Application.Interfaces;
 
-namespace Infrastructure.Services.BusinessLogic;
+namespace Application.Services;
 
 public class EnergyFlowSummation : IEnergyFlowSummation
 {
