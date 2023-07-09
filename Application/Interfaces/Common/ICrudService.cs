@@ -1,11 +1,12 @@
-using System.Linq.Expressions;
+using Application.DataObjects;
 
 namespace Application.Interfaces.Common;
 
 public interface ICrudService <T>
 {
-    IEnumerable<T> GetAll();
-    Task CreateAsync(T entity);
-    Task<T> GetByCondition(Expression<Func<T, bool>> expression);
-    void Update(T entity);
+    BaseResponse<IEnumerable<T>> GetAll();
+    Task<BaseResponse<Guid?>> CreateAsync(T model);
+    Task<BaseResponse<T>> GetByOid(Guid oid);
+    Task<BaseResponse<Guid?>> Update(T model);
+    Task<BaseResponse<bool>> Delete(Guid oid);
 }

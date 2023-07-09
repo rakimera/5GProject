@@ -6,6 +6,6 @@ public interface IBaseRepository<T>
 {
     IQueryable<T> GetAll();
     Task CreateAsync(T entity);
-    Task<T> GetByCondition(Expression<Func<T, bool>> expression);
+    Task<T?> GetByCondition(Expression<Func<T, bool>> expression);
     void Update(T entity);
 }

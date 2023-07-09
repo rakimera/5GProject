@@ -16,10 +16,22 @@ public class AccountController : Controller
     }
 
     [HttpGet]
-    public IActionResult Get(int id)
-    {
-        List<UserDTO> dtoModel = _service.UserService.GetAll().ToList();
+    public IActionResult Get() => 
+        Ok(_service.UserService.GetAll());
+    
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> Get(Guid oid) => 
+        Ok(await _service.UserService.GetByOid(oid));
 
-        return Ok(dtoModel);
-    }
+    [HttpPost]
+    public async Task<IActionResult> Post(UserDTO model) =>
+        Ok(await _service.UserService.CreateAsync(model));
+
+    [HttpPut]
+    public async Task<IActionResult> Put(UserDTO model) =>
+        Ok(await _service.UserService.Update(model));
+
+    [HttpDelete]
+    public async Task<IActionResult> Delete(Guid oid) =>
+        Ok(await _service.UserService.Delete(oid));
 }
