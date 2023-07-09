@@ -1,10 +1,10 @@
 using System.Linq.Expressions;
 
-namespace Application.Interfaces.RepositoryContract.Common;
+namespace Application.Interfaces.Common;
 
-public interface IBaseRepository<T>
+public interface ICrudService <T>
 {
-    IQueryable<T> GetAll();
+    IEnumerable<T> GetAll();
     Task CreateAsync(T entity);
     Task<T> GetByCondition(Expression<Func<T, bool>> expression);
     void Update(T entity);

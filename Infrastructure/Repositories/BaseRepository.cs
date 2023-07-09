@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 using Application.Interfaces.RepositoryContract.Common;
-using Infrastructure.Persistance.DataContext;
+using Infrastructure.Persistence.DataContext;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
@@ -14,7 +14,7 @@ public abstract class BaseRepository <T> : IBaseRepository<T> where T : class
         DbContext = dbContext;
     }
 
-    public IQueryable<T?> GetAll()
+    public IQueryable<T> GetAll()
     {
         return DbContext.Set<T>();
     }
@@ -24,12 +24,12 @@ public abstract class BaseRepository <T> : IBaseRepository<T> where T : class
         await DbContext.Set<T>().AddAsync(entity);
     }
 
-    public async Task<T?> GetByCondition(Expression<Func<T, bool>> expression)
+    public async Task<T> GetByCondition(Expression<Func<T, bool>> expression)
     {
         return await DbContext.Set<T>().FirstOrDefaultAsync(expression);
     }
 
-    public void UpdateAsync(T entity)
+    public void Update(T entity)
     {
         DbContext.Set<T>().Update(entity);
     }

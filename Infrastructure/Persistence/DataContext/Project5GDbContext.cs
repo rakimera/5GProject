@@ -1,7 +1,7 @@
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Persistance.DataContext;
+namespace Infrastructure.Persistence.DataContext;
 
 public class Project5GDbContext : DbContext
 {
