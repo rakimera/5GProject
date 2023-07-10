@@ -11,6 +11,7 @@ public static class ConfigureService
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
         services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
+        // services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
         return services;
     }
 

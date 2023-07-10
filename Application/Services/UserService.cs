@@ -1,6 +1,6 @@
 using Application.DataObjects;
 using Application.Interfaces;
-using Application.Interfaces.RepositoryContract;
+using Application.Interfaces.RepositoryContract.Common;
 using Application.Models;
 using Application.Validation;
 using AutoMapper;
@@ -10,22 +10,21 @@ namespace Application.Services;
 
 public class UserService : IUserService
 {
-    private readonly IUserRepository _userRepository;
+    private readonly IRepositoryWrapper _repositoryWrapper;
     private readonly IMapper _mapper;
     private readonly UserValidator _userValidator;
 
-    public UserService(IUserRepository userRepository, IMapper mapper, UserValidator userValidator)
+    public UserService(IRepositoryWrapper repositoryWrapper, IMapper mapper, UserValidator userValidator)
     {
-        _userRepository = userRepository;
+        _repositoryWrapper = repositoryWrapper;
         _mapper = mapper;
         _userValidator = userValidator;
     }
-
     public BaseResponse<IEnumerable<UserDTO>> GetAll()
     {
         try
         {
-            IQueryable<User> users = _userRepository.GetAll();
+            IQueryable<User> users = _repositoryWrapper.UserRepository.GetAll();
             List<UserDTO> models = _mapper.Map<List<UserDTO>>(users);
 
             if (models.Count > 0)
@@ -63,7 +62,7 @@ public class UserService : IUserService
                 model.CreatedBy = "Admin"; // реализация зависит от методики работы авторизацией и регистрацией.
                 User user = _mapper.Map<User>(model);
                 
-                await _userRepository.CreateAsync(user);
+                await _repositoryWrapper.UserRepository.CreateAsync(user);
 
                 return new BaseResponse<Guid?>(
                     Result: user.Oid,
@@ -93,7 +92,7 @@ public class UserService : IUserService
     {
         try
         {
-            User? user = await _userRepository.GetByCondition(x => x.Oid == oid);
+            User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Oid == oid);
             UserDTO model = _mapper.Map<UserDTO>(user);
 
             if (user is null)
@@ -129,7 +128,7 @@ public class UserService : IUserService
                 model.LastModifiedBy = "Admin"; // реализация зависит от методики работы авторизацией и регистрацией.
                 User user = _mapper.Map<User>(model);
                 
-                _userRepository.Update(user);
+                _repositoryWrapper.UserRepository.Update(user);
 
                 return new BaseResponse<Guid?>(
                     Result: user.Oid,
@@ -164,7 +163,7 @@ public class UserService : IUserService
             {
                 User user = _mapper.Map<User>(response.Result);
                 user.IsDelete = true;
-                _userRepository.Update(user);
+                _repositoryWrapper.UserRepository.Update(user);
 
                 return new BaseResponse<bool>(
                     Result: true,
