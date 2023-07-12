@@ -120,6 +120,36 @@ public class UserService : IUserService
                 StatusCode: 500);
         }
     }
+    
+    public BaseResponse<UserDTO> GetAuthorizedUser(string login,string password)
+    {
+        try
+        {
+            User? user = _repositoryWrapper.UserRepository.GetByCondition(x => x.Login == login && x.Password == password).Result;
+            UserDTO model = _mapper.Map<UserDTO>(user);
+
+            if (user is null)
+                return new BaseResponse<UserDTO>(
+                    Result: null,
+                    Message: "Пользователь не найден",
+                    Success: true,
+                    StatusCode: 404);
+            return new BaseResponse<UserDTO>(
+                Result: model,
+                Success: true,
+                StatusCode: 200,
+                Message:"Пользователь успешно найден");
+
+        }
+        catch (Exception e)
+        {
+            return new BaseResponse<UserDTO>(
+                Result: null,
+                Success: false,
+                Message: e.Message,
+                StatusCode: 500);
+        }
+    }
 
     public async Task<BaseResponse<Guid?>> Update(UserDTO model)
     {
