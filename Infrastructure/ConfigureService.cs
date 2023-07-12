@@ -12,6 +12,7 @@ public static class ConfigureService
     {
         services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
         // services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+        services.AddScoped<AdminInitializer>();
         return services;
     }
 
