@@ -25,5 +25,19 @@ public class UserMapProfile : Profile
                 opt.MapFrom(src => src.LastModifiedBy))
             .ForMember(dest => dest.CreatedBy, opt =>
                 opt.MapFrom(src => src.CreatedBy)).ReverseMap();
+
+        CreateMap<UserDTO, UpdateUserDto>()
+            .ForMember(dest => dest.Id, opt =>
+                opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Name, opt =>
+                opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Surname, opt =>
+                opt.MapFrom(src => src.Surname)).ReverseMap();
+        
+        CreateMap<UserDTO, CreateUserDto>()
+            .ForMember(dest => dest.Name, opt =>
+                opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Surname, opt =>
+                opt.MapFrom(src => src.Surname)).ReverseMap();
     }
 }

@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace Domain.Common;
 
 public abstract class BaseEntity
@@ -12,5 +14,5 @@ public abstract class BaseEntity
     public DateTime? LastModified { get; set; }
 
     public string? LastModifiedBy { get; set; }
-    public bool? IsDelete { get; set; }
+    public bool? IsDelete { get; set; } = false;
 }

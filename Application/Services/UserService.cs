@@ -25,6 +25,7 @@ public class UserService : IUserService
         try
         {
             IQueryable<User> users = _repositoryWrapper.UserRepository.GetAll();
+            // users = users.AsEnumerable().Where(u => u.IsDelete == false).AsQueryable(); //Для отображения только не удаленных пользователей
             List<UserDTO> models = _mapper.Map<List<UserDTO>>(users);
 
             if (models.Count > 0)
@@ -32,7 +33,8 @@ public class UserService : IUserService
                 return new BaseResponse<IEnumerable<UserDTO>>(
                     Result: models,
                     Success: true,
-                    StatusCode: 200);
+                    StatusCode: 200,
+                    Message:"Пользователи успешно получены");
             } 
             return new BaseResponse<IEnumerable<UserDTO>>(
                     Result: models,
@@ -57,17 +59,18 @@ public class UserService : IUserService
             var result = await _userValidator.ValidateAsync(model);
             if (result.IsValid)
             {
+                model.Oid = Guid.NewGuid();
                 model.Created = DateTime.Now;
-                model.Oid = new Guid();
                 model.CreatedBy = "Admin"; // реализация зависит от методики работы авторизацией и регистрацией.
                 User user = _mapper.Map<User>(model);
-                
                 await _repositoryWrapper.UserRepository.CreateAsync(user);
+                await _repositoryWrapper.Save();
 
                 return new BaseResponse<Guid?>(
                     Result: user.Oid,
                     Success: true,
-                    StatusCode: 200);
+                    StatusCode: 200,
+                    Message:"Пользователь успешно создан");
             }
 
             throw new InvalidDataException(string.Join('\n', result.Errors));
@@ -104,7 +107,38 @@ public class UserService : IUserService
             return new BaseResponse<UserDTO>(
                 Result: model,
                 Success: true,
-                StatusCode: 200);
+                StatusCode: 200,
+                Message:"Пользователь успешно найден");
+
+        }
+        catch (Exception e)
+        {
+            return new BaseResponse<UserDTO>(
+                Result: null,
+                Success: false,
+                Message: e.Message,
+                StatusCode: 500);
+        }
+    }
+    
+    public BaseResponse<UserDTO> GetAuthorizedUser(string login,string password)
+    {
+        try
+        {
+            User? user = _repositoryWrapper.UserRepository.GetByCondition(x => x.Login == login && x.Password == password).Result;
+            UserDTO model = _mapper.Map<UserDTO>(user);
+
+            if (user is null)
+                return new BaseResponse<UserDTO>(
+                    Result: null,
+                    Message: "Пользователь не найден",
+                    Success: true,
+                    StatusCode: 404);
+            return new BaseResponse<UserDTO>(
+                Result: model,
+                Success: true,
+                StatusCode: 200,
+                Message:"Пользователь успешно найден");
 
         }
         catch (Exception e)
@@ -129,11 +163,13 @@ public class UserService : IUserService
                 User user = _mapper.Map<User>(model);
                 
                 _repositoryWrapper.UserRepository.Update(user);
+                await _repositoryWrapper.Save();
 
                 return new BaseResponse<Guid?>(
                     Result: user.Oid,
                     Success: true,
-                    StatusCode: 200);
+                    StatusCode: 200,
+                    Message:"Пользователь успешно изменен");
             }
 
             throw new InvalidDataException(string.Join('\n', result.Errors));
@@ -158,19 +194,20 @@ public class UserService : IUserService
     {
         try
         {
-            BaseResponse<UserDTO> response = await GetByOid(oid);
-            if (response.Success)
+            User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Oid == oid);
+            if (user is not null)
             {
-                User user = _mapper.Map<User>(response.Result);
                 user.IsDelete = true;
                 _repositoryWrapper.UserRepository.Update(user);
+                await _repositoryWrapper.Save();
 
                 return new BaseResponse<bool>(
                     Result: true,
                     Success: true,
-                    StatusCode: 200);
+                    StatusCode: 200,
+                    Message: "Пользователь успешно удален");
             }
-            throw new InvalidDataException(string.Join('\n', response.Message));
+            throw new InvalidDataException("Пользователя не существует");
         }
         catch (Exception e)
         {

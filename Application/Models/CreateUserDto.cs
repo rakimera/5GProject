@@ -1,8 +1,6 @@
-using Domain.Common;
-
 namespace Application.Models;
 
-public class UserDTO : BaseEntity
+public class CreateUserDto
 {
     public string Login { get; set; }
     public string Name { get; set; }
