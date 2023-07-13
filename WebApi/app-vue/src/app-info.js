@@ -1,3 +1,3 @@
 export default {
-  title: "App Vue"
+  title: "5G Project"
 };
