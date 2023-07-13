@@ -18,6 +18,16 @@ builder.Services.AddInfrastructureServices();
 builder.Services.AddApplicationServices();
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policyBuilder =>
+    {
+        policyBuilder.WithOrigins("http://localhost:8080")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -31,6 +41,8 @@ if (app.Environment.IsDevelopment())
         await initialiser.TrySeedAsync();
     }
 }
+
+app.UseCors();
 
 app.UseHttpsRedirection();
 
