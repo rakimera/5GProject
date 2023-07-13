@@ -8,6 +8,8 @@ public class Project : BaseEntity
     public ContrAgent ContrAgent { get; set; }
     public int ExecutorId { get; set; }
     public User Executor { get; set; }
+    public int EnergyResultId { get; set; }
+    public EnergyResult EnergyResult { get; set; }
     public int ProjectStatusId { get; set; }
     public ProjectStatus ProjectStatus { get; set; }
     public int DistrictId { get; set; }

@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices;
-
 namespace Domain.Common;
 
 public abstract class BaseEntity
