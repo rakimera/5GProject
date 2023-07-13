@@ -17,8 +17,8 @@ export default [
         path: "/tasks"
       },
       {
-        text: "Data",
-        path: "/data"
+        text: "Users",
+        path: "/users"
       }
     ]
   }
