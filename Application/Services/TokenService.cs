@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
+using Application.Common;
 using Application.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 
@@ -9,16 +9,15 @@ namespace Application.Services;
 
 public class TokenService : ITokenService
 {
-    private const string _key = "arthursuperSecretKey@1995";
     public string GenerateAccessToken(IEnumerable<Claim> claims)
     {
-        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key));
+        var secretKey = AuthenticationOptions.GetSymmetricSecurityKey();
         var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
         var tokeOptions = new JwtSecurityToken(
-            issuer: "Project5G",
-            audience: "Vue.js",
+            issuer: AuthenticationOptions.ISSUER,
+            audience: AuthenticationOptions.AUDIENCE,
             claims: claims,
-            expires: DateTime.Now.AddMinutes(60),
+            expires: DateTime.Now.AddMinutes(AuthenticationOptions.LIFETIME),
             signingCredentials: signinCredentials
         );
         var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
@@ -42,7 +41,7 @@ public class TokenService : ITokenService
             ValidateAudience = false,
             ValidateIssuer = false,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key)),
+            IssuerSigningKey = AuthenticationOptions.GetSymmetricSecurityKey(),
             ValidateLifetime = false 
         };
         var tokenHandler = new JwtSecurityTokenHandler();
