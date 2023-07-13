@@ -6,6 +6,7 @@ import Profile from "./views/profile-page";
 import Tasks from "./views/tasks-page";
 import defaultLayout from "./layouts/side-nav-outer-toolbar";
 import simpleLayout from "./layouts/single-card";
+import Users from './views/Users-page.vue';
 
 function loadView(view) {
   return () => import (/* webpackChunkName: "login" */ `./views/${view}.vue`)
@@ -92,6 +93,15 @@ const router = new createRouter({
     {
       path: "/:pathMatch(.*)*",
       redirect: "/home"
+    },
+    {
+      path: "/users",
+      name: "users",
+      meta: {
+        requiresAuth: false,
+        layout: defaultLayout
+      },
+      component: Users
     }
   ],
   history: createWebHashHistory()
