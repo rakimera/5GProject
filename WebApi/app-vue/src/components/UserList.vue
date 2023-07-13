@@ -3,12 +3,17 @@
     <h1>Users</h1>
     <ul>
       <li v-for="user in users" :key="user.id">
-        {{ user.name }}
+        {{ user.login }},
+        {{ user.name }},
+        {{ user.surname }},
+        {{ user.password }},
       </li>
     </ul>
     <form @submit.prevent="createUser">
+      <input type="email" v-model="newUser.login" placeholder="Email" required>
       <input type="text" v-model="newUser.name" placeholder="Name" required>
-      <input type="email" v-model="newUser.email" placeholder="Email" required>
+      <input type="text" v-model="newUser.surname" placeholder="Surname" required>
+      <input type="text" v-model="newUser.password" placeholder="Password" required>
       <button type="submit">Create User</button>
     </form>
   </div>
@@ -22,8 +27,10 @@ export default {
     return {
       users: [],
       newUser: {
+        login: '',
         name: '',
-        email: '',
+        surname: '',
+        password: '',
       },
     };
   },
@@ -34,7 +41,8 @@ export default {
     async getUsers() {
       try {
         const response = await userService.getUsers();
-        this.users = response.data;
+        console.log(response.data)
+        this.users = response.data.result;
       } catch (error) {
         console.error(error);
       }
@@ -45,8 +53,11 @@ export default {
         console.log(response.data);
         // Обработка успешного создания пользователя
         this.newUser = {
+          login: '',
           name: '',
-          email: '',
+          surname: '',
+          password: '',
+          role: '',
         };
       } catch (error) {
         console.error(error);
