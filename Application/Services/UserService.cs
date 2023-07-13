@@ -1,7 +1,7 @@
 using Application.DataObjects;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
-using Application.Models;
+using Application.Models.Users;
 using Application.Validation;
 using AutoMapper;
 using Domain.Entities;

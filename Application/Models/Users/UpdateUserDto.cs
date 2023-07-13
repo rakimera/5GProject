@@ -1,8 +1,8 @@
-namespace Application.Models;
+namespace Application.Models.Users;
 
 public class UpdateUserDto
 {
-    public int Id { get; set; }
+    public Guid Oid { get; set; }
     public string Name { get; set; }
     public string Surname { get; set; }
 }
