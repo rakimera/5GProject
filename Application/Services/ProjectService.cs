@@ -5,7 +5,6 @@ using Application.Models.Projects;
 using Application.Validation;
 using AutoMapper;
 using Domain.Entities;
-using FluentValidation.Results;
 
 namespace Application.Services;
 

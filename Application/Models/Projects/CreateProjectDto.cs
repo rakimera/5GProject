@@ -2,7 +2,7 @@ using Domain.Common;
 
 namespace Application.Models.Projects;
 
-public class CreateProjectDto : BaseEntity
+public class CreateProjectDto
 {
     public Guid ContrAgentId { get; set; }
     public Guid ExecutorId { get; set; }
