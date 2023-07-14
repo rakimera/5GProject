@@ -5,5 +5,17 @@ namespace Application.Validation;
 
 public class ProjectValidator : AbstractValidator<ProjectDTO>
 {
-    
+    public ProjectValidator()
+    {
+        RuleFor(dto => dto.ContrAgentId)
+            .NotNull().WithMessage("Контрагент не выбран");
+        RuleFor(dto => dto.ExecutorId)
+            .NotNull().WithMessage("Ответственный за проект не выбран");
+        RuleFor(dto => dto.ProjectStatusId)
+            .NotNull().WithMessage("Статус проекта не выбран");
+        RuleFor(dto => dto.DistrictId)
+            .NotNull().WithMessage("Область установки не выбрана");
+        RuleFor(dto => dto.Town)
+            .NotNull().WithMessage("Город установки не выбран");
+    }
 }

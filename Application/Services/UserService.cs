@@ -34,19 +34,19 @@ public class UserService : IUserService
                     Result: models,
                     Success: true,
                     StatusCode: 200,
-                    Message:"Пользователи успешно получены");
+                    Messages: new List<string>{"Пользователи успешно получены"});
             } 
             return new BaseResponse<IEnumerable<UserDTO>>(
                     Result: models,
                     Success: true,
                     StatusCode: 200,
-                    Message: "Данные не были получены, возможно пользователи еще не созданы");
+                    Messages: new List<string>{"Данные не были получены, возможно пользователи еще не созданы или удалены"});
         }
         catch (Exception e)
         {
             return new BaseResponse<IEnumerable<UserDTO>>(
                 Result: null, 
-                Message: e.Message,
+                Messages: new List<string>{e.Message},
                 Success: false,
                 StatusCode: 500);
         }
@@ -70,22 +70,20 @@ public class UserService : IUserService
                     Result: user.Oid,
                     Success: true,
                     StatusCode: 200,
-                    Message:"Пользователь успешно создан");
+                    Messages: new List<string>{"Пользователь успешно создан"});
             }
-
-            throw new InvalidDataException(string.Join('\n', result.Errors));
+            List<string> messages = _mapper.Map<List<string>>(result.Errors);
+            
+            return new BaseResponse<Guid?>(
+                Result: null, 
+                Messages: messages,
+                Success: false,
+                StatusCode: 400);
         }
         catch (Exception e)
         {
-            if (e is InvalidDataException ex)
-            {
-                return new BaseResponse<Guid?>(Result: null, 
-                    Message: ex.Message,
-                    Success: false,
-                    StatusCode: 400);
-            }
             return new BaseResponse<Guid?>(Result: null,
-                Message: e.Message,
+                Messages: new List<string>{e.Message},
                 Success: false,
                 StatusCode: 500);
         }
@@ -101,14 +99,14 @@ public class UserService : IUserService
             if (user is null)
                 return new BaseResponse<UserDTO>(
                     Result: null,
-                    Message: "Пользователь не найден",
+                    Messages: new List<string>{"Пользователь не найден"},
                     Success: true,
                     StatusCode: 404);
             return new BaseResponse<UserDTO>(
                 Result: model,
                 Success: true,
                 StatusCode: 200,
-                Message:"Пользователь успешно найден");
+                Messages: new List<string>{"Пользователь успешно найден"});
 
         }
         catch (Exception e)
@@ -116,7 +114,7 @@ public class UserService : IUserService
             return new BaseResponse<UserDTO>(
                 Result: null,
                 Success: false,
-                Message: e.Message,
+                Messages: new List<string>{e.Message},
                 StatusCode: 500);
         }
     }
@@ -139,7 +137,7 @@ public class UserService : IUserService
                     Result: user.Oid,
                     Success: true,
                     StatusCode: 200,
-                    Message:"Пользователь успешно изменен");
+                    Messages: new List<string>{"Пользователь успешно изменен"});
             }
 
             throw new InvalidDataException(string.Join('\n', result.Errors));
@@ -149,12 +147,12 @@ public class UserService : IUserService
             if (e is InvalidDataException ex)
             {
                 return new BaseResponse<Guid?>(Result: null, 
-                    Message: ex.Message,
+                    Messages: new List<string>{ex.Message},
                     Success: false,
                     StatusCode: 400);
             }
             return new BaseResponse<Guid?>(Result: null,
-                Message: e.Message,
+                Messages: new List<string>{e.Message},
                 Success: false,
                 StatusCode: 500);
         }
@@ -175,7 +173,7 @@ public class UserService : IUserService
                     Result: true,
                     Success: true,
                     StatusCode: 200,
-                    Message: "Пользователь успешно удален");
+                    Messages: new List<string>{"Пользователь успешно удален"});
             }
             throw new InvalidDataException("Пользователя не существует");
         }
@@ -185,13 +183,13 @@ public class UserService : IUserService
             {
                 return new BaseResponse<bool>(
                     Result: false, 
-                    Message: ex.Message,
+                    Messages: new List<string>{ex.Message},
                     Success: false,
                     StatusCode: 400);
             }
             return new BaseResponse<bool>(
                 Result: false,
-                Message: e.Message,
+                Messages: new List<string>{e.Message},
                 Success: false,
                 StatusCode: 500);
         }

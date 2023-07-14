@@ -1,3 +1,4 @@
+using Application.Models.Antennas;
 using Application.Models.Users;
 using Domain.Common;
 
@@ -15,5 +16,7 @@ public class ProjectDTO : BaseEntity
     public DistrictDTO District { get; set; }
     public Guid TownId { get; set; }
     public TownDTO Town { get; set; }
+    public string? Street { get; set; }
+    public string? House { get; set; }
     public List<ProjectAntennaDTO> ProjectAntennae { get; set; } = new List<ProjectAntennaDTO>();
 }
