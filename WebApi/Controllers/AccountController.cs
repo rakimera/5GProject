@@ -1,6 +1,8 @@
 using Application.Interfaces;
 using Application.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -18,7 +20,7 @@ public class AccountController : Controller
         _mapper = mapper;
     }
 
-    [HttpGet]
+    [HttpGet , Authorize(Roles = "Admin")]
     public IActionResult Get() => 
         Ok(_service.UserService.GetAll());
     
