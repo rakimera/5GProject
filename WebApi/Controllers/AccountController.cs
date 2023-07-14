@@ -24,9 +24,9 @@ public class AccountController : Controller
         Ok(_service.UserService.GetAll());
     
     
-    [HttpGet("{id}")]
-    public async Task<IActionResult> Get(Guid id) => 
-        Ok(await _service.UserService.GetByOid(id));
+    [HttpGet("{oid}")]
+    public async Task<IActionResult> Get(Guid oid) => 
+        Ok(await _service.UserService.GetByOid(oid));
 
     [HttpPost]
     public async Task<IActionResult> Post(CreateUserDto model)
@@ -42,9 +42,7 @@ public class AccountController : Controller
         return Ok(await _service.UserService.Update(userDto));
     }
         
-        
-
-    [HttpDelete]
+    [HttpDelete("{oid}")]
     public async Task<IActionResult> Delete(Guid oid) =>
         Ok(await _service.UserService.Delete(oid));
 }
