@@ -10,23 +10,23 @@ public class ProjectMapProfile : Profile
     {
         CreateMap<Project, ProjectDTO>()
             .ForMember(dest => dest.ContrAgentId, opt =>
-                opt.MapFrom(src => src.ContrAgentId))
+                opt.MapFrom(src => src.ContrAgentOid))
             .ForMember(dest => dest.ContrAgent, opt =>
                 opt.MapFrom(src => src.ContrAgent))
             .ForMember(dest => dest.ExecutorId, opt =>
-                opt.MapFrom(src => src.ExecutorId))
+                opt.MapFrom(src => src.ExecutorOid))
             .ForMember(dest => dest.Executor, opt =>
                 opt.MapFrom(src => src.Executor))
             .ForMember(dest => dest.ProjectStatusId, opt =>
-                opt.MapFrom(src => src.ProjectStatusId))
+                opt.MapFrom(src => src.ProjectStatusOid))
             .ForMember(dest => dest.ProjectStatus, opt =>
                 opt.MapFrom(src => src.ProjectStatus))
             .ForMember(dest => dest.DistrictId, opt =>
-                opt.MapFrom(src => src.DistrictId))
+                opt.MapFrom(src => src.DistrictOid))
             .ForMember(dest => dest.District, opt =>
                 opt.MapFrom(src => src.District))
             .ForMember(dest => dest.TownId, opt =>
-                opt.MapFrom(src => src.TownId))
+                opt.MapFrom(src => src.TownOid))
             .ForMember(dest => dest.Town, opt =>
                 opt.MapFrom(src => src.Town))
             .ForMember(dest => dest.ProjectAntennae, opt =>

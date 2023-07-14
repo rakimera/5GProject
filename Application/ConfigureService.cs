@@ -12,6 +12,7 @@ public static class ConfigureService
     {
         services.AddScoped<IServiceWrapper, ServiceWrapper>();
         services.AddScoped<UserValidator>();
+        services.AddScoped<ProjectValidator>();
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         return services;
     }

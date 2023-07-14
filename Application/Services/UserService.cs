@@ -52,21 +52,21 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<BaseResponse<Guid?>> CreateAsync(UserDTO model)
+    public async Task<BaseResponse<string>> CreateAsync(UserDTO model)
     {
         try
         {
             var result = await _userValidator.ValidateAsync(model);
             if (result.IsValid)
             {
-                model.Oid = Guid.NewGuid();
+                model.Oid = Guid.NewGuid().ToString();
                 model.Created = DateTime.Now;
                 model.CreatedBy = "Admin"; // реализация зависит от методики работы авторизацией и регистрацией.
                 User user = _mapper.Map<User>(model);
                 await _repositoryWrapper.UserRepository.CreateAsync(user);
                 await _repositoryWrapper.Save();
 
-                return new BaseResponse<Guid?>(
+                return new BaseResponse<string>(
                     Result: user.Oid,
                     Success: true,
                     StatusCode: 200,
@@ -74,22 +74,23 @@ public class UserService : IUserService
             }
             List<string> messages = _mapper.Map<List<string>>(result.Errors);
             
-            return new BaseResponse<Guid?>(
-                Result: null, 
+            return new BaseResponse<string>(
+                Result: "", 
                 Messages: messages,
                 Success: false,
                 StatusCode: 400);
         }
         catch (Exception e)
         {
-            return new BaseResponse<Guid?>(Result: null,
+            return new BaseResponse<string>(
+                Result: "",
                 Messages: new List<string>{e.Message},
                 Success: false,
                 StatusCode: 500);
         }
     }
 
-    public async Task<BaseResponse<UserDTO>> GetByOid(Guid oid)
+    public async Task<BaseResponse<UserDTO>> GetByOid(string oid)
     {
         try
         {
@@ -119,7 +120,7 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<BaseResponse<Guid?>> Update(UserDTO model)
+    public async Task<BaseResponse<string>> Update(UserDTO model)
     {
         try
         {
@@ -133,32 +134,31 @@ public class UserService : IUserService
                 _repositoryWrapper.UserRepository.Update(user);
                 await _repositoryWrapper.Save();
 
-                return new BaseResponse<Guid?>(
+                return new BaseResponse<string>(
                     Result: user.Oid,
                     Success: true,
                     StatusCode: 200,
                     Messages: new List<string>{"Пользователь успешно изменен"});
             }
+            List<string> messages = _mapper.Map<List<string>>(result.Errors);
 
-            throw new InvalidDataException(string.Join('\n', result.Errors));
+            return new BaseResponse<string>(
+                Result: "", 
+                Messages: messages,
+                Success: false,
+                StatusCode: 400);
         }
         catch (Exception e)
         {
-            if (e is InvalidDataException ex)
-            {
-                return new BaseResponse<Guid?>(Result: null, 
-                    Messages: new List<string>{ex.Message},
-                    Success: false,
-                    StatusCode: 400);
-            }
-            return new BaseResponse<Guid?>(Result: null,
+            return new BaseResponse<string>(
+                Result: "",
                 Messages: new List<string>{e.Message},
                 Success: false,
                 StatusCode: 500);
         }
     }
 
-    public async Task<BaseResponse<bool>> Delete(Guid oid)
+    public async Task<BaseResponse<bool>> Delete(string oid)
     {
         try
         {
@@ -175,18 +175,15 @@ public class UserService : IUserService
                     StatusCode: 200,
                     Messages: new List<string>{"Пользователь успешно удален"});
             }
-            throw new InvalidDataException("Пользователя не существует");
+            
+            return new BaseResponse<bool>(
+                Result: false, 
+                Messages: new List<string>{"Пользователя не существует"},
+                Success: false,
+                StatusCode: 400);
         }
         catch (Exception e)
         {
-            if (e is InvalidDataException ex)
-            {
-                return new BaseResponse<bool>(
-                    Result: false, 
-                    Messages: new List<string>{ex.Message},
-                    Success: false,
-                    StatusCode: 400);
-            }
             return new BaseResponse<bool>(
                 Result: false,
                 Messages: new List<string>{e.Message},

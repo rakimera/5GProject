@@ -12,6 +12,6 @@ public class EnergyResult : BaseEntity
     public decimal _60 { get; set; }
     public decimal _80 { get; set; }
     public decimal _100 { get; set; }
-    public int TranslatorSpecsId { get; set; }
+    public string TranslatorSpecsOid { get; set; }
     public TranslatorSpecs TranslatorSpecs { get; set; }
 }

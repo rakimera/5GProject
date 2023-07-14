@@ -23,7 +23,7 @@ public class ProjectsController : Controller
         Ok(_service.ProjectService.GetAll());
     
     [HttpGet("{oid}")]
-    public async Task<IActionResult> Get(Guid oid) => 
+    public async Task<IActionResult> Get(string oid) => 
         Ok(await _service.ProjectService.GetByOid(oid));
     
     [HttpPost]
@@ -41,6 +41,6 @@ public class ProjectsController : Controller
     }
 
     [HttpDelete("{oid}")]
-    public async Task<IActionResult> Delete(Guid oid) =>
+    public async Task<IActionResult> Delete(string oid) =>
         Ok(await _service.ProjectService.Delete(oid));
 }

@@ -4,15 +4,15 @@ namespace Domain.Entities;
 
 public class Project : BaseEntity
 {
-    public int ContrAgentId { get; set; }
+    public string ContrAgentOid { get; set; }
     public ContrAgent ContrAgent { get; set; }
-    public int ExecutorId { get; set; }
+    public string ExecutorOid { get; set; }
     public User Executor { get; set; }
-    public int ProjectStatusId { get; set; }
+    public string ProjectStatusOid { get; set; }
     public ProjectStatus ProjectStatus { get; set; }
-    public int DistrictId { get; set; }
+    public string DistrictOid { get; set; }
     public District District { get; set; }
-    public int TownId { get; set; }
+    public string TownOid { get; set; }
     public Town Town { get; set; }
     public string? Street { get; set; }
     public string? House { get; set; }

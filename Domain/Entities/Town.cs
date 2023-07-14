@@ -5,6 +5,6 @@ namespace Domain.Entities;
 public class Town : BaseEntity
 {
     public string TownName { get; set; }
-    public int DistrictId { get; set; }
+    public string DistrictOid { get; set; }
     public District District{ get; set; }
 }

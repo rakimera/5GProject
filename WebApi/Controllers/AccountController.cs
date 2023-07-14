@@ -25,7 +25,7 @@ public class AccountController : Controller
     
     
     [HttpGet("{oid}")]
-    public async Task<IActionResult> Get(Guid oid) => 
+    public async Task<IActionResult> Get(string oid) => 
         Ok(await _service.UserService.GetByOid(oid));
 
     [HttpPost]
@@ -43,6 +43,6 @@ public class AccountController : Controller
     }
         
     [HttpDelete("{oid}")]
-    public async Task<IActionResult> Delete(Guid oid) =>
+    public async Task<IActionResult> Delete(string oid) =>
         Ok(await _service.UserService.Delete(oid));
 }

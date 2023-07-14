@@ -52,21 +52,21 @@ public class ProjectService : IProjectService
         }
     }
 
-    public async Task<BaseResponse<Guid?>> CreateAsync(ProjectDTO model)
+    public async Task<BaseResponse<string>> CreateAsync(ProjectDTO model)
     {
         try
         {
             var result = await _projectValidator.ValidateAsync(model);
             if (result.IsValid)
             {
-                model.Oid = Guid.NewGuid();
+                model.Oid = Guid.NewGuid().ToString();
                 model.Created = DateTime.Now;
                 model.CreatedBy = "Admin"; // реализация зависит от методики работы авторизацией.
                 Project project = _mapper.Map<Project>(model);
                 await _repositoryWrapper.ProjectRepository.CreateAsync(project);
                 await _repositoryWrapper.Save();
 
-                return new BaseResponse<Guid?>(
+                return new BaseResponse<string>(
                     Result: project.Oid,
                     Success: true,
                     StatusCode: 200,
@@ -75,7 +75,8 @@ public class ProjectService : IProjectService
 
             List<string> messages = _mapper.Map<List<string>>(result.Errors);
             
-            return new BaseResponse<Guid?>(Result: null, 
+            return new BaseResponse<string>(
+                Result: "", 
                 Messages: messages,
                 Success: false,
                 StatusCode: 400);
@@ -83,15 +84,15 @@ public class ProjectService : IProjectService
         }
         catch (Exception e)
         {
-            return new BaseResponse<Guid?>(
-                Result: null,
+            return new BaseResponse<string>(
+                Result: "",
                 Messages: new List<string>{e.Message},
                 Success: false,
                 StatusCode: 500);
         }
     }
 
-    public async Task<BaseResponse<ProjectDTO>> GetByOid(Guid oid)
+    public async Task<BaseResponse<ProjectDTO>> GetByOid(string oid)
     {
         try
         {
@@ -121,7 +122,7 @@ public class ProjectService : IProjectService
         }
     }
 
-    public async Task<BaseResponse<Guid?>> Update(ProjectDTO model)
+    public async Task<BaseResponse<string>> Update(ProjectDTO model)
     {
         try
         {
@@ -135,7 +136,7 @@ public class ProjectService : IProjectService
                 _repositoryWrapper.ProjectRepository.Update(project);
                 await _repositoryWrapper.Save();
 
-                return new BaseResponse<Guid?>(
+                return new BaseResponse<string>(
                     Result: project.Oid,
                     Success: true,
                     StatusCode: 200,
@@ -143,21 +144,23 @@ public class ProjectService : IProjectService
             }
             List<string> messages = _mapper.Map<List<string>>(result.Errors);
 
-            return new BaseResponse<Guid?>(Result: null, 
+            return new BaseResponse<string>(
+                Result: "", 
                 Messages: messages,
                 Success: false,
                 StatusCode: 400);
         }
         catch (Exception e)
         {
-            return new BaseResponse<Guid?>(Result: null,
+            return new BaseResponse<string>(
+                Result: "",
                 Messages: new List<string>{e.Message},
                 Success: false,
                 StatusCode: 500);
         }
     }
 
-    public async Task<BaseResponse<bool>> Delete(Guid oid)
+    public async Task<BaseResponse<bool>> Delete(string oid)
     {
         try
         {
