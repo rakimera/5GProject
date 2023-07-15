@@ -7,6 +7,10 @@
         {{ user.name }},
         {{ user.surname }},
         {{ user.password }},
+        {{ user.role }},
+        {{ user.oid }},
+        <button @click="editUser(user)">Edit</button>
+        <button @click="deleteUser(user)">Delete</button>
       </li>
     </ul>
     <form @submit.prevent="createUser">
@@ -14,7 +18,17 @@
       <input type="text" v-model="newUser.name" placeholder="Name" required>
       <input type="text" v-model="newUser.surname" placeholder="Surname" required>
       <input type="text" v-model="newUser.password" placeholder="Password" required>
+      <input type="text" v-model="newUser.role" placeholder="Role" required>
       <button type="submit">Create User</button>
+    </form>
+    <form @submit.prevent="updateUser" v-if="editingUser">
+      <input type="email" v-model="editingUser.login" placeholder="Email" required>
+      <input type="text" v-model="editingUser.name" placeholder="Name" required>
+      <input type="text" v-model="editingUser.surname" placeholder="Surname" required>
+      <input type="text" v-model="editingUser.password" placeholder="Password" required>
+      <input type="text" v-model="editingUser.role" placeholder="Role" required>
+      <input type="hidden" :value="editingUser.oid" required>
+      <button type="submit">Update User</button>
     </form>
   </div>
 </template>
@@ -31,13 +45,19 @@ export default {
         name: '',
         surname: '',
         password: '',
+        role: '',
+        oid: ''
       },
+      editingUser: null,
     };
   },
   mounted() {
     this.getUsers();
   },
   methods: {
+    editUser(user) {
+      this.editingUser = { ...user };
+    },
     async getUsers() {
       try {
         const response = await userService.getUsers();
@@ -51,7 +71,6 @@ export default {
       try {
         const response = await userService.createUser(this.newUser);
         console.log(response.data);
-        // Обработка успешного создания пользователя
         this.newUser = {
           login: '',
           name: '',
@@ -59,9 +78,29 @@ export default {
           password: '',
           role: '',
         };
+        await this.getUsers();
       } catch (error) {
         console.error(error);
-        // Обработка ошибки при создании пользователя
+      }
+    },
+    async updateUser() {
+      try {
+        const response = await userService.updateUser(this.editingUser);
+        console.log(response);
+        this.editingUser = null;
+        await this.getUsers();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async deleteUser(user) {
+      try {
+        console.log(user.oid)
+        const response = await userService.deleteUser(user.oid);
+        console.log(response);
+        await this.getUsers();
+      } catch (error) {
+        console.error(error);
       }
     },
   },
