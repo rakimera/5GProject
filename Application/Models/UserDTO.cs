@@ -2,7 +2,7 @@ using Domain.Common;
 
 namespace Application.Models;
 
-public class UserDTO : BaseEntity
+public class UserDto : BaseEntity
 {
     public string Login { get; set; }
     public string Name { get; set; }

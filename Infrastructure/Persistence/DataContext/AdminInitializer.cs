@@ -22,7 +22,7 @@ public class AdminInitializer
         User? user = await _repositoryWrapper.UserRepository.GetByCondition(u => u.Id == 1);
         if (user is null)
         {
-            UserDTO admin = new UserDTO()
+            UserDto admin = new UserDto()
             {
                 Id = 1,
                 Oid = Guid.NewGuid(),

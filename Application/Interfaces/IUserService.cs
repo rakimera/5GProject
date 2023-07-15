@@ -4,7 +4,7 @@ using Application.Models;
 
 namespace Application.Interfaces;
 
-public interface IUserService : ICrudService<UserDTO>
+public interface IUserService : ICrudService<UserDto>
 {
-    public BaseResponse<UserDTO> GetAuthorizedUser(string login, string password);
+    public BaseResponse<UserDto> GetAuthorizedUser(string login, string password);
 }
