@@ -1,6 +1,6 @@
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
-using Application.Models;
+using Application.Models.Users;
 using Domain.Entities;
 
 namespace Infrastructure.Persistence.DataContext;
@@ -19,13 +19,12 @@ public class AdminInitializer
 
     public async Task TrySeedAsync()
     {
-        User? user = await _repositoryWrapper.UserRepository.GetByCondition(u => u.Id == 1);
+        User? user = await _repositoryWrapper.UserRepository.GetByCondition(u => u.Login.Equals("admin@gmail.com"));
         if (user is null)
         {
             UserDto admin = new UserDto()
             {
-                Id = 1,
-                Oid = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 Name = "Admin",
                 Surname = "Admin",
                 Login = "admin@gmail.com",

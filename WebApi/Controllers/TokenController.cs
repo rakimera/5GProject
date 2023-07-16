@@ -1,6 +1,7 @@
 using Application.DataObjects;
 using Application.Interfaces;
 using Application.Models;
+using Application.Models.Users;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -27,26 +28,36 @@ public class TokenController : ControllerBase
     {
         if (tokenApiModel is null)
             return BadRequest("Invalid client request");
+        
         string accessToken = tokenApiModel.AccessToken;
         string refreshToken = tokenApiModel.RefreshToken;
         var principal = _service.TokenService.GetPrincipalFromExpiredToken(accessToken);
         var username = principal.Identity.Name;
         var user = _service.UserService.GetByLogin(username).Result.Result;
+        
         if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
             return BadRequest("Неверный запрос");
+        
         var newAccessToken = _service.TokenService.GenerateAccessToken(principal.Claims);
         var newRefreshToken = _service.TokenService.GenerateRefreshToken();
         user.RefreshToken = newRefreshToken;
+        
         UserDto UserDto = _mapper.Map<UserDto>(user);
         _service.UserService.Update(UserDto);
+        
+        var tokenDto = new TokenDto()
+        {
+            AccessToken = newAccessToken,
+            RefreshToken = newRefreshToken
+        };
+
         return Ok(new BaseResponse<TokenDto>(
-            new TokenDto()
-            {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken 
-            }, 
-            true, 200, "Авторизация прошла успешно"));
+            Result: tokenDto,
+            Success: true,
+            StatusCode: 200,
+            Messages: new List<string>{ "Авторизация прошла успешно" }));
     }
+    
     [HttpPost, Authorize(AuthenticationSchemes=JwtBearerDefaults.AuthenticationScheme)]
     [Route("revoke")]
     public IActionResult Revoke()

@@ -1,6 +1,6 @@
 using Domain.Common;
 
-namespace Application.Models;
+namespace Application.Models.ContrAgents;
 
 public class ContrAgentDto : BaseEntity
 {

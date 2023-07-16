@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Application.Common;
 using Application.Interfaces;
 using Application.Models;
+using Application.Models.Users;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 

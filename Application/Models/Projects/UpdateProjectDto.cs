@@ -1,5 +1,3 @@
-using Domain.Common;
-
 namespace Application.Models.Projects;
 
 public class UpdateProjectDto
