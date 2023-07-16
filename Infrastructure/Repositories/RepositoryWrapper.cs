@@ -9,6 +9,7 @@ public class RepositoryWrapper : IRepositoryWrapper
 {
     private Project5GDbContext _db;
     private IUserRepository _userRepository;
+    private IProjectRepository _projectRepository;
 
     public RepositoryWrapper(Project5GDbContext db)
     {
@@ -25,6 +26,19 @@ public class RepositoryWrapper : IRepositoryWrapper
             }
 
             return _userRepository;
+        }
+    }
+
+    public IProjectRepository ProjectRepository
+    {
+        get
+        {
+            if (_projectRepository == null)
+            {
+                _projectRepository = new ProjectRepository(_db);
+            }
+
+            return _projectRepository;
         }
     }
 

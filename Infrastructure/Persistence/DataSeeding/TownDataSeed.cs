@@ -1,4 +1,4 @@
-namespace Infrastructure.Persistance.DataSeeding;
+namespace Infrastructure.Persistence.DataSeeding;
 
 public static class TownDataSeed
 {

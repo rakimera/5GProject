@@ -16,4 +16,11 @@ public class Project5GDbContext : DbContext
     public DbSet<User> Users { get; set; }
 
     public Project5GDbContext(DbContextOptions<Project5GDbContext> options) : base(options) {}
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<User>().HasQueryFilter(x => x.IsDelete == false);
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<User>().HasIndex(x => x.Id).IsUnique();
+    }
 }

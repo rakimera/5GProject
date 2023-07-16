@@ -6,4 +6,4 @@ public record BaseResponse<T>(
     [property: JsonPropertyName("result")] T? Result,
     [property: JsonPropertyName("success")] bool Success,
     [property: JsonPropertyName("statusCode")] int StatusCode,
-    [property: JsonPropertyName("message")] string? Message = null);
+    [property: JsonPropertyName("messages")] List<string> Messages);

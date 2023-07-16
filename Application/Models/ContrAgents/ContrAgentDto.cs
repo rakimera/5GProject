@@ -1,8 +1,8 @@
 using Domain.Common;
 
-namespace Domain.Entities;
+namespace Application.Models.ContrAgents;
 
-public class ContrAgent : BaseEntity
+public class ContrAgentDto : BaseEntity
 {
     public string CompanyName { get; set; }
     public int BIN { get; set; }

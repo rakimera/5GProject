@@ -1,4 +1,4 @@
-using Application.Models;
+using Application.Models.Users;
 using FluentValidation;
 
 namespace Application.Validation;

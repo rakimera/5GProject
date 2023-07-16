@@ -18,4 +18,4 @@ riderModule.iml
 /_ReSharper.Caches/
 .idea
 /Migrations
-appsettings.json
+/WebApi/appsettings.json

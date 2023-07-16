@@ -1,5 +1,5 @@
 using Application.Interfaces;
-using Application.Models;
+using Application.Models.Users;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,9 +24,9 @@ public class AccountController : Controller
         Ok(_service.UserService.GetAll());
     
     
-    [HttpGet("{id}")]
-    public async Task<IActionResult> Get(Guid id) => 
-        Ok(await _service.UserService.GetByOid(id));
+    [HttpGet("{oid}")]
+    public async Task<IActionResult> Get(string oid) => 
+        Ok(await _service.UserService.GetByOid(oid));
 
     [HttpPost]
     public async Task<IActionResult> Post(CreateUserDto model)
@@ -42,9 +42,7 @@ public class AccountController : Controller
         return Ok(await _service.UserService.Update(userDto));
     }
         
-        
-
     [HttpDelete("{oid}")]
-    public async Task<IActionResult> Delete(Guid oid) =>
+    public async Task<IActionResult> Delete(string oid) =>
         Ok(await _service.UserService.Delete(oid));
 }
