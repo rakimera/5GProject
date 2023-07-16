@@ -4,6 +4,6 @@ using Application.Models.Users;
 
 namespace Application.Interfaces;
 
-public interface IUserService : ICrudService<UserDTO>
+public interface IUserService : ICrudService<UserDto>
 {
 }

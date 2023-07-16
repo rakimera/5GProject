@@ -20,23 +20,23 @@ public class UserService : IUserService
         _mapper = mapper;
         _userValidator = userValidator;
     }
-    public BaseResponse<IEnumerable<UserDTO>> GetAll()
+    public BaseResponse<IEnumerable<UserDto>> GetAll()
     {
         try
         {
             IQueryable<User> users = _repositoryWrapper.UserRepository.GetAll();
             // users = users.AsEnumerable().Where(u => u.IsDelete == false).AsQueryable(); //Для отображения только не удаленных пользователей
-            List<UserDTO> models = _mapper.Map<List<UserDTO>>(users);
+            List<UserDto> models = _mapper.Map<List<UserDto>>(users);
 
             if (models.Count > 0)
             {
-                return new BaseResponse<IEnumerable<UserDTO>>(
+                return new BaseResponse<IEnumerable<UserDto>>(
                     Result: models,
                     Success: true,
                     StatusCode: 200,
                     Messages: new List<string>{"Пользователи успешно получены"});
             } 
-            return new BaseResponse<IEnumerable<UserDTO>>(
+            return new BaseResponse<IEnumerable<UserDto>>(
                     Result: models,
                     Success: true,
                     StatusCode: 200,
@@ -44,7 +44,7 @@ public class UserService : IUserService
         }
         catch (Exception e)
         {
-            return new BaseResponse<IEnumerable<UserDTO>>(
+            return new BaseResponse<IEnumerable<UserDto>>(
                 Result: null, 
                 Messages: new List<string>{e.Message},
                 Success: false,
@@ -52,7 +52,7 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<BaseResponse<string>> CreateAsync(UserDTO model)
+    public async Task<BaseResponse<string>> CreateAsync(UserDto model)
     {
         try
         {
@@ -90,20 +90,20 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<BaseResponse<UserDTO>> GetByOid(string oid)
+    public async Task<BaseResponse<UserDto>> GetByOid(string oid)
     {
         try
         {
             User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Oid == oid);
-            UserDTO model = _mapper.Map<UserDTO>(user);
+            UserDto model = _mapper.Map<UserDto>(user);
 
             if (user is null)
-                return new BaseResponse<UserDTO>(
+                return new BaseResponse<UserDto>(
                     Result: null,
                     Messages: new List<string>{"Пользователь не найден"},
                     Success: true,
                     StatusCode: 404);
-            return new BaseResponse<UserDTO>(
+            return new BaseResponse<UserDto>(
                 Result: model,
                 Success: true,
                 StatusCode: 200,
@@ -112,7 +112,7 @@ public class UserService : IUserService
         }
         catch (Exception e)
         {
-            return new BaseResponse<UserDTO>(
+            return new BaseResponse<UserDto>(
                 Result: null,
                 Success: false,
                 Messages: new List<string>{e.Message},
@@ -120,7 +120,7 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<BaseResponse<string>> Update(UserDTO model)
+    public async Task<BaseResponse<string>> Update(UserDto model)
     {
         try
         {

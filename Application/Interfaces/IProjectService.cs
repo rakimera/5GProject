@@ -3,7 +3,7 @@ using Application.Models.Projects;
 
 namespace Application.Interfaces;
 
-public interface IProjectService : ICrudService<ProjectDTO>
+public interface IProjectService : ICrudService<ProjectDto>
 {
     
 }

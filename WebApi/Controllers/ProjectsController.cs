@@ -29,14 +29,14 @@ public class ProjectsController : Controller
     [HttpPost]
     public async Task<IActionResult> Post(CreateProjectDto model)
     {
-        ProjectDTO projectDto = _mapper.Map<ProjectDTO>(model);
+        ProjectDto projectDto = _mapper.Map<ProjectDto>(model);
         return Ok(await _service.ProjectService.CreateAsync(projectDto));
     }
 
     [HttpPut]
     public async Task<IActionResult> Put(UpdateProjectDto model) 
     {
-        ProjectDTO projectDto = _mapper.Map<ProjectDTO>(model);
+        ProjectDto projectDto = _mapper.Map<ProjectDto>(model);
         return Ok(await _service.ProjectService.Update(projectDto));
     }
 

@@ -2,7 +2,7 @@ using Domain.Common;
 
 namespace Application.Models;
 
-public class ContrAgentDTO : BaseEntity
+public class ContrAgentDto : BaseEntity
 {
     public string CompanyName { get; set; }
     public int BIN { get; set; }

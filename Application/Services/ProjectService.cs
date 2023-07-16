@@ -21,22 +21,22 @@ public class ProjectService : IProjectService
         _projectValidator = projectValidator;
     }
 
-    public BaseResponse<IEnumerable<ProjectDTO>> GetAll()
+    public BaseResponse<IEnumerable<ProjectDto>> GetAll()
     {
         try
         {
             IQueryable<Project> projects = _repositoryWrapper.ProjectRepository.GetAll();
-            List<ProjectDTO> models = _mapper.Map<List<ProjectDTO>>(projects);
+            List<ProjectDto> models = _mapper.Map<List<ProjectDto>>(projects);
 
             if (models.Count > 0)
             {
-                return new BaseResponse<IEnumerable<ProjectDTO>>(
+                return new BaseResponse<IEnumerable<ProjectDto>>(
                     Result: models,
                     Success: true,
                     StatusCode: 200,
                     Messages: new List<string>{"Проекты успешно получены"});
             }
-            return new BaseResponse<IEnumerable<ProjectDTO>>(
+            return new BaseResponse<IEnumerable<ProjectDto>>(
                 Result: models,
                 Success: true,
                 StatusCode: 200,
@@ -44,7 +44,7 @@ public class ProjectService : IProjectService
         }
         catch (Exception e)
         {
-            return new BaseResponse<IEnumerable<ProjectDTO>>(
+            return new BaseResponse<IEnumerable<ProjectDto>>(
                 Result: null, 
                 Messages: new List<string>{e.Message},
                 Success: false,
@@ -52,7 +52,7 @@ public class ProjectService : IProjectService
         }
     }
 
-    public async Task<BaseResponse<string>> CreateAsync(ProjectDTO model)
+    public async Task<BaseResponse<string>> CreateAsync(ProjectDto model)
     {
         try
         {
@@ -92,20 +92,20 @@ public class ProjectService : IProjectService
         }
     }
 
-    public async Task<BaseResponse<ProjectDTO>> GetByOid(string oid)
+    public async Task<BaseResponse<ProjectDto>> GetByOid(string oid)
     {
         try
         {
             Project? project = await _repositoryWrapper.ProjectRepository.GetByCondition(x => x.Oid == oid);
-            ProjectDTO model = _mapper.Map<ProjectDTO>(project);
+            ProjectDto model = _mapper.Map<ProjectDto>(project);
 
             if (project is null)
-                return new BaseResponse<ProjectDTO>(
+                return new BaseResponse<ProjectDto>(
                     Result: null,
                     Messages: new List<string>{"Проект не найден"},
                     Success: true,
                     StatusCode: 404);
-            return new BaseResponse<ProjectDTO>(
+            return new BaseResponse<ProjectDto>(
                 Result: model,
                 Success: true,
                 StatusCode: 200,
@@ -114,7 +114,7 @@ public class ProjectService : IProjectService
         }
         catch (Exception e)
         {
-            return new BaseResponse<ProjectDTO>(
+            return new BaseResponse<ProjectDto>(
                 Result: null,
                 Success: false,
                 Messages: new List<string>{e.Message},
@@ -122,7 +122,7 @@ public class ProjectService : IProjectService
         }
     }
 
-    public async Task<BaseResponse<string>> Update(ProjectDTO model)
+    public async Task<BaseResponse<string>> Update(ProjectDto model)
     {
         try
         {

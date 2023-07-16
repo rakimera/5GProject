@@ -8,7 +8,7 @@ public class ProjectMapProfile : Profile
 {
     public ProjectMapProfile()
     {
-        CreateMap<Project, ProjectDTO>()
+        CreateMap<Project, ProjectDto>()
             .ForMember(dest => dest.ContrAgentId, opt =>
                 opt.MapFrom(src => src.ContrAgentOid))
             .ForMember(dest => dest.ContrAgent, opt =>

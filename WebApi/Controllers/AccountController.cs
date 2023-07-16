@@ -31,14 +31,14 @@ public class AccountController : Controller
     [HttpPost]
     public async Task<IActionResult> Post(CreateUserDto model)
     {
-        UserDTO userDto = _mapper.Map<UserDTO>(model);
+        UserDto userDto = _mapper.Map<UserDto>(model);
         return Ok(await _service.UserService.CreateAsync(userDto));
     }
 
     [HttpPut]
     public async Task<IActionResult> Put(UpdateUserDto model) 
     {
-        UserDTO userDto = _mapper.Map<UserDTO>(model);
+        UserDto userDto = _mapper.Map<UserDto>(model);
         return Ok(await _service.UserService.Update(userDto));
     }
         

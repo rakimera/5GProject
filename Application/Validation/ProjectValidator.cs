@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Application.Validation;
 
-public class ProjectValidator : AbstractValidator<ProjectDTO>
+public class ProjectValidator : AbstractValidator<ProjectDto>
 {
     public ProjectValidator()
     {
