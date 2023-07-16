@@ -40,8 +40,8 @@ public class AuthController : ControllerBase
         var refreshToken = _service.TokenService.GenerateRefreshToken();
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(AuthenticationOptions.LIFETIMEREFRESHTOKEN);
-        UserDTO userDto = _mapper.Map<UserDTO>(user);
-        _service.UserService.Update(userDto);
+        UserDto UserDto = _mapper.Map<UserDto>(user);
+        _service.UserService.Update(UserDto);
         TokenDto tokenDto = new TokenDto
         {
             AccessToken = accessToken,

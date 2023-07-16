@@ -6,6 +6,6 @@ namespace Application.Interfaces;
 
 public interface IUserService : ICrudService<UserDto>
 {
-    public BaseResponse<UserDTO> GetAuthorizedUser(string login, string password);
-    public Task<BaseResponse<UserDTO>> GetByLogin(string login);
+    public BaseResponse<UserDto> GetAuthorizedUser(string login, string password);
+    public Task<BaseResponse<UserDto>> GetByLogin(string login);
 }

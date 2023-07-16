@@ -37,8 +37,8 @@ public class TokenController : ControllerBase
         var newAccessToken = _service.TokenService.GenerateAccessToken(principal.Claims);
         var newRefreshToken = _service.TokenService.GenerateRefreshToken();
         user.RefreshToken = newRefreshToken;
-        UserDTO userDto = _mapper.Map<UserDTO>(user);
-        _service.UserService.Update(userDto);
+        UserDto UserDto = _mapper.Map<UserDto>(user);
+        _service.UserService.Update(UserDto);
         return Ok(new BaseResponse<TokenDto>(
             new TokenDto()
             {
@@ -55,8 +55,8 @@ public class TokenController : ControllerBase
         var user = _service.UserService.GetByLogin(username).Result.Result;
         if (user == null) return BadRequest();
         user.RefreshToken = null;
-        UserDTO userDto = _mapper.Map<UserDTO>(user);
-        _service.UserService.Update(userDto);
+        UserDto UserDto = _mapper.Map<UserDto>(user);
+        _service.UserService.Update(UserDto);
         return NoContent();
     }
 }

@@ -126,15 +126,15 @@ public class UserService : IUserService
         try
         {
             User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Login == login);
-            UserDTO model = _mapper.Map<UserDTO>(user);
+            UserDto model = _mapper.Map<UserDto>(user);
 
             if (user is null)
-                return new BaseResponse<UserDTO>(
+                return new BaseResponse<UserDto>(
                     Result: null,
                     Message: "Пользователь не найден",
                     Success: true,
                     StatusCode: 404);
-            return new BaseResponse<UserDTO>(
+            return new BaseResponse<UserDto>(
                 Result: model,
                 Success: true,
                 StatusCode: 200,
@@ -143,7 +143,7 @@ public class UserService : IUserService
         }
         catch (Exception e)
         {
-            return new BaseResponse<UserDTO>(
+            return new BaseResponse<UserDto>(
                 Result: null,
                 Success: false,
                 Message: e.Message,
