@@ -127,9 +127,16 @@ public class UserService : IUserService
             var result = await _userValidator.ValidateAsync(model);
             if (result.IsValid)
             {
+                /*User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Oid.Equals(model.Oid));*/
                 model.LastModified = DateTime.Now;
-                model.LastModifiedBy = "Admin"; // реализация зависит от методики работы авторизацией и регистрацией.
+                model.LastModifiedBy = "Admin"; // реализация зависит от методики работы авторизацией и регистрацией.*/
                 User user = _mapper.Map<User>(model);
+
+                // user.Name = model.Name;
+                // user.Surname = model.Surname;
+                // user.Role = model.Role;
+                // user.LastModified = DateTime.Now;
+                // user.LastModifiedBy = "Admin";
                 
                 _repositoryWrapper.UserRepository.Update(user);
                 await _repositoryWrapper.Save();
