@@ -8,7 +8,6 @@ public class ErrorMapper : Profile
     public ErrorMapper()
     {
         CreateMap<ValidationFailure, string>()
-            .ForMember(dest => dest, opt =>
-                opt.MapFrom(src => src.ErrorMessage));
+            .AfterMap((src, dest) => dest = src.ErrorMessage);
     }
 }
