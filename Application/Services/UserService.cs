@@ -20,23 +20,23 @@ public class UserService : IUserService
         _mapper = mapper;
         _userValidator = userValidator;
     }
-    public BaseResponse<IEnumerable<UserDTO>> GetAll()
+    public BaseResponse<IEnumerable<UserDto>> GetAll()
     {
         try
         {
             IQueryable<User> users = _repositoryWrapper.UserRepository.GetAll();
-            // users = users.AsEnumerable().Where(u => u.IsDelete == false).AsQueryable(); //Для отображения только не удаленных пользователей
-            List<UserDTO> models = _mapper.Map<List<UserDTO>>(users);
+            users = users.AsEnumerable().Where(u => u.IsDelete == false).AsQueryable(); //Для отображения только не удаленных пользователей
+            List<UserDto> models = _mapper.Map<List<UserDto>>(users);
 
             if (models.Count > 0)
             {
-                return new BaseResponse<IEnumerable<UserDTO>>(
+                return new BaseResponse<IEnumerable<UserDto>>(
                     Result: models,
                     Success: true,
                     StatusCode: 200,
                     Message:"Пользователи успешно получены");
             } 
-            return new BaseResponse<IEnumerable<UserDTO>>(
+            return new BaseResponse<IEnumerable<UserDto>>(
                     Result: models,
                     Success: true,
                     StatusCode: 200,
@@ -44,7 +44,7 @@ public class UserService : IUserService
         }
         catch (Exception e)
         {
-            return new BaseResponse<IEnumerable<UserDTO>>(
+            return new BaseResponse<IEnumerable<UserDto>>(
                 Result: null, 
                 Message: e.Message,
                 Success: false,
@@ -52,7 +52,7 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<BaseResponse<Guid?>> CreateAsync(UserDTO model)
+    public async Task<BaseResponse<Guid?>> CreateAsync(UserDto model)
     {
         try
         {
@@ -91,20 +91,20 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<BaseResponse<UserDTO>> GetByOid(Guid oid)
+    public async Task<BaseResponse<UserDto>> GetByOid(Guid oid)
     {
         try
         {
             User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Oid == oid);
-            UserDTO model = _mapper.Map<UserDTO>(user);
+            UserDto model = _mapper.Map<UserDto>(user);
 
             if (user is null)
-                return new BaseResponse<UserDTO>(
+                return new BaseResponse<UserDto>(
                     Result: null,
                     Message: "Пользователь не найден",
                     Success: true,
                     StatusCode: 404);
-            return new BaseResponse<UserDTO>(
+            return new BaseResponse<UserDto>(
                 Result: model,
                 Success: true,
                 StatusCode: 200,
@@ -113,7 +113,7 @@ public class UserService : IUserService
         }
         catch (Exception e)
         {
-            return new BaseResponse<UserDTO>(
+            return new BaseResponse<UserDto>(
                 Result: null,
                 Success: false,
                 Message: e.Message,
@@ -121,7 +121,7 @@ public class UserService : IUserService
         }
     }
     
-    public async Task<BaseResponse<UserDTO>> GetByLogin(string login)
+    public async Task<BaseResponse<UserDto>> GetByLogin(string login)
     {
         try
         {
@@ -151,20 +151,20 @@ public class UserService : IUserService
         }
     }
     
-    public BaseResponse<UserDTO> GetAuthorizedUser(string login,string password)
+    public BaseResponse<UserDto> GetAuthorizedUser(string login,string password)
     {
         try
         {
             User? user = _repositoryWrapper.UserRepository.GetByCondition(x => x.Login == login && x.Password == password).Result;
-            UserDTO model = _mapper.Map<UserDTO>(user);
+            UserDto model = _mapper.Map<UserDto>(user);
 
             if (user is null)
-                return new BaseResponse<UserDTO>(
+                return new BaseResponse<UserDto>(
                     Result: null,
                     Message: "Пользователь не найден",
                     Success: true,
                     StatusCode: 404);
-            return new BaseResponse<UserDTO>(
+            return new BaseResponse<UserDto>(
                 Result: model,
                 Success: true,
                 StatusCode: 200,
@@ -173,7 +173,7 @@ public class UserService : IUserService
         }
         catch (Exception e)
         {
-            return new BaseResponse<UserDTO>(
+            return new BaseResponse<UserDto>(
                 Result: null,
                 Success: false,
                 Message: e.Message,
@@ -181,7 +181,7 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<BaseResponse<Guid?>> Update(UserDTO model)
+    public async Task<BaseResponse<Guid?>> Update(UserDto model)
     {
         try
         {

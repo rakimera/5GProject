@@ -1,7 +1,6 @@
 using Application.Interfaces;
 using Application.Models;
 using AutoMapper;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,20 +31,20 @@ public class AccountController : Controller
     [HttpPost]
     public async Task<IActionResult> Post(CreateUserDto model)
     {
-        UserDTO userDto = _mapper.Map<UserDTO>(model);
+        UserDto userDto = _mapper.Map<UserDto>(model);
         return Ok(await _service.UserService.CreateAsync(userDto));
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put(UpdateUserDto model) 
+    public async Task<IActionResult> Put(UpdateUserDto model)
     {
-        UserDTO userDto = _mapper.Map<UserDTO>(model);
+        UserDto userDto = _mapper.Map<UserDto>(model);
         return Ok(await _service.UserService.Update(userDto));
     }
         
         
 
-    [HttpDelete]
+    [HttpDelete("{oid}")]
     public async Task<IActionResult> Delete(Guid oid) =>
         Ok(await _service.UserService.Delete(oid));
 }
