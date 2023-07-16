@@ -7,8 +7,9 @@ public class AuthenticationOptions
 {
     public const string ISSUER = "Project5GBack"; 
     public const string AUDIENCE = "Prooject5GFront";
-    const string KEY = "mysecretcod_secretkey!58544";  
+    const string KEY = "arthursuperSecretKey@1995";  
     public const int LIFETIME = 60;
+    public const int LIFETIMEREFRESHTOKEN = 480;
     public static SymmetricSecurityKey GetSymmetricSecurityKey()
     {
         return new SymmetricSecurityKey(Encoding.ASCII.GetBytes(KEY));

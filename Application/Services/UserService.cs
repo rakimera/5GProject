@@ -121,6 +121,36 @@ public class UserService : IUserService
         }
     }
     
+    public async Task<BaseResponse<UserDto>> GetByLogin(string login)
+    {
+        try
+        {
+            User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Login == login);
+            UserDto model = _mapper.Map<UserDto>(user);
+
+            if (user is null)
+                return new BaseResponse<UserDto>(
+                    Result: null,
+                    Message: "Пользователь не найден",
+                    Success: true,
+                    StatusCode: 404);
+            return new BaseResponse<UserDto>(
+                Result: model,
+                Success: true,
+                StatusCode: 200,
+                Message:"Пользователь успешно найден");
+
+        }
+        catch (Exception e)
+        {
+            return new BaseResponse<UserDto>(
+                Result: null,
+                Success: false,
+                Message: e.Message,
+                StatusCode: 500);
+        }
+    }
+    
     public BaseResponse<UserDto> GetAuthorizedUser(string login,string password)
     {
         try
