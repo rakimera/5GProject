@@ -59,7 +59,6 @@ public class ProjectService : IProjectService
             var result = await _projectValidator.ValidateAsync(model);
             if (result.IsValid)
             {
-                model.Oid = Guid.NewGuid().ToString();
                 model.Created = DateTime.Now;
                 model.CreatedBy = "Admin"; // реализация зависит от методики работы авторизацией.
                 Project project = _mapper.Map<Project>(model);
@@ -67,7 +66,7 @@ public class ProjectService : IProjectService
                 await _repositoryWrapper.Save();
 
                 return new BaseResponse<string>(
-                    Result: project.Oid,
+                    Result: project.Id.ToString(),
                     Success: true,
                     StatusCode: 200,
                     Messages: new List<string>{"Проект успешно создан"});
@@ -96,7 +95,7 @@ public class ProjectService : IProjectService
     {
         try
         {
-            Project? project = await _repositoryWrapper.ProjectRepository.GetByCondition(x => x.Oid == oid);
+            Project? project = await _repositoryWrapper.ProjectRepository.GetByCondition(x => x.Id.ToString() == oid);
             ProjectDto model = _mapper.Map<ProjectDto>(project);
 
             if (project is null)
@@ -137,7 +136,7 @@ public class ProjectService : IProjectService
                 await _repositoryWrapper.Save();
 
                 return new BaseResponse<string>(
-                    Result: project.Oid,
+                    Result: project.Id.ToString(),
                     Success: true,
                     StatusCode: 200,
                     Messages: new List<string>{"Проект успешно изменен"});
@@ -164,7 +163,7 @@ public class ProjectService : IProjectService
     {
         try
         {
-            Project? project = await _repositoryWrapper.ProjectRepository.GetByCondition(x => x.Oid == oid);
+            Project? project = await _repositoryWrapper.ProjectRepository.GetByCondition(x => x.Id.ToString() == oid);
             if (project is not null)
             {
                 project.IsDelete = true;

@@ -59,7 +59,6 @@ public class UserService : IUserService
             var result = await _userValidator.ValidateAsync(model);
             if (result.IsValid)
             {
-                model.Oid = Guid.NewGuid().ToString();
                 model.Created = DateTime.Now;
                 model.CreatedBy = "Admin"; // реализация зависит от методики работы авторизацией и регистрацией.
                 User user = _mapper.Map<User>(model);
@@ -67,7 +66,7 @@ public class UserService : IUserService
                 await _repositoryWrapper.Save();
 
                 return new BaseResponse<string>(
-                    Result: user.Oid,
+                    Result: user.Id.ToString(),
                     Success: true,
                     StatusCode: 200,
                     Messages: new List<string>{"Пользователь успешно создан"});
@@ -94,7 +93,7 @@ public class UserService : IUserService
     {
         try
         {
-            User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Oid == oid);
+            User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.ToString() == oid);
             UserDto model = _mapper.Map<UserDto>(user);
 
             if (user is null)
@@ -127,22 +126,20 @@ public class UserService : IUserService
             var result = await _userValidator.ValidateAsync(model);
             if (result.IsValid)
             {
-                /*User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Oid.Equals(model.Oid));*/
-                model.LastModified = DateTime.Now;
-                model.LastModifiedBy = "Admin"; // реализация зависит от методики работы авторизацией и регистрацией.*/
-                User user = _mapper.Map<User>(model);
+                User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.Equals(model.Id));
+                /*User user = _mapper.Map<User>(model);*/
 
-                // user.Name = model.Name;
-                // user.Surname = model.Surname;
-                // user.Role = model.Role;
-                // user.LastModified = DateTime.Now;
-                // user.LastModifiedBy = "Admin";
+                user.Name = model.Name;
+                user.Surname = model.Surname;
+                user.Role = model.Role;
+                user.LastModified = DateTime.Now;
+                user.LastModifiedBy = "Admin";
                 
                 _repositoryWrapper.UserRepository.Update(user);
                 await _repositoryWrapper.Save();
 
                 return new BaseResponse<string>(
-                    Result: user.Oid,
+                    Result: user.Id.ToString(),
                     Success: true,
                     StatusCode: 200,
                     Messages: new List<string>{"Пользователь успешно изменен"});
@@ -169,7 +166,7 @@ public class UserService : IUserService
     {
         try
         {
-            User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Oid == oid);
+            User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.ToString() == oid);
             if (user is not null)
             {
                 user.IsDelete = true;
