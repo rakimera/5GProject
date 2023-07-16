@@ -1,8 +1,8 @@
 using Domain.Common;
 
-namespace Domain.Entities;
+namespace Application.Models;
 
-public class User : BaseEntity
+public class UserDto : BaseEntity
 {
     public string Login { get; set; }
     public string Name { get; set; }

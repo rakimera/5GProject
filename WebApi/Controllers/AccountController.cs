@@ -2,6 +2,7 @@ using Application.Interfaces;
 using Application.Models;
 using Application.Models.Users;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -19,7 +20,7 @@ public class AccountController : Controller
         _mapper = mapper;
     }
 
-    [HttpGet]
+    [HttpGet , Authorize(Roles = "Admin")]
     public IActionResult Get() => 
         Ok(_service.UserService.GetAll());
     
@@ -36,7 +37,7 @@ public class AccountController : Controller
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put(UpdateUserDto model) 
+    public async Task<IActionResult> Put(UpdateUserDto model)
     {
         UserDto userDto = _mapper.Map<UserDto>(model);
         return Ok(await _service.UserService.Update(userDto));
