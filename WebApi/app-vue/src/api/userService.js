@@ -1,18 +1,26 @@
 import axios from '../utils/axios';
+import storeExtension from '../utils/storeExtension';
 
 const userService = {
-    getUsers() {
-        return axios.get('/api/users');
+    async getUsers() {
+        return await axios.get('/api/users');
     },
-    createUser(user) {
-        return axios.post('/api/users', user);
+    async createUser(user) {
+        return await axios.post('/api/users', user);
     },
-    updateUser(user) {
-        return axios.put('/api/users', user);
+    async updateUser(user) {
+        return await axios.put('/api/users', user);
     },
-    deleteUser(oid) {
-        return axios.delete(`/api/users/${oid}`);
+    async deleteUser(oid) {
+        return await axios.delete(`/api/users/${oid}`);
     },
+    async getAllUsers(loadOptions) {
+        let options = storeExtension.getParams(loadOptions)
+        return new Promise((resolve) =>  {
+            axios.get(`/api/users/Index/${options}`).then((responce)  => resolve(responce.data)   )
+        }) ;
+    },
+
 };
 
 export default userService;

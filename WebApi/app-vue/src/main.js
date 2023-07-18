@@ -14,3 +14,4 @@ themes.initialized(() => {
     app.config.globalProperties.$appInfo = appInfo;
     app.mount('#app');
 });
+
