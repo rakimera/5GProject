@@ -18,7 +18,7 @@ public class ServiceWrapper : IServiceWrapper
         ProjectValidator projectValidator)
     {
         _userService = new Lazy<IUserService>(() => new UserService(repository, mapper, userValidator));
-        _tokenService = new Lazy<ITokenService>(() => new TokenService());
+        _tokenService = new Lazy<ITokenService>(() => new TokenService(repository));
         _projectService = new Lazy<IProjectService>(()=> new ProjectService(repository, mapper, projectValidator));
     }
 

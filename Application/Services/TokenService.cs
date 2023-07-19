@@ -3,13 +3,21 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using Application.Common;
 using Application.Interfaces;
+using Application.Interfaces.RepositoryContract.Common;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Application.Services;
 
 public class TokenService : ITokenService
 {
-    public string GenerateAccessToken(IEnumerable<Claim> claims)
+    private readonly IRepositoryWrapper _repositoryWrapper;
+
+    public TokenService(IRepositoryWrapper repositoryWrapper)
+    {
+        _repositoryWrapper = repositoryWrapper;
+    }
+
+    public Task<string> GenerateAccessToken(IEnumerable<Claim> claims)
     {
         var secretKey = AuthenticationOptions.GetSymmetricSecurityKey();
         var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
@@ -21,20 +29,20 @@ public class TokenService : ITokenService
             signingCredentials: signinCredentials
         );
         var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
-        return tokenString;
+        return Task.FromResult(tokenString);
     }
     
-    public string GenerateRefreshToken()
+    public Task<string> GenerateRefreshToken()
     {
         var randomNumber = new byte[32];
         using (var rng = RandomNumberGenerator.Create())
         {
             rng.GetBytes(randomNumber);
-            return Convert.ToBase64String(randomNumber);
+            return Task.FromResult(Convert.ToBase64String(randomNumber));
         }
     }
     
-    public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+    public Task<ClaimsPrincipal> GetPrincipalFromExpiredToken(string token)
     {
         var tokenValidationParameters = new TokenValidationParameters
         {
@@ -50,6 +58,6 @@ public class TokenService : ITokenService
         var jwtSecurityToken = securityToken as JwtSecurityToken;
         if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
             throw new SecurityTokenException("Invalid token");
-        return principal;
+        return Task.FromResult(principal);
     }
 }

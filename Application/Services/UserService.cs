@@ -25,7 +25,6 @@ public class UserService : IUserService
         try
         {
             IQueryable<User> users = _repositoryWrapper.UserRepository.GetAll();
-            // users = users.AsEnumerable().Where(u => u.IsDelete == false).AsQueryable(); //Для отображения только не удаленных пользователей
             List<UserDto> models = _mapper.Map<List<UserDto>>(users);
 
             if (models.Count > 0)
