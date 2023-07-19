@@ -103,4 +103,64 @@ public class TokenService : ITokenService
             Success: true,
             StatusCode: 200);
     }
+
+    public async Task<BaseResponse<TokenDto>>Refresh(TokenDto tokenApiModel)
+    {
+        if (tokenApiModel is null)
+            return new BaseResponse<TokenDto>(
+                Result: null,
+                Messages: new List<string>{"Данные пусты"},
+                Success: false,
+                StatusCode: 404);
+        
+        string accessToken = tokenApiModel.AccessToken;
+        string refreshToken = tokenApiModel.RefreshToken;
+        var principal = await GetPrincipalFromExpiredToken(accessToken);
+        var username = principal.Identity.Name;
+        var user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Login == username);
+
+        if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+            return new BaseResponse<TokenDto>(
+                Result: null,
+                Messages: new List<string>{"Неверный запрос"},
+                Success: false,
+                StatusCode: 404);
+        
+        var newAccessToken = await GenerateAccessToken(principal.Claims);
+        var newRefreshToken = await GenerateRefreshToken();
+        user.RefreshToken = newRefreshToken;
+        _repositoryWrapper.UserRepository.Update(user);
+        await _repositoryWrapper.Save();
+
+        var tokenDto = new TokenDto()
+        {
+            AccessToken = newAccessToken,
+            RefreshToken = newRefreshToken
+        };
+
+        return new BaseResponse<TokenDto>(
+            Result: tokenDto,
+            Success: true,
+            StatusCode: 200,
+            Messages: new List<string>{ "Авторизация прошла успешно" });
+    }
+
+
+    public async Task<BaseResponse<bool>> Revoke(string login)
+    {
+        var user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Login == login);
+        if (user == null) return new BaseResponse<bool>(
+            Result: false,
+            Messages: new List<string>{"Такого пользователя нет"},
+            Success: false,
+            StatusCode: 404);
+        user.RefreshToken = null;
+        _repositoryWrapper.UserRepository.Update(user);
+        await _repositoryWrapper.Save();
+        return new BaseResponse<bool>(
+            Result: true,
+            Messages: new List<string>{"Операция произведена успешно"},
+            Success: true,
+            StatusCode: 204);
+    }
 }

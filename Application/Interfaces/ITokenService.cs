@@ -10,4 +10,6 @@ public interface ITokenService
     Task<string> GenerateRefreshToken();
     Task<ClaimsPrincipal> GetPrincipalFromExpiredToken(string token);
     public Task<BaseResponse<TokenDto>> Login(LoginDto loginModel);
+    public Task<BaseResponse<TokenDto>> Refresh(TokenDto tokenApiModel);
+    public Task<BaseResponse<bool>> Revoke(string login);
 }
