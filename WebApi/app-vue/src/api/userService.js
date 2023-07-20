@@ -1,24 +1,68 @@
 import axios from '../utils/axios';
 import storeExtension from '../utils/storeExtension';
 
+
 const userService = {
     async getUsers() {
-        return await axios.get('/api/users');
+        return new Promise((resolve, reject) =>{
+            console.log(resolve)
+            console.log(reject)
+            axios.get('/api/users')
+                .then((response) => {
+                    resolve(response.data);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        })
     },
     async createUser(user) {
-        return await axios.post('/api/users', user);
+        return new Promise((resolve, reject) => {
+            axios.post('/api/users', user)
+                .then((response) => {
+                    resolve(response.data);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        })
     },
+
     async updateUser(user) {
-        return await axios.put('/api/users', user);
+        return new Promise((resolve, reject) => {
+            axios.put('/api/users', user)
+                .then((response) => {
+                    resolve(response.data);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        })
     },
-    async deleteUser(oid) {
-        return await axios.delete(`/api/users/${oid}`);
+
+    deleteUser(oid) {
+        return new Promise((resolve, reject) => {
+            axios.delete(`/api/users/${oid}`)
+                .then((response) => {
+                    resolve(response.data);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
     },
+
     getAllUsers(loadOptions) {
         let options = storeExtension.getParams(loadOptions)
-        return new Promise((resolve) =>  {
-            axios.get(`/api/users/Index/${options}`).then((response)  => resolve(response.data))
-        }) ;
+        return new Promise((resolve, reject) =>  {
+            axios.get(`/api/users/Index/${options}`)
+                .then((response)  => {
+                    resolve(response.data);
+                })
+                .catch((error) => {
+                    reject(error);
+                })
+        });
     },
 };
 
