@@ -14,13 +14,12 @@ const userService = {
     async deleteUser(oid) {
         return await axios.delete(`/api/users/${oid}`);
     },
-    async getAllUsers(loadOptions) {
+    getAllUsers(loadOptions) {
         let options = storeExtension.getParams(loadOptions)
         return new Promise((resolve) =>  {
-            axios.get(`/api/users/Index/${options}`).then((responce)  => resolve(responce.data)   )
+            axios.get(`/api/users/Index/${options}`).then((response)  => resolve(response.data))
         }) ;
     },
-
 };
 
 export default userService;

@@ -5,8 +5,28 @@
       :remote-operations="true"
   >
     <DxColumn
+        data-field="login"
+        data-type="string"
+    />
+    <DxColumn
         data-field="name"
         data-type="string"
+    />
+    <DxColumn
+        data-field="surname"
+        data-type="string"
+    />
+    <DxColumn
+        data-field="password"
+        data-type="string"
+    />
+    <DxColumn
+        data-field="role"
+        data-type="string"
+    />
+    <DxColumn
+        data-field="action"
+        data-type="button"
     />
     <DxPaging :page-size="2"/>
     <DxPager
@@ -32,8 +52,7 @@ import userService from "@/api/userService";
 const store = new CustomStore({
   key: 'id',
   load: async (loadOptions) => {
-    let test = await userService.getAllUsers(loadOptions);
-    return test;
+    return await userService.getAllUsers(loadOptions);
   },
 });
 
