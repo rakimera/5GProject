@@ -25,13 +25,12 @@ public class AuthController : ControllerBase
     public IActionResult Login([FromBody] LoginDto loginModel)
     {
         if (loginModel is null)
-        {
             return BadRequest("Invalid client request");
-        }
 
         var user = _service.UserService.GetAuthorizedUser(loginModel.Login, loginModel.Password).Result;
         if (user is null)
             return Unauthorized();
+        
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, loginModel.Login),
@@ -41,13 +40,16 @@ public class AuthController : ControllerBase
         var refreshToken = _service.TokenService.GenerateRefreshToken();
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(AuthenticationOptions.LIFETIMEREFRESHTOKEN);
+        
         UserDto UserDto = _mapper.Map<UserDto>(user);
         _service.UserService.Update(UserDto);
+        
         TokenDto tokenDto = new TokenDto
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken
         };
+        
         return Ok(tokenDto);
     }
 }

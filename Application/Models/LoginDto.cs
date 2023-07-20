@@ -1,7 +1,9 @@
+using System.Text.Json.Serialization;
+
 namespace Application.Models;
 
 public class LoginDto
 {
-    public string Login { get; set; }
-    public string Password { get; set; }
+    [property: JsonPropertyName("login")] public required string Login { get; set; }
+    [property: JsonPropertyName("password")] public required string Password { get; set; }
 }

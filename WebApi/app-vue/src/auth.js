@@ -1,13 +1,40 @@
-const defaultUser = {
+/*const defaultUser = {
   email: 'sandra@example.com',
   avatarUrl: 'https://js.devexpress.com/Demos/WidgetsGallery/JSDemos/images/employees/06.png'
-};
+};*/
+import AuthService from '../api/AuthService';
+import login from "@/components/Login.vue";
 
 export default {
+  data(){
+    return{
+      loginModel:{
+        login: '',
+        password: ''
+      }
+    }
+  },
+  methods: {
+    login(){
+      this.loginModel = {login: this.loginModel.login}
+      return
+        try {
+          const response =  new Promise((resolve, reject) => {
+            login(loginModel).then()
+          })
+        }
+        
+        
+      }
+    },
+    
+  }
+  
+  /*
   _user: defaultUser,
   loggedIn() {
     return !!this._user;
-  },
+  },*/
 
   async logIn(email, password) {
     try {

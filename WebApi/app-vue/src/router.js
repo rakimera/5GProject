@@ -42,14 +42,14 @@ const router = new createRouter({
       component: Tasks
     },
     {
-      path: "/login-form",
-      name: "login-form",
+      path: "/login",
+      name: "login",
       meta: {
         requiresAuth: false,
-        layout: simpleLayout,
+        layout: auth,
         title: "Sign In"
       },
-      component: loadView("login-form")
+      component: loadView("login")
     },
     {
       path: "/reset-password",
@@ -98,7 +98,7 @@ const router = new createRouter({
       path: "/users",
       name: "users",
       meta: {
-        requiresAuth: false,
+        requiresAuth: true,
         layout: defaultLayout
       },
       component: Users
@@ -108,15 +108,15 @@ const router = new createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-
-  if (to.name === "login-form" && auth.loggedIn()) {
+  
+  if (to.name === "login" && auth.loggedIn()) {
     next({ name: "home" });
   }
 
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!auth.loggedIn()) {
       next({
-        name: "login-form",
+        name: "login",
         query: { redirect: to.fullPath }
       });
     } else {

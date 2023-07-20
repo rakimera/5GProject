@@ -24,7 +24,7 @@ public class TokenController : ControllerBase
 
     [HttpPost]
     [Route("refresh")]
-    public IActionResult Refresh(TokenDto tokenApiModel)
+    public IActionResult Refresh(TokenDto? tokenApiModel)
     {
         if (tokenApiModel is null)
             return BadRequest("Invalid client request");
