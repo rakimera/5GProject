@@ -1,4 +1,3 @@
-import auth from "./auth";
 import { createRouter, createWebHashHistory } from "vue-router";
 
 import Home from "./views/home-page";
@@ -7,6 +6,7 @@ import Tasks from "./views/tasks-page";
 import defaultLayout from "./layouts/side-nav-outer-toolbar";
 import simpleLayout from "./layouts/single-card";
 import Users from './views/Users-page.vue';
+import authService from "@/api/AuthService";
 
 function loadView(view) {
   return () => import (/* webpackChunkName: "login" */ `./views/${view}.vue`)
@@ -46,7 +46,7 @@ const router = new createRouter({
       name: "login",
       meta: {
         requiresAuth: false,
-        layout: auth,
+        layout: auth, //хз пока
         title: "Sign In"
       },
       component: loadView("login")
@@ -108,13 +108,12 @@ const router = new createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  
-  if (to.name === "login" && auth.loggedIn()) {
+  if (to.name === "login" && authService.loggedIn()) {
     next({ name: "home" });
   }
 
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!auth.loggedIn()) {
+  if (to.matched.some(record => record.meta.requiresAuth)) { // и тут пока не совсем понимаю как реализовать
+    if (!authService.loggedIn()) {
       next({
         name: "login",
         query: { redirect: to.fullPath }

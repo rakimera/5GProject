@@ -14,6 +14,9 @@ const userService = {
     deleteUser(oid) {
         return axios.delete(`/api/users/${oid}`, { headers: authHeader()});
     },
+    getUser(){
+        return axios.get(`/api/users/${oid}`, { headers: authHeader()});
+    }
 };
 
 export default userService;

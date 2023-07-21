@@ -1,28 +1,40 @@
 import axios from '../utils/axios';
-import response from "devextreme";
+import userService from "@/api/userService";
+
+async function updateTokens(response) {
+    localStorage.setItem('userToken', JSON.stringify(response.data.accessToken));
+    localStorage.setItem('refreshToken', JSON.stringify(response.data.refreshToken));
+    console.log(response.data.accessToken);
+    console.log(response.data.refreshToken);
+    return response.data;
+}
 
 const authService = {
     async login(loginModel) {
-        return new Promise((resolve, reject) => {
-            axios.post('/api/Auth/login', loginModel)
-                .then((resolve) => {
-                    localStorage.setItem('userToken', JSON.stringify(response.data.accessToken))
-                    localStorage.setItem('userToken', JSON.stringify(response.data.refreshToken))
-                    console.log(response.data.accessToken)
-                    console.log(response.data.refreshToken)
-                    console.log(resolve)
-                })
-                .catch((error) => {
-                    reject(error);
-                });
-        });
+        try {
+            const response = await axios.post('/api/Auth/login', loginModel);
+            return updateTokens(response);
+        } catch (error) {
+            throw error;
+        }
     },
-    refreshToken(tokenApiModel) {
-        return axios.post('/api/Token/refresh', tokenApiModel);
+    async refreshingToken(tokenApiModel) {
+        try {
+            const response = await axios.post('/api/Token/refresh', tokenApiModel);
+            return updateTokens(response);
+        } catch (error) {
+            throw error;
+        }
     },
-    logOut() {
+    revoke() {
+        localStorage.removeItem('userToken');
+        localStorage.removeItem('refreshToken');
         return axios.post('/api/Token/revoke');
+    },
+    loggedIn() {
+        // Логика проверки, аутентифицирован ли пользователь.
+        return !!localStorage.getItem('userToken');
     },
 };
 
-export default authService
+export default authService;
