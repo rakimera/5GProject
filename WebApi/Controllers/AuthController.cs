@@ -27,14 +27,14 @@ public class AuthController : ControllerBase
         if (loginModel is null)
             return BadRequest("Invalid client request");
 
-        var user = _service.UserService.GetAuthorizedUser(loginModel.Login, loginModel.Password).Result;
+        UserDto? user =  _service.UserService.GetAuthorizedUser(loginModel.Login, loginModel.Password).Result;
         if (user is null)
             return Unauthorized();
         
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, loginModel.Login),
-            new Claim(ClaimTypes.Role, user.Role)
+            new (ClaimTypes.Name, loginModel.Login),
+            new (ClaimTypes.Role, user.Role)
         };
         var accessToken = _service.TokenService.GenerateAccessToken(claims);
         var refreshToken = _service.TokenService.GenerateRefreshToken();

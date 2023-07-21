@@ -6,11 +6,15 @@ const authService = {
         return new Promise((resolve, reject) => {
             axios.post('/api/Auth/login', loginModel)
                 .then((resolve) => {
-                    resolve(response.data.accessToken)
+                    localStorage.setItem('userToken', JSON.stringify(response.data.accessToken))
+                    localStorage.setItem('userToken', JSON.stringify(response.data.refreshToken))
+                    console.log(response.data.accessToken)
+                    console.log(response.data.refreshToken)
+                    console.log(resolve)
                 })
-            
-            
-            
+                .catch((error) => {
+                    reject(error);
+                });
         });
     },
     refreshToken(tokenApiModel) {
@@ -21,19 +25,4 @@ const authService = {
     },
 };
 
-
-const userService = {
-    async getUsers() {
-        return new Promise((resolve, reject) =>{
-            console.log(resolve)
-            console.log(reject)
-            axios.get('/api/users')
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch((error) => {
-                    reject(error);
-                });
-        })
-    },
-export default authService;
+export default authService
