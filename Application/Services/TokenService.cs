@@ -129,6 +129,7 @@ public class TokenService : ITokenService
         var newAccessToken = await GenerateAccessToken(principal.Claims);
         var newRefreshToken = await GenerateRefreshToken();
         user.RefreshToken = newRefreshToken;
+        user.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(AuthenticationOptions.LIFETIMEREFRESHTOKEN);
         _repositoryWrapper.UserRepository.Update(user);
         await _repositoryWrapper.Save();
 
@@ -161,6 +162,6 @@ public class TokenService : ITokenService
             Result: true,
             Messages: new List<string>{"Операция произведена успешно"},
             Success: true,
-            StatusCode: 204);
+            StatusCode: 200);
     }
 }
