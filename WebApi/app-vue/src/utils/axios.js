@@ -1,5 +1,5 @@
 import axios from 'axios';
-import authHeader from './authHeader';
+import authHeader from '@/api//AuthHeader';
 import authService from "@/api/AuthService";
 
 const instance = axios.create({
@@ -14,8 +14,8 @@ axios.interceptors.response.use(response => {
         const tokenApiModel = {accessToken: user.accessToken, refreshToken: user.refreshToken};
         try {
             const response = await authService.refreshingToken(tokenApiModel);
-            localStorage.getItem('userToken')
-            localStorage.getItem('refreshToken')
+            localStorage.setItem('userToken', JSON.stringify(response.data.accessToken));
+            localStorage.setItem('refreshToken', JSON.stringify(response.data.refreshToken));
         } catch (error) {
             console.error('Ошибка обновления токена:', error);
             return {};

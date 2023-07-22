@@ -56,11 +56,12 @@
 <script>
 import DxButton from "devextreme-vue/button";
 import DxToolbar, { DxItem } from "devextreme-vue/toolbar";
-import auth from "../auth";
 import { useRouter, useRoute } from 'vue-router';
 import { ref } from 'vue';
 
 import UserPanel from "./user-panel";
+import AuthService from "@/api/AuthService";
+import jwtDecode from 'jwt-decode';
 
 export default {
   props: {
@@ -74,7 +75,15 @@ export default {
     const route = useRoute();
 
     const email = ref("");
-    auth.getUser().then((e) => email.value = e.data.email);
+    const user = JSON.parse(localStorage.getItem('userToken'));
+    try {
+        const decodedToken = jwtDecode(user.accessToken);
+        email.value = decodedToken.login;
+    }catch (errors){
+        console.log(errors)
+    }
+    
+    /*userService.getUser(decodedToken.).then((e) => email.value = e.data.login);*/
     
     const userMenuItems = [{
         text: "Profile",
@@ -88,7 +97,7 @@ export default {
     }];
       
     function onLogoutClick() {
-      auth.logOut();
+      AuthService.revoke();
       router.push({
         path: "/login-form",
         query: { redirect: route.path }

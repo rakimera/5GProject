@@ -57,7 +57,7 @@ import notify from 'devextreme/ui/notify';
 import { useRouter, useRoute } from 'vue-router';
 import { ref, reactive } from "vue";
 
-import auth from "../auth";
+import authService from "@/api/AuthService";
 
 export default {
 components: {
@@ -86,11 +86,11 @@ components: {
       const { password } = formData;
       loading.value = true;
   
-      const result = await auth.changePassword(password, recoveryCode.value);
+      const result = await authService.changePassword(password, recoveryCode.value);
       loading.value = false;
   
       if (result.isOk) {
-        router.push("/login-form");
+        await router.push("/login-form");
       } else {
         notify(result.message, 'error', 2000);
       }

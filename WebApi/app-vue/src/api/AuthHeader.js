@@ -5,6 +5,7 @@ export default async function authHeader() {
             return { Authorization: 'Bearer ' + user.accessToken };
         }
     } catch (error) {
-        throw error;
+        console.error("Ошибка при получении данных из локального хранилища:", error);
     }
+    return {};
 }

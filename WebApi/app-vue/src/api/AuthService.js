@@ -1,5 +1,4 @@
-import axios from '../utils/axios';
-import userService from "@/api/userService";
+import axios from '@/utils/axios';
 
 async function updateTokens(response) {
     localStorage.setItem('userToken', JSON.stringify(response.data.accessToken));
@@ -15,7 +14,7 @@ const authService = {
             const response = await axios.post('/api/Auth/login', loginModel);
             return updateTokens(response);
         } catch (error) {
-            throw error;
+            console.log("Ошибка получения токена", error)
         }
     },
     async refreshingToken(tokenApiModel) {
@@ -23,7 +22,7 @@ const authService = {
             const response = await axios.post('/api/Token/refresh', tokenApiModel);
             return updateTokens(response);
         } catch (error) {
-            throw error;
+            console.log("Ошибка получения Refresh токена", error)
         }
     },
     revoke() {
@@ -32,8 +31,31 @@ const authService = {
         return axios.post('/api/Token/revoke');
     },
     loggedIn() {
-        // Логика проверки, аутентифицирован ли пользователь.
         return !!localStorage.getItem('userToken');
+    },
+    async resetPassword(email) {
+        try {
+            console.log("Будущий сброс пароля по почте", email)
+        } catch (errors){
+            console.log(errors)
+        }
+        return "Тут будет сброс пароля, но не в этот раз";
+    },
+    async createAccount(email, password) {
+        try {
+            console.log("Будущий сброс пароля по почте", email, password)
+        } catch (errors){
+            console.log(errors)
+        }
+        return "Тут будет создание аккаунту, но это не точно";
+    },
+    async changePassword(password, recoveryCode) {
+        try {
+            console.log("Будущая смена пароля после получения кода на почту", password, recoveryCode)
+        } catch (errors){
+            console.log(errors)
+        }
+        return "Тут будет восстановление пароля, наверное";
     },
 };
 

@@ -46,10 +46,10 @@ const router = new createRouter({
       name: "login",
       meta: {
         requiresAuth: false,
-        layout: auth, //хз пока
+        layout: defaultLayout,
         title: "Sign In"
       },
-      component: loadView("login")
+      component: loadView("login-form")
     },
     {
       path: "/reset-password",
@@ -112,7 +112,7 @@ router.beforeEach((to, from, next) => {
     next({ name: "home" });
   }
 
-  if (to.matched.some(record => record.meta.requiresAuth)) { // и тут пока не совсем понимаю как реализовать
+  if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!authService.loggedIn()) {
       next({
         name: "login",

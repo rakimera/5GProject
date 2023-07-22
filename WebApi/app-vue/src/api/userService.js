@@ -14,7 +14,7 @@ const userService = {
     deleteUser(oid) {
         return axios.delete(`/api/users/${oid}`, { headers: authHeader()});
     },
-    getUser(){
+    getUser(oid){
         return axios.get(`/api/users/${oid}`, { headers: authHeader()});
     }
 };
