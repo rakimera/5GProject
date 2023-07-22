@@ -3,20 +3,11 @@ import storeExtension from '../utils/storeExtension';
 
 
 const userService = {
+
     async getUsers() {
-        return new Promise((resolve, reject) =>{
-            console.log(resolve)
-            console.log(reject)
-            axios.get('/api/users')
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch((error) => {
-                    reject(error);
-                });
-        })
+        return await axios.get(`/api/users`);
     },
-    async createUser(user) {
+    createUser(user) {
         return new Promise((resolve, reject) => {
             axios.post('/api/users', user)
                 .then((response) => {
@@ -29,15 +20,7 @@ const userService = {
     },
 
     async updateUser(user) {
-        return new Promise((resolve, reject) => {
-            axios.put('/api/users', user)
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch((error) => {
-                    reject(error);
-                });
-        })
+        return await axios.put('/api/users', user)
     },
 
     deleteUser(oid) {

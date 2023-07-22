@@ -106,7 +106,7 @@ const router = new createRouter({
     },
     {
       path: "/users_table",
-      name: "users",
+      name: "user_table",
       meta: {
         requiresAuth: false,
         layout: defaultLayout
