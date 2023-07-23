@@ -61,7 +61,7 @@ import { ref } from 'vue';
 
 import UserPanel from "./user-panel";
 import AuthService from "@/api/AuthService";
-import jwtDecode from 'jwt-decode';
+import VueJwtDecode from 'vue-jwt-decode'
 
 export default {
   props: {
@@ -77,8 +77,9 @@ export default {
     const email = ref("");
     const user = JSON.parse(localStorage.getItem('userToken'));
     try {
-        const decodedToken = jwtDecode(user.accessToken);
+        const decodedToken = VueJwtDecode.decoded(user.accessToken);
         email.value = decodedToken.login;
+        console.log(decodedToken);
     }catch (errors){
         console.log(errors)
     }

@@ -92,10 +92,11 @@ export default {
     }
 
     async function onSubmit() {
-      const { email, password } = formData;
+      /*const { email, password } = formData;*/
       loading.value = true;
+      const loginModel = {login: formData.email, password: formData.password};
       try {
-        const response = await authService.login(email, password);
+        const response = await authService.login(loginModel);
         console.log(response.data);
 
         await router.push(route.query.redirect || '/home');

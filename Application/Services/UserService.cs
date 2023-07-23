@@ -192,6 +192,8 @@ public class UserService : IUserService
                 user.Name = model.Name;
                 user.Surname = model.Surname;
                 user.Role = model.Role;
+                user.RefreshToken = model.RefreshToken;
+                user.RefreshTokenExpiryTime = model.RefreshTokenExpiryTime;
                 user.LastModified = DateTime.Now;
                 user.LastModifiedBy = "Admin";
                 

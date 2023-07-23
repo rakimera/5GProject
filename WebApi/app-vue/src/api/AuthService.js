@@ -1,4 +1,5 @@
 import axios from '@/utils/axios';
+import authHeader from "@/api/AuthHeader";
 
 async function updateTokens(response) {
     localStorage.setItem('userToken', JSON.stringify(response.data.accessToken));
@@ -7,7 +8,7 @@ async function updateTokens(response) {
     console.log(response.data.refreshToken);
     return response.data;
 }
-
+const header = await authHeader();
 const authService = {
     async login(loginModel) {
         try {
@@ -20,7 +21,7 @@ const authService = {
     async refreshingToken(tokenApiModel) {
         try {
             const response = await axios.post('/api/Token/refresh', tokenApiModel);
-            return updateTokens(response);
+            return response;
         } catch (error) {
             console.log("Ошибка получения Refresh токена", error)
         }
@@ -28,7 +29,7 @@ const authService = {
     revoke() {
         localStorage.removeItem('userToken');
         localStorage.removeItem('refreshToken');
-        return axios.post('/api/Token/revoke');
+        return axios.post('/api/Token/revoke', {},{ headers: header});
     },
     loggedIn() {
         return !!localStorage.getItem('userToken');
