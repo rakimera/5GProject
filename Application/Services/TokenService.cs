@@ -6,6 +6,7 @@ using Application.DataObjects;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
 using Application.Models;
+using Domain.Entities;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Application.Services;
@@ -19,10 +20,9 @@ public class TokenService : ITokenService
         _repositoryWrapper = repositoryWrapper;
     }
 
-    public Task<string> GenerateAccessToken(IEnumerable<Claim> claims)
+    public string GenerateAccessToken(IEnumerable<Claim> claims)
     {
-        var secretKey = AuthenticationOptions.GetSymmetricSecurityKey();
-        var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+        var signinCredentials = new SigningCredentials(AuthenticationOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256);
         var tokeOptions = new JwtSecurityToken(
             issuer: AuthenticationOptions.ISSUER,
             audience: AuthenticationOptions.AUDIENCE,
@@ -31,20 +31,20 @@ public class TokenService : ITokenService
             signingCredentials: signinCredentials
         );
         var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
-        return Task.FromResult(tokenString);
+        return tokenString;
     }
     
-    public Task<string> GenerateRefreshToken()
+    public string GenerateRefreshToken()
     {
         var randomNumber = new byte[32];
         using (var rng = RandomNumberGenerator.Create())
         {
             rng.GetBytes(randomNumber);
-            return Task.FromResult(Convert.ToBase64String(randomNumber));
+            return Convert.ToBase64String(randomNumber);
         }
     }
     
-    public Task<ClaimsPrincipal> GetPrincipalFromExpiredToken(string token)
+    public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
     {
         var tokenValidationParameters = new TokenValidationParameters
         {
@@ -60,48 +60,7 @@ public class TokenService : ITokenService
         var jwtSecurityToken = securityToken as JwtSecurityToken;
         if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
             throw new SecurityTokenException("Invalid token");
-        return Task.FromResult(principal);
-    }
-
-    public async Task<BaseResponse<TokenDto>>Login(LoginDto loginModel)
-    {
-        if (loginModel is null)
-        {
-            return new BaseResponse<TokenDto>(
-                Result: null,
-                Messages: new List<string>{"Данные пусты"},
-                Success: false,
-                StatusCode: 404);
-        }
-        var user = await _repositoryWrapper.UserRepository.GetByCondition
-            (x => x.Login == loginModel.Login && x.Password == loginModel.Password);
-        if (user is null)
-            return new BaseResponse<TokenDto>(
-                Result: null,
-                Messages: new List<string>{"Такого пользователя не существует"},
-                Success: false,
-                StatusCode: 404);
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, loginModel.Login),
-            new Claim(ClaimTypes.Role, user.Role)
-        };
-        var accessToken = await GenerateAccessToken(claims);
-        var refreshToken = await GenerateRefreshToken();
-        user.RefreshToken = refreshToken;
-        user.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(AuthenticationOptions.LIFETIMEREFRESHTOKEN);
-        _repositoryWrapper.UserRepository.Update(user);
-        await _repositoryWrapper.Save();
-        TokenDto tokenDto = new TokenDto
-        {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken
-        };
-        return new BaseResponse<TokenDto>(
-            Result: tokenDto,
-            Messages: new List<string>{"Пользователь успешно авторизован"},
-            Success: true,
-            StatusCode: 200);
+        return principal;
     }
 
     public async Task<BaseResponse<TokenDto>>Refresh(TokenDto tokenApiModel)
@@ -113,37 +72,46 @@ public class TokenService : ITokenService
                 Success: false,
                 StatusCode: 404);
         
-        string accessToken = tokenApiModel.AccessToken;
-        string refreshToken = tokenApiModel.RefreshToken;
-        var principal = await GetPrincipalFromExpiredToken(accessToken);
-        var username = principal.Identity.Name;
-        var user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Login == username);
-
-        if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
-            return new BaseResponse<TokenDto>(
-                Result: null,
-                Messages: new List<string>{"Неверный запрос"},
-                Success: false,
-                StatusCode: 404);
+        var principal = GetPrincipalFromExpiredToken(tokenApiModel.AccessToken);
+        var user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Login == principal.Identity.Name);
+        var refreshToken = _repositoryWrapper.TokenRepository.GetAll().FirstOrDefault(x=> x.Token == tokenApiModel.RefreshToken);
         
-        var newAccessToken = await GenerateAccessToken(principal.Claims);
-        var newRefreshToken = await GenerateRefreshToken();
-        user.RefreshToken = newRefreshToken;
-        user.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(AuthenticationOptions.LIFETIMEREFRESHTOKEN);
-        _repositoryWrapper.UserRepository.Update(user);
-        await _repositoryWrapper.Save();
+            if (refreshToken.RefreshTokenExpiryTime <= DateTime.Now)
+            {
+                _repositoryWrapper.TokenRepository.Delete(refreshToken);
+            }
+            if (user is null 
+                || refreshToken is null 
+                || refreshToken.Token != tokenApiModel.RefreshToken)
+                return new BaseResponse<TokenDto>(
+                    Result: null,
+                    Messages: new List<string>{"Неверный запрос"},
+                    Success: false,
+                    StatusCode: 404);
+        
+            var newRefreshToken = GenerateRefreshToken();
+            RefreshToken refToken = new RefreshToken
+            {
+                Id = refreshToken.Id,
+                Token = newRefreshToken,
+                UserId = user.Id,
+                RefreshTokenExpiryTime = DateTime.Now.AddMinutes(AuthenticationOptions.LIFETIMEREFRESHTOKEN)
+            };
+            _repositoryWrapper.TokenRepository.Update(refToken);
+            await _repositoryWrapper.Save();
 
-        var tokenDto = new TokenDto()
-        {
-            AccessToken = newAccessToken,
-            RefreshToken = newRefreshToken
-        };
+            var tokenDto = new TokenDto()
+            {
+                AccessToken = GenerateAccessToken(principal.Claims),
+                RefreshToken = newRefreshToken
+            };
 
-        return new BaseResponse<TokenDto>(
-            Result: tokenDto,
-            Success: true,
-            StatusCode: 200,
-            Messages: new List<string>{ "Авторизация прошла успешно" });
+            return new BaseResponse<TokenDto>(
+                Result: tokenDto,
+                Success: true,
+                StatusCode: 200,
+                Messages: new List<string>{ "Авторизация прошла успешно" });
+        
     }
 
 
@@ -155,8 +123,6 @@ public class TokenService : ITokenService
             Messages: new List<string>{"Такого пользователя нет"},
             Success: false,
             StatusCode: 404);
-        user.RefreshToken = null;
-        _repositoryWrapper.UserRepository.Update(user);
         await _repositoryWrapper.Save();
         return new BaseResponse<bool>(
             Result: true,

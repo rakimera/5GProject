@@ -34,7 +34,7 @@ public class UserService : IUserService
                     Success: true,
                     StatusCode: 200,
                     Messages: new List<string>{"Пользователи успешно получены"});
-            } 
+            }
             return new BaseResponse<IEnumerable<UserDto>>(
                     Result: models,
                     Success: true,
@@ -173,11 +173,11 @@ public class UserService : IUserService
                     StatusCode: 200,
                     Messages: new List<string>{"Пользователь успешно изменен"});
             }
-            List<string> messages = _mapper.Map<List<string>>(result.Errors);
+            //List<string> messages = 
 
             return new BaseResponse<string>(
                 Result: "", 
-                Messages: messages,
+                Messages: _mapper.Map<List<string>>(result.Errors),
                 Success: false,
                 StatusCode: 400);
         }

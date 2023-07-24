@@ -15,6 +15,7 @@ public static class ConfigureService
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddScoped<IServiceWrapper, ServiceWrapper>();
+        services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<UserValidator>();
         services.AddScoped<ProjectValidator>();
         services.AddAutoMapper(Assembly.GetExecutingAssembly());

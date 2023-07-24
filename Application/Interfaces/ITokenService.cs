@@ -6,10 +6,9 @@ namespace Application.Interfaces;
 
 public interface ITokenService
 {
-    Task<string> GenerateAccessToken(IEnumerable<Claim> claims);
-    Task<string> GenerateRefreshToken();
-    Task<ClaimsPrincipal> GetPrincipalFromExpiredToken(string token);
-    public Task<BaseResponse<TokenDto>> Login(LoginDto loginModel);
+    string GenerateAccessToken(IEnumerable<Claim> claims);
+    string GenerateRefreshToken();
+    ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
     public Task<BaseResponse<TokenDto>> Refresh(TokenDto tokenApiModel);
     public Task<BaseResponse<bool>> Revoke(string login);
 }

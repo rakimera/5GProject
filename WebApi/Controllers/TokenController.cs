@@ -26,7 +26,6 @@ public class TokenController : ControllerBase
     [Route("revoke")]
     public async Task<IActionResult> Revoke()
     {
-        var login = User.Identity.Name;
-        return Ok(await _service.TokenService.Revoke(login));
+        return Ok(await _service.TokenService.Revoke(User.Identity.Name));
     }
 }
