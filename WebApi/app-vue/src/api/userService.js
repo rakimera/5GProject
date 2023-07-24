@@ -5,48 +5,53 @@ import storeExtension from '../utils/storeExtension';
 const userService = {
 
     async getUsers() {
-        return await axios.get(`/api/users`);
+        try {
+            return await axios.get(`/api/users`);
+        }
+        catch (error){
+            console.log(error)
+        }
     },
-    createUser(user) {
-        return new Promise((resolve, reject) => {
-            axios.post('/api/users', user)
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch((error) => {
-                    reject(error);
-                });
-        })
+    
+    async createUser(user) {
+        try {
+            return await axios.post('/api/users', user);
+        }
+        catch (error){
+            console.log(error)
+        }
+        
     },
-
+    
     async updateUser(user) {
-        return await axios.put('/api/users', user)
+        try {
+            return await axios.put('/api/users', user)
+        }
+        catch (error){
+            console.log(error)
+        }
     },
 
-    deleteUser(oid) {
-        return new Promise((resolve, reject) => {
-            axios.delete(`/api/users/${oid}`)
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch((error) => {
-                    reject(error);
-                });
-        });
+    async deleteUser(oid) {
+        try {
+            return await axios.delete(`/api/users/${oid}`)
+        }
+        catch (error){
+            console.log(error)
+        }
+        
     },
 
-    getAllUsers(loadOptions) {
-        let options = storeExtension.getParams(loadOptions)
-        return new Promise((resolve, reject) =>  {
-            axios.get(`/api/users/Index/${options}`)
-                .then((response)  => {
-                    resolve(response.data);
-                })
-                .catch((error) => {
-                    reject(error);
-                })
-        });
-    },
+    async getAllUsers(loadOptions) {
+        try {
+            let options = storeExtension.getParams(loadOptions);
+            const response = await axios.get(`/api/users/Index/${options}`);
+            return response.data;
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    
 };
 
 export default userService;

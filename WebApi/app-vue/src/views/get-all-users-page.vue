@@ -45,9 +45,6 @@ import CustomStore from 'devextreme/data/custom_store';
 import 'whatwg-fetch';
 import userService from "@/api/userService";
 
-// function isNotEmpty(value) {
-//   return value !== undefined && value !== null && value !== '';
-// }
 
 const store = new CustomStore({
   key: 'id',
