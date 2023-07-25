@@ -46,7 +46,7 @@ const router = new createRouter({
       name: "login",
       meta: {
         requiresAuth: false,
-        layout: defaultLayout,
+        layout: simpleLayout,
         title: "Sign In"
       },
       component: loadView("login-form")

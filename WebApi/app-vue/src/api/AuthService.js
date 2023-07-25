@@ -1,11 +1,11 @@
 import axios from '@/utils/axios';
 import authHeader from "@/api/AuthHeader";
-
 async function updateTokens(response) {
     localStorage.setItem('userToken', JSON.stringify(response.data.accessToken));
     localStorage.setItem('refreshToken', JSON.stringify(response.data.refreshToken));
     console.log(response.data.accessToken);
     console.log(response.data.refreshToken);
+    
     return response.data;
 }
 const header = await authHeader();

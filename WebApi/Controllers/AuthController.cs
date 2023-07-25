@@ -34,7 +34,9 @@ public class AuthController : ControllerBase
         var claims = new List<Claim>
         {
             new (ClaimTypes.Name, loginModel.Login),
-            new (ClaimTypes.Role, user.Role)
+            new ("login", loginModel.Login),
+            new (ClaimTypes.Role, user.Role),
+            new ("role", user.Role)
         };
         var accessToken = _service.TokenService.GenerateAccessToken(claims);
         var refreshToken = _service.TokenService.GenerateRefreshToken();

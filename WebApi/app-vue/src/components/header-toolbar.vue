@@ -61,7 +61,7 @@ import { ref } from 'vue';
 
 import UserPanel from "./user-panel";
 import AuthService from "@/api/AuthService";
-import VueJwtDecode from 'vue-jwt-decode'
+import jwt_decode from "jwt-decode";
 
 export default {
   props: {
@@ -75,16 +75,10 @@ export default {
     const route = useRoute();
 
     const email = ref("");
-    const user = JSON.parse(localStorage.getItem('userToken'));
-    try {
-        const decodedToken = VueJwtDecode.decoded(user.accessToken);
-        email.value = decodedToken.login;
-        console.log(decodedToken);
-    }catch (errors){
-        console.log(errors)
-    }
-    
-    /*userService.getUser(decodedToken.).then((e) => email.value = e.data.login);*/
+
+    const token = localStorage.getItem('userToken');
+    const decoded = jwt_decode(token);
+    email.value = decoded.login;
     
     const userMenuItems = [{
         text: "Profile",
