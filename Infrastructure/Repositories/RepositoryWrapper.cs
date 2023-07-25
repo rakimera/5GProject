@@ -10,6 +10,7 @@ public class RepositoryWrapper : IRepositoryWrapper
     private Project5GDbContext _db;
     private IUserRepository _userRepository;
     private IProjectRepository _projectRepository;
+    private ITokenRepository _tokenRepository;
 
     public RepositoryWrapper(Project5GDbContext db)
     {
@@ -39,6 +40,19 @@ public class RepositoryWrapper : IRepositoryWrapper
             }
 
             return _projectRepository;
+        }
+    }
+    
+    public ITokenRepository TokenRepository
+    {
+        get
+        {
+            if (_tokenRepository == null)
+            {
+                _tokenRepository = new TokenRepository(_db);
+            }
+
+            return _tokenRepository;
         }
     }
 

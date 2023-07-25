@@ -25,7 +25,6 @@ public class UserService : IUserService
         try
         {
             IQueryable<User> users = _repositoryWrapper.UserRepository.GetAll();
-            // users = users.AsEnumerable().Where(u => u.IsDelete == false).AsQueryable(); //Для отображения только не удаленных пользователей
             List<UserDto> models = _mapper.Map<List<UserDto>>(users);
 
             if (models.Count > 0)
@@ -35,7 +34,7 @@ public class UserService : IUserService
                     Success: true,
                     StatusCode: 200,
                     Messages: new List<string>{"Пользователи успешно получены"});
-            } 
+            }
             return new BaseResponse<IEnumerable<UserDto>>(
                     Result: models,
                     Success: true,
@@ -149,35 +148,6 @@ public class UserService : IUserService
         }
     }
     
-    public BaseResponse<UserDto> GetAuthorizedUser(string login,string password)
-    {
-        try
-        {
-            User? user = _repositoryWrapper.UserRepository.GetByCondition(x => x.Login == login && x.Password == password).Result;
-            UserDto model = _mapper.Map<UserDto>(user);
-
-            if (user is null)
-                return new BaseResponse<UserDto>(
-                    Result: null,
-                    Messages: new List<string>{"Пользователь не найден"},
-                    Success: true,
-                    StatusCode: 404);
-            return new BaseResponse<UserDto>(
-                Result: model,
-                Success: true,
-                StatusCode: 200,
-                Messages: new List<string>{"Пользователь успешно найден"});
-
-        }
-        catch (Exception e)
-        {
-            return new BaseResponse<UserDto>(
-                Result: null,
-                Success: false,
-                Messages: new List<string>{e.Message},
-                StatusCode: 500);
-        }
-    }
     
     public async Task<BaseResponse<string>> Update(UserDto model)
     {
@@ -187,7 +157,6 @@ public class UserService : IUserService
             if (result.IsValid)
             {
                 User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.Equals(model.Id));
-                /*User user = _mapper.Map<User>(model);*/
 
                 user.Name = model.Name;
                 user.Surname = model.Surname;
@@ -206,11 +175,11 @@ public class UserService : IUserService
                     StatusCode: 200,
                     Messages: new List<string>{"Пользователь успешно изменен"});
             }
-            List<string> messages = _mapper.Map<List<string>>(result.Errors);
+            //List<string> messages = 
 
             return new BaseResponse<string>(
                 Result: "", 
-                Messages: messages,
+                Messages: _mapper.Map<List<string>>(result.Errors),
                 Success: false,
                 StatusCode: 400);
         }
