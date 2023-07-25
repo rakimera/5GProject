@@ -55,12 +55,12 @@ public class UserService : IUserService
     {
         try
         {
-            var result = await _userValidator.ValidateAsync(model);
+            User user = _mapper.Map<User>(model);
+            var result = await _userValidator.ValidateAsync(user);
             if (result.IsValid)
             {
-                model.Created = DateTime.Now;
-                model.CreatedBy = "Admin"; // реализация зависит от методики работы авторизацией и регистрацией.
-                User user = _mapper.Map<User>(model);
+                user.Created = DateTime.Now;
+                user.CreatedBy = "Admin"; // реализация зависит от методики работы авторизацией и регистрацией.
                 await _repositoryWrapper.UserRepository.CreateAsync(user);
                 await _repositoryWrapper.Save();
 
@@ -153,16 +153,13 @@ public class UserService : IUserService
     {
         try
         {
-            var result = await _userValidator.ValidateAsync(model);
+            User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.Equals(model.Id));
+            var result = await _userValidator.ValidateAsync(user);
             if (result.IsValid)
             {
-                User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.Equals(model.Id));
-
                 user.Name = model.Name;
                 user.Surname = model.Surname;
                 user.Role = model.Role;
-                user.RefreshToken = model.RefreshToken;
-                user.RefreshTokenExpiryTime = model.RefreshTokenExpiryTime;
                 user.LastModified = DateTime.Now;
                 user.LastModifiedBy = "Admin";
                 
@@ -175,8 +172,6 @@ public class UserService : IUserService
                     StatusCode: 200,
                     Messages: new List<string>{"Пользователь успешно изменен"});
             }
-            //List<string> messages = 
-
             return new BaseResponse<string>(
                 Result: "", 
                 Messages: _mapper.Map<List<string>>(result.Errors),
