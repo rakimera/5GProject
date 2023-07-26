@@ -33,5 +33,36 @@ public class ContrAgentMapProfile : Profile
                 opt.MapFrom(src => src.BIN))
             .ReverseMap();
         
+        CreateMap<ContrAgentDto, UpdateContrAgentDto>()
+            .ForMember(dest => dest.Id, opt =>
+                opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.AmplificationFactor, opt =>
+                opt.MapFrom(src => src.AmplificationFactor))
+            .ForMember(dest => dest.CompanyName, opt =>
+                opt.MapFrom(src => src.CompanyName))
+            .ForMember(dest => dest.DirectorName, opt =>
+                opt.MapFrom(src => src.DirectorName))
+            .ForMember(dest => dest.DirectorPatronymic, opt =>
+                opt.MapFrom(src => src.DirectorPatronymic))
+            .ForMember(dest => dest.DirectorSurname, opt =>
+                opt.MapFrom(src => src.DirectorSurname))
+            .ForMember(dest => dest.BIN, opt =>
+                opt.MapFrom(src => src.BIN)).ReverseMap();
+        
+        
+        CreateMap<ContrAgentDto, CreateContrAgentDto>()
+            .ForMember(dest => dest.AmplificationFactor, opt =>
+                opt.MapFrom(src => src.AmplificationFactor))
+            .ForMember(dest => dest.CompanyName, opt =>
+                opt.MapFrom(src => src.CompanyName))
+            .ForMember(dest => dest.DirectorName, opt =>
+                opt.MapFrom(src => src.DirectorName))
+            .ForMember(dest => dest.DirectorPatronymic, opt =>
+                opt.MapFrom(src => src.DirectorPatronymic))
+            .ForMember(dest => dest.DirectorSurname, opt =>
+                opt.MapFrom(src => src.DirectorSurname))
+            .ForMember(dest => dest.BIN, opt =>
+                opt.MapFrom(src => src.BIN)).ReverseMap();
+        
     }
 }

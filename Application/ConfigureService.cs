@@ -18,6 +18,7 @@ public static class ConfigureService
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<UserValidator>();
         services.AddScoped<ProjectValidator>();
+        services.AddScoped<ContrAgentValidator>();
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         
         services.AddAuthentication(opt => {

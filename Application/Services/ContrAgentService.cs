@@ -123,10 +123,16 @@ public class ContrAgentService : IContrAgentService
     {
         try
         {
-            ContrAgent contrAgent = _mapper.Map<ContrAgent>(model);
+            ContrAgent? contrAgent = await _repositoryWrapper.ContrAgentRepository.GetByCondition(x => x.Id == model.Id);
             var result = await _contrAgentValidator.ValidateAsync(contrAgent);
             if (result.IsValid)
             {
+                contrAgent.AmplificationFactor = model.AmplificationFactor;
+                contrAgent.CompanyName = model.CompanyName;
+                contrAgent.DirectorName = model.DirectorName;
+                contrAgent.DirectorPatronymic = model.DirectorPatronymic;
+                contrAgent.DirectorSurname = model.DirectorSurname;
+                contrAgent.BIN = model.BIN;
                 contrAgent.LastModified = DateTime.Now;
                 contrAgent.LastModifiedBy = "Admin";
                 _repositoryWrapper.ContrAgentRepository.Update(contrAgent);
