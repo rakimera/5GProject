@@ -14,6 +14,7 @@ public class ExceptionHandlingMiddleware
     {
         _next = next;
         _logger = logger;
+        logger.LogDebug("Nlog интегрирован в ExceptionHandlingMiddleware");
     }
 
     public async Task InvokeAsync(HttpContext httpContext)
