@@ -1,6 +1,7 @@
 using Application;
 using Infrastructure;
 using Infrastructure.Persistence.DataContext;
+using WebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +42,8 @@ if (app.Environment.IsDevelopment())
         await initialiser.TrySeedAsync();
     }
 }
+
+app.ConfigureCustomExceptionMiddleware();
 
 app.UseCors();
 
