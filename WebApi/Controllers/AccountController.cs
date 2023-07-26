@@ -19,7 +19,7 @@ public class AccountController : Controller
         _mapper = mapper;
     }
 
-    [HttpGet , Authorize(Roles = "Admin")]
+    [HttpGet]
     public IActionResult Get() => 
         Ok(_service.UserService.GetAll());
     
