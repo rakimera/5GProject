@@ -11,12 +11,12 @@ async function updateTokens(response) {
 const header = await authHeader();
 const authService = {
     async login(loginModel) {
-        try {
-            const response = await axios.post('/api/Auth/login', loginModel);
-            return updateTokens(response);
-        } catch (error) {
-            console.log("Ошибка получения токена", error)
+        const response = await axios.post('/api/Auth/login', loginModel);
+        if (response.data.success === false){
+            throw new Error("неверный логин или пароль") ;
         }
+        
+        return updateTokens(response);
     },
     async refreshingToken(tokenApiModel) {
         try {
