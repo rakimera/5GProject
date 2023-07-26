@@ -75,10 +75,15 @@ export default {
     const route = useRoute();
 
     const email = ref("");
-
-    const token = localStorage.getItem('userToken');
-    const decoded = jwt_decode(token);
-    email.value = decoded.login;
+    
+    try {
+      const token = localStorage.getItem('userToken');
+      const decoded = jwt_decode(token);
+      email.value = decoded.login;
+    }catch (error){
+      console.log(error)
+    }
+    
     
     const userMenuItems = [{
         text: "Profile",
