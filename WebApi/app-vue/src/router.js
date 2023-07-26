@@ -47,7 +47,7 @@ const router = new createRouter({
       meta: {
         requiresAuth: false,
         layout: simpleLayout,
-        title: "Sign In"
+        title: "Войти в аккаунт"
       },
       component: loadView("login-form")
     },
@@ -57,7 +57,7 @@ const router = new createRouter({
       meta: {
         requiresAuth: false,
         layout: simpleLayout,
-        title: "Reset Password",
+        title: "Сбросить пароль",
         description: "Please enter the email address that you used to register, and we will send you a link to reset your password via Email."
       },
       component: loadView("reset-password-form")
@@ -68,7 +68,7 @@ const router = new createRouter({
       meta: {
         requiresAuth: false,
         layout: simpleLayout,
-        title: "Sign Up"
+        title: "Создать аккаунт"
       },
       component: loadView("create-account-form"),
     },
