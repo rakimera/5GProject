@@ -54,7 +54,7 @@ public class AccountController : Controller
         try
         {
             BaseResponse<IEnumerable<UserDto>> usersResponse = _service.UserService.GetAll();
-    
+
             if (!usersResponse.Success)
             {
                 return StatusCode(usersResponse.StatusCode, new { Message = usersResponse.Messages });

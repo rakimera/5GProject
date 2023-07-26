@@ -51,6 +51,16 @@ public class UserService : IUserService
                 StatusCode: 500);
         }
     }
+    
+    public BaseResponse<IQueryable<User>> GetAllQueryable()
+    {
+            var test = _repositoryWrapper.UserRepository.GetAll();
+            return new BaseResponse<IQueryable<User>>(
+                Result: test,
+                Success: true,
+                StatusCode: 200,
+                Messages: new List<string>{"Данные не были получены, возможно пользователи еще не созданы или удалены"});
+    }
 
     public async Task<BaseResponse<string>> CreateAsync(UserDto model)
     {
