@@ -1,3 +1,4 @@
+using Application.CustomExceptions;
 using Application.DataObjects;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
@@ -13,12 +14,15 @@ public class UserService : IUserService
     private readonly IRepositoryWrapper _repositoryWrapper;
     private readonly IMapper _mapper;
     private readonly UserValidator _userValidator;
+    private readonly ILoggerService _logger;
 
-    public UserService(IRepositoryWrapper repositoryWrapper, IMapper mapper, UserValidator userValidator)
+    public UserService(IRepositoryWrapper repositoryWrapper, IMapper mapper, UserValidator userValidator,
+        ILoggerService logger)
     {
         _repositoryWrapper = repositoryWrapper;
         _mapper = mapper;
         _userValidator = userValidator;
+        _logger = logger;
     }
 
     public BaseResponse<IEnumerable<UserDto>> GetAll()
@@ -52,6 +56,7 @@ public class UserService : IUserService
             await _repositoryWrapper.UserRepository.CreateAsync(user);
             await _repositoryWrapper.Save();
 
+            _logger.LogInformation($"Пользователь успешно создан. Id: {user.Id}");
             return new BaseResponse<string>(
                 Result: user.Id.ToString(),
                 Success: true,
@@ -59,7 +64,8 @@ public class UserService : IUserService
         }
 
         List<string> messages = _mapper.Map<List<string>>(result.Errors);
-
+        _logger.LogError("Не удалось создать пользователя");
+        throw new UserException("Не удалось создать пользователя");
         return new BaseResponse<string>(
             Result: "",
             Messages: messages,
@@ -72,10 +78,16 @@ public class UserService : IUserService
         UserDto model = _mapper.Map<UserDto>(user);
 
         if (user is null)
+        {
+            _logger.LogError("Пользователь не найден");
+            throw new UserException("Пользователь не найден");
             return new BaseResponse<UserDto>(
                 Result: null,
                 Messages: new List<string> { "Пользователь не найден" },
                 Success: true);
+        }
+
+        _logger.LogInformation($"Пользователь {model.Name} успешно найден");
         return new BaseResponse<UserDto>(
             Result: model,
             Success: true,
@@ -88,10 +100,16 @@ public class UserService : IUserService
         UserDto model = _mapper.Map<UserDto>(user);
 
         if (user is null)
+        {
+            _logger.LogError($"Пользователь не найден");
+            throw new UserException("Пользователь не найден");
             return new BaseResponse<UserDto>(
                 Result: null,
                 Messages: new List<string> { "Пользователь не найден" },
                 Success: true);
+        }
+
+        _logger.LogInformation($"Пользователь {model.Name} успешно найден");
         return new BaseResponse<UserDto>(
             Result: model,
             Success: true,
@@ -114,13 +132,15 @@ public class UserService : IUserService
             _repositoryWrapper.UserRepository.Update(user);
             await _repositoryWrapper.Save();
 
+            _logger.LogInformation($"Пользователь {model.Name} успешно изменен");
             return new BaseResponse<string>(
                 Result: user.Id.ToString(),
                 Success: true,
                 Messages: new List<string> { "Пользователь успешно изменен" });
         }
-        //List<string> messages = 
-
+        
+        _logger.LogError($"Пользователя не удалось обновить");
+        throw new UserException($"Пользователя не удалось обновить");
         return new BaseResponse<string>(
             Result: "",
             Messages: _mapper.Map<List<string>>(result.Errors),
@@ -136,12 +156,15 @@ public class UserService : IUserService
             _repositoryWrapper.UserRepository.Update(user);
             await _repositoryWrapper.Save();
 
+            _logger.LogInformation($"Пользователь {user.Name} успешно удален");
             return new BaseResponse<bool>(
                 Result: true,
                 Success: true,
                 Messages: new List<string> { "Пользователь успешно удален" });
         }
 
+        _logger.LogError($"Пользователя не существует");
+        throw new UserException($"Пользователя не существует");
         return new BaseResponse<bool>(
             Result: false,
             Messages: new List<string> { "Пользователя не существует" },
