@@ -20,208 +20,131 @@ public class UserService : IUserService
         _mapper = mapper;
         _userValidator = userValidator;
     }
+
     public BaseResponse<IEnumerable<UserDto>> GetAll()
     {
-        try
-        {
-            IQueryable<User> users = _repositoryWrapper.UserRepository.GetAll();
-            List<UserDto> models = _mapper.Map<List<UserDto>>(users);
+        IQueryable<User> users = _repositoryWrapper.UserRepository.GetAll();
+        List<UserDto> models = _mapper.Map<List<UserDto>>(users);
 
-            if (models.Count > 0)
-            {
-                return new BaseResponse<IEnumerable<UserDto>>(
-                    Result: models,
-                    Success: true,
-                    StatusCode: 200,
-                    Messages: new List<string>{"Пользователи успешно получены"});
-            }
-            return new BaseResponse<IEnumerable<UserDto>>(
-                    Result: models,
-                    Success: true,
-                    StatusCode: 200,
-                    Messages: new List<string>{"Данные не были получены, возможно пользователи еще не созданы или удалены"});
-        }
-        catch (Exception e)
+        if (models.Count > 0)
         {
             return new BaseResponse<IEnumerable<UserDto>>(
-                Result: null, 
-                Messages: new List<string>{e.Message},
-                Success: false,
-                StatusCode: 500);
+                Result: models,
+                Success: true,
+                Messages: new List<string> { "Пользователи успешно получены" });
         }
+
+        return new BaseResponse<IEnumerable<UserDto>>(
+            Result: models,
+            Success: true,
+            Messages: new List<string>
+                { "Данные не были получены, возможно пользователи еще не созданы или удалены" });
     }
 
     public async Task<BaseResponse<string>> CreateAsync(UserDto model)
     {
-        try
+        var result = await _userValidator.ValidateAsync(model);
+        if (result.IsValid)
         {
-            var result = await _userValidator.ValidateAsync(model);
-            if (result.IsValid)
-            {
-                model.Created = DateTime.Now;
-                model.CreatedBy = "Admin"; // реализация зависит от методики работы авторизацией и регистрацией.
-                User user = _mapper.Map<User>(model);
-                await _repositoryWrapper.UserRepository.CreateAsync(user);
-                await _repositoryWrapper.Save();
+            model.Created = DateTime.Now;
+            model.CreatedBy = "Admin"; // реализация зависит от методики работы авторизацией и регистрацией.
+            User user = _mapper.Map<User>(model);
+            await _repositoryWrapper.UserRepository.CreateAsync(user);
+            await _repositoryWrapper.Save();
 
-                return new BaseResponse<string>(
-                    Result: user.Id.ToString(),
-                    Success: true,
-                    StatusCode: 200,
-                    Messages: new List<string>{"Пользователь успешно создан"});
-            }
-            List<string> messages = _mapper.Map<List<string>>(result.Errors);
-            
             return new BaseResponse<string>(
-                Result: "", 
-                Messages: messages,
-                Success: false,
-                StatusCode: 400);
+                Result: user.Id.ToString(),
+                Success: true,
+                Messages: new List<string> { "Пользователь успешно создан" });
         }
-        catch (Exception e)
-        {
-            return new BaseResponse<string>(
-                Result: "",
-                Messages: new List<string>{e.Message},
-                Success: false,
-                StatusCode: 500);
-        }
+
+        List<string> messages = _mapper.Map<List<string>>(result.Errors);
+
+        return new BaseResponse<string>(
+            Result: "",
+            Messages: messages,
+            Success: false);
     }
 
     public async Task<BaseResponse<UserDto>> GetByOid(string oid)
     {
-        try
-        {
-            User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.ToString() == oid);
-            UserDto model = _mapper.Map<UserDto>(user);
+        User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.ToString() == oid);
+        UserDto model = _mapper.Map<UserDto>(user);
 
-            if (user is null)
-                return new BaseResponse<UserDto>(
-                    Result: null,
-                    Messages: new List<string>{"Пользователь не найден"},
-                    Success: true,
-                    StatusCode: 404);
-            return new BaseResponse<UserDto>(
-                Result: model,
-                Success: true,
-                StatusCode: 200,
-                Messages: new List<string>{"Пользователь успешно найден"});
-
-        }
-        catch (Exception e)
-        {
+        if (user is null)
             return new BaseResponse<UserDto>(
                 Result: null,
-                Success: false,
-                Messages: new List<string>{e.Message},
-                StatusCode: 500);
-        }
+                Messages: new List<string> { "Пользователь не найден" },
+                Success: true);
+        return new BaseResponse<UserDto>(
+            Result: model,
+            Success: true,
+            Messages: new List<string> { "Пользователь успешно найден" });
     }
-    
+
     public async Task<BaseResponse<UserDto>> GetByLogin(string login)
     {
-        try
-        {
-            User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Login == login);
-            UserDto model = _mapper.Map<UserDto>(user);
+        User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Login == login);
+        UserDto model = _mapper.Map<UserDto>(user);
 
-            if (user is null)
-                return new BaseResponse<UserDto>(
-                    Result: null,
-                    Messages: new List<string>{"Пользователь не найден"},
-                    Success: true,
-                    StatusCode: 404);
-            return new BaseResponse<UserDto>(
-                Result: model,
-                Success: true,
-                StatusCode: 200,
-                Messages: new List<string>{"Пользователь успешно найден"});
-
-        }
-        catch (Exception e)
-        {
+        if (user is null)
             return new BaseResponse<UserDto>(
                 Result: null,
-                Success: false,
-                Messages: new List<string>{e.Message},
-                StatusCode: 500);
-        }
+                Messages: new List<string> { "Пользователь не найден" },
+                Success: true);
+        return new BaseResponse<UserDto>(
+            Result: model,
+            Success: true,
+            Messages: new List<string> { "Пользователь успешно найден" });
     }
-    
-    
+
     public async Task<BaseResponse<string>> Update(UserDto model)
     {
-        try
+        var result = await _userValidator.ValidateAsync(model);
+        if (result.IsValid)
         {
-            var result = await _userValidator.ValidateAsync(model);
-            if (result.IsValid)
-            {
-                User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.Equals(model.Id));
+            User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.Equals(model.Id));
 
-                user.Name = model.Name;
-                user.Surname = model.Surname;
-                user.Role = model.Role;
-                user.LastModified = DateTime.Now;
-                user.LastModifiedBy = "Admin";
-                
-                _repositoryWrapper.UserRepository.Update(user);
-                await _repositoryWrapper.Save();
+            user.Name = model.Name;
+            user.Surname = model.Surname;
+            user.Role = model.Role;
+            user.LastModified = DateTime.Now;
+            user.LastModifiedBy = "Admin";
 
-                return new BaseResponse<string>(
-                    Result: user.Id.ToString(),
-                    Success: true,
-                    StatusCode: 200,
-                    Messages: new List<string>{"Пользователь успешно изменен"});
-            }
-            //List<string> messages = 
+            _repositoryWrapper.UserRepository.Update(user);
+            await _repositoryWrapper.Save();
 
             return new BaseResponse<string>(
-                Result: "", 
-                Messages: _mapper.Map<List<string>>(result.Errors),
-                Success: false,
-                StatusCode: 400);
+                Result: user.Id.ToString(),
+                Success: true,
+                Messages: new List<string> { "Пользователь успешно изменен" });
         }
-        catch (Exception e)
-        {
-            return new BaseResponse<string>(
-                Result: "",
-                Messages: new List<string>{e.Message},
-                Success: false,
-                StatusCode: 500);
-        }
+        //List<string> messages = 
+
+        return new BaseResponse<string>(
+            Result: "",
+            Messages: _mapper.Map<List<string>>(result.Errors),
+            Success: false);
     }
 
     public async Task<BaseResponse<bool>> Delete(string oid)
     {
-        try
+        User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.ToString() == oid);
+        if (user is not null)
         {
-            User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.ToString() == oid);
-            if (user is not null)
-            {
-                user.IsDelete = true;
-                _repositoryWrapper.UserRepository.Update(user);
-                await _repositoryWrapper.Save();
+            user.IsDelete = true;
+            _repositoryWrapper.UserRepository.Update(user);
+            await _repositoryWrapper.Save();
 
-                return new BaseResponse<bool>(
-                    Result: true,
-                    Success: true,
-                    StatusCode: 200,
-                    Messages: new List<string>{"Пользователь успешно удален"});
-            }
-            
             return new BaseResponse<bool>(
-                Result: false, 
-                Messages: new List<string>{"Пользователя не существует"},
-                Success: false,
-                StatusCode: 400);
+                Result: true,
+                Success: true,
+                Messages: new List<string> { "Пользователь успешно удален" });
         }
-        catch (Exception e)
-        {
-            return new BaseResponse<bool>(
-                Result: false,
-                Messages: new List<string>{e.Message},
-                Success: false,
-                StatusCode: 500);
-        }
+
+        return new BaseResponse<bool>(
+            Result: false,
+            Messages: new List<string> { "Пользователя не существует" },
+            Success: false);
     }
 }

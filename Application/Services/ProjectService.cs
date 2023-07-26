@@ -23,173 +23,108 @@ public class ProjectService : IProjectService
 
     public BaseResponse<IEnumerable<ProjectDto>> GetAll()
     {
-        try
-        {
-            IQueryable<Project> projects = _repositoryWrapper.ProjectRepository.GetAll();
-            List<ProjectDto> models = _mapper.Map<List<ProjectDto>>(projects);
+        IQueryable<Project> projects = _repositoryWrapper.ProjectRepository.GetAll();
+        List<ProjectDto> models = _mapper.Map<List<ProjectDto>>(projects);
 
-            if (models.Count > 0)
-            {
-                return new BaseResponse<IEnumerable<ProjectDto>>(
-                    Result: models,
-                    Success: true,
-                    StatusCode: 200,
-                    Messages: new List<string>{"Проекты успешно получены"});
-            }
+        if (models.Count > 0)
+        {
             return new BaseResponse<IEnumerable<ProjectDto>>(
                 Result: models,
                 Success: true,
-                StatusCode: 200,
-                Messages: new List<string>{"Данные не были получены, возможно проекты еще не созданы или удалены"});
+                Messages: new List<string> { "Проекты успешно получены" });
         }
-        catch (Exception e)
-        {
-            return new BaseResponse<IEnumerable<ProjectDto>>(
-                Result: null, 
-                Messages: new List<string>{e.Message},
-                Success: false,
-                StatusCode: 500);
-        }
+
+        return new BaseResponse<IEnumerable<ProjectDto>>(
+            Result: models,
+            Success: true,
+            Messages: new List<string> { "Данные не были получены, возможно проекты еще не созданы или удалены" });
     }
 
     public async Task<BaseResponse<string>> CreateAsync(ProjectDto model)
     {
-        try
+        var result = await _projectValidator.ValidateAsync(model);
+        if (result.IsValid)
         {
-            var result = await _projectValidator.ValidateAsync(model);
-            if (result.IsValid)
-            {
-                model.Created = DateTime.Now;
-                model.CreatedBy = "Admin"; // реализация зависит от методики работы авторизацией.
-                Project project = _mapper.Map<Project>(model);
-                await _repositoryWrapper.ProjectRepository.CreateAsync(project);
-                await _repositoryWrapper.Save();
+            model.Created = DateTime.Now;
+            model.CreatedBy = "Admin"; // реализация зависит от методики работы авторизацией.
+            Project project = _mapper.Map<Project>(model);
+            await _repositoryWrapper.ProjectRepository.CreateAsync(project);
+            await _repositoryWrapper.Save();
 
-                return new BaseResponse<string>(
-                    Result: project.Id.ToString(),
-                    Success: true,
-                    StatusCode: 200,
-                    Messages: new List<string>{"Проект успешно создан"});
-            }
+            return new BaseResponse<string>(
+                Result: project.Id.ToString(),
+                Success: true,
+                Messages: new List<string> { "Проект успешно создан" });
+        }
 
-            List<string> messages = _mapper.Map<List<string>>(result.Errors);
-            
-            return new BaseResponse<string>(
-                Result: "", 
-                Messages: messages,
-                Success: false,
-                StatusCode: 400);
-            
-        }
-        catch (Exception e)
-        {
-            return new BaseResponse<string>(
-                Result: "",
-                Messages: new List<string>{e.Message},
-                Success: false,
-                StatusCode: 500);
-        }
+        List<string> messages = _mapper.Map<List<string>>(result.Errors);
+
+        return new BaseResponse<string>(
+            Result: "",
+            Messages: messages,
+            Success: false);
     }
 
     public async Task<BaseResponse<ProjectDto>> GetByOid(string oid)
     {
-        try
-        {
-            Project? project = await _repositoryWrapper.ProjectRepository.GetByCondition(x => x.Id.ToString() == oid);
-            ProjectDto model = _mapper.Map<ProjectDto>(project);
+        Project? project = await _repositoryWrapper.ProjectRepository.GetByCondition(x => x.Id.ToString() == oid);
+        ProjectDto model = _mapper.Map<ProjectDto>(project);
 
-            if (project is null)
-                return new BaseResponse<ProjectDto>(
-                    Result: null,
-                    Messages: new List<string>{"Проект не найден"},
-                    Success: true,
-                    StatusCode: 404);
-            return new BaseResponse<ProjectDto>(
-                Result: model,
-                Success: true,
-                StatusCode: 200,
-                Messages: new List<string>{"Проект успешно найден"});
-
-        }
-        catch (Exception e)
-        {
+        if (project is null)
             return new BaseResponse<ProjectDto>(
                 Result: null,
-                Success: false,
-                Messages: new List<string>{e.Message},
-                StatusCode: 500);
-        }
+                Messages: new List<string> { "Проект не найден" },
+                Success: true);
+        return new BaseResponse<ProjectDto>(
+            Result: model,
+            Success: true,
+            Messages: new List<string> { "Проект успешно найден" });
     }
 
     public async Task<BaseResponse<string>> Update(ProjectDto model)
     {
-        try
+        var result = await _projectValidator.ValidateAsync(model);
+        if (result.IsValid)
         {
-            var result = await _projectValidator.ValidateAsync(model);
-            if (result.IsValid)
-            {
-                model.LastModified = DateTime.Now;
-                model.LastModifiedBy = "Admin"; // реализация зависит от методики работы авторизацией.
-                Project project = _mapper.Map<Project>(model);
-                
-                _repositoryWrapper.ProjectRepository.Update(project);
-                await _repositoryWrapper.Save();
+            model.LastModified = DateTime.Now;
+            model.LastModifiedBy = "Admin"; // реализация зависит от методики работы авторизацией.
+            Project project = _mapper.Map<Project>(model);
 
-                return new BaseResponse<string>(
-                    Result: project.Id.ToString(),
-                    Success: true,
-                    StatusCode: 200,
-                    Messages: new List<string>{"Проект успешно изменен"});
-            }
-            List<string> messages = _mapper.Map<List<string>>(result.Errors);
+            _repositoryWrapper.ProjectRepository.Update(project);
+            await _repositoryWrapper.Save();
 
             return new BaseResponse<string>(
-                Result: "", 
-                Messages: messages,
-                Success: false,
-                StatusCode: 400);
+                Result: project.Id.ToString(),
+                Success: true,
+                Messages: new List<string> { "Проект успешно изменен" });
         }
-        catch (Exception e)
-        {
-            return new BaseResponse<string>(
-                Result: "",
-                Messages: new List<string>{e.Message},
-                Success: false,
-                StatusCode: 500);
-        }
+
+        List<string> messages = _mapper.Map<List<string>>(result.Errors);
+
+        return new BaseResponse<string>(
+            Result: "",
+            Messages: messages,
+            Success: false);
     }
 
     public async Task<BaseResponse<bool>> Delete(string oid)
     {
-        try
+        Project? project = await _repositoryWrapper.ProjectRepository.GetByCondition(x => x.Id.ToString() == oid);
+        if (project is not null)
         {
-            Project? project = await _repositoryWrapper.ProjectRepository.GetByCondition(x => x.Id.ToString() == oid);
-            if (project is not null)
-            {
-                project.IsDelete = true;
-                _repositoryWrapper.ProjectRepository.Update(project);
-                await _repositoryWrapper.Save();
+            project.IsDelete = true;
+            _repositoryWrapper.ProjectRepository.Update(project);
+            await _repositoryWrapper.Save();
 
-                return new BaseResponse<bool>(
-                    Result: true,
-                    Success: true,
-                    StatusCode: 200,
-                    Messages: new List<string>{"Проект успешно удален"});
-            }
-            
             return new BaseResponse<bool>(
-                Result: false, 
-                Messages: new List<string>{"Проекта не существует"},
-                Success: false,
-                StatusCode: 400);
+                Result: true,
+                Success: true,
+                Messages: new List<string> { "Проект успешно удален" });
         }
-        catch (Exception e)
-        {
-            return new BaseResponse<bool>(
-                Result: false,
-                Messages: new List<string>{e.Message},
-                Success: false,
-                StatusCode: 500);
-        }
+
+        return new BaseResponse<bool>(
+            Result: false,
+            Messages: new List<string> { "Проекта не существует" },
+            Success: false);
     }
 }
