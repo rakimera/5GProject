@@ -24,29 +24,19 @@ public class ExceptionHandlingMiddleware
         }
         catch (Exception ex)
         {
-            await HandleExceptionAsync(httpContext,
-                ex.Message,
-                HttpStatusCode.InternalServerError,
-                "Internal server error");
+            _logger.LogError("Что-то пошло не так: {Ex}", ex);
+            await HandleExceptionAsync(httpContext, ex);
         }
     }
 
-    private async Task HandleExceptionAsync(HttpContext context, string exMsg, HttpStatusCode httpStatusCode,
-        string message)
+    private async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
-        _logger.LogError(exMsg);
-
-        HttpResponse response = context.Response;
-
-        response.ContentType = "application/json";
-        response.StatusCode = (int)httpStatusCode;
-
-        ErrorDto errorDto = new()
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+        await context.Response.WriteAsync(new ErrorDto()
         {
-            Message = message,
-            StatusCode = (int)httpStatusCode
-        };
-
-        await response.WriteAsJsonAsync(errorDto);
+            StatusCode = context.Response.StatusCode,
+            Message = exception.Message
+        }.ToString());
     }
 }
