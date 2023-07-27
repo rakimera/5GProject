@@ -19,9 +19,11 @@ public class AccountController : Controller
         _mapper = mapper;
     }
 
-    [HttpGet]
-    public IActionResult Get() => 
-        Ok(_service.UserService.GetAll());
+    [HttpGet , Authorize(Roles = "Admin")]
+    public IActionResult Get()
+    {
+        return Ok(_service.UserService.GetAll());
+    } 
     
     
     [HttpGet("{oid}")]
