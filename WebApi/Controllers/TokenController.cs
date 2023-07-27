@@ -19,13 +19,21 @@ public class TokenController : ControllerBase
 
     [HttpPost]
     [Route("refresh")]
-    public async Task<IActionResult> Refresh(TokenDto tokenApiModel) => 
-        Ok(await _service.TokenService.Refresh(tokenApiModel));
+    public async Task<IActionResult> Refresh(TokenDto tokenApiModel)
+    {
+        var baseResponse = await _service.TokenService.Refresh(tokenApiModel);
+        if (baseResponse.Success)
+            return Ok(baseResponse);
+        return BadRequest(baseResponse.Messages);
+    }
 
-    [HttpPost, Authorize(AuthenticationSchemes=JwtBearerDefaults.AuthenticationScheme)]
+    [HttpPost, Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("revoke")]
     public async Task<IActionResult> Revoke()
     {
-        return Ok(await _service.TokenService.Revoke(User.Identity.Name));
+        var baseResponse = await _service.TokenService.Revoke(User.Identity.Name);
+        if (baseResponse.Success)
+            return Ok(baseResponse);
+        return NotFound(baseResponse.Messages);
     }
 }
