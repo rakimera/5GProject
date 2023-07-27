@@ -1,4 +1,3 @@
-using Application.CustomExceptions;
 using Application.DataObjects;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
@@ -65,7 +64,6 @@ public class UserService : IUserService
 
         List<string> messages = _mapper.Map<List<string>>(result.Errors);
         _logger.LogError("Не удалось создать пользователя");
-        throw new UserException("Не удалось создать пользователя");
         return new BaseResponse<string>(
             Result: "",
             Messages: messages,
@@ -80,7 +78,6 @@ public class UserService : IUserService
         if (user is null)
         {
             _logger.LogError("Пользователь не найден");
-            throw new UserException("Пользователь не найден");
             return new BaseResponse<UserDto>(
                 Result: null,
                 Messages: new List<string> { "Пользователь не найден" },
@@ -102,7 +99,6 @@ public class UserService : IUserService
         if (user is null)
         {
             _logger.LogError($"Пользователь не найден");
-            throw new UserException("Пользователь не найден");
             return new BaseResponse<UserDto>(
                 Result: null,
                 Messages: new List<string> { "Пользователь не найден" },
@@ -140,7 +136,6 @@ public class UserService : IUserService
         }
         
         _logger.LogError($"Пользователя не удалось обновить");
-        throw new UserException($"Пользователя не удалось обновить");
         return new BaseResponse<string>(
             Result: "",
             Messages: _mapper.Map<List<string>>(result.Errors),
@@ -164,7 +159,6 @@ public class UserService : IUserService
         }
 
         _logger.LogError($"Пользователя не существует");
-        throw new UserException($"Пользователя не существует");
         return new BaseResponse<bool>(
             Result: false,
             Messages: new List<string> { "Пользователя не существует" },
