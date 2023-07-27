@@ -1,5 +1,4 @@
 using Application.DataObjects;
-using Application.DataObjects;
 using Application.Interfaces;
 using Application.Models.Users;
 using AutoMapper;
@@ -24,6 +23,7 @@ public class AccountController : Controller
     }
 
     [HttpGet, Authorize(Roles = "Admin")]
+    // [HttpGet]
     public IActionResult Get()
     {
         var baseResponse = _service.UserService.GetAll();

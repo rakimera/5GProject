@@ -1,5 +1,6 @@
 import axios from '../utils/axios';
 import storeExtension from '../utils/storeExtension';
+import authHeader from "@/api/AuthHeader";
 
 
 const header = await authHeader();
@@ -7,7 +8,6 @@ const userService = {
 
     async getUsers() {
         try {
-            
             return await axios.get(`/api/users`, { headers: header});
         }
         catch (error){
