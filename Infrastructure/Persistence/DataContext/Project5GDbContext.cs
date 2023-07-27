@@ -14,6 +14,7 @@ public class Project5GDbContext : DbContext
     public DbSet<ProjectStatus> ProjectsStatuses { get; set; }
     public DbSet<Town> Towns { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     public Project5GDbContext(DbContextOptions<Project5GDbContext> options) : base(options) {}
 

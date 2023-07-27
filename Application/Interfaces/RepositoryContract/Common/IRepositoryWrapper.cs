@@ -4,5 +4,6 @@ public interface IRepositoryWrapper
 {
     IUserRepository UserRepository { get; }
     IProjectRepository ProjectRepository { get; }
+    ITokenRepository TokenRepository { get; }
     Task Save();
 }

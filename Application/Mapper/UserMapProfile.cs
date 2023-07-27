@@ -29,10 +29,7 @@ public class UserMapProfile : Profile
                 opt.MapFrom(src => src.Password))
             .ForMember(dest => dest.Role, opt =>
                 opt.MapFrom(src => src.Role))
-            .ForMember(dest => dest.RefreshToken, opt =>
-                opt.MapFrom(src => src.RefreshToken))
-            .ForMember(dest => dest.RefreshTokenExpiryTime, opt =>
-                opt.MapFrom(src => src.RefreshTokenExpiryTime)).ReverseMap();
+            .ReverseMap();
         
         CreateMap<UserDto, UpdateUserDto>()
             .ForMember(dest => dest.Id, opt =>
