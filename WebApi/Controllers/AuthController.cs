@@ -21,6 +21,6 @@ public class AuthController : ControllerBase
         var baseResponse = await _service.AuthorizationService.Login(loginModel);
         if (baseResponse.Success)
             return Ok(baseResponse);
-        return BadRequest(baseResponse.Messages);
+        return BadRequest(baseResponse);
     }
 }

@@ -24,7 +24,7 @@ public class TokenController : ControllerBase
         var baseResponse = await _service.TokenService.Refresh(tokenApiModel);
         if (baseResponse.Success)
             return Ok(baseResponse);
-        return BadRequest(baseResponse.Messages);
+        return BadRequest(baseResponse);
     }
 
     [HttpPost, Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -34,6 +34,6 @@ public class TokenController : ControllerBase
         var baseResponse = await _service.TokenService.Revoke(User.Identity.Name);
         if (baseResponse.Success)
             return Ok(baseResponse);
-        return NotFound(baseResponse.Messages);
+        return NotFound(baseResponse);
     }
 }

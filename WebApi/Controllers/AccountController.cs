@@ -25,7 +25,7 @@ public class AccountController : Controller
         var baseResponse = _service.UserService.GetAll();
         if (baseResponse.Success)
             return Ok(baseResponse);
-        return NotFound(baseResponse.Messages);
+        return NotFound(baseResponse);
     }
 
 
@@ -35,7 +35,7 @@ public class AccountController : Controller
         var baseResponse = await _service.UserService.GetByOid(oid);
         if (baseResponse.Success)
             return Ok(baseResponse);
-        return NotFound(baseResponse.Messages);
+        return NotFound(baseResponse);
     }
 
     [HttpPost]
@@ -55,7 +55,7 @@ public class AccountController : Controller
         var baseResponse = await _service.UserService.Update(userDto);
         if (baseResponse.Success)
             return Ok(baseResponse);
-        return BadRequest(baseResponse.Messages);
+        return BadRequest(baseResponse);
     }
 
     [HttpDelete("{oid}")]
@@ -64,6 +64,6 @@ public class AccountController : Controller
         var baseResponse = await _service.UserService.Delete(oid);
         if (baseResponse.Success)
             return Ok(baseResponse);
-        return NotFound(baseResponse.Messages);
+        return NotFound(baseResponse);
     }
 }

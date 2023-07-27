@@ -24,7 +24,7 @@ public class ProjectsController : Controller
         var baseResponse = _service.ProjectService.GetAll();
         if (baseResponse.Success)
             return Ok(baseResponse);
-        return NotFound(baseResponse.Messages);
+        return NotFound(baseResponse);
     }
 
     [HttpGet("{oid}")]
@@ -33,7 +33,7 @@ public class ProjectsController : Controller
         var baseResponse = await _service.ProjectService.GetByOid(oid);
         if (baseResponse.Success)
             return Ok(baseResponse);
-        return NotFound(baseResponse.Messages);
+        return NotFound(baseResponse);
     }
 
     [HttpPost]
@@ -43,7 +43,7 @@ public class ProjectsController : Controller
         var baseResponse = await _service.ProjectService.CreateAsync(projectDto);
         if (baseResponse.Success)
             return Ok(baseResponse);
-        return BadRequest(baseResponse.Messages);
+        return BadRequest(baseResponse);
     }
 
     [HttpPut]
@@ -53,7 +53,7 @@ public class ProjectsController : Controller
         var baseResponse = await _service.ProjectService.Update(projectDto);
         if (baseResponse.Success)
             return Ok(baseResponse);
-        return BadRequest(baseResponse.Messages);
+        return BadRequest(baseResponse);
     }
 
     [HttpDelete("{oid}")]
@@ -62,6 +62,6 @@ public class ProjectsController : Controller
         var baseResponse = await _service.ProjectService.Delete(oid);
         if (baseResponse.Success)
             return Ok(baseResponse);
-        return NotFound(baseResponse.Messages);
+        return NotFound(baseResponse);
     }
 }
