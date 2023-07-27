@@ -47,8 +47,12 @@ public class UserService : IUserService
             return new BaseResponse<IQueryable<User>?>(
                 Result: queryableUsers,
                 Success: true,
-                StatusCode: 200,
                 Messages: new List<string>{"Данные не были получены, возможно пользователи еще не созданы или удалены"});
+    }
+
+    public BaseResponse<UserDto> GetAuthorizedUser(string login, string password)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<BaseResponse<string>> CreateAsync(UserDto model)

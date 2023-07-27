@@ -1,5 +1,4 @@
 using Application.DataObjects;
-using Application.DataObjects;
 using Application.Interfaces;
 using Application.Models.Users;
 using AutoMapper;
@@ -74,22 +73,14 @@ public class AccountController : Controller
     [HttpGet("index")]
     public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
     {
-        try
-        {
-            BaseResponse<IQueryable<User>?> usersResponse = _service.UserService.GetAllQueryable();
+        BaseResponse<IQueryable<User>?> usersResponse = _service.UserService.GetAllQueryable();
 
-            if (!usersResponse.Success)
-            {
-                return StatusCode(usersResponse.StatusCode, new { Message = usersResponse.Messages });
-            }
-    
+        if (usersResponse.Success)
+        {
             IQueryable<User>? users = usersResponse.Result;
             var result = await DataSourceLoader.LoadAsync(users, loadOptions);
             return Ok(result);
         }
-        catch (Exception e)
-        {
-            return StatusCode(500, new { Message = e.Message });
-        }
+        return BadRequest(usersResponse);
     }
 }
