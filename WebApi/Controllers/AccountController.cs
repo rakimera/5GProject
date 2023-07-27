@@ -3,7 +3,7 @@ using Application.Interfaces;
 using Application.Models.Users;
 using AutoMapper;
 using DevExtreme.AspNet.Data;
-using Microsoft.AspNetCore.Authorization;
+using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -48,22 +48,20 @@ public class AccountController : Controller
     public async Task<IActionResult> Delete(string oid) =>
         Ok(await _service.UserService.Delete(oid));
 
-    [HttpGet("Index")]
+    [HttpGet("index")]
     public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
     {
         try
         {
-            BaseResponse<IEnumerable<UserDto>> usersResponse = _service.UserService.GetAll();
+            BaseResponse<IQueryable<User>?> usersResponse = _service.UserService.GetAllQueryable();
 
             if (!usersResponse.Success)
             {
                 return StatusCode(usersResponse.StatusCode, new { Message = usersResponse.Messages });
             }
     
-            IEnumerable<UserDto> users = usersResponse.Result;
-    
-            var result = DataSourceLoader.Load(users, loadOptions);
-    
+            IQueryable<User>? users = usersResponse.Result;
+            var result = await DataSourceLoader.LoadAsync(users, loadOptions);
             return Ok(result);
         }
         catch (Exception e)

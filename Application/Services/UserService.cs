@@ -52,11 +52,11 @@ public class UserService : IUserService
         }
     }
     
-    public BaseResponse<IQueryable<User>> GetAllQueryable()
+    public BaseResponse<IQueryable<User>?> GetAllQueryable()
     {
-            var test = _repositoryWrapper.UserRepository.GetAll();
-            return new BaseResponse<IQueryable<User>>(
-                Result: test,
+            var queryableUsers = _repositoryWrapper.UserRepository.GetAll();
+            return new BaseResponse<IQueryable<User>?>(
+                Result: queryableUsers,
                 Success: true,
                 StatusCode: 200,
                 Messages: new List<string>{"Данные не были получены, возможно пользователи еще не созданы или удалены"});
