@@ -79,8 +79,8 @@ import DxLoadIndicator from 'devextreme-vue/load-indicator';
 import notify from 'devextreme/ui/notify';
 import { useRouter } from 'vue-router';
 import { ref, reactive } from 'vue';
+import authService from "@/api/AuthService";
 
-import auth from "../auth";
 
 export default {
   components: {
@@ -107,11 +107,11 @@ export default {
     const { email, password } = formData;
     loading.value = true;
 
-    const result = await auth.createAccount(email, password);
+    const result = await authService.createAccount(email, password);
     loading.value = false;
 
     if (result.isOk) {
-      router.push("/login-form");
+      await router.push("/login-form");
     } else {
       notify(result.message, 'error', 2000);
     }

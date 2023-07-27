@@ -20,8 +20,10 @@ public class AccountController : Controller
     }
 
     [HttpGet , Authorize(Roles = "Admin")]
-    public IActionResult Get() => 
-        Ok(_service.UserService.GetAll());
+    public IActionResult Get()
+    {
+        return Ok(_service.UserService.GetAll());
+    } 
     
     
     [HttpGet("{oid}")]
