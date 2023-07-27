@@ -17,10 +17,9 @@ public class ServiceWrapper : IServiceWrapper
         IMapper mapper,
         UserValidator userValidator,
         ProjectValidator projectValidator,
-        ITokenService tokenService,
-        ILoggerService logger)
+        ITokenService tokenService)
     {
-        _userService = new Lazy<IUserService>(() => new UserService(repository, mapper, userValidator, logger));
+        _userService = new Lazy<IUserService>(() => new UserService(repository, mapper, userValidator));
         _tokenService = new Lazy<ITokenService>(() => new TokenService(repository));
         _projectService = new Lazy<IProjectService>(()=> new ProjectService(repository, mapper, projectValidator));
         _authorizationService = new Lazy<IAuthorizationService>(()=> new AuthorizationService(repository,tokenService));
