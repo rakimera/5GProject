@@ -1,7 +1,9 @@
+using System.Text.Json.Serialization;
+
 namespace Application.Models;
 
 public class TokenDto
 {
-    public string? AccessToken { get; set; }
-    public string? RefreshToken { get; set; }
+    [property: JsonPropertyName("accessToken")] public string? AccessToken { get; set; }
+    [property: JsonPropertyName("refreshToken")] public string? RefreshToken { get; set; }
 }

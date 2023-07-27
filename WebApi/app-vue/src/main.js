@@ -2,7 +2,7 @@ import 'devextreme/dist/css/dx.common.css';
 import './themes/generated/theme.base.css';
 import './themes/generated/theme.additional.css';
 import { createApp }  from "vue";
-import router from "./router";
+import router from "@/router";
 import themes from "devextreme/ui/themes";
 
 import App from "./App";
@@ -14,4 +14,3 @@ themes.initialized(() => {
     app.config.globalProperties.$appInfo = appInfo;
     app.mount('#app');
 });
-

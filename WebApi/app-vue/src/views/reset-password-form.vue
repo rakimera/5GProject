@@ -53,7 +53,7 @@ import notify from 'devextreme/ui/notify';
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 
-import auth from "../auth";
+import authService from "@/api/AuthService";
 
 const notificationText = 'We\'ve sent a link to reset your password. Check your inbox.';
 
@@ -80,11 +80,11 @@ export default {
       const { email } = formData;
       loading.value = true;
 
-      const result = await auth.resetPassword(email);
+      const result = await authService.resetPassword(email);
       loading.value = false;
 
       if (result.isOk) {
-        router.push("/login-form");
+        await router.push("/login-form");
         notify(notificationText, "success", 2500);
       } else {
         notify(result.message, "error", 2000);
