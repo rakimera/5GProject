@@ -43,7 +43,8 @@ public class UserService : IUserService
 
     public async Task<BaseResponse<string>> CreateAsync(UserDto model)
     {
-        var result = await _userValidator.ValidateAsync(model);
+        var map = _mapper.Map<User>(model);
+        var result = await _userValidator.ValidateAsync(map);
         if (result.IsValid)
         {
             model.Created = DateTime.Now;
@@ -105,7 +106,8 @@ public class UserService : IUserService
 
     public async Task<BaseResponse<string>> Update(UserDto model)
     {
-        var result = await _userValidator.ValidateAsync(model);
+        var map = _mapper.Map<User>(model);
+        var result = await _userValidator.ValidateAsync(map);
         if (result.IsValid)
         {
             User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.Equals(model.Id));
