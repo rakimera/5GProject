@@ -3,6 +3,7 @@ using Application.Interfaces;
 using Application.Models.Users;
 using AutoMapper;
 using DevExtreme.AspNet.Data;
+using DevExtreme.AspNet.Data.ResponseModel;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -74,14 +75,7 @@ public class AccountController : Controller
     [HttpGet("index")]
     public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
     {
-        BaseResponse<IQueryable<User>?> usersResponse = _service.UserService.GetAllQueryable();
-
-        if (usersResponse.Success)
-        {
-            IQueryable<User>? users = usersResponse.Result;
-            var result = await DataSourceLoader.LoadAsync(users, loadOptions);
-            return Ok(result);
-        }
-        return BadRequest(usersResponse);
+        var loadResult = await _service.UserService.GetLoadResult(loadOptions);
+        return Ok(loadResult);
     }
 }
