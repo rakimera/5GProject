@@ -40,7 +40,9 @@ public class AuthorizationService : IAuthorizationService
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, loginModel.Login),
-            new Claim(ClaimTypes.Role, user.Role)
+            new Claim("login", loginModel.Login),
+            new Claim(ClaimTypes.Role, user.Role),
+            new Claim("role", user.Role)
         };
         var refresh = _tokenService.GenerateRefreshToken();
         RefreshToken refreshToken = new RefreshToken

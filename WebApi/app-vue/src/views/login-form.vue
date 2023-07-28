@@ -2,57 +2,57 @@
   <form class="login-form" @submit.prevent="onSubmit">
     <dx-form :form-data="formData" :disabled="loading">
       <dx-item
-        data-field="email"
-        editor-type="dxTextBox"
-        :editor-options="{ stylingMode: 'filled', placeholder: 'Email', mode: 'email' }"
+          data-field="email"
+          editor-type="dxTextBox"
+          :editor-options="{ stylingMode: 'filled', placeholder: 'Email', mode: 'email' }"
       >
-        <dx-required-rule message="Email is required" />
-        <dx-email-rule message="Email is invalid" />
+        <dx-required-rule message="Поле Email обязательно" />
+        <dx-email-rule message="Неверный формат Email" />
         <dx-label :visible="false" />
       </dx-item>
       <dx-item
-        data-field='password'
-        editor-type='dxTextBox'
-        :editor-options="{ stylingMode: 'filled', placeholder: 'Password', mode: 'password' }"
+          data-field='password'
+          editor-type='dxTextBox'
+          :editor-options="{ stylingMode: 'filled', placeholder: 'Password', mode: 'password' }"
       >
-        <dx-required-rule message="Password is required" />
+        <dx-required-rule message="Введите пароль" />
         <dx-label :visible="false" />
       </dx-item>
       <dx-item
-        data-field="rememberMe"
-        editor-type="dxCheckBox"
-        :editor-options="{ text: 'Remember me', elementAttr: { class: 'form-text' } }"
+          data-field="rememberMe"
+          editor-type="dxCheckBox"
+          :editor-options="{ text: 'Запомнить меня', elementAttr: { class: 'form-text' } }"
       >
         <dx-label :visible="false" />
       </dx-item>
       <dx-button-item>
         <dx-button-options
-          width="100%"
-          type="default"
-          template="signInTemplate"
-          :use-submit-behavior="true"
+            width="100%"
+            type="default"
+            template="signInTemplate"
+            :use-submit-behavior="true"
         >
         </dx-button-options>
       </dx-button-item>
       <dx-item>
         <template #default>
           <div class="link">
-            <router-link to="/reset-password">Forgot password?</router-link>
+            <router-link to="/reset-password">Забыли пароль?</router-link>
           </div>
         </template>
       </dx-item>
       <dx-button-item>
         <dx-button-options
-          text="Create an account"
-          width="100%"
-          :on-click="onCreateAccountClick"
+            text="Создать новый аккаунт"
+            width="100%"
+            :on-click="onCreateAccountClick"
         />
       </dx-button-item>
       <template #signInTemplate>
         <div>
           <span class="dx-button-text">
             <dx-load-indicator v-if="loading" width="24px" height="24px" :visible="true" />
-            <span v-if="!loading">Sign In</span>
+            <span v-if="!loading">Войти</span>
           </span>
         </div>
       </template>
@@ -72,10 +72,9 @@ import DxForm, {
 } from "devextreme-vue/form";
 import notify from 'devextreme/ui/notify';
 
-import auth from "../auth";
-
 import { reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import authService from "@/api/AuthService";
 
 export default {
   setup() {
@@ -89,18 +88,18 @@ export default {
     const loading = ref(false);
 
     function onCreateAccountClick() {
-      router.push("/create-account");
+      router.push("/create-account"); //пока не раб, может потом раб, а может нет
     }
 
     async function onSubmit() {
-      const { email, password } = formData;
       loading.value = true;
-      const result = await auth.logIn(email, password);
-      if (!result.isOk) {
+      const loginModel = {login: formData.email, password: formData.password};
+      try {
+        await authService.login(loginModel);
+        await router.push(route.query.redirect || '/home');
+      } catch (error){
         loading.value = false;
-        notify(result.message, "error", 2000);
-      } else {
-        router.push(route.query.redirect || "/home");
+        notify(error.message, 'error', 2000);
       }
     }
 

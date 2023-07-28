@@ -1,4 +1,3 @@
-import auth from "./auth";
 import { createRouter, createWebHashHistory } from "vue-router";
 
 import Home from "./views/home-page";
@@ -7,6 +6,7 @@ import Tasks from "./views/tasks-page";
 import defaultLayout from "./layouts/side-nav-outer-toolbar";
 import simpleLayout from "./layouts/single-card";
 import Users from './views/Users-page.vue';
+import authService from "@/api/AuthService";
 
 function loadView(view) {
   return () => import (/* webpackChunkName: "login" */ `./views/${view}.vue`)
@@ -42,12 +42,12 @@ const router = new createRouter({
       component: Tasks
     },
     {
-      path: "/login-form",
-      name: "login-form",
+      path: "/login",
+      name: "login",
       meta: {
         requiresAuth: false,
         layout: simpleLayout,
-        title: "Sign In"
+        title: "Войти в аккаунт"
       },
       component: loadView("login-form")
     },
@@ -57,7 +57,7 @@ const router = new createRouter({
       meta: {
         requiresAuth: false,
         layout: simpleLayout,
-        title: "Reset Password",
+        title: "Сбросить пароль",
         description: "Please enter the email address that you used to register, and we will send you a link to reset your password via Email."
       },
       component: loadView("reset-password-form")
@@ -68,7 +68,7 @@ const router = new createRouter({
       meta: {
         requiresAuth: false,
         layout: simpleLayout,
-        title: "Sign Up"
+        title: "Создать аккаунт"
       },
       component: loadView("create-account-form"),
     },
@@ -98,7 +98,7 @@ const router = new createRouter({
       path: "/users",
       name: "users",
       meta: {
-        requiresAuth: false,
+        requiresAuth: true,
         layout: defaultLayout
       },
       component: Users
@@ -108,15 +108,14 @@ const router = new createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-
-  if (to.name === "login-form" && auth.loggedIn()) {
+  if (to.name === "login" && authService.loggedIn()) {
     next({ name: "home" });
   }
 
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!auth.loggedIn()) {
+    if (!authService.loggedIn()) {
       next({
-        name: "login-form",
+        name: "login",
         query: { redirect: to.fullPath }
       });
     } else {
