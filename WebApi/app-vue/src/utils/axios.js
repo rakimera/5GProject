@@ -3,7 +3,7 @@ import authHeader from '@/api//AuthHeader';
 import authService from "@/api/AuthService";
 
 const instance = axios.create({
-    baseURL: 'https://localhost:7015/',
+    baseURL: 'http://localhost:5176/',
 });
 axios.interceptors.response.use(
     (response) => response,
