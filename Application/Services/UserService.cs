@@ -42,11 +42,11 @@ public class UserService : IUserService
             Messages: new List<string>
                 { "Данные не были получены, возможно пользователи еще не созданы или удалены" });
     }
-    
+
     public async Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions)
     {
-            var queryableUsers = _repositoryWrapper.UserRepository.GetAll();
-            return await DataSourceLoader.LoadAsync(queryableUsers, loadOptions);
+        var queryableUsers = _repositoryWrapper.UserRepository.GetAll();
+        return await DataSourceLoader.LoadAsync(queryableUsers, loadOptions);
     }
 
     public BaseResponse<UserDto> GetAuthorizedUser(string login, string password)
@@ -65,7 +65,7 @@ public class UserService : IUserService
             User user = _mapper.Map<User>(model);
             await _repositoryWrapper.UserRepository.CreateAsync(user);
             await _repositoryWrapper.Save();
-            
+
             return new BaseResponse<string>(
                 Result: user.Id.ToString(),
                 Success: true,
@@ -91,7 +91,7 @@ public class UserService : IUserService
                 Messages: new List<string> { "Пользователь не найден" },
                 Success: true);
         }
-        
+
         return new BaseResponse<UserDto>(
             Result: model,
             Success: true,
@@ -110,40 +110,56 @@ public class UserService : IUserService
                 Messages: new List<string> { "Пользователь не найден" },
                 Success: true);
         }
-        
+
         return new BaseResponse<UserDto>(
             Result: model,
             Success: true,
             Messages: new List<string> { "Пользователь успешно найден" });
     }
 
-    public async Task<BaseResponse<string>> Update(UserDto model)
+    public async Task<BaseResponse<UserDto>> UpdateUser(UpdateUserDto model)
     {
-        var mapUser = _mapper.Map<User>(model);
-        var result = await _userValidator.ValidateAsync(mapUser);
-        if (result.IsValid)
+        BaseResponse<UserDto> getUserResponse = await GetByOid(model.Id);
+        if (!getUserResponse.Success || getUserResponse.Result == null)
         {
-            User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.Equals(model.Id));
-
-            user.Name = model.Name;
-            user.Surname = model.Surname;
-            user.Role = model.Role;
-            user.LastModified = DateTime.Now;
-            user.LastModifiedBy = "Admin";
-
-            _repositoryWrapper.UserRepository.Update(user);
-            await _repositoryWrapper.Save();
-            
-            return new BaseResponse<string>(
-                Result: user.Id.ToString(),
-                Success: true,
-                Messages: new List<string> { "Пользователь успешно изменен" });
+            return new BaseResponse<UserDto>(
+                Result: null,
+                Messages: new List<string> { "Пользователь не найден" },
+                Success: false);
         }
-        
-        return new BaseResponse<string>(
-            Result: "",
-            Messages: _mapper.Map<List<string>>(result.Errors),
-            Success: false);
+
+        UserDto existingUserDto = getUserResponse.Result;
+        _mapper.Map(model, existingUserDto);
+
+        User user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.Equals(existingUserDto.Id));
+        if (user == null)
+        {
+            return new BaseResponse<UserDto>(
+                Result: null,
+                Messages: new List<string> { "Пользователь не найден" },
+                Success: false);
+        }
+
+        _mapper.Map(existingUserDto, user);
+        user.LastModified = DateTime.Now;
+        user.LastModifiedBy = "Admin";
+
+        var result = await _userValidator.ValidateAsync(user);
+        if (!result.IsValid)
+        {
+            return new BaseResponse<UserDto>(
+                Result: null,
+                Messages: _mapper.Map<List<string>>(result.Errors),
+                Success: false);
+        }
+
+        _repositoryWrapper.UserRepository.Update(user);
+        await _repositoryWrapper.Save();
+
+        return new BaseResponse<UserDto>(
+            Result: existingUserDto,
+            Success: true,
+            Messages: new List<string> { "Пользователь успешно изменен" });
     }
 
     public async Task<BaseResponse<bool>> Delete(string oid)
@@ -154,13 +170,13 @@ public class UserService : IUserService
             user.IsDelete = true;
             _repositoryWrapper.UserRepository.Update(user);
             await _repositoryWrapper.Save();
-            
+
             return new BaseResponse<bool>(
                 Result: true,
                 Success: true,
                 Messages: new List<string> { "Пользователь успешно удален" });
         }
-        
+
         return new BaseResponse<bool>(
             Result: false,
             Messages: new List<string> { "Пользователя не существует" },
