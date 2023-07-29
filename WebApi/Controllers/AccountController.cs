@@ -1,6 +1,10 @@
+using Application.DataObjects;
 using Application.Interfaces;
 using Application.Models.Users;
 using AutoMapper;
+using DevExtreme.AspNet.Data;
+using DevExtreme.AspNet.Data.ResponseModel;
+using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +24,7 @@ public class AccountController : Controller
     }
 
     [HttpGet, Authorize(Roles = "Admin")]
+    // [HttpGet]
     public IActionResult Get()
     {
         var baseResponse = _service.UserService.GetAll();
@@ -65,5 +70,12 @@ public class AccountController : Controller
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
+    }
+
+    [HttpGet("index")]
+    public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
+    {
+        var loadResult = await _service.UserService.GetLoadResult(loadOptions);
+        return Ok(loadResult);
     }
 }

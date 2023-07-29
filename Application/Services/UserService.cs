@@ -4,6 +4,8 @@ using Application.Interfaces.RepositoryContract.Common;
 using Application.Models.Users;
 using Application.Validation;
 using AutoMapper;
+using DevExtreme.AspNet.Data;
+using DevExtreme.AspNet.Data.ResponseModel;
 using Domain.Entities;
 
 namespace Application.Services;
@@ -40,11 +42,22 @@ public class UserService : IUserService
             Messages: new List<string>
                 { "Данные не были получены, возможно пользователи еще не созданы или удалены" });
     }
+    
+    public async Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions)
+    {
+            var queryableUsers = _repositoryWrapper.UserRepository.GetAll();
+            return await DataSourceLoader.LoadAsync(queryableUsers, loadOptions);
+    }
+
+    public BaseResponse<UserDto> GetAuthorizedUser(string login, string password)
+    {
+        throw new NotImplementedException();
+    }
 
     public async Task<BaseResponse<string>> CreateAsync(UserDto model)
     {
-        var map = _mapper.Map<User>(model);
-        var result = await _userValidator.ValidateAsync(map);
+        var mapUser = _mapper.Map<User>(model);
+        var result = await _userValidator.ValidateAsync(mapUser);
         if (result.IsValid)
         {
             model.Created = DateTime.Now;
@@ -106,8 +119,8 @@ public class UserService : IUserService
 
     public async Task<BaseResponse<string>> Update(UserDto model)
     {
-        var map = _mapper.Map<User>(model);
-        var result = await _userValidator.ValidateAsync(map);
+        var mapUser = _mapper.Map<User>(model);
+        var result = await _userValidator.ValidateAsync(mapUser);
         if (result.IsValid)
         {
             User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.Equals(model.Id));
