@@ -49,8 +49,7 @@ public class ProjectsController : Controller
     [HttpPut]
     public async Task<IActionResult> Put(UpdateProjectDto model)
     {
-        ProjectDto projectDto = _mapper.Map<ProjectDto>(model);
-        var baseResponse = await _service.ProjectService.Update(projectDto);
+        var baseResponse = await _service.ProjectService.Update(model);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);
