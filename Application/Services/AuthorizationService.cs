@@ -19,24 +19,24 @@ public class AuthorizationService : IAuthorizationService
         _tokenService = tokenService;
     }
 
-    public async Task<BaseResponse<TokenDto>>Login(LoginDto loginModel)
+    public async Task<BaseResponse<TokenDto>> Login(LoginDto loginModel)
     {
         if (loginModel is null)
         {
             return new BaseResponse<TokenDto>(
                 Result: null,
-                Messages: new List<string>{"Данные пусты"},
-                Success: false,
-                StatusCode: 404);
+                Messages: new List<string> { "Данные пусты" },
+                Success: false);
         }
+
         var user = await _repositoryWrapper.UserRepository.GetByCondition
             (x => x.Login == loginModel.Login && x.Password == loginModel.Password);
         if (user is null)
             return new BaseResponse<TokenDto>(
                 Result: null,
-                Messages: new List<string>{"Такого пользователя не существует"},
-                Success: false,
-                StatusCode: 404);
+                Messages: new List<string> { "Такого пользователя не существует" },
+                Success: false);
+
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, loginModel.Login),
@@ -61,8 +61,7 @@ public class AuthorizationService : IAuthorizationService
         };
         return new BaseResponse<TokenDto>(
             Result: tokenDto,
-            Messages: new List<string>{"Пользователь успешно авторизован"},
-            Success: true,
-            StatusCode: 200);
+            Messages: new List<string> { "Пользователь успешно авторизован" },
+            Success: true);
     }
 }
