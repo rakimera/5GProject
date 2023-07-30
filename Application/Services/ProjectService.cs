@@ -81,30 +81,40 @@ public class ProjectService : IProjectService
             Messages: new List<string> { "Проект успешно найден" });
     }
 
-    public async Task<BaseResponse<string>> Update(ProjectDto model)
+    public async Task<BaseResponse<string>> Update(UpdateProjectDto model)
     {
-        var result = await _projectValidator.ValidateAsync(model);
-        if (result.IsValid)
+        var projectDto = _mapper.Map<ProjectDto>(model);
+        var result = await _projectValidator.ValidateAsync(projectDto);
+        if (!result.IsValid)
         {
-            model.LastModified = DateTime.Now;
-            model.LastModifiedBy = "Admin"; // реализация зависит от методики работы авторизацией.
-            Project project = _mapper.Map<Project>(model);
-
-            _repositoryWrapper.ProjectRepository.Update(project);
-            await _repositoryWrapper.Save();
+            List<string> messages = _mapper.Map<List<string>>(result.Errors);
 
             return new BaseResponse<string>(
-                Result: project.Id.ToString(),
-                Success: true,
-                Messages: new List<string> { "Проект успешно изменен" });
+                Result: "",
+                Messages: messages,
+                Success: false);
         }
 
-        List<string> messages = _mapper.Map<List<string>>(result.Errors);
+        Project project = await _repositoryWrapper.ProjectRepository.GetByCondition(x => x.Id.Equals(model.Oid));
+        if (project == null)
+        {
+            return new BaseResponse<string>(
+                Result: null,
+                Messages: new List<string> { "Проект не найден" },
+                Success: false);
+        }
+
+        _mapper.Map(model, project);
+        project.LastModified = DateTime.Now;
+        project.LastModifiedBy = "Admin";
+
+        _repositoryWrapper.ProjectRepository.Update(project);
+        await _repositoryWrapper.Save();
 
         return new BaseResponse<string>(
-            Result: "",
-            Messages: messages,
-            Success: false);
+            Result: project.Id.ToString(),
+            Success: true,
+            Messages: new List<string> { "Проект успешно изменен" });
     }
 
     public async Task<BaseResponse<bool>> Delete(string oid)
