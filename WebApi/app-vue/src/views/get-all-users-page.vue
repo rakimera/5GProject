@@ -89,9 +89,14 @@ const store = new CustomStore({
     return { data: baseResponse.result };
   },
   update: async (user) => {
-    console.log(user + " <== вот тут метод апдейт")
-    const baseResponse = await userService.updateUser(user);
-    return { data: baseResponse.result };
+    try {
+      console.log(user + " <== тут id")
+      console.log(user.data() + "вот тут дто должен быть");
+      const baseResponse = await userService.updateUser(user.data());
+      return {data: baseResponse.result};
+    } catch (error) {
+      console.log(error);
+    }
   },
   remove: async (oid) => {
     console.log(oid + " <== вот тут метод remove")
