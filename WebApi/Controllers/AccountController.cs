@@ -24,7 +24,6 @@ public class AccountController : Controller
     }
 
     [HttpGet, Authorize(Roles = "Admin")]
-    // [HttpGet]
     public IActionResult Get()
     {
         var baseResponse = _service.UserService.GetAll();
@@ -72,7 +71,7 @@ public class AccountController : Controller
         return NotFound(baseResponse);
     }
 
-    [HttpGet("index")]
+    [HttpGet("index"), Authorize(Roles = "Admin")]
     public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
     {
         var loadResult = await _service.UserService.GetLoadResult(loadOptions);

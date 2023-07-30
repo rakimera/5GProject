@@ -3,8 +3,9 @@ import authHeader from '@/api//AuthHeader';
 import authService from "@/api/AuthService";
 
 const instance = axios.create({
-    baseURL: 'http://localhost:5176/',
+    baseURL: 'https://localhost:7015/',
 });
+
 axios.interceptors.response.use(
     (response) => response,
     async (error) => {
@@ -24,6 +25,18 @@ axios.interceptors.response.use(
         return Promise.reject(error);
     }
 );
-axios.defaults.headers.common = authHeader();
 
+instance.interceptors.request.use(
+    async (config) => {
+        const token = await authHeader();
+        if (token) {
+            config.headers.Authorization = 'Bearer ' + token;
+            console.log(token)
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 export default instance;
