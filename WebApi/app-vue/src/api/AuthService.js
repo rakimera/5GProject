@@ -2,8 +2,6 @@ import axios from '@/utils/axios';
 async function updateTokens(response) {
     localStorage.setItem('userToken', JSON.stringify(response.data.result.accessToken));
     localStorage.setItem('refreshToken', JSON.stringify(response.data.result.refreshToken));
-    console.log(response.data.result.accessToken);
-    console.log(response.data.result.refreshToken);
     
     return response.data;
 }
@@ -24,10 +22,17 @@ const authService = {
             console.log("Ошибка получения Refresh токена", error)
         }
     },
-    revoke() {
-        localStorage.removeItem('userToken');
-        localStorage.removeItem('refreshToken');
-        return axios.post('/api/Token/revoke');
+    async revoke() {
+        try {
+            await axios.post('/api/Token/revoke');
+            localStorage.removeItem('userToken');
+            localStorage.removeItem('refreshToken');
+        }
+        catch (error) {
+            return error;
+        }
+       
+        
     },
     loggedIn() {
         return !!localStorage.getItem('userToken');

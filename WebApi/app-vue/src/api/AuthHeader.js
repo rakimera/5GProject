@@ -2,7 +2,6 @@ export default async function authHeader() {
     try {
         const user = JSON.parse(localStorage.getItem('userToken'));
         if (user) {
-            console.log(user)
             return  user;
         }
     } catch (error) {

@@ -113,13 +113,24 @@ public class TokenService : ITokenService
 
     public async Task<BaseResponse<bool>> Revoke(string login)
     {
-        var user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Login == login);
+        User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Login == login);
         if (user == null)
             return new BaseResponse<bool>(
                 Result: false,
                 Messages: new List<string> { "Такого пользователя нет" },
                 Success: false);
+        
+        RefreshToken? refreshToken = await _repositoryWrapper.TokenRepository.GetByCondition(x => x.UserId == user.Id);
+        if (refreshToken != null) 
+            _repositoryWrapper.TokenRepository.Delete(refreshToken);
+        else
+            return new BaseResponse<bool>(
+            Result: false,
+            Messages: new List<string> { "Refresh токен не найден" },
+            Success: false);
+        
         await _repositoryWrapper.Save();
+        
         return new BaseResponse<bool>(
             Result: true,
             Messages: new List<string> { "Операция произведена успешно" },
