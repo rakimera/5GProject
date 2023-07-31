@@ -43,10 +43,9 @@
         :allowed-page-sizes="[8, 12, 20]"
     />
     <DxEditing
-        :allow-updating="true"
         :allow-deleting="true"
         :allow-adding="true"
-        mode="row"
+        mode="form"
     />
   </DxDataGrid>
   <div id="events">
@@ -88,11 +87,10 @@ const store = new CustomStore({
     const baseResponse = await userService.createUser(user);
     return { data: baseResponse.result };
   },
-  update: async (user) => {
+  update: async (id) => {
     try {
-      console.log(user + " <== тут id")
-      console.log(user.data() + "вот тут дто должен быть");
-      const baseResponse = await userService.updateUser(user.data());
+      console.log(id + " <== тут id")
+      const baseResponse = await userService.updateUser(id);
       return {data: baseResponse.result};
     } catch (error) {
       console.log(error);
