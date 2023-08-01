@@ -75,7 +75,7 @@ public class TokenService : ITokenService
 
         var principal = GetPrincipalFromExpiredToken(tokenApiModel.AccessToken);
         var user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Login == principal.Identity.Name);
-        var refreshToken = _repositoryWrapper.TokenRepository.GetAll()
+        RefreshToken? refreshToken = _repositoryWrapper.TokenRepository.GetAll()
             .FirstOrDefault(x => x.Token == tokenApiModel.RefreshToken);
 
         if (refreshToken.RefreshTokenExpiryTime <= DateTime.Now)
@@ -92,14 +92,10 @@ public class TokenService : ITokenService
                 Success: false);
 
         var newRefreshToken = GenerateRefreshToken();
-        RefreshToken refToken = new RefreshToken
-        {
-            Id = refreshToken.Id,
-            Token = newRefreshToken,
-            UserId = user.Id,
-            RefreshTokenExpiryTime = DateTime.Now.AddMinutes(AuthenticationOptions.LIFETIMEREFRESHTOKEN)
-        };
-        _repositoryWrapper.TokenRepository.Update(refToken);
+        refreshToken.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(AuthenticationOptions.LIFETIMEREFRESHTOKEN);
+        refreshToken.Token = newRefreshToken;
+
+        _repositoryWrapper.TokenRepository.Update(refreshToken);
         await _repositoryWrapper.Save();
 
         var tokenDto = new TokenDto()
