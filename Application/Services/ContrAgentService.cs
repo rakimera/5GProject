@@ -4,6 +4,8 @@ using Application.Interfaces.RepositoryContract.Common;
 using Application.Models.ContrAgents;
 using Application.Validation;
 using AutoMapper;
+using DevExtreme.AspNet.Data;
+using DevExtreme.AspNet.Data.ResponseModel;
 using Domain.Entities;
 
 namespace Application.Services;
@@ -23,174 +25,123 @@ public class ContrAgentService : IContrAgentService
 
     public BaseResponse<IEnumerable<ContrAgentDto>> GetAll()
     {
-        try
+        IQueryable<ContrAgent> contrAgents = _repositoryWrapper.ContrAgentRepository.GetAll();
+        List<ContrAgentDto> models = _mapper.Map<List<ContrAgentDto>>(contrAgents);
+        if (models.Count > 0)
         {
-            IQueryable<ContrAgent> contrAgents = _repositoryWrapper.ContrAgentRepository.GetAll();
-            List<ContrAgentDto> models = _mapper.Map<List<ContrAgentDto>>(contrAgents); 
-
-            if (models.Count > 0)
-            {
-                return new BaseResponse<IEnumerable<ContrAgentDto>>(
-                    Result: models,
-                    Success: true,
-                    StatusCode: 200,
-                    Messages: new List<string>{"Контрагенты успешно получены"});
-            }
             return new BaseResponse<IEnumerable<ContrAgentDto>>(
                 Result: models,
                 Success: true,
-                StatusCode: 200,
-                Messages: new List<string>{"Данные не были получены, возможно контрагенты еще не созданы или удалены"});
+                Messages: new List<string>{"Контрагенты успешно получены"});
         }
-        catch (Exception e)
-        {
-            return new BaseResponse<IEnumerable<ContrAgentDto>>(
-                Result: null, 
-                Messages: new List<string>{e.Message},
-                Success: false,
-                StatusCode: 500);
-        }
+        return new BaseResponse<IEnumerable<ContrAgentDto>>(
+            Result: models,
+            Success: true,
+            Messages: new List<string>{"Данные не были получены, возможно контрагенты еще не созданы или удалены"});
     }
 
     public async Task<BaseResponse<string>> CreateAsync(ContrAgentDto model)
     {
-        try
+        ContrAgent contrAgent = _mapper.Map<ContrAgent>(model);
+        var result = await _contrAgentValidator.ValidateAsync(contrAgent);
+        if (result.IsValid)
         {
-            ContrAgent contrAgent = _mapper.Map<ContrAgent>(model);
-            var result = await _contrAgentValidator.ValidateAsync(contrAgent);
-            if (result.IsValid)
-            {
-                contrAgent.Created = DateTime.Now;
-                contrAgent.CreatedBy = "Admin";
-                await _repositoryWrapper.ContrAgentRepository.CreateAsync(contrAgent);
-                await _repositoryWrapper.Save();
+            contrAgent.Created = DateTime.Now;
+            contrAgent.CreatedBy = "Admin";
+            await _repositoryWrapper.ContrAgentRepository.CreateAsync(contrAgent);
+            await _repositoryWrapper.Save();
 
-                return new BaseResponse<string>(
-                    Result: contrAgent.Id.ToString(),
-                    Success: true,
-                    StatusCode: 200,
-                    Messages: new List<string>{"Контрагент успешно создан"});
-            }
-            List<string> messages = _mapper.Map<List<string>>(result.Errors);
-            
             return new BaseResponse<string>(
-                Result: "", 
-                Messages: messages,
-                Success: false,
-                StatusCode: 400);
+                Result: contrAgent.Id.ToString(),
+                Success: true,
+                Messages: new List<string>{"Контрагент успешно создан"});
         }
-        catch (Exception e)
-        {
-            return new BaseResponse<string>(
-                Result: "",
-                Messages: new List<string>{e.Message},
-                Success: false,
-                StatusCode: 500);
-        }
+        List<string> messages = _mapper.Map<List<string>>(result.Errors);
+        return new BaseResponse<string>(
+            Result: "", 
+            Messages: messages,
+            Success: false);
     }
 
     public async Task<BaseResponse<ContrAgentDto>> GetByOid(string oid)
     {
-        try
-        {
-            ContrAgent? contrAgent = await _repositoryWrapper.ContrAgentRepository.GetByCondition(x => x.Id.ToString() == oid);
-            ContrAgentDto model = _mapper.Map<ContrAgentDto>(contrAgent);
-
-            if (contrAgent is null)
-                return new BaseResponse<ContrAgentDto>(
-                    Result: null,
-                    Messages: new List<string>{"Контрагент не найден"},
-                    Success: true,
-                    StatusCode: 404);
+        ContrAgent? contrAgent = await _repositoryWrapper.ContrAgentRepository.GetByCondition(x => x.Id.ToString() == oid);
+        ContrAgentDto model = _mapper.Map<ContrAgentDto>(contrAgent);
+        if (contrAgent is null)
             return new BaseResponse<ContrAgentDto>(
-                Result: model,
-                Success: true,
-                StatusCode: 200,
-                Messages: new List<string>{"Контрагент успешно найден"});
+                Result: null,
+                Messages: new List<string>{"Контрагент не найден"},
+                Success: true);
+        return new BaseResponse<ContrAgentDto>(
+            Result: model,
+            Success: true,
+            Messages: new List<string>{"Контрагент успешно найден"});
+    }
 
-        }
-        catch (Exception e)
+    public async Task<BaseResponse<ContrAgentDto>> UpdateContrAgent(UpdateContrAgentDto model)
+    {
+        BaseResponse<ContrAgentDto> getContrAgentResponse = await GetByOid(model.Id);
+        if (!getContrAgentResponse.Success || getContrAgentResponse.Result == null)
         {
             return new BaseResponse<ContrAgentDto>(
                 Result: null,
-                Success: false,
-                Messages: new List<string>{e.Message},
-                StatusCode: 500);
+                Messages: new List<string> { "Контрагент не найден" },
+                Success: false);
         }
-    }
-
-    public async Task<BaseResponse<string>> Update(ContrAgentDto model)
-    {
-        try
+        ContrAgentDto existingContrAgentDto = getContrAgentResponse.Result;
+        _mapper.Map(model, existingContrAgentDto);
+        ContrAgent contrAgent =
+            await _repositoryWrapper.ContrAgentRepository.GetByCondition(x => x.Id.Equals(existingContrAgentDto.Id));
+        if (contrAgent == null)
         {
-            ContrAgent? contrAgent = await _repositoryWrapper.ContrAgentRepository.GetByCondition(x => x.Id == model.Id);
-            var result = await _contrAgentValidator.ValidateAsync(contrAgent);
-            if (result.IsValid)
-            {
-                contrAgent.AmplificationFactor = model.AmplificationFactor;
-                contrAgent.CompanyName = model.CompanyName;
-                contrAgent.DirectorName = model.DirectorName;
-                contrAgent.DirectorPatronymic = model.DirectorPatronymic;
-                contrAgent.DirectorSurname = model.DirectorSurname;
-                contrAgent.BIN = model.BIN;
-                contrAgent.LastModified = DateTime.Now;
-                contrAgent.LastModifiedBy = "Admin";
-                _repositoryWrapper.ContrAgentRepository.Update(contrAgent);
-                await _repositoryWrapper.Save();
+            return new BaseResponse<ContrAgentDto>(
+                Result: null,
+                Messages: new List<string> { "Контрагент не найден" },
+                Success: false);
+        }
 
-                return new BaseResponse<string>(
-                    Result: contrAgent.Id.ToString(),
-                    Success: true,
-                    StatusCode: 200,
-                    Messages: new List<string>{"Контрагент успешно изменен"});
-            }
-            return new BaseResponse<string>(
-                Result: "", 
+        existingContrAgentDto.LastModified = DateTime.Now;
+        existingContrAgentDto.LastModifiedBy = "Admin";
+        _mapper.Map(existingContrAgentDto, contrAgent);
+        var result = await _contrAgentValidator.ValidateAsync(contrAgent);
+        if (!result.IsValid)
+            return new BaseResponse<ContrAgentDto>(
+                Result: null,
                 Messages: _mapper.Map<List<string>>(result.Errors),
-                Success: false,
-                StatusCode: 400);
-        }
-        catch (Exception e)
-        {
-            return new BaseResponse<string>(
-                Result: "",
-                Messages: new List<string>{e.Message},
-                Success: false,
-                StatusCode: 500);
-        }
+                Success: false);
+        
+        _repositoryWrapper.ContrAgentRepository.Update(contrAgent);
+        await _repositoryWrapper.Save();
+        
+        return new BaseResponse<ContrAgentDto>(
+            Result: existingContrAgentDto,
+            Success: true,
+            Messages: new List<string> { "Пользователь успешно изменен" });
+    }
+    
+    public async Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions)
+    {
+        var queryableContrAgents = _repositoryWrapper.ContrAgentRepository.GetAll();
+        return await DataSourceLoader.LoadAsync(queryableContrAgents, loadOptions);
     }
 
     public async Task<BaseResponse<bool>> Delete(string oid)
     {
-        try
+        ContrAgent? contrAgent = await _repositoryWrapper.ContrAgentRepository.GetByCondition(x => x.Id.ToString() == oid);
+        if (contrAgent is not null)
         {
-            ContrAgent? contrAgent = await _repositoryWrapper.ContrAgentRepository.GetByCondition(x => x.Id.ToString() == oid);
-            if (contrAgent is not null)
-            {
-                contrAgent.IsDelete = true;
-                _repositoryWrapper.ContrAgentRepository.Update(contrAgent);
-                await _repositoryWrapper.Save();
+            contrAgent.IsDelete = true;
+            _repositoryWrapper.ContrAgentRepository.Update(contrAgent);
+            await _repositoryWrapper.Save();
 
-                return new BaseResponse<bool>(
-                    Result: true,
-                    Success: true,
-                    StatusCode: 200,
-                    Messages: new List<string>{"Контрагент успешно удален"});
-            }
-            
             return new BaseResponse<bool>(
-                Result: false, 
-                Messages: new List<string>{"Контрагент не существует"},
-                Success: false,
-                StatusCode: 400);
+                Result: true,
+                Success: true,
+                Messages: new List<string>{"Контрагент успешно удален"});
         }
-        catch (Exception e)
-        {
-            return new BaseResponse<bool>(
-                Result: false,
-                Messages: new List<string>{e.Message},
-                Success: false,
-                StatusCode: 500);
-        }
+        return new BaseResponse<bool>(
+            Result: false, 
+            Messages: new List<string>{"Контрагент не существует"},
+            Success: false);
     }
 }

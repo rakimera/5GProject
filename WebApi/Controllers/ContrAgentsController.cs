@@ -1,6 +1,8 @@
 using Application.Interfaces;
 using Application.Models.ContrAgents;
 using AutoMapper;
+using DevExtreme.AspNet.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -18,30 +20,57 @@ public class ContrAgentsController : Controller
         _service = service;
     }
 
-    [HttpGet]
-    public IActionResult Get() => 
-        Ok(_service.ContrAgentService.GetAll());
+    [HttpGet, Authorize(Roles = "Admin")]
+    public IActionResult Get()
+    {
+        var baseResponse = _service.ContrAgentService.GetAll();
+        if (baseResponse.Success)
+            return Ok(baseResponse);
+        return NotFound(baseResponse);
+    }
     
     
     [HttpGet("{oid}")]
-    public async Task<IActionResult> Get(string oid) => 
-        Ok(await _service.ContrAgentService.GetByOid(oid));
+    public async Task<IActionResult> Get(string oid)
+    {
+        var baseResponse = await _service.ContrAgentService.GetByOid(oid);
+        if (baseResponse.Success)
+            return Ok(baseResponse);
+        return NotFound(baseResponse);
+    }
 
     [HttpPost]
     public async Task<IActionResult> Post(CreateContrAgentDto model)
     {
         ContrAgentDto contrAgentDto = _mapper.Map<ContrAgentDto>(model);
-        return Ok(await _service.ContrAgentService.CreateAsync(contrAgentDto));
+        var baseResponse = await _service.ContrAgentService.CreateAsync(contrAgentDto);
+        if (baseResponse.Success)
+            return Ok(baseResponse);
+        return BadRequest(baseResponse);
     }
 
     [HttpPut]
     public async Task<IActionResult> Put(UpdateContrAgentDto model)
     {
-        ContrAgentDto contrAgentDto = _mapper.Map<ContrAgentDto>(model);
-        return Ok(await _service.ContrAgentService.Update(contrAgentDto));
+        var baseResponse = await _service.ContrAgentService.UpdateContrAgent(model);
+        if (baseResponse.Success)
+            return Ok(baseResponse);
+        return BadRequest(baseResponse);
     }
         
     [HttpDelete("{oid}")]
-    public async Task<IActionResult> Delete(string oid) =>
-        Ok(await _service.ContrAgentService.Delete(oid));
+    public async Task<IActionResult> Delete(string oid)
+    {
+        var baseResponse = await _service.ContrAgentService.Delete(oid);
+        if (baseResponse.Success)
+            return Ok(baseResponse);
+        return NotFound(baseResponse);
+    }
+    
+    [HttpGet("index"), Authorize(Roles = "Admin")]
+    public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
+    {
+        var loadResult = await _service.UserService.GetLoadResult(loadOptions);
+        return Ok(loadResult);
+    }
 }
