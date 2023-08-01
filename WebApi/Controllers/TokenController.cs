@@ -29,9 +29,9 @@ public class TokenController : ControllerBase
 
     [HttpPost, Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("revoke")]
-    public async Task<IActionResult> Revoke()
+    public async Task<IActionResult> Revoke(TokenDto tokenApiModel)
     {
-        var baseResponse = await _service.TokenService.Revoke(User.Identity.Name);
+        var baseResponse = await _service.TokenService.Revoke(tokenApiModel.RefreshToken);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);

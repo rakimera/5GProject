@@ -19,7 +19,11 @@ const authService = {
     },
     async revoke() {
         try {
-            await axios.post('/api/Token/revoke');
+            const refreshToken = {
+                accessToken: null, 
+                refreshToken: await tokenService.getRefreshToken()}; 
+            console.log(refreshToken)
+            await axios.post('/api/Token/revoke', refreshToken);
             await tokenService.removeTokens();
         }
         catch (error) {
