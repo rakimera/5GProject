@@ -19,28 +19,48 @@ public class ProjectsController : Controller
     }
 
     [HttpGet]
-    public IActionResult Get() =>
-        Ok(_service.ProjectService.GetAll());
-    
+    public IActionResult Get()
+    {
+        var baseResponse = _service.ProjectService.GetAll();
+        if (baseResponse.Success)
+            return Ok(baseResponse);
+        return NotFound(baseResponse);
+    }
+
     [HttpGet("{oid}")]
-    public async Task<IActionResult> Get(string oid) => 
-        Ok(await _service.ProjectService.GetByOid(oid));
-    
+    public async Task<IActionResult> Get(string oid)
+    {
+        var baseResponse = await _service.ProjectService.GetByOid(oid);
+        if (baseResponse.Success)
+            return Ok(baseResponse);
+        return NotFound(baseResponse);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Post(CreateProjectDto model)
     {
         ProjectDto projectDto = _mapper.Map<ProjectDto>(model);
-        return Ok(await _service.ProjectService.CreateAsync(projectDto));
+        var baseResponse = await _service.ProjectService.CreateAsync(projectDto);
+        if (baseResponse.Success)
+            return Ok(baseResponse);
+        return BadRequest(baseResponse);
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put(UpdateProjectDto model) 
+    public async Task<IActionResult> Put(UpdateProjectDto model)
     {
-        ProjectDto projectDto = _mapper.Map<ProjectDto>(model);
-        return Ok(await _service.ProjectService.Update(projectDto));
+        var baseResponse = await _service.ProjectService.Update(model);
+        if (baseResponse.Success)
+            return Ok(baseResponse);
+        return BadRequest(baseResponse);
     }
 
     [HttpDelete("{oid}")]
-    public async Task<IActionResult> Delete(string oid) =>
-        Ok(await _service.ProjectService.Delete(oid));
+    public async Task<IActionResult> Delete(string oid)
+    {
+        var baseResponse = await _service.ProjectService.Delete(oid);
+        if (baseResponse.Success)
+            return Ok(baseResponse);
+        return NotFound(baseResponse);
+    }
 }

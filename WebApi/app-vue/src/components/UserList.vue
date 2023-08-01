@@ -8,7 +8,7 @@
         {{ user.surname }},
         {{ user.password }},
         {{ user.role }},
-        {{ user.oid }},
+        {{ user.id }},
         <button @click="editUser(user)">Edit</button>
         <button @click="deleteUser(user)">Delete</button>
       </li>
@@ -46,7 +46,7 @@ export default {
         surname: '',
         password: '',
         role: '',
-        oid: ''
+        id: ''
       },
       editingUser: null,
     };
@@ -95,8 +95,8 @@ export default {
     },
     async deleteUser(user) {
       try {
-        console.log(user.oid)
-        const response = await userService.deleteUser(user.oid);
+        console.log(user.id)
+        const response = await userService.deleteUser(user.id);
         console.log(response);
         await this.getUsers();
       } catch (error) {

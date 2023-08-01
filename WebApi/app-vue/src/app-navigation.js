@@ -21,6 +21,10 @@ export default [
         path: "/users"
       },
       {
+        text: "Users Table",
+        path: "/users_table"
+      },
+      {
         text: "ContrAgents",
         path: "/contrAgents"
       }
