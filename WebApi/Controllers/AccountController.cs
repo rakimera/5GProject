@@ -1,10 +1,7 @@
-using Application.DataObjects;
 using Application.Interfaces;
 using Application.Models.Users;
 using AutoMapper;
 using DevExtreme.AspNet.Data;
-using DevExtreme.AspNet.Data.ResponseModel;
-using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +21,6 @@ public class AccountController : Controller
     }
 
     [HttpGet, Authorize(Roles = "Admin")]
-    // [HttpGet]
     public IActionResult Get()
     {
         var baseResponse = _service.UserService.GetAll();
@@ -56,8 +52,7 @@ public class AccountController : Controller
     [HttpPut]
     public async Task<IActionResult> Put(UpdateUserDto model)
     {
-        UserDto userDto = _mapper.Map<UserDto>(model);
-        var baseResponse = await _service.UserService.Update(userDto);
+        var baseResponse = await _service.UserService.UpdateUser(model);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);
@@ -72,7 +67,7 @@ public class AccountController : Controller
         return NotFound(baseResponse);
     }
 
-    [HttpGet("index")]
+    [HttpGet("index"), Authorize(Roles = "Admin")]
     public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
     {
         var loadResult = await _service.UserService.GetLoadResult(loadOptions);
