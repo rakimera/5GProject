@@ -1,19 +1,53 @@
 import axios from '../utils/axios';
-import authHeader from "@/api/AuthHeader";
+import storeExtension from "@/utils/storeExtension";
 
-const header = await authHeader();
 const contrAgentService = {
-    getContrAgents() {
-        return axios.get('/api/contrAgents', { headers: header});
+    async getContrAgents() {
+        try {
+            return await axios.get(`/api/contrAgents`);
+        }
+        catch (error){
+            console.log(error)
+        }
     },
-    createContrAgent(contrAgent) {
-        return axios.post('/api/contrAgents', contrAgent, { headers: header});
+    async createContrAgent(contrAgent) {
+        try {
+            return await axios.post('/api/contrAgents', contrAgent);
+        }
+        catch (error){
+            console.log(error)
+        }
+
     },
-    updateContrAgent(contrAgent) {
-        return axios.put('/api/contrAgents', contrAgent, { headers: header});
+
+    async updateContrAgent(contrAgent) {
+        try {
+            return await axios.put('/api/contrAgents', contrAgent)
+        }
+        catch (error){
+            console.log(error)
+        }
     },
-    deleteContrAgent(oid) {
-        return axios.delete(`/api/contrAgents/${oid}`, { headers: header});
+
+    async deleteContrAgent(oid) {
+        try {
+            return await axios.delete(`/api/contrAgents/${oid}`)
+        }
+        catch (error){
+            console.log(error)
+        }
+
+    },
+
+    async getAllContrAgents(loadOptions) {
+        try {
+            let options = storeExtension.getParams(loadOptions);
+            const response = await axios.get(`/api/contrAgents/Index/${options}`);
+            console.log(response)
+            return response.data;
+        } catch (error) {
+            console.log(error)
+        }
     }
 };
 
