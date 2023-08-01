@@ -1,5 +1,4 @@
 import axios from '@/utils/axios';
-import authHeader from "@/api/AuthHeader";
 async function updateTokens(response) {
     localStorage.setItem('userToken', JSON.stringify(response.data.result.accessToken));
     localStorage.setItem('refreshToken', JSON.stringify(response.data.result.refreshToken));
@@ -8,7 +7,6 @@ async function updateTokens(response) {
     
     return response.data;
 }
-const header = await authHeader();
 const authService = {
     async login(loginModel) {
         const response = await axios.post('/api/Auth/login', loginModel);
@@ -29,7 +27,7 @@ const authService = {
     revoke() {
         localStorage.removeItem('userToken');
         localStorage.removeItem('refreshToken');
-        return axios.post('/api/Token/revoke', {},{ headers: header});
+        return axios.post('/api/Token/revoke');
     },
     loggedIn() {
         return !!localStorage.getItem('userToken');
