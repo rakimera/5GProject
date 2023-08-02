@@ -4,6 +4,8 @@ using Application.Interfaces.RepositoryContract.Common;
 using Application.Models.Projects;
 using Application.Validation;
 using AutoMapper;
+using DevExtreme.AspNet.Data;
+using DevExtreme.AspNet.Data.ResponseModel;
 using Domain.Entities;
 
 namespace Application.Services;
@@ -38,6 +40,12 @@ public class ProjectService : IProjectService
             Result: models,
             Success: true,
             Messages: new List<string> { "Данные не были получены, возможно проекты еще не созданы или удалены" });
+    }
+    
+    public async Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions)
+    {
+        var queryableUsers = _repositoryWrapper.ProjectRepository.GetAll();
+        return await DataSourceLoader.LoadAsync(queryableUsers, loadOptions);
     }
 
     public async Task<BaseResponse<string>> CreateAsync(ProjectDto model)

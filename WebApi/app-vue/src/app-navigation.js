@@ -5,16 +5,12 @@ export default [
     icon: "home"
   },
   {
-    text: "Examples",
-    icon: "folder",
+    text: "Администрирование",
+    icon: "preferences",
     items: [
       {
         text: "Profile",
         path: "/profile"
-      },
-      {
-        text: "Tasks",
-        path: "/tasks"
       },
       {
         text: "Users",
@@ -27,6 +23,20 @@ export default [
       {
         text: "ContrAgents",
         path: "/contrAgents"
+      }
+    ]
+  },
+  {
+    text: "Работа с проектами",
+    icon: "folder",
+    items: [
+      {
+        text: "Проекты",
+        path: "/projects"
+      },
+      {
+        text: "Новый проект",
+        path: "/create-projects"
       }
     ]
   }
