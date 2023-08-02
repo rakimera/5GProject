@@ -6,4 +6,5 @@ public interface IServiceWrapper
     ITokenService TokenService { get; }
     IProjectService ProjectService { get; }
     IAuthorizationService AuthorizationService { get; }
+    IContrAgentService ContrAgentService { get; }
 }

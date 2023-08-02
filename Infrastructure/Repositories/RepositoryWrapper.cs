@@ -11,6 +11,7 @@ public class RepositoryWrapper : IRepositoryWrapper
     private IUserRepository _userRepository;
     private IProjectRepository _projectRepository;
     private ITokenRepository _tokenRepository;
+    private IContrAgentRepository _contrAgentRepository;
 
     public RepositoryWrapper(Project5GDbContext db)
     {
@@ -27,6 +28,19 @@ public class RepositoryWrapper : IRepositoryWrapper
             }
 
             return _userRepository;
+        }
+    }
+    
+    public IContrAgentRepository ContrAgentRepository
+    {
+        get
+        {
+            if (_contrAgentRepository == null)
+            {
+                _contrAgentRepository = new ContrAgentRepository(_db);
+            }
+
+            return _contrAgentRepository;
         }
     }
 

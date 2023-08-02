@@ -21,6 +21,7 @@ public class Project5GDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<ContrAgent>().HasQueryFilter(x => x.IsDelete == false);
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<User>().HasIndex(x => x.Id).IsUnique();
     }

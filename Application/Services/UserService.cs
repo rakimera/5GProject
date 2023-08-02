@@ -49,11 +49,6 @@ public class UserService : IUserService
         return await DataSourceLoader.LoadAsync(queryableUsers, loadOptions);
     }
 
-    public BaseResponse<UserDto> GetAuthorizedUser(string login, string password)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<BaseResponse<string>> CreateAsync(UserDto model)
     {
         var mapUser = _mapper.Map<User>(model);
@@ -82,25 +77,6 @@ public class UserService : IUserService
     public async Task<BaseResponse<UserDto>> GetByOid(string oid)
     {
         User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.ToString() == oid);
-        UserDto model = _mapper.Map<UserDto>(user);
-
-        if (user is null)
-        {
-            return new BaseResponse<UserDto>(
-                Result: null,
-                Messages: new List<string> { "Пользователь не найден" },
-                Success: true);
-        }
-
-        return new BaseResponse<UserDto>(
-            Result: model,
-            Success: true,
-            Messages: new List<string> { "Пользователь успешно найден" });
-    }
-
-    public async Task<BaseResponse<UserDto>> GetByLogin(string login)
-    {
-        User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Login == login);
         UserDto model = _mapper.Map<UserDto>(user);
 
         if (user is null)

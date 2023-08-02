@@ -7,6 +7,7 @@ import defaultLayout from "./layouts/side-nav-outer-toolbar";
 import simpleLayout from "./layouts/single-card";
 import Users from './views/Users-page.vue';
 import GetAllUsersPage from "@/views/get-all-users-page.vue";
+import ContrAgents from './views/ContrAgent-page.vue';
 import authService from "@/api/AuthService";
 
 function loadView(view) {
@@ -112,6 +113,16 @@ const router = new createRouter({
         layout: defaultLayout
       },
       component: GetAllUsersPage
+    }
+    ,
+    {
+      path: "/contrAgents",
+      name: "contrAgents",
+      meta: {
+        requiresAuth: true,
+        layout: defaultLayout
+      },
+      component: ContrAgents
     }
   ],
   history: createWebHashHistory()
