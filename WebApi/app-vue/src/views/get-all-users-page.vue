@@ -4,18 +4,6 @@
       :show-borders="true"
       :remote-operations="true"
       key-expr="ID"
-      @editing-start="logEvent('EditingStart')"
-      @init-new-row="logEvent('InitNewRow')"
-      @row-inserting="logEvent('RowInserting')"
-      @row-inserted="logEvent('RowInserted')"
-      @row-updating="logEvent('RowUpdating')"
-      @row-updated="logEvent('RowUpdated')"
-      @row-removing="logEvent('RowRemoving')"
-      @row-removed="logEvent('RowRemoved')"
-      @saving="logEvent('Saving')"
-      @saved="logEvent('Saved')"
-      @edit-canceling="logEvent('EditCanceling')"
-      @edit-canceled="logEvent('EditCanceled')"
   >
     <DxColumn
         data-field="login"
@@ -44,29 +32,11 @@
     />
     <DxEditing
         :allow-deleting="true"
-        :allow-adding="true"
-        mode="form"
     />
   </DxDataGrid>
-  <div id="events">
-    <div>
-      <div class="caption">
-        Fired events
-      </div>
-      <DxButton
-          id="clear"
-          text="Clear"
-          @click="clearEvents()"
-      />
-    </div>
-    <ul>
-      <li v-for="(event, index) in events" :key="index">{{ event }}</li>
-    </ul>
-  </div>
 </template>
 
 <script>
-import DxButton from "devextreme-vue/button";
 import {
   DxDataGrid,
   DxColumn,
@@ -110,21 +80,12 @@ export default {
     DxPaging,
     DxPager,
     DxEditing,
-    DxButton,
   },
   data() {
     return {
       dataSource: store,
       events: [],
     };
-  },
-  methods: {
-    logEvent(eventName) {
-      this.events.unshift(eventName);
-    },
-    clearEvents() {
-      this.events = [];
-    },
   },
 };
 </script>
