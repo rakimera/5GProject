@@ -1,12 +1,6 @@
 import axios from '@/utils/axios';
-async function updateTokens(response) {
-    localStorage.setItem('userToken', JSON.stringify(response.data.result.accessToken));
-    localStorage.setItem('refreshToken', JSON.stringify(response.data.result.refreshToken));
-    console.log(response.data.result.accessToken);
-    console.log(response.data.result.refreshToken);
-    
-    return response.data;
-}
+import tokenService from "@/api/tokenService";
+
 const authService = {
     async login(loginModel) {
         const response = await axios.post('/api/Auth/login', loginModel);
@@ -14,20 +8,27 @@ const authService = {
             throw new Error("неверный логин или пароль") ;
         }
         
-        return updateTokens(response);
+        await tokenService.updateTokens(response);
     },
     async refreshingToken(tokenApiModel) {
         try {
-            const response = await axios.post('/api/Token/refresh', tokenApiModel);
-            return response;
+            return await axios.post('/api/Token/refresh', tokenApiModel);
         } catch (error) {
             console.log("Ошибка получения Refresh токена", error)
         }
     },
-    revoke() {
-        localStorage.removeItem('userToken');
-        localStorage.removeItem('refreshToken');
-        return axios.post('/api/Token/revoke');
+    async revoke() {
+        try {
+            const refreshToken = {
+                accessToken: null, 
+                refreshToken: await tokenService.getRefreshToken()}; 
+            console.log(refreshToken)
+            await axios.post('/api/Token/revoke', refreshToken);
+            await tokenService.removeTokens();
+        }
+        catch (error) {
+            return error;
+        }        
     },
     loggedIn() {
         return !!localStorage.getItem('userToken');

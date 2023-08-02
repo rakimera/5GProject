@@ -86,19 +86,19 @@ export default {
     
     
     const userMenuItems = [{
-        text: "Profile",
+        text: "Профиль",
         icon: "user",
         onClick: onProfileClick
       },
       {
-        text: "Logout",
+        text: "Выход",
         icon: "runner",
         onClick: onLogoutClick
     }];
       
-    function onLogoutClick() {
-      AuthService.revoke();
-      router.push({
+    async function onLogoutClick() {
+      await AuthService.revoke();
+      await router.push({
         path: "/login-form",
         query: { redirect: route.path }
       });

@@ -6,8 +6,8 @@
         editor-type="dxTextBox"
         :editor-options="{ stylingMode: 'filled', placeholder: 'Email', mode: 'email' }"
       >
-        <dx-required-rule message="Email is required" />
-        <dx-email-rule message="Email is invalid" />
+        <dx-required-rule message="Для сброса пароля необходимо ввести Email" />
+        <dx-email-rule message="Email адресс введен неверно" />
         <dx-label :visible="false" />
       </dx-item>
       <dx-button-item>
@@ -23,7 +23,7 @@
       <dx-item>
         <template #default>
           <div class="login-link">
-            Return to <router-link to="/login-form">Sign In</router-link>
+            Попробовать <router-link to="/login-form">Войти</router-link>
           </div>
         </template>
       </dx-item>
@@ -31,7 +31,7 @@
         <div>
           <span class="dx-button-text">
               <dx-load-indicator v-if="loading" width="24px" height="24px" :visible="true" />
-              <span v-if="!loading">Reset my password</span>
+              <span v-if="!loading">Сбросить мой пароль</span>
           </span>
         </div>
       </template>
@@ -55,7 +55,7 @@ import { useRouter } from 'vue-router';
 
 import authService from "@/api/AuthService";
 
-const notificationText = 'We\'ve sent a link to reset your password. Check your inbox.';
+const notificationText = 'Мы отпарвили Вам ссылку для сброса пароля, пожалуйста проверьте свою почту.';
 
 export default {
   components: {
