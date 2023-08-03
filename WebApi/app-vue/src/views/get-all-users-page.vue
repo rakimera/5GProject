@@ -4,6 +4,7 @@
       :show-borders="true"
       :remote-operations="true"
       key-expr="ID"
+      @row-click="onRowClick"
   >
     <DxColumn
         data-field="login"
@@ -87,6 +88,12 @@ export default {
       events: [],
     };
   },
+  methods: {
+    onRowClick(e) {
+      const userId = e.key;
+      this.$router.push({ name: 'userDetail', params: { id: userId } });
+    }
+  }
 };
 </script>
 
