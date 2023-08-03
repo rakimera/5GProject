@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Application.DataObjects;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
@@ -7,6 +8,7 @@ using AutoMapper;
 using DevExtreme.AspNet.Data;
 using DevExtreme.AspNet.Data.ResponseModel;
 using Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace Application.Services;
 
@@ -50,6 +52,12 @@ public class ProjectService : IProjectService
 
     public async Task<BaseResponse<string>> CreateAsync(ProjectDto model)
     {
+        var totalUser = ClaimsIdentity.DefaultNameClaimType; //пытаюсь достать текущего пользователя
+        var totalUser2 = ClaimsPrincipal.Current.Identity.Name; //пытаюсь достать текущего пользователя
+        User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Login.Equals("заглушка"));
+        model.ExecutorId = user.Id.ToString();
+        model.ProjectStatusId = new Guid().ToString();
+        
         var result = await _projectValidator.ValidateAsync(model);
         if (result.IsValid)
         {

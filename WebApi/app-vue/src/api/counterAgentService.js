@@ -1,7 +1,7 @@
 import axios from '../utils/axios';
 import storeExtension from "@/utils/storeExtension";
 
-const contrAgentService = {
+const counterAgentService = {
     async getContrAgents() {
         try {
             return await axios.get(`/api/contrAgents`);
@@ -10,9 +10,9 @@ const contrAgentService = {
             console.log(error)
         }
     },
-    async createContrAgent(contrAgent) {
+    async createContrAgent(CreateProjectDto) {
         try {
-            return await axios.post('/api/contrAgents', contrAgent);
+            return await axios.post('/api/contrAgents', CreateProjectDto);
         }
         catch (error){
             console.log(error)
@@ -51,4 +51,4 @@ const contrAgentService = {
     }
 };
 
-export default contrAgentService;
+export default counterAgentService;

@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import contrAgentService from '../api/contrAgentService';
+import counterAgentService from '../api/counterAgentService';
 
 export default {
   data() {
@@ -64,7 +64,7 @@ export default {
     },
     async getContrAgents() {
       try {
-        const response = await contrAgentService.getContrAgents();
+        const response = await counterAgentService.getContrAgents();
         this.contrAgents = response.data.result;
       } catch (error) {
         console.error(error);
@@ -72,7 +72,7 @@ export default {
     },
     async createContrAgent() {
       try {
-        await contrAgentService.createContrAgent(this.newContrAgent);
+        await counterAgentService.createContrAgent(this.newContrAgent);
         this.newContrAgent = {
           companyName: '',
           bin: '',
@@ -88,7 +88,7 @@ export default {
     },
     async updateContrAgent() {
       try {
-        await contrAgentService.updateContrAgent(this.editingContrAgent);
+        await counterAgentService.updateContrAgent(this.editingContrAgent);
         this.editingContrAgent = null;
         await this.getContrAgents();
       } catch (error) {
@@ -97,7 +97,7 @@ export default {
     },
     async deleteContrAgent(contrAgent) {
       try {
-        await contrAgentService.deleteContrAgent(contrAgent.id);
+        await counterAgentService.deleteContrAgent(contrAgent.id);
         await this.getContrAgents();
       } catch (error) {
         console.error(error);
