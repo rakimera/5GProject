@@ -141,4 +141,9 @@ export default {
 #events ul li:last-child {
   border-bottom: none;
 }
+
+.dx-datagrid .dx-row:hover {
+  background-color: #f2f2f2;
+  cursor: pointer;
+}
 </style>
