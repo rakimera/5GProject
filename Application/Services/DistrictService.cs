@@ -87,10 +87,10 @@ public class DistrictService : IDistrictService
             Success: false);
     }
 
-    public BaseResponse<string> GetByDistrictOid(string name)
+    public async Task<BaseResponse<string>> GetByDistrictOid(string name)
     {
-        var district = _repositoryWrapper.DistrictRepository
-            .GetByCondition(x => x.DistrictName.Equals(name)).Result;
+        var district = await _repositoryWrapper.DistrictRepository
+            .GetByCondition(x => x.DistrictName.Equals(name));
         if (district != null)
         {
             string id = district.Id.ToString();

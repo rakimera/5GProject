@@ -201,127 +201,127 @@ public class DataSeed
                 new Town
                 {
                     TownName = "Атырау",
-                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Атырауская область").Result,
+                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Атырауская область").Result.Result,
                     District = _serviceWrapper.DistrictService.GetDistrictByName("Атырауская область").Result.Result
                 },
                 new Town
                 {
                     TownName = "Рудный",
-                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Костанайская область").Result,
+                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Костанайская область").Result.Result,
                     District = _serviceWrapper.DistrictService.GetDistrictByName("Костанайская область").Result.Result
                 },
                 new Town
                 {
                     TownName = "Экибастуз",
-                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Павлодарская область").Result,
+                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Павлодарская область").Result.Result,
                     District = _serviceWrapper.DistrictService.GetDistrictByName("Павлодарская область").Result.Result
                 },
                 new Town
                 {
                     TownName = "Талдыкорган",
-                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Жетысуская область").Result,
+                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Жетысуская область").Result.Result,
                     District = _serviceWrapper.DistrictService.GetDistrictByName("Жетысуская область").Result.Result
                 },
                 new Town
                 {
                     TownName = "Темиртау",
-                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Карагандинская область").Result,
+                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Карагандинская область").Result.Result,
                     District = _serviceWrapper.DistrictService.GetDistrictByName("Карагандинская область").Result.Result
                 },
                 new Town
                 {
                     TownName = "Кокшетау",
-                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Акмолинская область").Result,
+                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Акмолинская область").Result.Result,
                     District = _serviceWrapper.DistrictService.GetDistrictByName("Акмолинская область").Result.Result
                 },
                 new Town
                 {
                     TownName = "Туркестан",
-                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Туркестанская область").Result,
+                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Туркестанская область").Result.Result,
                     District = _serviceWrapper.DistrictService.GetDistrictByName("Туркестанская область").Result.Result
                 },
                 new Town
                 {
                     TownName = "Петропавловск",
-                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Северо-Казахстанская область").Result,
+                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Северо-Казахстанская область").Result.Result,
                     District = _serviceWrapper.DistrictService.GetDistrictByName("Северо-Казахстанская область").Result.Result
                 },
                 new Town
                 {
                     TownName = "Уральск",
-                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Западно-Казахстанская область").Result,
+                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Западно-Казахстанская область").Result.Result,
                     District = _serviceWrapper.DistrictService.GetDistrictByName("Западно-Казахстанская область").Result.Result
                 },
                 new Town
                 {
                     TownName = "Костанай",
-                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Костанайская область").Result,
+                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Костанайская область").Result.Result,
                     District = _serviceWrapper.DistrictService.GetDistrictByName("Костанайская область").Result.Result
                 },
                 new Town
                 {
                     TownName = "Актау",
-                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Мангистауская область").Result,
+                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Мангистауская область").Result.Result,
                     District = _serviceWrapper.DistrictService.GetDistrictByName("Мангистауская область").Result.Result
                 },
                 new Town
                 {
                     TownName = "Кызылорда",
-                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Кызылординская область").Result,
+                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Кызылординская область").Result.Result,
                     District = _serviceWrapper.DistrictService.GetDistrictByName("Кызылординская область").Result.Result
                 },
                 new Town
                 {
                     TownName = "Семей",
-                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Абайская область").Result,
+                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Абайская область").Result.Result,
                     District = _serviceWrapper.DistrictService.GetDistrictByName("Абайская область").Result.Result
                 },
                 new Town
                 {
                     TownName = "Павлодар",
-                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Павлодарская область").Result,
+                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Павлодарская область").Result.Result,
                     District = _serviceWrapper.DistrictService.GetDistrictByName("Павлодарская область").Result.Result
                 },
                 new Town
                 {
                     TownName = "Усть-Каменогорск",
-                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Восточно-Казахстанская область").Result,
+                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Восточно-Казахстанская область").Result.Result,
                     District = _serviceWrapper.DistrictService.GetDistrictByName("Восточно-Казахстанская область").Result.Result
                 },
                 new Town
                 {
                     TownName = "Тараз",
-                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Жамбылская область").Result,
+                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Жамбылская область").Result.Result,
                     District = _serviceWrapper.DistrictService.GetDistrictByName("Жамбылская область").Result.Result
                 },
                 new Town
                 {
                     TownName = "Караганда",
-                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Карагандинская область").Result,
+                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Карагандинская область").Result.Result,
                     District = _serviceWrapper.DistrictService.GetDistrictByName("Карагандинская область").Result.Result
                 },
                 new Town
                 {
                     TownName = "Актобе",
-                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Актюбинская область").Result,
+                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Актюбинская область").Result.Result,
                     District = _serviceWrapper.DistrictService.GetDistrictByName("Актюбинская область").Result.Result
                 },
                 new Town
                 {
                     TownName = "Алматы",
-                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Города Республиканского значения").Result,
+                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Города Республиканского значения").Result.Result,
                     District = _serviceWrapper.DistrictService.GetDistrictByName("Города Республиканского значения").Result.Result
                 },
                 new Town
                 {
                     TownName = "Шымкент",
-                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Города Республиканского значения").Result,
+                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Города Республиканского значения").Result.Result,
                     District = _serviceWrapper.DistrictService.GetDistrictByName("Города Республиканского значения").Result.Result
                 },
                 new Town
                 {
                     TownName = "Астана",
-                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Города Республиканского значения").Result,
+                    DistrictOid = _serviceWrapper.DistrictService.GetByDistrictOid("Города Республиканского значения").Result.Result,
                     District = _serviceWrapper.DistrictService.GetDistrictByName("Города Республиканского значения").Result.Result
                 }
             };
