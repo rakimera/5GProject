@@ -16,14 +16,17 @@
         <DxTab
             title="Контрагент"
         >
-          <div class="dx-fieldset">
+          <div class="fileuploader-container" v-if="counterAgentsLoaded">
             <DxSelectBox
-                :data-source="companies"
+                :data-source="dataSource"
                 :input-attr="{ 'aria-label': 'Контрагенты' }"
                 label="Выберите контрагента"
+                display-expr="companyName"
+                value-expr="companyName"
                 data-field="contrAgentId"
             />
           </div>
+          <div v-else>Loading...</div>
         </DxTab>
         <DxTab
             title="Адрес"
@@ -79,20 +82,36 @@ import {
 import {reactive, ref} from "vue";
 import { useRoute, useRouter } from 'vue-router';
 import counterAgentService from "@/api/counterAgentService";
+import projectService from "@/api/projectService";
+import ArrayStore from "devextreme/data/array_store";
 
 export default {
   setup(){
     const formData = reactive({
       contrAgentId:"",
-      password:"",
       districtId: "",
       townId: "",
       street: "",
       house: ""
     });
+    
     const route = useRoute();
     const router = useRouter();
     const loading = ref(false);
+    const counterAgents = ref([]);
+    const counterAgentsLoaded = ref(false);
+
+    async function fetchCounterAgents() {
+      try {
+        const response = await counterAgentService.getContrAgents();
+        counterAgents.value = response.data.result;
+        counterAgentsLoaded.value = true;
+      } catch (error) {
+        console.error("Ошибка получения агнетов (не секретных):", error);
+      }
+    }
+
+    fetchCounterAgents()
     async function onSubmit() {
       loading.value = true;
       const CreateProjectDto = {
@@ -102,7 +121,7 @@ export default {
         street: formData.street,
         house: formData.house};
       try {
-        await counterAgentService.createContrAgent(CreateProjectDto)
+        await projectService.createProject(CreateProjectDto)
         await router.push(route.query.redirect || '/projects');
         notify('Uncomment the line to enable sending a form to the server.');
       } catch (error){
@@ -114,8 +133,13 @@ export default {
     return {
       formData,
       loading,
-      onSubmit
-    };
+      onSubmit,
+      counterAgents,
+      dataSource: new ArrayStore({
+      data: counterAgents,
+      key: 'companyName',
+    }),
+    }
   },
     
   components: {

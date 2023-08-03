@@ -11,9 +11,9 @@ const projectService = {
         }
     },
 
-    async createProject(user) {
+    async createProject(project) {
         try {
-            return await axios.post('/api/projects', user);
+            return await axios.post('/api/projects', project);
         }
         catch (error){
             console.log(error)
@@ -21,9 +21,9 @@ const projectService = {
 
     },
 
-    async updateProject(user) {
+    async updateProject(project) {
         try {
-            return await axios.put('/api/projects', user)
+            return await axios.put('/api/projects', project)
         }
         catch (error){
             console.log(error)

@@ -10,9 +10,9 @@ const counterAgentService = {
             console.log(error)
         }
     },
-    async createContrAgent(CreateProjectDto) {
+    async createContrAgent(contrAgent) {
         try {
-            return await axios.post('/api/contrAgents', CreateProjectDto);
+            return await axios.post('/api/contrAgents', contrAgent);
         }
         catch (error){
             console.log(error)
