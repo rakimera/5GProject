@@ -9,6 +9,7 @@ import Users from './views/Users-page.vue';
 import GetAllUsersPage from "@/views/get-all-users-page.vue";
 import ContrAgents from './views/ContrAgent-page.vue';
 import authService from "@/api/AuthService";
+import UserDetail from '@/views/users_detail_info.vue';
 
 function loadView(view) {
   return () => import (/* webpackChunkName: "login" */ `./views/${view}.vue`)
@@ -123,7 +124,16 @@ const router = new createRouter({
         layout: defaultLayout
       },
       component: ContrAgents
-    }
+    },
+      {
+          path: '/user/:id',
+          name: 'userDetail',
+          meta: {
+              requiresAuth: true,
+              layout: defaultLayout
+          },
+          component: UserDetail
+      }
   ],
   history: createWebHashHistory()
 });
