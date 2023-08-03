@@ -35,6 +35,18 @@ public class ProjectMapProfile : Profile
                 opt.MapFrom(src => src.Street))
             .ForMember(dest => dest.House, opt =>
                 opt.MapFrom(src => src.House)).ReverseMap();
+        
+        CreateMap<CreateProjectDto, ProjectDto>()
+            .ForMember(dest => dest.ContrAgentId, opt =>
+                opt.MapFrom(src => src.ContrAgentId))
+            .ForMember(dest => dest.DistrictId, opt =>
+                opt.MapFrom(src => src.DistrictId))
+            .ForMember(dest => dest.TownId, opt =>
+                opt.MapFrom(src => src.TownId))
+            .ForMember(dest => dest.Street, opt =>
+                opt.MapFrom(src => src.Street))
+            .ForMember(dest => dest.House, opt =>
+                opt.MapFrom(src => src.House)).ReverseMap();
 
     }
 }

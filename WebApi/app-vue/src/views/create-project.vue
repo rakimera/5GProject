@@ -22,8 +22,8 @@
                 :input-attr="{ 'aria-label': 'Контрагенты' }"
                 label="Выберите контрагента"
                 display-expr="companyName"
-                value-expr="companyName"
-                data-field="contrAgentId"
+                value-expr="id"
+                v-model="formData.contrAgentId"
             />
           </div>
           <div v-else>Loading...</div>
@@ -115,8 +115,8 @@ export default {
       loading.value = true;
       const CreateProjectDto = {
         contrAgentId: formData.contrAgentId, 
-        districtId: formData.districtId,
-        townId: formData.townId,
+        districtId: "854",
+        townId: "543",
         street: formData.street,
         house: formData.house};
       try {
