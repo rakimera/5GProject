@@ -87,40 +87,23 @@ public class DistrictService : IDistrictService
             Success: false);
     }
 
-    public async Task<BaseResponse<string>> GetByDistrictOid(string name)
+    public async Task<string?> GetByDistrictOid(string name)
     {
         var district = await _repositoryWrapper.DistrictRepository
             .GetByCondition(x => x.DistrictName.Equals(name));
         if (district != null)
-        {
-            string id = district.Id.ToString();
-            return new BaseResponse<string>(
-                Result: id,
-                Success: true,
-                Messages: new List<string> { "Айди успешно найден" });
-        }
-        return new BaseResponse<string>(
-            Result: null,
-            Messages: new List<string> { "Регион не существует" },
-            Success: false);
+            return district.Id.ToString();
+        return null;
     }
     
     
-    public async Task<BaseResponse<District>> GetDistrictByName(string name)
+    public async Task<District> GetDistrictByName(string name)
     {
         var district = await _repositoryWrapper.DistrictRepository
             .GetByCondition(x => x.DistrictName.Equals(name));
         if (district != null)
-        {
-            return new BaseResponse<District>(
-                Result: district,
-                Success: true,
-                Messages: new List<string> { "Айди успешно найден" });
-        }
-        return new BaseResponse<District>(
-            Result: null,
-            Messages: new List<string> { "Регион не существует" },
-            Success: false);
+            return district;
+        return null;
     }
         
 }
