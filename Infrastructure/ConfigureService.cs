@@ -1,5 +1,6 @@
 using Application.Interfaces.RepositoryContract.Common;
 using Infrastructure.Persistence.DataContext;
+using Infrastructure.Persistence.DataSeeding;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +12,7 @@ public static class ConfigureService
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
         services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
-        services.AddScoped<AdminInitializer>();
+        services.AddScoped<DataSeed>();
         return services;
     }
 

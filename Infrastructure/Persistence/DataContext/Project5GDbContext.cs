@@ -14,6 +14,7 @@ public class Project5GDbContext : DbContext
     public DbSet<ProjectStatus> ProjectsStatuses { get; set; }
     public DbSet<Town> Towns { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Role> Roles { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     public Project5GDbContext(DbContextOptions<Project5GDbContext> options) : base(options) {}
@@ -21,8 +22,8 @@ public class Project5GDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<User>().HasIndex(x => x.Login).IsUnique();
         modelBuilder.Entity<ContrAgent>().HasQueryFilter(x => x.IsDelete == false);
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<User>().HasIndex(x => x.Id).IsUnique();
     }
 }
