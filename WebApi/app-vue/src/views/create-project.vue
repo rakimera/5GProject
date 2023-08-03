@@ -83,7 +83,6 @@ import {reactive, ref} from "vue";
 import { useRoute, useRouter } from 'vue-router';
 import counterAgentService from "@/api/counterAgentService";
 import projectService from "@/api/projectService";
-import ArrayStore from "devextreme/data/array_store";
 
 export default {
   setup(){
@@ -135,10 +134,8 @@ export default {
       loading,
       onSubmit,
       counterAgents,
-      dataSource: new ArrayStore({
-      data: counterAgents,
-      key: 'companyName',
-    }),
+      counterAgentsLoaded,
+      dataSource: counterAgents,
     }
   },
     
