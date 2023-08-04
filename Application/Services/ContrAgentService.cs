@@ -46,7 +46,6 @@ public class ContrAgentService : IContrAgentService
         var result = await _contrAgentValidator.ValidateAsync(contrAgent);
         if (result.IsValid)
         {
-            contrAgent.Created = DateTime.Now;
             contrAgent.CreatedBy = "Admin";
             await _repositoryWrapper.ContrAgentRepository.CreateAsync(contrAgent);
             await _repositoryWrapper.Save();
@@ -99,8 +98,7 @@ public class ContrAgentService : IContrAgentService
                 Messages: new List<string> { "Контрагент не найден" },
                 Success: false);
         }
-
-        existingContrAgentDto.LastModified = DateTime.Now;
+        
         existingContrAgentDto.LastModifiedBy = "Admin";
         _mapper.Map(existingContrAgentDto, contrAgent);
         var result = await _contrAgentValidator.ValidateAsync(contrAgent);

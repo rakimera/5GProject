@@ -5,7 +5,7 @@ namespace Application.Models.ContrAgents;
 public class ContrAgentDto : BaseEntity
 {
     public string CompanyName { get; set; }
-    public int BIN { get; set; }
+    public string BIN { get; set; }
     public string DirectorName { get; set; }
     public string DirectorSurname { get; set; }
     public string DirectorPatronymic { get; set; }
