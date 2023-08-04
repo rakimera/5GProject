@@ -55,7 +55,6 @@ public class UserService : IUserService
         var result = await _userValidator.ValidateAsync(mapUser);
         if (result.IsValid)
         {
-            model.Created = DateTime.Now;
             model.CreatedBy = "Admin"; // реализация зависит от методики работы авторизацией и регистрацией.
             User user = _mapper.Map<User>(model);
             await _repositoryWrapper.UserRepository.CreateAsync(user);
@@ -117,7 +116,6 @@ public class UserService : IUserService
         }
 
         _mapper.Map(existingUserDto, user);
-        user.LastModified = DateTime.Now;
         user.LastModifiedBy = "Admin";
 
         var result = await _userValidator.ValidateAsync(user);

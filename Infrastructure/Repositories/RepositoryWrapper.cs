@@ -12,6 +12,9 @@ public class RepositoryWrapper : IRepositoryWrapper
     private IProjectRepository _projectRepository;
     private ITokenRepository _tokenRepository;
     private IContrAgentRepository _contrAgentRepository;
+    private IRoleRepository _roleRepository;
+    private IDistrictRepository _districtRepository;
+    private ITownRepository _townRepository;
 
     public RepositoryWrapper(Project5GDbContext db)
     {
@@ -67,6 +70,45 @@ public class RepositoryWrapper : IRepositoryWrapper
             }
 
             return _tokenRepository;
+        }
+    }
+    
+    public IRoleRepository RoleRepository
+    {
+        get
+        {
+            if (_roleRepository == null)
+            {
+                _roleRepository = new RoleRepository(_db);
+            }
+
+            return _roleRepository;
+        }
+    }
+    
+    public IDistrictRepository DistrictRepository
+    {
+        get
+        {
+            if (_districtRepository == null)
+            {
+                _districtRepository = new DistrictRepository(_db);
+            }
+
+            return _districtRepository;
+        }
+    }
+    
+    public ITownRepository TownRepository
+    {
+        get
+        {
+            if (_townRepository == null)
+            {
+                _townRepository = new TownRepository(_db);
+            }
+
+            return _townRepository;
         }
     }
 
