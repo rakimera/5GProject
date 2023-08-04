@@ -1,39 +1,25 @@
 <template>
   <div>
     <h2>Подробнее о пользователе</h2>
-    <DxDataGrid :data-source="dataSource">
-      <DxColumn
-          data-field="login"
-          data-type="string"
-      />
-      <DxColumn
-          data-field="name"
-          data-type="string"
-      />
-      <DxColumn
-          data-field="surname"
-          data-type="string"
-      />
-      <DxColumn
-          data-field="password"
-          data-type="string"
-      />
-      <DxColumn
-          data-field="role"
-          data-type="string"
-      />
-    </DxDataGrid>
+
+    <dx-form
+        id="form"
+        label-location="top"
+        :form-data="dataSource">
+
+    </dx-form>
   </div>
 </template>
 
 <script>
-import {DxColumn, DxDataGrid} from "devextreme-vue/data-grid";
+
 import userService from "@/api/userService";
+import DxForm from "devextreme-vue/form";
 
 export default {
   components: {
-    DxColumn,
-    DxDataGrid,
+    DxForm,
+
   },
   data() {
     return {
@@ -49,7 +35,7 @@ export default {
       console.log(oid + "<=======")
       const response = await userService.getUser(oid);
       console.log(response)
-      this.dataSource = [response.data.result];
+      this.dataSource = response.data.result;
     },
   },
 };

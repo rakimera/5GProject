@@ -33,6 +33,7 @@
     />
     <DxEditing
         :allow-deleting="true"
+        :allow-adding="true"
     />
   </DxDataGrid>
 </template>
@@ -91,7 +92,7 @@ export default {
   methods: {
     onRowClick(e) {
       const userId = e.key;
-      this.$router.push({ name: 'userDetail', params: { id: userId } });
+      this.$router.push({ name: 'userDetail', params: { mode:"read", id: userId } });
     }
   }
 };

@@ -126,7 +126,7 @@ const router = new createRouter({
       component: ContrAgents
     },
       {
-          path: '/user/:id',
+          path: '/user/:mode/:id',
           name: 'userDetail',
           meta: {
               requiresAuth: true,
