@@ -18,13 +18,6 @@
         <dx-required-rule message="Введите пароль" />
         <dx-label :visible="false" />
       </dx-item>
-      <dx-item
-          data-field="rememberMe"
-          editor-type="dxCheckBox"
-          :editor-options="{ text: 'Запомнить меня', elementAttr: { class: 'form-text' } }"
-      >
-        <dx-label :visible="false" />
-      </dx-item>
       <dx-button-item>
         <dx-button-options
             width="100%"
@@ -41,13 +34,6 @@
           </div>
         </template>
       </dx-item>
-      <dx-button-item>
-        <dx-button-options
-            text="Создать новый аккаунт"
-            width="100%"
-            :on-click="onCreateAccountClick"
-        />
-      </dx-button-item>
       <template #signInTemplate>
         <div>
           <span class="dx-button-text">
