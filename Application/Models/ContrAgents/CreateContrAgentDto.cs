@@ -7,7 +7,7 @@ public class CreateContrAgentDto
     [property: JsonPropertyName("companyName")] 
     public string CompanyName { get; set; }
     [property: JsonPropertyName("bin")] 
-    public int BIN { get; set; }
+    public string BIN { get; set; }
     [property: JsonPropertyName("directorName")] 
     public string DirectorName { get; set; }
     [property: JsonPropertyName("directorSurname")] 

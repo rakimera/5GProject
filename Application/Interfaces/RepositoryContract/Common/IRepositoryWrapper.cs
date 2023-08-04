@@ -6,5 +6,8 @@ public interface IRepositoryWrapper
     IProjectRepository ProjectRepository { get; }
     ITokenRepository TokenRepository { get; }
     IContrAgentRepository ContrAgentRepository { get; }
+    IRoleRepository RoleRepository { get; }
+    IDistrictRepository DistrictRepository { get; }
+    ITownRepository TownRepository { get; }
     Task Save();
 }
