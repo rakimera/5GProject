@@ -8,7 +8,7 @@ const authService = {
         if (response.data.success === false){
             throw new Error("неверный логин или пароль") ;
         }
-        
+
         await tokenService.updateTokens(response);
     },
     async refreshingToken(tokenApiModel) {
@@ -22,11 +22,11 @@ const authService = {
     },
     async revoke() {
         try {
-            const refreshToken = {
+            const tokenApiModel = {
                 accessToken: null, 
                 refreshToken: await tokenService.getRefreshToken()}; 
-            console.log(refreshToken)
-            await axios.post('/api/Token/revoke', refreshToken);
+            console.log(tokenApiModel)
+            await axios.post('/api/Token/revoke', tokenApiModel);
             await tokenService.removeTokens();
         }
         catch (error) {

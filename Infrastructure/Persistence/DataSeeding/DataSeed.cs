@@ -3,7 +3,6 @@ using Application.Interfaces.RepositoryContract.Common;
 using Application.Models;
 using Application.Models.ContrAgents;
 using Application.Models.Users;
-using AutoMapper;
 using Domain.Entities;
 
 namespace Infrastructure.Persistence.DataSeeding;
@@ -12,13 +11,11 @@ public class DataSeed
 {
     private readonly IServiceWrapper _serviceWrapper;
     private readonly IRepositoryWrapper _repositoryWrapper;
-    private readonly IMapper _mapper;
 
-    public DataSeed(IServiceWrapper serviceWrapper, IRepositoryWrapper repositoryWrapper, IMapper mapper)
+    public DataSeed(IServiceWrapper serviceWrapper, IRepositoryWrapper repositoryWrapper)
     {
         _serviceWrapper = serviceWrapper;
         _repositoryWrapper = repositoryWrapper;
-        _mapper = mapper;
     }
     
 
@@ -35,7 +32,7 @@ public class DataSeed
                 Password = "Qwerty@123",
                 Role = "Admin"
             };
-            await _serviceWrapper.UserService.CreateAsync(admin);
+            await _serviceWrapper.UserService.CreateAsync(admin,"Admin");
             await _repositoryWrapper.Save();
         }
     }
@@ -96,7 +93,7 @@ public class DataSeed
             };
             foreach (var contrAgent in contrAgents)
             {
-                await _serviceWrapper.ContrAgentService.CreateAsync(contrAgent);
+                await _serviceWrapper.ContrAgentService.CreateAsync(contrAgent,"Admin");
             }
             await _repositoryWrapper.Save();
         }
@@ -185,7 +182,7 @@ public class DataSeed
             
             foreach (var district in districts)
             {
-                await _serviceWrapper.DistrictService.CreateAsync(district);
+                await _serviceWrapper.DistrictService.CreateAsync(district,"Admin");
             }
             await _repositoryWrapper.Save();
         }
@@ -201,128 +198,107 @@ public class DataSeed
                 new Town
                 {
                     TownName = "Атырау",
-                    DistrictOid = await _serviceWrapper.DistrictService.GetByDistrictOid("Атырауская область"),
-                    District = await _serviceWrapper.DistrictService.GetDistrictByName("Атырауская область")
+                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictOid("Атырауская область"),
                 },
                 new Town
                 {
                     TownName = "Рудный",
-                    DistrictOid = await _serviceWrapper.DistrictService.GetByDistrictOid("Костанайская область"),
-                    District = await _serviceWrapper.DistrictService.GetDistrictByName("Костанайская область")
+                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictOid("Костанайская область"),
                 },
                 new Town
                 {
                     TownName = "Экибастуз",
-                    DistrictOid = await _serviceWrapper.DistrictService.GetByDistrictOid("Павлодарская область"),
-                    District = await _serviceWrapper.DistrictService.GetDistrictByName("Павлодарская область")
+                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictOid("Павлодарская область"),
                 },
                 new Town
                 {
                     TownName = "Талдыкорган",
-                    DistrictOid = await _serviceWrapper.DistrictService.GetByDistrictOid("Жетысуская область"),
-                    District = await _serviceWrapper.DistrictService.GetDistrictByName("Жетысуская область")
+                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictOid("Жетысуская область"),
                 },
                 new Town
                 {
                     TownName = "Темиртау",
-                    DistrictOid = await _serviceWrapper.DistrictService.GetByDistrictOid("Карагандинская область"),
-                    District = await _serviceWrapper.DistrictService.GetDistrictByName("Карагандинская область")
+                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictOid("Карагандинская область"),
                 },
                 new Town
                 {
                     TownName = "Кокшетау",
-                    DistrictOid = await _serviceWrapper.DistrictService.GetByDistrictOid("Акмолинская область"),
-                    District = await _serviceWrapper.DistrictService.GetDistrictByName("Акмолинская область")
+                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictOid("Акмолинская область"),
                 },
                 new Town
                 {
                     TownName = "Туркестан",
-                    DistrictOid = await _serviceWrapper.DistrictService.GetByDistrictOid("Туркестанская область"),
-                    District = await _serviceWrapper.DistrictService.GetDistrictByName("Туркестанская область")
+                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictOid("Туркестанская область"),
                 },
                 new Town
                 {
                     TownName = "Петропавловск",
-                    DistrictOid = await _serviceWrapper.DistrictService.GetByDistrictOid("Северо-Казахстанская область"),
-                    District = await _serviceWrapper.DistrictService.GetDistrictByName("Северо-Казахстанская область")
+                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictOid("Северо-Казахстанская область"),
                 },
                 new Town
                 {
                     TownName = "Уральск",
-                    DistrictOid = await _serviceWrapper.DistrictService.GetByDistrictOid("Западно-Казахстанская область"),
-                    District = await _serviceWrapper.DistrictService.GetDistrictByName("Западно-Казахстанская область")
+                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictOid("Западно-Казахстанская область"),
                 },
                 new Town
                 {
                     TownName = "Костанай",
-                    DistrictOid = await _serviceWrapper.DistrictService.GetByDistrictOid("Костанайская область"),
-                    District = await _serviceWrapper.DistrictService.GetDistrictByName("Костанайская область")
+                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictOid("Костанайская область"),
                 },
                 new Town
                 {
                     TownName = "Актау",
-                    DistrictOid = await _serviceWrapper.DistrictService.GetByDistrictOid("Мангистауская область"),
-                    District = await _serviceWrapper.DistrictService.GetDistrictByName("Мангистауская область")
+                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictOid("Мангистауская область"),
                 },
                 new Town
                 {
                     TownName = "Кызылорда",
-                    DistrictOid = await _serviceWrapper.DistrictService.GetByDistrictOid("Кызылординская область"),
-                    District = await _serviceWrapper.DistrictService.GetDistrictByName("Кызылординская область")
+                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictOid("Кызылординская область"),
                 },
                 new Town
                 {
                     TownName = "Семей",
-                    DistrictOid = await _serviceWrapper.DistrictService.GetByDistrictOid("Абайская область"),
-                    District = await _serviceWrapper.DistrictService.GetDistrictByName("Абайская область")
+                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictOid("Абайская область"),
                 },
                 new Town
                 {
                     TownName = "Павлодар",
-                    DistrictOid = await _serviceWrapper.DistrictService.GetByDistrictOid("Павлодарская область"),
-                    District = await _serviceWrapper.DistrictService.GetDistrictByName("Павлодарская область")
+                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictOid("Павлодарская область"),
                 },
                 new Town
                 {
                     TownName = "Усть-Каменогорск",
-                    DistrictOid = await _serviceWrapper.DistrictService.GetByDistrictOid("Восточно-Казахстанская область"),
-                    District = await  _serviceWrapper.DistrictService.GetDistrictByName("Восточно-Казахстанская область")
+                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictOid("Восточно-Казахстанская область"),
                 },
                 new Town
                 {
                     TownName = "Тараз",
-                    DistrictOid = await _serviceWrapper.DistrictService.GetByDistrictOid("Жамбылская область"),
-                    District = await _serviceWrapper.DistrictService.GetDistrictByName("Жамбылская область")
+                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictOid("Жамбылская область"),
                 },
                 new Town
                 {
                     TownName = "Караганда",
-                    DistrictOid = await _serviceWrapper.DistrictService.GetByDistrictOid("Карагандинская область"),
-                    District = await _serviceWrapper.DistrictService.GetDistrictByName("Карагандинская область")
+                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictOid("Карагандинская область"),
                 },
                 new Town
                 {
                     TownName = "Актобе",
-                    DistrictOid = await _serviceWrapper.DistrictService.GetByDistrictOid("Актюбинская область"),
-                    District = await _serviceWrapper.DistrictService.GetDistrictByName("Актюбинская область")
+                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictOid("Актюбинская область"),
                 },
                 new Town
                 {
                     TownName = "Алматы",
-                    DistrictOid = await _serviceWrapper.DistrictService.GetByDistrictOid("Города Республиканского значения"),
-                    District = await _serviceWrapper.DistrictService.GetDistrictByName("Города Республиканского значения")
+                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictOid("Города Республиканского значения"),
                 },
                 new Town
                 {
                     TownName = "Шымкент",
-                    DistrictOid = await _serviceWrapper.DistrictService.GetByDistrictOid("Города Республиканского значения"),
-                    District = await _serviceWrapper.DistrictService.GetDistrictByName("Города Республиканского значения")
+                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictOid("Города Республиканского значения"),
                 },
                 new Town
                 {
                     TownName = "Астана",
-                    DistrictOid = await _serviceWrapper.DistrictService.GetByDistrictOid("Города Республиканского значения"),
-                    District = await _serviceWrapper.DistrictService.GetDistrictByName("Города Республиканского значения")
+                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictOid("Города Республиканского значения"),
                 }
             };
             foreach (var town in towns)

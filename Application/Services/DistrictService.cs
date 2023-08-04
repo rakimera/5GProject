@@ -37,9 +37,9 @@ public class DistrictService : IDistrictService
                 { "Данные не были получены, возможно регионы еще не созданы или удалены" });
     }
 
-    public async Task<BaseResponse<string>> CreateAsync(DistrictDto model)
+    public async Task<BaseResponse<string>> CreateAsync(DistrictDto model,string creator)
     {
-        model.CreatedBy = "Admin";
+        model.CreatedBy = creator;
         District district = _mapper.Map<District>(model);
         await _repositoryWrapper.DistrictRepository.CreateAsync(district);
         await _repositoryWrapper.Save();
@@ -86,23 +86,13 @@ public class DistrictService : IDistrictService
             Success: false);
     }
 
-    public async Task<string?> GetByDistrictOid(string name)
+    public async Task<Guid?> GetByDistrictOid(string name)
     {
         var district = await _repositoryWrapper.DistrictRepository
             .GetByCondition(x => x.DistrictName.Equals(name));
         if (district != null)
-            return district.Id.ToString();
+            return district.Id;
         return null;
     }
-    
-    
-    public async Task<District> GetDistrictByName(string name)
-    {
-        var district = await _repositoryWrapper.DistrictRepository
-            .GetByCondition(x => x.DistrictName.Equals(name));
-        if (district != null)
-            return district;
-        return null;
-    }
-        
+
 }
