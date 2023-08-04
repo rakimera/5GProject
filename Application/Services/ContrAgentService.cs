@@ -40,14 +40,14 @@ public class ContrAgentService : IContrAgentService
             Messages: new List<string>{"Данные не были получены, возможно контрагенты еще не созданы или удалены"});
     }
 
-    public async Task<BaseResponse<string>> CreateAsync(ContrAgentDto model)
+    public async Task<BaseResponse<string>> CreateAsync(ContrAgentDto model, string creator)
     {
         ContrAgent contrAgent = _mapper.Map<ContrAgent>(model);
         var result = await _contrAgentValidator.ValidateAsync(contrAgent);
         if (result.IsValid)
         {
             contrAgent.Created = DateTime.Now;
-            contrAgent.CreatedBy = "Admin";
+            contrAgent.CreatedBy = creator;
             await _repositoryWrapper.ContrAgentRepository.CreateAsync(contrAgent);
             await _repositoryWrapper.Save();
 

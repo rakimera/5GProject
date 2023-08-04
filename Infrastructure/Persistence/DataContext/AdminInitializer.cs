@@ -31,7 +31,8 @@ public class AdminInitializer
                 Password = "Qwerty@123",
                 Role = "Admin"
             };
-            await _serviceWrapper.UserService.CreateAsync(admin);
+            string creatorId = "SuperSystem123";
+            await _serviceWrapper.UserService.CreateAsync(admin, creatorId);
             await _repositoryWrapper.Save();
         }
     }

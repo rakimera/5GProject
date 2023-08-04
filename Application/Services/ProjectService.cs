@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Application.DataObjects;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
@@ -8,7 +7,6 @@ using AutoMapper;
 using DevExtreme.AspNet.Data;
 using DevExtreme.AspNet.Data.ResponseModel;
 using Domain.Entities;
-using Microsoft.AspNetCore.Identity;
 
 namespace Application.Services;
 
@@ -50,17 +48,18 @@ public class ProjectService : IProjectService
         return await DataSourceLoader.LoadAsync(queryableUsers, loadOptions);
     }
 
-    public async Task<BaseResponse<string>> CreateAsync(ProjectDto model)
+    public async Task<BaseResponse<string>> CreateAsync(ProjectDto model, string creator)
     {
-        User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Login.Equals("заглушка"));
+        User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Login.Equals(creator));
         model.ExecutorId = user.Id.ToString();
-        model.ProjectStatusId = new Guid().ToString();
-        
+        model.ProjectStatusId = "c2d0c703-8864-4847-9d20-84200de0ebc4"; //заглушка
+        model.DistrictId = "c1d0c703-8864-4847-9d20-84200de0ebc4"; //заглушка
+        model.TownId = "c3d0c703-8864-4847-9d20-84200de0ebc4"; //заглушк
         var result = await _projectValidator.ValidateAsync(model);
         if (result.IsValid)
         {
             model.Created = DateTime.Now;
-            model.CreatedBy = "Admin"; // реализация зависит от методики работы авторизацией.
+            model.CreatedBy = creator;
             Project project = _mapper.Map<Project>(model);
             await _repositoryWrapper.ProjectRepository.CreateAsync(project);
             await _repositoryWrapper.Save();

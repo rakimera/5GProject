@@ -1,5 +1,6 @@
 import axios from '@/utils/axios';
 import tokenService from "@/api/tokenService";
+import router from "@/router";
 
 const authService = {
     async login(loginModel) {
@@ -15,6 +16,8 @@ const authService = {
             return await axios.post('/api/Token/refresh', tokenApiModel);
         } catch (error) {
             console.log("Ошибка получения Refresh токена", error)
+            await tokenService.removeTokens();
+            await router.push('/login');
         }
     },
     async revoke() {

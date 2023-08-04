@@ -24,5 +24,17 @@ public class Project5GDbContext : DbContext
         modelBuilder.Entity<ContrAgent>().HasQueryFilter(x => x.IsDelete == false);
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<User>().HasIndex(x => x.Id).IsUnique();
+        modelBuilder.Entity<Antenna>().HasIndex(x => x.Id).IsUnique();
+        modelBuilder.Entity<ContrAgent>().HasIndex(x => x.Id).IsUnique();
+        modelBuilder.Entity<District>().HasIndex(x => x.Id).IsUnique();
+        modelBuilder.Entity<EnergyResult>().HasIndex(x => x.Id).IsUnique();
+        modelBuilder.Entity<Location>().HasIndex(x => x.Id).IsUnique();
+        modelBuilder.Entity<Project>().HasIndex(x => x.Id).IsUnique();
+        modelBuilder.Entity<ProjectAntenna>().HasIndex(x => x.Id).IsUnique();
+        modelBuilder.Entity<ProjectStatus>().HasIndex(x => x.Id).IsUnique();
+        modelBuilder.Entity<RefreshToken>().HasIndex(x => x.Id).IsUnique();
+        modelBuilder.Entity<Role>().HasIndex(x => x.Id).IsUnique();
+        modelBuilder.Entity<Town>().HasIndex(x => x.Id).IsUnique();
+        modelBuilder.Entity<TranslatorSpecs>().HasIndex(x => x.Id).IsUnique();
     }
 }

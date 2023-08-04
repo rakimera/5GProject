@@ -49,14 +49,14 @@ public class UserService : IUserService
         return await DataSourceLoader.LoadAsync(queryableUsers, loadOptions);
     }
 
-    public async Task<BaseResponse<string>> CreateAsync(UserDto model)
+    public async Task<BaseResponse<string>> CreateAsync(UserDto model, string creator)
     {
         var mapUser = _mapper.Map<User>(model);
         var result = await _userValidator.ValidateAsync(mapUser);
         if (result.IsValid)
         {
             model.Created = DateTime.Now;
-            model.CreatedBy = "Admin"; // реализация зависит от методики работы авторизацией и регистрацией.
+            model.CreatedBy = creator;
             User user = _mapper.Map<User>(model);
             await _repositoryWrapper.UserRepository.CreateAsync(user);
             await _repositoryWrapper.Save();
@@ -107,7 +107,7 @@ public class UserService : IUserService
         UserDto existingUserDto = getUserResponse.Result;
         _mapper.Map(model, existingUserDto);
 
-        User user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.Equals(existingUserDto.Id));
+        User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.Equals(existingUserDto.Id));
         if (user == null)
         {
             return new BaseResponse<UserDto>(

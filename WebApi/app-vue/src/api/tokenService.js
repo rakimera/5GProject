@@ -35,8 +35,15 @@ const tokenService = {
     },
 
     async updateTokens(response) {
-       await localStorage.setItem('userToken', JSON.stringify(response.data.result.accessToken));
-       await localStorage.setItem('refreshToken', JSON.stringify(response.data.result.refreshToken));
+        try {
+            console.log(response)
+            await localStorage.setItem('userToken', JSON.stringify(response.data.result.accessToken));
+            await localStorage.setItem('refreshToken', JSON.stringify(response.data.result.refreshToken));
+        }
+        catch (error) {
+            console.log("Ошибка записи токена" + error)
+        }
+       
     }
 }
 

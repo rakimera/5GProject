@@ -48,7 +48,8 @@ public class ProjectsController : Controller
     public async Task<IActionResult> Post([FromBody]CreateProjectDto model)
     {
         ProjectDto projectDto = _mapper.Map<ProjectDto>(model);
-        var baseResponse = await _service.ProjectService.CreateAsync(projectDto);
+        var baseResponse = await _service.ProjectService.CreateAsync(projectDto, User.Identity.Name);
+        
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);
