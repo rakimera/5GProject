@@ -39,7 +39,6 @@ public class DistrictService : IDistrictService
 
     public async Task<BaseResponse<string>> CreateAsync(DistrictDto model)
     {
-        model.Created = DateTime.Now;
         model.CreatedBy = "Admin";
         District district = _mapper.Map<District>(model);
         await _repositoryWrapper.DistrictRepository.CreateAsync(district);

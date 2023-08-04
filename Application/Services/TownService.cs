@@ -53,7 +53,6 @@ public class TownService : ITownService
     
     public async Task<BaseResponse<string>> CreateTownAsync(Town town)
     {
-        town.Created = DateTime.Now;
         town.CreatedBy = "Admin";
         await _repositoryWrapper.TownRepository.CreateAsync(town);
         await _repositoryWrapper.Save();

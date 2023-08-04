@@ -46,7 +46,6 @@ public class ContrAgentService : IContrAgentService
         var result = await _contrAgentValidator.ValidateAsync(contrAgent);
         if (result.IsValid)
         {
-            contrAgent.Created = DateTime.Now;
             contrAgent.CreatedBy = "Admin";
             await _repositoryWrapper.ContrAgentRepository.CreateAsync(contrAgent);
             await _repositoryWrapper.Save();

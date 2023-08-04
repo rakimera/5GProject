@@ -45,7 +45,6 @@ public class ProjectService : IProjectService
         var result = await _projectValidator.ValidateAsync(model);
         if (result.IsValid)
         {
-            model.Created = DateTime.Now;
             model.CreatedBy = "Admin"; // реализация зависит от методики работы авторизацией.
             Project project = _mapper.Map<Project>(model);
             await _repositoryWrapper.ProjectRepository.CreateAsync(project);

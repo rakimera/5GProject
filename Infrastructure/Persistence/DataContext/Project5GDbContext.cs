@@ -1,3 +1,4 @@
+using Domain.Common;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,9 +22,12 @@ public class Project5GDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<User>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<BaseEntity>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<User>().HasIndex(x => x.Login).IsUnique();
-        modelBuilder.Entity<ContrAgent>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<BaseEntity>()
+            .Property(b => b.Created)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
         base.OnModelCreating(modelBuilder);
+        
     }
 }
