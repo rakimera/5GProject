@@ -104,7 +104,6 @@ public class ProjectService : IProjectService
         }
 
         _mapper.Map(model, project);
-        project.LastModified = DateTime.Now;
         project.LastModifiedBy = "Admin";
 
         _repositoryWrapper.ProjectRepository.Update(project);

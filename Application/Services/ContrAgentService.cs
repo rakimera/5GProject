@@ -98,8 +98,7 @@ public class ContrAgentService : IContrAgentService
                 Messages: new List<string> { "Контрагент не найден" },
                 Success: false);
         }
-
-        existingContrAgentDto.LastModified = DateTime.Now;
+        
         existingContrAgentDto.LastModifiedBy = "Admin";
         _mapper.Map(existingContrAgentDto, contrAgent);
         var result = await _contrAgentValidator.ValidateAsync(contrAgent);

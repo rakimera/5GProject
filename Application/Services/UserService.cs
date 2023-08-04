@@ -116,7 +116,6 @@ public class UserService : IUserService
         }
 
         _mapper.Map(existingUserDto, user);
-        user.LastModified = DateTime.Now;
         user.LastModifiedBy = "Admin";
 
         var result = await _userValidator.ValidateAsync(user);

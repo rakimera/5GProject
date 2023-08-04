@@ -35,39 +35,26 @@ public class Project5GDbContext : DbContext
         modelBuilder.Entity<ProjectAntenna>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<ProjectStatus>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<TranslatorSpecs>().HasQueryFilter(x => x.IsDelete == false);
-        modelBuilder.Entity<User>()
-            .Property(b => b.Created)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP");
-        modelBuilder.Entity<ContrAgent>()
-            .Property(b => b.Created)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP");
-        modelBuilder.Entity<District>()
-            .Property(b => b.Created)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP");
-        modelBuilder.Entity<Town>()
-            .Property(b => b.Created)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP");
-        modelBuilder.Entity<Project>()
-            .Property(b => b.Created)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP");
-        modelBuilder.Entity<Antenna>()
-            .Property(b => b.Created)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP");
-        modelBuilder.Entity<EnergyResult>()
-            .Property(b => b.Created)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP");
-        modelBuilder.Entity<Location>()
-            .Property(b => b.Created)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP");
-        modelBuilder.Entity<ProjectAntenna>()
-            .Property(b => b.Created)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP");
-        modelBuilder.Entity<ProjectStatus>()
-            .Property(b => b.Created)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP");
-        modelBuilder.Entity<TranslatorSpecs>()
-            .Property(b => b.Created)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP");
         base.OnModelCreating(modelBuilder);
+    }
+
+    public async Task<int> SaveChangesAsync()
+    {
+        var entries = ChangeTracker
+            .Entries()
+            .Where(e => e.Entity is BaseEntity && (
+                e.State == EntityState.Added
+                || e.State == EntityState.Modified));
+
+        foreach (var entityEntry in entries)
+        {
+            ((BaseEntity)entityEntry.Entity).LastModified = DateTime.Now;
+            if (entityEntry.State == EntityState.Added)
+            {
+                ((BaseEntity)entityEntry.Entity).Created = DateTime.Now;
+            }
+        }
+
+        return await base.SaveChangesAsync();
     }
 }

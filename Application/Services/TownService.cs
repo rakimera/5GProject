@@ -39,7 +39,6 @@ public class TownService : ITownService
 
     public async Task<BaseResponse<string>> CreateAsync(TownDto model)
     {
-        model.Created = DateTime.Now;
         model.CreatedBy = "Admin";
         Town town = _mapper.Map<Town>(model);
         await _repositoryWrapper.TownRepository.CreateAsync(town);
