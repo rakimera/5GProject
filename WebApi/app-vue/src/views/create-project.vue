@@ -23,6 +23,7 @@
                 label="Выберите контрагента"
                 display-expr="companyName"
                 value-expr="id"
+                name ='contrAgentId'
                 v-model="formData.contrAgentId"
             />
           </div>
@@ -46,6 +47,20 @@
             <dx-required-rule message="Введите номер здания на котором расположен объект"/>
             <dx-label :visible="false" />
           </dx-item>
+            <dx-item
+                    data-field='townId'
+                    editor-type='dxTextBox'
+                    :editor-options="{ stylingMode: 'filled', placeholder: 'id города' }"
+            >
+                <dx-label :visible="false" />
+            </dx-item>
+            <dx-item
+                    data-field='districtId'
+                    editor-type='dxTextBox'
+                    :editor-options="{ stylingMode: 'filled', placeholder: 'id района' }"
+            >
+                <dx-label :visible="false" />
+            </dx-item>            
         </DxTab>
         <DxTab
             title="Фото места установки"
@@ -85,13 +100,7 @@ import projectService from "@/api/projectService";
 
 export default {
   setup(){
-    const formData = reactive({
-      contrAgentId:"",
-      districtId: "",
-      townId: "",
-      street: "",
-      house: ""
-    });
+    const formData = reactive({});
     
     const route = useRoute();
     const router = useRouter();
@@ -106,14 +115,8 @@ export default {
     })
     async function onSubmit() {
       loading.value = true;
-      const CreateProjectDto = {
-        contrAgentId: formData.contrAgentId, 
-        districtId: "854",
-        townId: "543",
-        street: formData.street,
-        house: formData.house};
       try {
-        await projectService.createProject(CreateProjectDto)
+        await projectService.createProject(formData)
         await router.push(route.query.redirect || '/projects');
         notify('Uncomment the line to enable sending a form to the server.');
       } catch (error){
@@ -126,7 +129,6 @@ export default {
       formData,
       loading,
       onSubmit,
-      counterAgents,
       dataSource: counterAgents,
     }
   },
