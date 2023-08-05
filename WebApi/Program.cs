@@ -1,6 +1,6 @@
 using Application;
 using Infrastructure;
-using Infrastructure.Persistence.DataContext;
+using Infrastructure.Persistence.DataSeeding;
 using NLog;
 using NLog.Web;
 using WebApi.Extensions;
@@ -48,8 +48,12 @@ try
         app.UseSwaggerUI();
         using (var scope = app.Services.CreateScope())
         {
-            var initialiser = scope.ServiceProvider.GetRequiredService<AdminInitializer>();
-            await initialiser.TrySeedAsync();
+            var dataseed = scope.ServiceProvider.GetRequiredService<DataSeed>();
+            await dataseed.SeedAdmin();
+            await dataseed.SeedRoles();
+            await dataseed.SeedContrAgents();
+            await dataseed.SeedDistricts();
+            await dataseed.SeedTowns();
         }
     }
 

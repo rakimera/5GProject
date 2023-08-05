@@ -1,4 +1,5 @@
 using Application.Interfaces;
+using Application.Interfaces.RepositoryContract;
 using Application.Interfaces.RepositoryContract.Common;
 using Application.Validation;
 using AutoMapper;
@@ -12,6 +13,8 @@ public class ServiceWrapper : IServiceWrapper
     private readonly Lazy<IAuthorizationService> _authorizationService;
     private readonly Lazy<IProjectService> _projectService;
     private readonly Lazy<IContrAgentService> _contrAgentService;
+    private readonly Lazy<IDistrictService> _districtService;
+    private readonly Lazy<ITownService> _townService;
 
     public ServiceWrapper(
         IRepositoryWrapper repository,
@@ -21,11 +24,13 @@ public class ServiceWrapper : IServiceWrapper
         ProjectValidator projectValidator,
         ITokenService tokenService)
     {
+        _districtService = new Lazy<IDistrictService>(() => new DistrictService(repository,mapper));
         _userService = new Lazy<IUserService>(() => new UserService(repository, mapper, userValidator));
         _tokenService = new Lazy<ITokenService>(() => new TokenService(repository));
         _projectService = new Lazy<IProjectService>(()=> new ProjectService(repository, mapper, projectValidator));
         _authorizationService = new Lazy<IAuthorizationService>(()=> new AuthorizationService(repository,tokenService));
         _contrAgentService = new Lazy<IContrAgentService>(() => new ContrAgentService(repository, mapper, contrAgentValidator));
+        _townService = new Lazy<ITownService>(() => new TownService(repository,mapper));
     }
 
     public IUserService UserService => _userService.Value;
@@ -33,4 +38,6 @@ public class ServiceWrapper : IServiceWrapper
     public ITokenService TokenService => _tokenService.Value;
     public IAuthorizationService AuthorizationService => _authorizationService.Value;
     public IContrAgentService ContrAgentService => _contrAgentService.Value;
+    public IDistrictService DistrictService => _districtService.Value;
+    public ITownService TownService => _townService.Value;
 }
