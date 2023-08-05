@@ -16,7 +16,7 @@
         <DxTab
             title="Контрагент"
         >
-          <div class="fileuploader-container" v-if="counterAgentsLoaded">
+          <div class="fileuploader-container">
             <DxSelectBox
                 :data-source="dataSource"
                 :input-attr="{ 'aria-label': 'Контрагенты' }"
@@ -26,7 +26,6 @@
                 v-model="formData.contrAgentId"
             />
           </div>
-          <div v-else>Loading...</div>
         </DxTab>
         <DxTab
             title="Адрес"
@@ -79,7 +78,7 @@ import DxSelectBox from 'devextreme-vue/select-box';
 import {
   DxForm, DxGroupItem, DxTabbedItem, DxTabPanelOptions, DxTab, DxRequiredRule, DxLabel, DxItem,
 } from 'devextreme-vue/form';
-import {reactive, ref} from "vue";
+import {reactive, ref, onBeforeMount} from "vue";
 import { useRoute, useRouter } from 'vue-router';
 import counterAgentService from "@/api/counterAgentService";
 import projectService from "@/api/projectService";
@@ -98,19 +97,13 @@ export default {
     const router = useRouter();
     const loading = ref(false);
     const counterAgents = ref([]);
-    const counterAgentsLoaded = ref(false);
-
-    async function fetchCounterAgents() {
-      try {
-        const response = await counterAgentService.getContrAgents();
-        counterAgents.value = response.data.result;
-        counterAgentsLoaded.value = true;
-      } catch (error) {
-        console.error("Ошибка получения агнетов (не секретных):", error);
-      }
-    }
-
-    fetchCounterAgents()
+    
+    onBeforeMount(async () => {
+      loading.value = true;
+      const response = await counterAgentService.getContrAgents();
+      counterAgents.value = response.data.result;
+      loading.value = false;
+    })
     async function onSubmit() {
       loading.value = true;
       const CreateProjectDto = {
@@ -134,7 +127,6 @@ export default {
       loading,
       onSubmit,
       counterAgents,
-      counterAgentsLoaded,
       dataSource: counterAgents,
     }
   },
