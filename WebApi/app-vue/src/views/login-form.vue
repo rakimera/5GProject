@@ -60,7 +60,7 @@ import notify from 'devextreme/ui/notify';
 
 import { reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import authService from "@/api/AuthService";
+import authorizationService from "@/api/AuthorizationService";
 
 export default {
   setup() {
@@ -81,7 +81,7 @@ export default {
       loading.value = true;
       const loginModel = {login: formData.email, password: formData.password};
       try {
-        await authService.login(loginModel);
+        await authorizationService.login(loginModel);
         await router.push(route.query.redirect || '/home');
       } catch (error){
         loading.value = false;

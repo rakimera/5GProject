@@ -49,6 +49,7 @@ import {
 import CustomStore from "devextreme/data/custom_store";
 import "whatwg-fetch";
 import userService from "@/api/userService";
+import AuthenticationService from "@/api/AuthenticationService";
 
 const store = new CustomStore({
   key: 'id',
@@ -57,7 +58,7 @@ const store = new CustomStore({
   },
   insert: async (user) => {
     const baseResponse = await userService.createUser(user);
-    return { data: baseResponse.result };
+    return {data: baseResponse.result};
   },
   update: async (id) => {
     try {
@@ -71,7 +72,7 @@ const store = new CustomStore({
   remove: async (oid) => {
     console.log(oid + " <== вот тут метод remove")
     const baseResponse = await userService.deleteUser(oid);
-    return { data: baseResponse.result };
+    return {data: baseResponse.result};
   },
 });
 
@@ -90,9 +91,23 @@ export default {
     };
   },
   methods: {
-    onRowClick(e) {
-      const userId = e.key;
-      this.$router.push({ name: 'userDetail', params: { mode:"read", id: userId } });
+    async onRowClick(e) {
+      try {
+        const userId = e.key;
+        let role = await AuthenticationService.getRole();
+        console.log(role)
+        this.$router.push({name: 'userDetail', params: {mode: "read", id: userId}});
+        // if (role === "Admin") {
+        //   this.$router.push({name: 'userDetail', params: {mode: "edit", id: userId}});
+        // }
+        // if (role === "guest") {
+        //   this.$router.push({name: 'userDetail', params: {mode: "read", id: userId}});
+        // }
+      //   пример реализации разделения по ролям
+      } catch (error) {
+        console.log(error)
+      }
+
     }
   }
 };

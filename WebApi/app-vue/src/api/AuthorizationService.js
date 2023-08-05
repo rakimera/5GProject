@@ -1,7 +1,7 @@
 import axios from '@/utils/axios';
 import tokenService from "@/api/tokenService";
 
-const authService = {
+const authorizationService = {
     async login(loginModel) {
         const response = await axios.post('/api/Auth/login', loginModel);
         if (response.data.success === false){
@@ -59,4 +59,4 @@ const authService = {
     },
 };
 
-export default authService;
+export default authorizationService;
