@@ -33,7 +33,6 @@
     />
     <DxEditing
         :allow-deleting="true"
-        :allow-adding="true"
     />
   </DxDataGrid>
 </template>
@@ -103,7 +102,7 @@ export default {
         // if (role === "guest") {
         //   this.$router.push({name: 'userDetail', params: {mode: "read", id: userId}});
         // }
-      //   пример реализации разделения по ролям
+        //   пример реализации разделения по ролям
       } catch (error) {
         console.log(error)
       }
