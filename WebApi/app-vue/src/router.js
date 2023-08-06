@@ -9,6 +9,7 @@ import Users from './views/Users-page.vue';
 import GetAllUsersPage from "@/views/get-all-users-page.vue";
 import CreateProject from "@/views/create-project.vue";
 import ContrAgents from './views/ContrAgent-page.vue';
+import ContrAgentJournal from "@/views/get-all-contrAgents-page.vue";
 import authorizationService from "@/api/AuthorizationService";
 import UserDetail from '@/views/users_detail_info.vue';
 
@@ -134,6 +135,15 @@ const router = new createRouter({
         layout: defaultLayout
       },
       component: ContrAgents
+    },
+    {
+      path: "/ContrAgentsJournal",
+      name: "Журнал контрагентов",
+      meta: {
+        requiresAuth: true,
+        layout: defaultLayout
+      },
+      component: ContrAgentJournal
     },
       {
           path: '/user/:mode/:id',
