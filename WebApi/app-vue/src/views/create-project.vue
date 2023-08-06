@@ -81,7 +81,7 @@ import {
 } from 'devextreme-vue/form';
 import {reactive, ref} from "vue";
 import { useRoute, useRouter } from 'vue-router';
-import counterAgentService from "@/api/counterAgentService";
+import contrAgentService from "@/api/contrAgentService";
 import projectService from "@/api/projectService";
 
 export default {
@@ -102,7 +102,7 @@ export default {
 
     async function fetchCounterAgents() {
       try {
-        const response = await counterAgentService.getContrAgents();
+        const response = await contrAgentService.getContrAgents();
         counterAgents.value = response.data.result;
         counterAgentsLoaded.value = true;
       } catch (error) {

@@ -11,6 +11,7 @@ import CreateProject from "@/views/create-project.vue";
 import ContrAgentJournal from "@/views/get-all-contrAgents-page.vue";
 import authorizationService from "@/api/AuthorizationService";
 import UserDetail from '@/views/users_detail_info.vue';
+import ContrAgentDetail from '@/views/contrAgent-detail-info.vue';
 
 function loadView(view) {
   return () => import (/* webpackChunkName: "login" */ `./views/${view}.vue`)
@@ -144,6 +145,16 @@ const router = new createRouter({
           },
           component: UserDetail
       }
+    ,
+    {
+      path: '/contrAgent/:mode/:id',
+      name: 'contrAgentDetail',
+      meta: {
+        requiresAuth: true,
+        layout: defaultLayout
+      },
+      component: ContrAgentDetail
+    }
   ],
   history: createWebHashHistory()
 });
