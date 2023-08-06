@@ -47,7 +47,7 @@
   </DxDataGrid>
 </template>
 
-<script>
+<script setup>
 import {
   DxDataGrid,
   DxColumn,
@@ -61,44 +61,26 @@ import counterAgentService from "@/api/counterAgentService";
 import { useRouter } from 'vue-router';
 
 
+const router = useRouter();
+const dataSource = new CustomStore({
+  key: 'id',
 
-export default {
-  setup()
-  {
-    const router = useRouter();
-    const store = new CustomStore({
-      key: 'id',
-
-        load: async (loadOptions) => {
-          return await counterAgentService.getAllContrAgents(loadOptions);
-        },
-      remove: async (oid) => {
-        const baseResponse = await counterAgentService.deleteContrAgent(oid);
-        return {data: baseResponse.result};
-      },
-    });
-    async function onRowClick(e) {
-        try {
-          const contrAgentId = e.key;
-          await router.push({name: 'contrAgentDetail', params: {mode: "read", id: contrAgentId}});
-        } catch (error) {
-          console.log(error)
-        }
-      }
-    return {
-      dataSource: store,
-      events: [],
-      onRowClick
-    };
+  load: async (loadOptions) => {
+    return await counterAgentService.getAllContrAgents(loadOptions);
   },
-  components: {
-      DxDataGrid,
-      DxColumn,
-      DxPaging,
-      DxPager,
-      DxEditing,
+  remove: async (oid) => {
+    const baseResponse = await counterAgentService.deleteContrAgent(oid);
+    return {data: baseResponse.result};
   },
-};
+});
+async function onRowClick(e) {
+  try {
+    const contrAgentId = e.key;
+    await router.push({name: 'contrAgentDetail', params: {mode: "read", id: contrAgentId}});
+  } catch (error) {
+    console.log(error)
+  }
+}
 </script>
 
 <style>
