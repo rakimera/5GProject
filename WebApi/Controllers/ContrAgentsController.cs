@@ -71,7 +71,7 @@ public class ContrAgentsController : Controller
     [HttpGet("index"), Authorize(Roles = "Admin")]
     public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
     {
-        var loadResult = await _service.UserService.GetLoadResult(loadOptions);
+        var loadResult = await _service.ContrAgentService.GetLoadResult(loadOptions);
         return Ok(loadResult);
     }
 }
