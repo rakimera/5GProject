@@ -5,7 +5,6 @@
         id="form"
         label-location="top"
         :form-data="dataSource"
-        :colCount="2"
         :read-only="isFormDisabled"
     >
     </dx-form>
@@ -36,10 +35,6 @@ let dataSource = reactive({
   'Фамилия директора': "",
   'Отчетсво директора':"",
   'Коэффициент усиления': "",
-  'Дата добавления':"",
-  'Кем добавлено': "",
-  'Дата изменения':"",
-  'Кем изменено': "",
 });
 let isFormDisabled = ref(true);
 const oid = route.params.id;
@@ -52,10 +47,6 @@ onBeforeMount(async () => {
   dataSource["Фамилия директора"] = response.data.result.directorSurname;
   dataSource["Отчетсво директора"] = response.data.result.directorPatronymic;
   dataSource["Коэффициент усиления"] = response.data.result.amplificationFactor;
-  dataSource["Дата добавления"] = response.data.result.created;
-  dataSource["Кем добавлено"] = response.data.result.createdBy;
-  dataSource["Дата изменения"] = response.data.result.lastModified;
-  dataSource["Кем изменено"] = response.data.result.lastModifiedBy;
 })
 function onClickEditUser() {
   isFormDisabled.value = false;
@@ -69,10 +60,6 @@ async function onClickSaveChanges() {
     directorSurname: dataSource["Фамилия директора"],
     directorPatronymic: dataSource["Отчетсво директора"],
     amplificationFactor: dataSource["Коэффициент усиления"],
-    created: dataSource["Дата добавления"],
-    createdBy: dataSource["Кем добавлено"],
-    lastModified: dataSource["Дата изменения"],
-    lastModifiedBy: dataSource["Кем изменено"]
   };
   try {
     await contrAgentService.updateContrAgent(updatedData);

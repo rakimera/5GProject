@@ -66,10 +66,10 @@ const dataSource = new CustomStore({
   key: 'id',
 
   load: async (loadOptions) => {
-    return await counterAgentService.getAllContrAgents(loadOptions);
+    return await contrAgentService.getAllContrAgents(loadOptions);
   },
   remove: async (oid) => {
-    const baseResponse = await counterAgentService.deleteContrAgent(oid);
+    const baseResponse = await contrAgentService.deleteContrAgent(oid);
     return {data: baseResponse.result};
   },
 });
