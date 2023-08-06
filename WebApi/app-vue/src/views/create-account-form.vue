@@ -79,7 +79,7 @@ import DxLoadIndicator from 'devextreme-vue/load-indicator';
 import notify from 'devextreme/ui/notify';
 import { useRouter } from 'vue-router';
 import { ref, reactive } from 'vue';
-import authService from "@/api/AuthService";
+import authorizationService from "@/api/AuthorizationService";
 
 
 export default {
@@ -107,7 +107,7 @@ export default {
     const { email, password } = formData;
     loading.value = true;
 
-    const result = await authService.createAccount(email, password);
+    const result = await authorizationService.createAccount(email, password);
     loading.value = false;
 
     if (result.isOk) {

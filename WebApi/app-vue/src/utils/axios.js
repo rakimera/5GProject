@@ -1,6 +1,6 @@
 import axios from 'axios';
 import tokenService from '@/api/tokenService';
-import authService from "@/api/AuthService";
+import authorizationService from "@/api/AuthorizationService";
 
 const instance = axios.create({
     baseURL: 'https://localhost:7015/',
@@ -19,7 +19,7 @@ instance.interceptors.response.use(
                     const refreshToken = await tokenService.getRefreshToken();
                     const userToken = await tokenService.getAccessToken();
                     const tokenApiModel = {accessToken: userToken, refreshToken: refreshToken};
-                    const response = await authService.refreshingToken(tokenApiModel);
+                    const response = await authorizationService.refreshingToken(tokenApiModel);
                     await tokenService.updateTokens(response);
                     
                     return instance(originalConfig);

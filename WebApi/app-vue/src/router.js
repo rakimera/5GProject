@@ -9,7 +9,7 @@ import Users from './views/Users-page.vue';
 import GetAllUsersPage from "@/views/get-all-users-page.vue";
 import CreateProject from "@/views/create-project.vue";
 import ContrAgents from './views/ContrAgent-page.vue';
-import authService from "@/api/AuthService";
+import authorizationService from "@/api/AuthorizationService";
 import UserDetail from '@/views/users_detail_info.vue';
 
 function loadView(view) {
@@ -136,7 +136,7 @@ const router = new createRouter({
       component: ContrAgents
     },
       {
-          path: '/user/:id',
+          path: '/user/:mode/:id',
           name: 'userDetail',
           meta: {
               requiresAuth: true,
@@ -149,12 +149,12 @@ const router = new createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.name === "login" && authService.loggedIn()) {
+  if (to.name === "login" && authorizationService.loggedIn()) {
     next({ name: "home" });
   }
 
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!authService.loggedIn()) {
+    if (!authorizationService.loggedIn()) {
       next({
         name: "login",
         query: { redirect: to.fullPath }
