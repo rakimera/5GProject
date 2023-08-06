@@ -85,7 +85,7 @@
     />
   </form>
 </template>
-<script>
+<script setup>
 import { DxFileUploader } from 'devextreme-vue/file-uploader';
 import { DxButton } from 'devextreme-vue/button';
 import notify from 'devextreme/ui/notify';
@@ -98,54 +98,29 @@ import { useRoute, useRouter } from 'vue-router';
 import counterAgentService from "@/api/counterAgentService";
 import projectService from "@/api/projectService";
 
-export default {
-  setup(){
-    const formData = reactive({});
-    
-    const route = useRoute();
-    const router = useRouter();
-    const loading = ref(false);
-    const counterAgents = ref([]);
-    
-    onBeforeMount(async () => {
-      loading.value = true;
-      const response = await counterAgentService.getContrAgents();
-      counterAgents.value = response.data.result;
-      loading.value = false;
-    })
-    async function onSubmit() {
-      loading.value = true;
-      try {
-        await projectService.createProject(formData)
-        await router.push(route.query.redirect || '/projects');
-        notify('Uncomment the line to enable sending a form to the server.');
-      } catch (error){
-        loading.value = false;
-        notify(error.message, 'error', 2000);
-      }
-    }
+const formData = reactive({});
+const route = useRoute();
+const router = useRouter();
+const loading = ref(false);
+const counterAgents = ref([]);
 
-    return {
-      formData,
-      loading,
-      onSubmit,
-      dataSource: counterAgents,
-    }
-  },
-    
-  components: {
-    DxItem, DxLabel, DxRequiredRule,
-    DxFileUploader,
-    DxButton,
-    DxGroupItem,
-    DxTabbedItem,
-    DxTabPanelOptions,
-    DxTab,
-    DxForm,
-    DxSelectBox,
-  },
-};
-
+onBeforeMount(async () => {
+  loading.value = true;
+  const response = await counterAgentService.getContrAgents();
+  counterAgents.value = response.data.result;
+  loading.value = false;
+})
+async function onSubmit() {
+  loading.value = true;
+  try {
+    await projectService.createProject(formData)
+    await router.push(route.query.redirect || '/projects');
+    notify('Uncomment the line to enable sending a form to the server.');
+  } catch (error){
+    loading.value = false;
+    notify(error.message, 'error', 2000);
+  }
+}
 </script>
 <style>
 .project-form {
@@ -153,21 +128,15 @@ export default {
   margin: auto;
   margin-top: 50px;
 }
-
 .button {
   margin-top: 50px;
   margin-right: 20px;
   float: right;
 }
-
 .fileuploader-container {
   border: 1px solid #d3d3d3;
   margin: 20px 20px 0 20px;
 }
-.dx-fieldset{
-  margin-left: 0px;
-}
-
 #form h3 {
   margin-left: 20px;
   font-weight: normal;
