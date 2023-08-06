@@ -21,11 +21,6 @@ export default [
         path: "/users_table"
       },
       {
-        text: "ContrAgents",
-        path: "/contrAgents"
-      }
-      ,
-      {
         text: "Журнал контрагентов",
         path: "/ContrAgentsJournal"
       }
