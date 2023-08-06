@@ -4,6 +4,6 @@ namespace Domain.Entities;
 
 public class TranslatorSpecs : BaseEntity 
 { 
-    public string AntennaOid { get; set; }
+    public Guid AntennaId { get; set; }
     public Antenna Antenna { get; set; }
 }

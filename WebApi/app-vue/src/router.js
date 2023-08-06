@@ -7,6 +7,7 @@ import defaultLayout from "./layouts/side-nav-outer-toolbar";
 import simpleLayout from "./layouts/single-card";
 import Users from './views/Users-page.vue';
 import GetAllUsersPage from "@/views/get-all-users-page.vue";
+import CreateProject from "@/views/create-project.vue";
 import ContrAgents from './views/ContrAgent-page.vue';
 import authService from "@/api/AuthService";
 
@@ -35,13 +36,22 @@ const router = new createRouter({
       component: Profile
     },
     {
-      path: "/tasks",
-      name: "tasks",
+      path: "/projects",
+      name: "projects",
       meta: {
         requiresAuth: true,
         layout: defaultLayout
       },
       component: Tasks
+    },
+    {
+      path: "/create-projects",
+      name: "create-projects",
+      meta: {
+        requiresAuth: true,
+        layout: defaultLayout
+      },
+      component: CreateProject
     },
     {
       path: "/login",

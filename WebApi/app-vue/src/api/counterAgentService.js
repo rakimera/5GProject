@@ -1,7 +1,7 @@
 import axios from '../utils/axios';
 import storeExtension from "@/utils/storeExtension";
 
-const contrAgentService = {
+const counterAgentService = {
     async getContrAgents() {
         try {
             return await axios.get(`/api/contrAgents`);
@@ -51,4 +51,4 @@ const contrAgentService = {
     }
 };
 
-export default contrAgentService;
+export default counterAgentService;

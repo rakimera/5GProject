@@ -4,6 +4,8 @@ using Application.Interfaces.RepositoryContract.Common;
 using Application.Models.Projects;
 using Application.Validation;
 using AutoMapper;
+using DevExtreme.AspNet.Data;
+using DevExtreme.AspNet.Data.ResponseModel;
 using Domain.Entities;
 
 namespace Application.Services;
@@ -39,13 +41,24 @@ public class ProjectService : IProjectService
             Success: true,
             Messages: new List<string> { "Данные не были получены, возможно проекты еще не созданы или удалены" });
     }
-
-    public async Task<BaseResponse<string>> CreateAsync(ProjectDto model)
+    
+    public async Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions)
     {
+        var queryableUsers = _repositoryWrapper.ProjectRepository.GetAll();
+        return await DataSourceLoader.LoadAsync(queryableUsers, loadOptions);
+    }
+
+    public async Task<BaseResponse<string>> CreateAsync(ProjectDto model, string creator)
+    {
+        User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Login.Equals(creator));
+        model.ExecutorId = user.Id.ToString();
+        model.ProjectStatusId = "c2d0c703-8864-4847-9d20-84200de0ebc4"; //заглушка
+        model.DistrictId = "652ced75-bdbb-41af-a7b3-12548fa0f17a"; //заглушка
+        model.TownId = "15750865-d58f-4fff-98ba-99e5dc45b607"; //заглушк
         var result = await _projectValidator.ValidateAsync(model);
         if (result.IsValid)
         {
-            model.CreatedBy = "Admin"; // реализация зависит от методики работы авторизацией.
+            model.CreatedBy = creator;
             Project project = _mapper.Map<Project>(model);
             await _repositoryWrapper.ProjectRepository.CreateAsync(project);
             await _repositoryWrapper.Save();

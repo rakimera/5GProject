@@ -43,7 +43,8 @@ public class ContrAgentsController : Controller
     public async Task<IActionResult> Post(CreateContrAgentDto model)
     {
         ContrAgentDto contrAgentDto = _mapper.Map<ContrAgentDto>(model);
-        var baseResponse = await _service.ContrAgentService.CreateAsync(contrAgentDto);
+        var baseResponse = await _service.ContrAgentService.CreateAsync(contrAgentDto, User.Identity.Name);
+        
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);

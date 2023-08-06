@@ -21,8 +21,8 @@ public class TownMapProfile : Profile
                 opt.MapFrom(src => src.CreatedBy))
             .ForMember(dest => dest.TownName, opt =>
                 opt.MapFrom(src => src.TownName))
-            .ForMember(dest => dest.DistrictOid, opt =>
-                opt.MapFrom(src => src.DistrictOid))
+            .ForMember(dest => dest.DistrictId, opt =>
+                opt.MapFrom(src => src.DistrictId))
             .ForMember(dest => dest.District, opt =>
                 opt.MapFrom(src => src.District))
             .ReverseMap();

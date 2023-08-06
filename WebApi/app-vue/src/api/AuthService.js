@@ -1,5 +1,6 @@
 import axios from '@/utils/axios';
 import tokenService from "@/api/tokenService";
+import router from "@/router";
 
 const authService = {
     async login(loginModel) {
@@ -7,7 +8,7 @@ const authService = {
         if (response.data.success === false){
             throw new Error("неверный логин или пароль") ;
         }
-        
+
         await tokenService.updateTokens(response);
     },
     async refreshingToken(tokenApiModel) {
@@ -15,15 +16,17 @@ const authService = {
             return await axios.post('/api/Token/refresh', tokenApiModel);
         } catch (error) {
             console.log("Ошибка получения Refresh токена", error)
+            await tokenService.removeTokens();
+            await router.push('/login');
         }
     },
     async revoke() {
         try {
-            const refreshToken = {
+            const tokenApiModel = {
                 accessToken: null, 
                 refreshToken: await tokenService.getRefreshToken()}; 
-            console.log(refreshToken)
-            await axios.post('/api/Token/revoke', refreshToken);
+            console.log(tokenApiModel)
+            await axios.post('/api/Token/revoke', tokenApiModel);
             await tokenService.removeTokens();
         }
         catch (error) {

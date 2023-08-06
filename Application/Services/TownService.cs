@@ -37,9 +37,9 @@ public class TownService : ITownService
                 { "Данные не были получены, возможно города еще не созданы или удалены" });
     }
 
-    public async Task<BaseResponse<string>> CreateAsync(TownDto model)
+    public async Task<BaseResponse<string>> CreateAsync(TownDto model,string creator)
     {
-        model.CreatedBy = "Admin";
+        model.CreatedBy = creator;
         Town town = _mapper.Map<Town>(model);
         await _repositoryWrapper.TownRepository.CreateAsync(town);
         await _repositoryWrapper.Save();

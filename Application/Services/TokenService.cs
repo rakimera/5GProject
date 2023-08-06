@@ -80,7 +80,7 @@ public class TokenService : ITokenService
 
         if (refreshToken.RefreshTokenExpiryTime <= DateTime.Now)
         {
-            _repositoryWrapper.TokenRepository.Delete(refreshToken);
+            await Revoke(refreshToken.Token);
         }
 
         if (user is null
