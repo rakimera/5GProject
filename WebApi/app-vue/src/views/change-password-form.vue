@@ -57,7 +57,7 @@ import notify from 'devextreme/ui/notify';
 import { useRouter, useRoute } from 'vue-router';
 import { ref, reactive } from "vue";
 
-import authService from "@/api/AuthService";
+import authorizationService from "@/api/AuthorizationService";
 
 export default {
 components: {
@@ -86,7 +86,7 @@ components: {
       const { password } = formData;
       loading.value = true;
   
-      const result = await authService.changePassword(password, recoveryCode.value);
+      const result = await authorizationService.changePassword(password, recoveryCode.value);
       loading.value = false;
   
       if (result.isOk) {

@@ -11,6 +11,15 @@ const userService = {
             console.log(error)
         }
     },
+
+    async getUser(oid) {
+        try {
+            return await axios.get(`/api/users/${oid}`);
+        }
+        catch (error){
+            console.log(error)
+        }
+    },
     
     async createUser(user) {
         try {

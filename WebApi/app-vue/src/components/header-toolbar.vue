@@ -2,51 +2,51 @@
   <header class="header-component">
     <dx-toolbar class="header-toolbar">
       <dx-item
-        :visible="menuToggleEnabled"
-        location="before"
-        css-class="menu-button"
+          :visible="menuToggleEnabled"
+          location="before"
+          css-class="menu-button"
       >
         <template #default>
           <dx-button
-            icon="menu"
-            styling-mode="text"
-            @click="toggleMenuFunc"
+              icon="menu"
+              styling-mode="text"
+              @click="toggleMenuFunc"
           />
         </template>
       </dx-item>
 
       <dx-item
-        v-if="title"
-        location="before"
-        css-class="header-title dx-toolbar-label"
+          v-if="title"
+          location="before"
+          css-class="header-title dx-toolbar-label"
       >
         <div>{{ title }}</div>
       </dx-item>
 
       <dx-item
-        location="after"
-        locate-in-menu="auto"
-        menu-item-template="menuUserItem"
+          location="after"
+          locate-in-menu="auto"
+          menu-item-template="menuUserItem"
       >
-      <template #default>
+        <template #default>
           <div>
             <dx-button
-              class="user-button authorization"
-              :width="210"
-              height="100%"
-              styling-mode="text"
+                class="user-button authorization"
+                :width="210"
+                height="100%"
+                styling-mode="text"
             >
-              <user-panel :email="email" :menu-items="userMenuItems" menu-mode="context" />
+              <user-panel :email="email" :menu-items="userMenuItems" menu-mode="context"/>
             </dx-button>
           </div>
         </template>
       </dx-item>
-      
+
       <template #menuUserItem>
         <user-panel
-          :email="email"
-          :menu-items="userMenuItems"
-          menu-mode="list"
+            :email="email"
+            :menu-items="userMenuItems"
+            menu-mode="list"
         />
       </template>
     </dx-toolbar>
@@ -55,13 +55,13 @@
 
 <script>
 import DxButton from "devextreme-vue/button";
-import DxToolbar, { DxItem } from "devextreme-vue/toolbar";
-import { useRouter, useRoute } from 'vue-router';
-import { ref } from 'vue';
+import DxToolbar, {DxItem} from "devextreme-vue/toolbar";
+import {useRouter, useRoute} from 'vue-router';
+import {ref} from 'vue';
 
 import UserPanel from "./user-panel";
-import AuthService from "@/api/AuthService";
-import jwt_decode from "jwt-decode";
+import AuthService from "@/api/AuthorizationService";
+import AuthenticationService from "@/api/AuthenticationService";
 
 export default {
   props: {
@@ -75,39 +75,38 @@ export default {
     const route = useRoute();
 
     const email = ref("");
-    
-    try {
-      const token = localStorage.getItem('userToken');
-      const decoded = jwt_decode(token);
-      email.value = decoded.login;
-    }catch (error){
-      console.log(error)
-    }
-    
-    
+
+    (async () => {
+      try {
+        email.value = await AuthenticationService.getLogin();
+      } catch (error) {
+        console.log(error)
+      }
+    })();
+
     const userMenuItems = [{
-        text: "Профиль",
-        icon: "user",
-        onClick: onProfileClick
-      },
+      text: "Профиль",
+      icon: "user",
+      onClick: onProfileClick
+    },
       {
         text: "Выход",
         icon: "runner",
         onClick: onLogoutClick
-    }];
-      
+      }];
+
     async function onLogoutClick() {
       await AuthService.revoke();
       await router.push({
         path: "/login-form",
-        query: { redirect: route.path }
+        query: {redirect: route.path}
       });
     }
 
     function onProfileClick() {
       router.push({
         path: "/profile",
-        query: { redirect: route.path }
+        query: {redirect: route.path}
       });
     }
 

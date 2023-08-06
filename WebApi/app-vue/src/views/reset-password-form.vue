@@ -53,7 +53,7 @@ import notify from 'devextreme/ui/notify';
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 
-import authService from "@/api/AuthService";
+import authorizationService from "@/api/AuthorizationService";
 
 const notificationText = 'Мы отпарвили Вам ссылку для сброса пароля, пожалуйста проверьте свою почту.';
 
@@ -80,7 +80,7 @@ export default {
       const { email } = formData;
       loading.value = true;
 
-      const result = await authService.resetPassword(email);
+      const result = await authorizationService.resetPassword(email);
       loading.value = false;
 
       if (result.isOk) {
