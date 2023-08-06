@@ -57,7 +57,7 @@ import {
 } from "devextreme-vue/data-grid";
 import CustomStore from "devextreme/data/custom_store";
 import "whatwg-fetch";
-import counterAgentService from "@/api/counterAgentService";
+import contrAgentService from "@/api/contrAgentService";
 import { useRouter } from 'vue-router';
 
 
@@ -70,10 +70,10 @@ export default {
       key: 'id',
 
         load: async (loadOptions) => {
-          return await counterAgentService.getAllContrAgents(loadOptions);
+          return await contrAgentService.getAllContrAgents(loadOptions);
         },
       remove: async (oid) => {
-        const baseResponse = await counterAgentService.deleteContrAgent(oid);
+        const baseResponse = await contrAgentService.deleteContrAgent(oid);
         return {data: baseResponse.result};
       },
     });
