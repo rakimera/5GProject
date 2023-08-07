@@ -11,6 +11,7 @@ import CreateProject from "@/views/create-project.vue";
 import ContrAgents from './views/ContrAgent-page.vue';
 import authorizationService from "@/api/AuthorizationService";
 import UserDetail from '@/views/users_detail_info.vue';
+import CreateUser from '@/views/create-user.vue';
 
 function loadView(view) {
   return () => import (/* webpackChunkName: "login" */ `./views/${view}.vue`)
@@ -118,7 +119,7 @@ const router = new createRouter({
     },
     {
       path: "/users_table",
-      name: "user_table",
+      name: "users_table",
       meta: {
         requiresAuth: false,
         layout: defaultLayout
@@ -143,7 +144,16 @@ const router = new createRouter({
               layout: defaultLayout
           },
           component: UserDetail
-      }
+      },
+    {
+      path: '/user/:mode',
+      name: 'createUser',
+      meta: {
+        requiresAuth: true,
+        layout: defaultLayout
+      },
+      component: CreateUser
+    }
   ],
   history: createWebHashHistory()
 });
