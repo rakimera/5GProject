@@ -1,18 +1,18 @@
 using Application.Interfaces;
 using Application.Models.Antennas;
-using Application.Models.ContrAgents;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
 
-public class AntennaController : Controller
+[Route("api/[controller]")]
+[ApiController]
+public class AntennasController : Controller
 {
     private readonly IServiceWrapper _service;
     private readonly IMapper _mapper;
    
-    public AntennaController(IServiceWrapper service, IMapper mapper)
+    public AntennasController(IServiceWrapper service, IMapper mapper)
     {
         _service = service;
         _mapper = mapper;
