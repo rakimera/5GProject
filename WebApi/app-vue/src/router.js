@@ -147,6 +147,15 @@ const router = new createRouter({
       },
     {
       path: '/user/:mode',
+      name: 'userCreate',
+      meta: {
+        requiresAuth: true,
+        layout: defaultLayout
+      },
+      component: UserDetail
+    },
+    {
+      path: '/user/:mode',
       name: 'createUser',
       meta: {
         requiresAuth: true,

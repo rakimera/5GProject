@@ -48,12 +48,7 @@ const onRowClick = async (e) => {
     const userId = e.key;
     const role = await AuthenticationService.getRole();
     console.log(role);
-    const routeParams = {name: "userDetail", params: {id: userId}};
-    if (role === "Admin") {
-      routeParams.params.mode = "edit";
-    } else {
-      routeParams.params.mode = "read";
-    }
+    const routeParams = {name: "userDetail", params: {mode: "read", id: userId}};
     await router.push(routeParams);
   } catch (error) {
     console.log(error);
@@ -85,7 +80,7 @@ const store = new CustomStore({
 
 const onCreateUserClick = async () => {
   try {
-    let routeParams = {name: "createUser", params: {mode: "create"}};
+    const routeParams = {name: "userCreate", params: {mode: "create"}};
     await router.push(routeParams);
   } catch (error) {
     console.log(error);
