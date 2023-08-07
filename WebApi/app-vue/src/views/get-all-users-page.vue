@@ -15,6 +15,13 @@
     <DxPager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
     <DxEditing :allow-deleting="true"/>
   </DxDataGrid>
+  <DxButton
+      class="button"
+      text="Создать"
+      type="success"
+      :use-submit-behavior="true"
+      :on-click="onCreateUserClick"
+  />
 </template>
 
 <script setup>
@@ -31,8 +38,10 @@ import "whatwg-fetch";
 import userService from "@/api/userService";
 import AuthenticationService from "@/api/AuthenticationService";
 import {useRouter} from "vue-router";
+import {DxButton} from "devextreme-vue/button";
 
 const dataSource = ref(null);
+const router = useRouter();
 
 const onRowClick = async (e) => {
   try {
@@ -50,8 +59,6 @@ const onRowClick = async (e) => {
     console.log(error);
   }
 };
-
-const router = useRouter();
 
 const store = new CustomStore({
   key: "id",
@@ -75,6 +82,15 @@ const store = new CustomStore({
     return {data: baseResponse.result};
   },
 });
+
+const onCreateUserClick = async () => {
+  try {
+    let routeParams = {name: "createUser", params: {mode: "create"}};
+    await router.push(routeParams);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 onMounted(() => {
   dataSource.value = store;
