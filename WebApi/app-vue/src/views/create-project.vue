@@ -95,7 +95,7 @@ import {
 } from 'devextreme-vue/form';
 import {reactive, ref, onBeforeMount} from "vue";
 import { useRoute, useRouter } from 'vue-router';
-import counterAgentService from "@/api/counterAgentService";
+import contrAgentService from "@/api/contrAgentService";
 import projectService from "@/api/projectService";
 
 const formData = reactive({});
