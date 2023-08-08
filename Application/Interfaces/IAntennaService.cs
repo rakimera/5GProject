@@ -8,5 +8,4 @@ namespace Application.Interfaces;
 public interface IAntennaService : ICrudService<AntennaDto>
 {
     Task<BaseResponse<string>> Update(UpdateAntennaDto model);
-    public Task<Guid?> GetByAntennaOid(string name);
 }

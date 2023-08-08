@@ -14,16 +14,16 @@ public class AntennaService : IAntennaService
     private readonly IMapper _mapper;
     private readonly AntennaValidator _antennaValidator;
 
-    public AntennaService(IRepositoryWrapper repositoryWrapper, IMapper mapper)
+    public AntennaService(IRepositoryWrapper repositoryWrapper, IMapper mapper, AntennaValidator antennaValidator)
     {
         _repositoryWrapper = repositoryWrapper;
         _mapper = mapper;
-       
+        _antennaValidator = antennaValidator;
     }
 
     public BaseResponse<IEnumerable<AntennaDto>> GetAll()
     {
-        IQueryable<Project> antennas = _repositoryWrapper.ProjectRepository.GetAll();
+        IQueryable<Antenna> antennas = _repositoryWrapper.AntennaRepository.GetAll();
         List<AntennaDto> models = _mapper.Map<List<AntennaDto>>(antennas);
 
         if (models.Count > 0)
@@ -42,6 +42,9 @@ public class AntennaService : IAntennaService
 
     public async Task<BaseResponse<string>> CreateAsync(AntennaDto model, string creator)
     {
+        // _mapper.Map<AntennaDto>(model);
+        // await _antennaValidator.ValidateAsync(model);
+        
         model.CreatedBy = creator;
         Antenna antenna = _mapper.Map<Antenna>(model);
         await _repositoryWrapper.AntennaRepository.CreateAsync(antenna);
@@ -69,9 +72,9 @@ public class AntennaService : IAntennaService
             Messages: new List<string> { "Антенна успешно найдена" });
     }
     
-    public async Task<BaseResponse<bool>> Delete(string oid)
+    public async Task<BaseResponse<bool>> Delete(string id)
     {
-        Antenna? antenna = await _repositoryWrapper.AntennaRepository.GetByCondition(x => x.Id.ToString() == oid);
+        Antenna? antenna = await _repositoryWrapper.AntennaRepository.GetByCondition(x => x.Id.ToString() == id);
         if (antenna is not null)
         {
             antenna.IsDelete = true;
@@ -96,14 +99,14 @@ public class AntennaService : IAntennaService
         if (!result.IsValid)
         {
             List<string> messages = _mapper.Map<List<string>>(result.Errors);
-
+        
             return new BaseResponse<string>(
                 Result: "",
                 Messages: messages,
                 Success: false);
         }
 
-        Antenna? antenna = await _repositoryWrapper.AntennaRepository.GetByCondition(x => x.Id.Equals(model.Oid));
+        Antenna? antenna = await _repositoryWrapper.AntennaRepository.GetByCondition(x => x.Id.ToString() == model.Id);
         if (antenna == null)
         {
             return new BaseResponse<string>(
@@ -122,14 +125,5 @@ public class AntennaService : IAntennaService
             Result: antenna.Id.ToString(),
             Success: true,
             Messages: new List<string> { "Антенна успешно изменена" });
-    }
-
-    public async Task<Guid?> GetByAntennaOid(string name)
-    {
-        var antenna = await _repositoryWrapper.AntennaRepository
-            .GetByCondition(x => x.Model.Equals(name));
-        if (antenna != null)
-            return antenna.Id;
-        return null;
     }
 }

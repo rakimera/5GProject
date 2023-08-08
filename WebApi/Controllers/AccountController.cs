@@ -19,9 +19,8 @@ public class AccountController : Controller
         _service = service;
         _mapper = mapper;
     }
-
-    [HttpGet]
-    // [HttpGet, Authorize(Roles = "Admin")]
+    
+    [HttpGet, Authorize(Roles = "Admin")]
     public IActionResult Get()
     {
         var baseResponse = _service.UserService.GetAll();
@@ -68,9 +67,8 @@ public class AccountController : Controller
             return Ok(baseResponse);
         return NotFound(baseResponse);
     }
-
-    [HttpGet]
-    // [HttpGet("index"), Authorize(Roles = "Admin")]
+    
+    [HttpGet("index"), Authorize(Roles = "Admin")]
     public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
     {
         var loadResult = await _service.UserService.GetLoadResult(loadOptions);

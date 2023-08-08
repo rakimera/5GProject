@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
 
-[Route("api/[controller]")]
 [ApiController]
+[Route("api/antennae")]
 public class AntennasController : Controller
 {
     private readonly IServiceWrapper _service;

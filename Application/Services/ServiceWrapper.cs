@@ -23,7 +23,8 @@ public class ServiceWrapper : IServiceWrapper
         UserValidator userValidator,
         ContrAgentValidator contrAgentValidator,
         ProjectValidator projectValidator,
-        ITokenService tokenService)
+        ITokenService tokenService,
+        AntennaValidator antennaValidator)
     {
         _districtService = new Lazy<IDistrictService>(() => new DistrictService(repository,mapper));
         _userService = new Lazy<IUserService>(() => new UserService(repository, mapper, userValidator));
@@ -32,7 +33,7 @@ public class ServiceWrapper : IServiceWrapper
         _authorizationService = new Lazy<IAuthorizationService>(()=> new AuthorizationService(repository,tokenService));
         _contrAgentService = new Lazy<IContrAgentService>(() => new ContrAgentService(repository, mapper, contrAgentValidator));
         _townService = new Lazy<ITownService>(() => new TownService(repository,mapper));
-        _antennaService = new Lazy<IAntennaService>(() => new AntennaService(repository, mapper));
+        _antennaService = new Lazy<IAntennaService>(() => new AntennaService(repository, mapper, antennaValidator));
     }
 
     public IUserService UserService => _userService.Value;
