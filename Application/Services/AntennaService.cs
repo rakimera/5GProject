@@ -42,9 +42,7 @@ public class AntennaService : IAntennaService
 
     public async Task<BaseResponse<string>> CreateAsync(AntennaDto model, string creator)
     {
-        // _mapper.Map<AntennaDto>(model);
-        // await _antennaValidator.ValidateAsync(model);
-        
+        await _antennaValidator.ValidateAsync(model);
         model.CreatedBy = creator;
         Antenna antenna = _mapper.Map<Antenna>(model);
         await _repositoryWrapper.AntennaRepository.CreateAsync(antenna);
