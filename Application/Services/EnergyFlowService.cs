@@ -2,7 +2,6 @@ using Application.Interfaces;
 
 namespace Application.Services;
 
-public class EnergyFlowSummation : IEnergyFlowSummation
+public class EnergyFlowService : IEnergyFlowService
 {
-    
 }
