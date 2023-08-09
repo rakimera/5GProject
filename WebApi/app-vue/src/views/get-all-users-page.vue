@@ -43,6 +43,17 @@ import {DxButton} from "devextreme-vue/button";
 const dataSource = ref(null);
 const router = useRouter();
 
+const store = new CustomStore({
+  key: "id",
+  async load(loadOptions) {
+    return await userService.getAllUsers(loadOptions);
+  },
+  async remove(oid) {
+    const baseResponse = await userService.deleteUser(oid);
+    return {data: baseResponse.result};
+  },
+});
+
 const onRowClick = async (e) => {
   try {
     const userId = e.key;
@@ -55,33 +66,10 @@ const onRowClick = async (e) => {
   }
 };
 
-const store = new CustomStore({
-  key: "id",
-  async load(loadOptions) {
-    return await userService.getAllUsers(loadOptions);
-  },
-  async insert(user) {
-    const baseResponse = await userService.createUser(user);
-    return {data: baseResponse.result};
-  },
-  async update(id) {
-    try {
-      const baseResponse = await userService.updateUser(id);
-      return {data: baseResponse.result};
-    } catch (error) {
-      console.log(error);
-    }
-  },
-  async remove(oid) {
-    const baseResponse = await userService.deleteUser(oid);
-    return {data: baseResponse.result};
-  },
-});
 
 const onCreateUserClick = async () => {
   try {
-    const routeParams = {name: "userCreate", params: {mode: "create"}};
-    await router.push(routeParams);
+    await router.push({name: 'userDetail', params: {mode: "create", id: null}});
   } catch (error) {
     console.log(error);
   }
