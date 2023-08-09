@@ -1,4 +1,4 @@
-namespace Application.Models.Antennas;
+namespace Application.Models.Antennae;
 
 public class UpdateAntennaDto
 {

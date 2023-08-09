@@ -1,5 +1,5 @@
 using Application.Interfaces;
-using Application.Models.Antennas;
+using Application.Models.Antennae;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 

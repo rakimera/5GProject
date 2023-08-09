@@ -1,7 +1,7 @@
 using Application.Models.TranslatorSpecs;
 using Domain.Common;
 
-namespace Application.Models.Antennas;
+namespace Application.Models.Antennae;
 
 public class AntennaDto : BaseEntity
 {

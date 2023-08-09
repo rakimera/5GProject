@@ -1,4 +1,4 @@
-using Application.Models.Antennas;
+using Application.Models.Antennae;
 using AutoMapper;
 using Domain.Entities;
 
@@ -34,7 +34,7 @@ public class AntennaMapProfile : Profile
                 opt.MapFrom(src => src.VerticalSizeDiameter))
             .ReverseMap();
         
-        CreateMap<UpdateAntennaDto, Antenna>()
+        CreateMap<AntennaDto, UpdateAntennaDto>()
             .ForMember(dest => dest.Model, opt =>
                 opt.MapFrom(src => src.Model))
             .ForMember(dest => dest.VerticalSizeDiameter, opt =>

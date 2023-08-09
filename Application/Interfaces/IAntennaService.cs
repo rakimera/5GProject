@@ -1,7 +1,7 @@
 using Application.DataObjects;
 using Application.Interfaces.Common;
-using Application.Models.Antennas;
-using Domain.Entities;
+using Application.Models.Antennae;
+
 
 namespace Application.Interfaces;
 

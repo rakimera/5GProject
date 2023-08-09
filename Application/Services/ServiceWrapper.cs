@@ -1,5 +1,4 @@
 using Application.Interfaces;
-using Application.Interfaces.RepositoryContract;
 using Application.Interfaces.RepositoryContract.Common;
 using Application.Validation;
 using AutoMapper;

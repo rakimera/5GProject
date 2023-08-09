@@ -1,4 +1,4 @@
-using Application.Models.Antennas;
+using Application.Models.Antennae;
 using Domain.Common;
 
 namespace Application.Models.TranslatorSpecs;
