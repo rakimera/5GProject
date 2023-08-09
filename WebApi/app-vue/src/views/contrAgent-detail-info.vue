@@ -94,12 +94,13 @@
 import {DxForm, DxSimpleItem,DxPatternRule, DxRequiredRule,DxStringLengthRule,DxButtonItem} from "devextreme-vue/form";
 import DxButton from 'devextreme-vue/button';
 import DxValidationSummary from 'devextreme-vue/validation-summary';
-import {onBeforeMount, onBeforeUpdate, reactive, ref} from "vue";
+import {onBeforeMount, reactive, ref} from "vue";
 import contrAgentService from "@/api/contrAgentService";
-import {useRoute, useRouter} from "vue-router";
+import {useRoute} from "vue-router";
+import notify from "devextreme/ui/notify";
 
 const route = useRoute();
-const router = useRouter();
+// const router = useRouter();
 let dataSource = reactive({
   'Название компании':"",
   'БИН': "",
@@ -108,7 +109,7 @@ let dataSource = reactive({
   'Отчество директора':"",
   'Коэффициент усиления': "",
 });
-const routeParams = {name: "Журнал контрагентов"};
+// const routeParams = {name: "Журнал контрагентов"};
 let isFormDisabled = ref(true);
 let oid = route.params.id;
 const mode = route.params.mode;
@@ -121,27 +122,7 @@ const buttonOption = ref({
   text: 'Подтвердить',
   type: 'success',
   useSubmitBehavior: true,
-});
-let hasChanges = ref(false);
-
-// Хук beforeRouteUpdate для обработки обновлений параметров маршрута
-const beforeRouteUpdate = (to, from, next) => {
-  if (hasChanges.value) {
-    const confirmMessage = "Вы внесли изменения. Вы уверены, что хотите покинуть страницу?";
-    if (confirm(confirmMessage)) {
-      hasChanges.value = false; // Сбрасываем флаг изменений перед переходом
-      next(); // Продолжаем обновление компонента
-    } else {
-      next(false); // Останавливаем обновление
-    }
-  } else {
-    next(); // Просто продолжаем обновление компонента
-  }
-};
-
-// Регистрируем хук beforeRouteUpdate
-onBeforeUpdate(beforeRouteUpdate);
-
+}) ;
 
 onBeforeMount(async () => {
   if (mode === "read") {
@@ -161,7 +142,8 @@ onBeforeMount(async () => {
 function onClickEditContrAgent() {
   isFormDisabled.value = false;
 }
-async function onClickSaveChanges() {
+async function onClickSaveChanges()
+{
   try {
     if (mode === "read"){
       const updatedData = {
@@ -185,9 +167,14 @@ async function onClickSaveChanges() {
         directorPatronymic: dataSource["Отчество директора"],
         amplificationFactor: dataSource["Коэффициент усиления"],
       };
-      hasChanges = true;
-      await contrAgentService.createContrAgent(createdData)
-      await router.push(routeParams);
+      await contrAgentService.createContrAgent(createdData);
+      notify({
+        message: 'Контрагент успешно создан',
+        position: {
+          my: 'center top',
+          at: 'center top',
+        },
+      }, 'success', 100);
     }
   } catch (error) {
     console.error("Ошибка при сохранении изменений:", error);
