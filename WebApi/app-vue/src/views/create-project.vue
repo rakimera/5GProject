@@ -95,7 +95,7 @@ import {
 } from 'devextreme-vue/form';
 import {reactive, ref, onBeforeMount} from "vue";
 import { useRoute, useRouter } from 'vue-router';
-import counterAgentService from "@/api/counterAgentService";
+import contrAgentService from "@/api/contrAgentService";
 import projectService from "@/api/projectService";
 
 const formData = reactive({});
@@ -106,7 +106,7 @@ const counterAgents = ref([]);
 
 onBeforeMount(async () => {
   loading.value = true;
-  const response = await counterAgentService.getContrAgents();
+  const response = await contrAgentService.getContrAgents();
   counterAgents.value = response.data.result;
   loading.value = false;
 })

@@ -8,9 +8,11 @@ import simpleLayout from "./layouts/single-card";
 import Users from './views/Users-page.vue';
 import GetAllUsersPage from "@/views/get-all-users-page.vue";
 import CreateProject from "@/views/create-project.vue";
-import ContrAgents from './views/ContrAgent-page.vue';
+import ContrAgentJournal from "@/views/get-all-contrAgents-page.vue";
 import authorizationService from "@/api/AuthorizationService";
 import UserDetail from '@/views/users_detail_info.vue';
+import ContrAgentDetail from '@/views/contrAgent-detail-info.vue';
+import CreateUser from '@/views/create-user.vue';
 
 function loadView(view) {
   return () => import (/* webpackChunkName: "login" */ `./views/${view}.vue`)
@@ -127,23 +129,42 @@ const router = new createRouter({
     }
     ,
     {
-      path: "/contrAgents",
-      name: "contrAgents",
+      path: "/ContrAgentsJournal",
+      name: "Журнал контрагентов",
       meta: {
         requiresAuth: true,
         layout: defaultLayout
       },
-      component: ContrAgents
+      component: ContrAgentJournal
     },
+      {
+          path: '/user/:mode/:id',
+          name: 'userDetail',
+          meta: {
+              requiresAuth: true,
+              layout: defaultLayout
+          },
+          component: UserDetail
+      }
+    ,
     {
-        path: '/user/:mode/:id',
-        name: 'userDetail',
-        meta: {
-            requiresAuth: true,
-            layout: defaultLayout
-        },
-        component: UserDetail
+      path: '/contrAgent/:mode/:id?',
+      name: 'contrAgentDetail',
+      meta: {
+        requiresAuth: true,
+        layout: defaultLayout
+      },
+      component: ContrAgentDetail
     },
+    // {
+    //   path: '/contrAgent/:mode',
+    //   name: 'contrAgentCreate',
+    //   meta: {
+    //     requiresAuth: true,
+    //     layout: defaultLayout
+    //   },
+    //   component: ContrAgentDetail
+    // },
     {
       path: '/user/:mode',
       name: 'userCreate',
@@ -153,6 +174,15 @@ const router = new createRouter({
       },
       component: UserDetail
     },
+    {
+      path: '/user/:mode',
+      name: 'createUser',
+      meta: {
+        requiresAuth: true,
+        layout: defaultLayout
+      },
+      component: CreateUser
+    }
   ],
   history: createWebHashHistory()
 });
