@@ -40,5 +40,12 @@ public class AntennaMapProfile : Profile
             .ForMember(dest => dest.VerticalSizeDiameter, opt =>
                 opt.MapFrom(src => src.VerticalSizeDiameter))
             .ReverseMap();
+        
+        CreateMap<Antenna, UpdateAntennaDto>()
+            .ForMember(dest => dest.Model, opt =>
+                opt.MapFrom(src => src.Model))
+            .ForMember(dest => dest.VerticalSizeDiameter, opt =>
+                opt.MapFrom(src => src.VerticalSizeDiameter))
+            .ReverseMap();
     }
 }
