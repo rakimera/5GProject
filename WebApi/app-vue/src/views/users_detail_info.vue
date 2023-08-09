@@ -1,48 +1,97 @@
 <template>
-  <div>
     <h2 v-text="pageDescription"></h2>
+  <div class="user-form">
     <dx-form
         id="form"
         label-location="top"
-        :form-data="createSource"
-        :disabled="isFormDisabled"
-        v-if="created"
-    ></dx-form>
-    <dx-form
-        id="form"
-        label-location="top"
-        :form-data="dataSource"
+        :form-data="formData"
         :read-only="isFormDisabled"
-        v-if="!created"
-    ></dx-form>
-    <DxButton
-        text="Редактировать"
-        :on-click="onClickEditUser"
-        v-if="isFormDisabled"
-    />
-    <DxButton
-        text="Подтвердить"
-        :on-click="onClickSaveChanges"
-        v-if="!isFormDisabled"
-    />
+    >
+      <dx-item
+          data-field="login"
+          editor-type="dxTextBox"
+          :editor-options="{ stylingMode: 'filled', placeholder: 'Логин' }"
+      >
+        <dx-required-rule message="Пожалуйста, введите email"/>
+        <dx-email-rule message="Пожалуйста, введите корректный email"/>
+        <dx-label :visible="false"/>
+      </dx-item>
+      <dx-item
+          data-field="name"
+          editor-type="dxTextBox"
+          :editor-options="{ stylingMode: 'filled', placeholder: 'Имя' }"
+      >
+        <dx-required-rule message="Пожалуйста, введите имя"/>
+        <dx-label :visible="false"/>
+      </dx-item>
+      <dx-item
+          data-field="surname"
+          editor-type="dxTextBox"
+          :editor-options="{ stylingMode: 'filled', placeholder: 'Фамилия' }"
+      >
+        <dx-required-rule message="Пожалуйста, введите фамилию"/>
+        <dx-label :visible="false"/>
+      </dx-item>
+      <dx-item
+          data-field="role"
+          editor-type="dxTextBox"
+          :editor-options="{ stylingMode: 'filled', placeholder: 'Роль' }"
+      >
+        <dx-required-rule message="Пожалуйста, введите роль"/>
+        <dx-label :visible="false"/>
+      </dx-item>
+      <dx-item
+          v-if="mode === 'create'"
+          data-field="password"
+          editor-type="dxTextBox"
+          :editor-options="{ stylingMode: 'filled', placeholder: 'Пароль', mode: 'password' }"
+      >
+        <dx-required-rule message="Пожалуйста, введите пароль"/>
+        <dx-label :visible="false"/>
+      </dx-item>
+      <dx-button-item>
+        <dx-button-options
+            width="100%"
+            type="default"
+            styling-mode="outlined"
+            template="Редактировать"
+            :on-click="onClickEditUser"
+            v-if="isFormDisabled"
+            :use-submit-behavior="true"
+        >
+        </dx-button-options>
+      </dx-button-item>
+      <dx-button-item>
+        <dx-button-options
+            width="100%"
+            type="success"
+            styling-mode="outlined"
+            :template="mode === 'create' ? 'Создать' : 'Сохранить изменения'"
+            :on-click="onClickSaveChanges"
+            v-if="!isFormDisabled"
+            :use-submit-behavior="true"
+        >
+        </dx-button-options>
+      </dx-button-item>
+    </dx-form>
   </div>
 </template>
 <script setup>
-import DxForm from "devextreme-vue/form";
-import DxButton from "devextreme-vue/button";
+import DxForm, {
+  DxItem,
+  DxLabel,
+  DxRequiredRule,
+  DxEmailRule, 
+  DxButtonItem,
+  DxButtonOptions
+} from "devextreme-vue/form";
 import {onBeforeMount, reactive, ref} from "vue";
 import userService from "@/api/userService";
 import {useRoute, useRouter} from "vue-router";
 
 const route = useRoute();
 const router = useRouter();
-const dataSource = reactive({
-  login: "",
-  name: "",
-  surname: "",
-  role: "",
-});
-const createSource = reactive({
+const formData = reactive({
   login: "",
   name: "",
   surname: "",
@@ -53,19 +102,18 @@ const routeParams = {name: "users_table"};
 let isFormDisabled = ref(true);
 let oid = route.params.id;
 const mode = route.params.mode;
-const pageDescription = ref("Подробно о пользователе");
+const pageDescription = ref(mode === "create" ? "Создание пользователя" : "Подробно о пользователе");
 const created = ref(false);
 
 onBeforeMount(async () => {
   if (mode === "create") {
     isFormDisabled.value = false;
-    pageDescription.value = "Создание пользователя";
     created.value = true;
   } else {
     try {
       const response = await userService.getUser(route.params.id);
       const userData = response.data.result;
-      Object.assign(dataSource, userData);
+      Object.assign(formData, userData);
     } catch (error) {
       console.error("Ошибка при загрузке данных пользователя:", error);
     }
@@ -81,20 +129,20 @@ async function onClickSaveChanges() {
     if (mode === "read") {
       const updatedData = {
         id: oid,
-        login: dataSource.login,
-        name: dataSource.name,
-        surname: dataSource.surname,
-        role: dataSource.role,
+        login: formData.login,
+        name: formData.name,
+        surname: formData.surname,
+        role: formData.role,
       };
       await userService.updateUser(updatedData);
       isFormDisabled.value = true;
     } else {
       const createdData = {
-        login: createSource.login,
-        name: createSource.name,
-        surname: createSource.surname,
-        role: createSource.role,
-        password: createSource.password,
+        login: formData.login,
+        name: formData.name,
+        surname: formData.surname,
+        role: formData.role,
+        password: formData.password,
       };
       await userService.createUser(createdData);
       await router.push(routeParams);
@@ -104,3 +152,18 @@ async function onClickSaveChanges() {
   }
 }
 </script>
+
+<style lang="scss">
+@import "../themes/generated/variables.base.scss";
+
+.user-form {
+  max-width: 1000px;
+  margin: 50px auto auto;
+}
+
+#form h2 {
+  margin-left: 20px;
+  font-weight: normal;
+  font-size: 22px;
+}
+</style>
