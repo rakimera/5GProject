@@ -45,6 +45,13 @@
         :allow-deleting="true"
     />
   </DxDataGrid>
+  <DxButton
+      class="button"
+      text="Создать"
+      type="success"
+      :use-submit-behavior="true"
+      :on-click="onCreateContrAgentClick"
+  />
 </template>
 
 <script setup>
@@ -59,6 +66,7 @@ import CustomStore from "devextreme/data/custom_store";
 import "whatwg-fetch";
 import contrAgentService from "@/api/contrAgentService";
 import { useRouter } from 'vue-router';
+import {DxButton} from "devextreme-vue/button";
 
 
 const router = useRouter();
@@ -76,11 +84,21 @@ const dataSource = new CustomStore({
 async function onRowClick(e) {
   try {
     const contrAgentId = e.key;
+    console.log(contrAgentId)
     await router.push({name: 'contrAgentDetail', params: {mode: "read", id: contrAgentId}});
   } catch (error) {
     console.log(error)
   }
 }
+
+const onCreateContrAgentClick = async () => {
+  try {
+    await router.push({name: 'contrAgentDetail', params: {mode: "create", id: null}});
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 </script>
 
 <style>

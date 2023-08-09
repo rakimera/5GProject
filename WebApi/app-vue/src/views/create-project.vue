@@ -106,7 +106,7 @@ const counterAgents = ref([]);
 
 onBeforeMount(async () => {
   loading.value = true;
-  const response = await counterAgentService.getContrAgents();
+  const response = await contrAgentService.getContrAgents();
   counterAgents.value = response.data.result;
   loading.value = false;
 })

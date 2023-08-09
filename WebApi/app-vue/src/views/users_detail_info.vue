@@ -13,7 +13,7 @@
         id="form"
         label-location="top"
         :form-data="dataSource"
-        :disabled="isFormDisabled"
+        :read-only="isFormDisabled"
         v-if="!created">
     </dx-form>
       <DxButton
