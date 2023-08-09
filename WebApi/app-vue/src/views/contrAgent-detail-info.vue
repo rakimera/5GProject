@@ -9,16 +9,10 @@
         id="form"
         label-location="top"
         :read-only="isFormDisabled"
-        :form-data="dataSource"
-        :show-colon-after-label="true"
-        :show-validation-summary="true">
+        :form-data="dataSource">
       <DxSimpleItem
           data-field="Название компании">
         <DxRequiredRule message="Название компании должно быть заполнено"/>
-        <DxPatternRule
-            :pattern="namePattern"
-            message="Нельзя использовать цифры в имени"
-        />
       </DxSimpleItem>
       <DxSimpleItem
           data-field="БИН">
@@ -82,14 +76,15 @@
           horizontal-alignment="left"
           v-if="!isFormDisabled"
       />
-      <DxButtonItem
-          :button-options="buttonUpdate"
-          horizontal-alignment="left"
-          :on-click="onClickEditContrAgent"
-          v-if="isFormDisabled"
-      />
     </dx-form>
     </form>
+    <DxButton
+        text="Редактировать"
+        type="success"
+        horizontal-alignment="left"
+        :on-click="onClickEditContrAgent"
+        v-if="isFormDisabled"
+    />
       <DxValidationSummary id="summary"/>
 
   </div>
@@ -97,11 +92,11 @@
 <script setup>
 
 import {DxForm, DxSimpleItem,DxPatternRule, DxRequiredRule,DxStringLengthRule,DxButtonItem} from "devextreme-vue/form";
+import DxButton from 'devextreme-vue/button';
 import DxValidationSummary from 'devextreme-vue/validation-summary';
-import {onBeforeMount, reactive, ref} from "vue";
+import {onBeforeMount, onBeforeUpdate, reactive, ref} from "vue";
 import contrAgentService from "@/api/contrAgentService";
 import {useRoute, useRouter} from "vue-router";
-import notify from "devextreme/ui/notify";
 
 const route = useRoute();
 const router = useRouter();
@@ -126,24 +121,48 @@ const buttonOption = ref({
   text: 'Подтвердить',
   type: 'success',
   useSubmitBehavior: true,
-}) ;
-const buttonUpdate = ref({
-  text: 'Редактировать',
-  type: 'success',
-  useSubmitBehavior: true,
-}) ;
+});
+let hasChanges = ref(false);
+
+// Хук beforeRouteUpdate для обработки обновлений параметров маршрута
+const beforeRouteUpdate = (to, from, next) => {
+  if (hasChanges.value) {
+    const confirmMessage = "Вы внесли изменения. Вы уверены, что хотите покинуть страницу?";
+    if (confirm(confirmMessage)) {
+      hasChanges.value = false; // Сбрасываем флаг изменений перед переходом
+      next(); // Продолжаем обновление компонента
+    } else {
+      next(false); // Останавливаем обновление
+    }
+  } else {
+    next(); // Просто продолжаем обновление компонента
+  }
+};
+
+// Регистрируем хук beforeRouteUpdate
+onBeforeUpdate(beforeRouteUpdate);
 
 
-
+onBeforeMount(async () => {
+  if (mode === "read") {
+    const response = await contrAgentService.getContrAgent(oid);
+    dataSource["БИН"] = response.data.result.bin;
+    dataSource["Название компании"] = response.data.result.companyName;
+    dataSource["Имя директора"] = response.data.result.directorName;
+    dataSource["Фамилия директора"] = response.data.result.directorSurname;
+    dataSource["Отчество директора"] = response.data.result.directorPatronymic;
+    dataSource["Коэффициент усиления"] = response.data.result.amplificationFactor;
+  } else {
+    isFormDisabled.value = false;
+    pageDescription.value = "Создание контрагента"
+    created.value = true;
+  }
+})
+function onClickEditContrAgent() {
+  isFormDisabled.value = false;
+}
 async function onClickSaveChanges() {
   try {
-    notify({
-      message: 'You have submitted the form',
-      position: {
-        my: 'center top',
-        at: 'center top',
-      },
-    }, 'success', 30000);
     if (mode === "read"){
       const updatedData = {
         id: oid,
@@ -163,34 +182,16 @@ async function onClickSaveChanges() {
         companyName: dataSource["Название компании"],
         directorName: dataSource["Имя директора"],
         directorSurname: dataSource["Фамилия директора"],
-        directorPatronymic: dataSource["Отчетсво директора"],
+        directorPatronymic: dataSource["Отчество директора"],
         amplificationFactor: dataSource["Коэффициент усиления"],
       };
+      hasChanges = true;
       await contrAgentService.createContrAgent(createdData)
       await router.push(routeParams);
     }
   } catch (error) {
     console.error("Ошибка при сохранении изменений:", error);
   }
-}
-
-onBeforeMount(async () => {
-    if (mode === "create") {
-    isFormDisabled.value = false;
-    pageDescription.value = "Создание контрагента"
-    created.value = true;
-  } else {
-    const response = await contrAgentService.getContrAgent(oid);
-    dataSource["БИН"] = response.data.result.bin;
-    dataSource["Название компании"] = response.data.result.companyName;
-    dataSource["Имя директора"] = response.data.result.directorName;
-    dataSource["Фамилия директора"] = response.data.result.directorSurname;
-    dataSource["Отчество директора"] = response.data.result.directorPatronymic;
-    dataSource["Коэффициент усиления"] = response.data.result.amplificationFactor;
-  }
-})
-function onClickEditContrAgent() {
-  isFormDisabled.value = false;
 }
 </script>
 <style scoped>
