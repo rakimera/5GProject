@@ -1,5 +1,5 @@
 <template>
-    <h2 v-text="pageDescription"></h2>
+  <h2 v-text="pageDescription"></h2>
   <div class="user-form">
     <dx-form
         id="form"
@@ -81,13 +81,14 @@ import DxForm, {
   DxItem,
   DxLabel,
   DxRequiredRule,
-  DxEmailRule, 
+  DxEmailRule,
   DxButtonItem,
   DxButtonOptions
 } from "devextreme-vue/form";
 import {onBeforeMount, reactive, ref} from "vue";
 import userService from "@/api/userService";
 import {useRoute, useRouter} from "vue-router";
+import notify from "devextreme/ui/notify";
 
 const route = useRoute();
 const router = useRouter();
@@ -144,8 +145,21 @@ async function onClickSaveChanges() {
         role: formData.role,
         password: formData.password,
       };
-      await userService.createUser(createdData);
-      await router.push(routeParams);
+      const response = await userService.createUser(createdData);
+      console.log(response.data.result + " <==== response.data.result")
+      console.log(response.data.success + " <==== response.data.success")
+      if (response.data.success) {
+        notify({
+          message: 'Пользователь успешно создан',
+          position: {
+            my: 'center top',
+            at: 'center top',
+          },
+        }, 'success', 1000);
+        await router.push(routeParams);
+      } else {
+        notify(response.data.messages, 'error', 2000);
+      }
     }
   } catch (error) {
     console.error("Ошибка при сохранении изменений:", error);
