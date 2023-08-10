@@ -1,15 +1,14 @@
 <template>
-  <div class="project-form">
-    <h2
-        v-text="pageDescription"></h2>
-    <form
-        @submit="onClickSaveChanges"
-    >
+  <div class="contrAgent-form">
+    <h2 v-text="pageDescription"></h2>
     <dx-form
         id="form"
         label-location="top"
+        :form-data="dataSource"
         :read-only="isFormDisabled"
-        :form-data="dataSource">
+        :show-colon-after-label="true"
+        :show-validation-summary="true"
+    >
       <DxSimpleItem
           data-field="Название компании">
         <DxRequiredRule message="Название компании должно быть заполнено"/>
@@ -71,36 +70,51 @@
             message="Коэффициент усиление это числовое значение с возможностью разделение через точку"
         />
       </DxSimpleItem>
-      <DxButtonItem
-          :button-options="buttonOption"
-          horizontal-alignment="left"
-          v-if="!isFormDisabled"
-      />
+      <dx-button-item>
+        <dx-button-options
+            width="100%"
+            type="default"
+            styling-mode="outlined"
+            template="Редактировать"
+            :on-click="onClickEditContrAgent"
+            :visible="isFormDisabled"
+            :use-submit-behavior="true"
+        >
+        </dx-button-options>
+      </dx-button-item>
+      <dx-button-item>
+        <dx-button-options
+            width="100%"
+            type="success"
+            styling-mode="outlined"
+            :template="mode === 'create' ? 'Создать' : 'Сохранить изменения'"
+            :on-click="onClickSaveChanges"
+            :visible="!isFormDisabled"
+            :use-submit-behavior="true"
+        >
+        </dx-button-options>
+      </dx-button-item>
     </dx-form>
-    </form>
-    <DxButton
-        text="Редактировать"
-        type="success"
-        horizontal-alignment="left"
-        :on-click="onClickEditContrAgent"
-        v-if="isFormDisabled"
-    />
-      <DxValidationSummary id="summary"/>
-
   </div>
 </template>
 <script setup>
 
-import {DxForm, DxSimpleItem,DxPatternRule, DxRequiredRule,DxStringLengthRule,DxButtonItem} from "devextreme-vue/form";
-import DxButton from 'devextreme-vue/button';
-import DxValidationSummary from 'devextreme-vue/validation-summary';
+import {
+  DxForm,
+  DxSimpleItem,
+  DxPatternRule,
+  DxRequiredRule,
+  DxStringLengthRule,
+  DxButtonItem,
+  DxButtonOptions,
+} from "devextreme-vue/form";
 import {onBeforeMount, reactive, ref} from "vue";
 import contrAgentService from "@/api/contrAgentService";
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import notify from "devextreme/ui/notify";
 
 const route = useRoute();
-// const router = useRouter();
+const router = useRouter();
 let dataSource = reactive({
   'Название компании':"",
   'БИН': "",
@@ -109,20 +123,14 @@ let dataSource = reactive({
   'Отчество директора':"",
   'Коэффициент усиления': "",
 });
-// const routeParams = {name: "Журнал контрагентов"};
+const routeParams = {name: "Журнал контрагентов"};
 let isFormDisabled = ref(true);
 let oid = route.params.id;
 const mode = route.params.mode;
 const pageDescription = ref("Подробно о контрагенте");
-const created = ref(false);
 const ampPattern = ref(/^(\d+(.\d+)*)?$/);
 const namePattern = ref("^[a-zA-Zа-яА-Я]+$")
 const binPattern = ref("^[0-9]")
-const buttonOption = ref({
-  text: 'Подтвердить',
-  type: 'success',
-  useSubmitBehavior: true,
-}) ;
 
 onBeforeMount(async () => {
   if (mode === "read") {
@@ -136,16 +144,14 @@ onBeforeMount(async () => {
   } else {
     isFormDisabled.value = false;
     pageDescription.value = "Создание контрагента"
-    created.value = true;
   }
 })
 function onClickEditContrAgent() {
   isFormDisabled.value = false;
 }
-async function onClickSaveChanges()
-{
+async function onClickSaveChanges() {
   try {
-    if (mode === "read"){
+    if (mode === "read") {
       const updatedData = {
         id: oid,
         bin: dataSource["БИН"],
@@ -157,8 +163,7 @@ async function onClickSaveChanges()
       };
       await contrAgentService.updateContrAgent(updatedData);
       isFormDisabled.value = true;
-    }
-    else {
+    } else {
       const createdData = {
         bin: dataSource["БИН"],
         companyName: dataSource["Название компании"],
@@ -167,14 +172,19 @@ async function onClickSaveChanges()
         directorPatronymic: dataSource["Отчество директора"],
         amplificationFactor: dataSource["Коэффициент усиления"],
       };
-      await contrAgentService.createContrAgent(createdData);
-      notify({
-        message: 'Контрагент успешно создан',
-        position: {
-          my: 'center top',
-          at: 'center top',
-        },
-      }, 'success', 100);
+      const response = await contrAgentService.createContrAgent(createdData);
+      if (response.data.success) {
+        notify({
+          message: 'Контрагент успешно создан',
+          position: {
+            my: 'center top',
+            at: 'center top',
+          },
+        }, 'success', 1000);
+        await router.push(routeParams);
+      } else {
+        notify(response.data.messages, 'error', 2000);
+      }
     }
   } catch (error) {
     console.error("Ошибка при сохранении изменений:", error);
@@ -182,19 +192,14 @@ async function onClickSaveChanges()
 }
 </script>
 <style scoped>
-#summary {
-  padding-left: 10px;
-  margin-top: 20px;
-  margin-bottom: 10px;
-}
-.project-form {
+
+.contrAgent-form {
   max-width: 1000px;
-  margin: auto;
-  margin-top: 50px;
+  margin: 50px auto auto;
 }
 #form h2 {
-  margin-left: 20px;
+  margin-left: 40px;
   font-weight: normal;
-  font-size: 22px;
+  font-size: 35px;
 }
 </style>
