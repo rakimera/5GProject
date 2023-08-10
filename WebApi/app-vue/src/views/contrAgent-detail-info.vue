@@ -3,6 +3,7 @@
     <h2 v-text="pageDescription"></h2>
     <dx-form
         id="form"
+        ref="formRef"
         label-location="top"
         :form-data="dataSource"
         :read-only="isFormDisabled"
@@ -131,6 +132,7 @@ const pageDescription = ref("Подробно о контрагенте");
 const ampPattern = ref(/^(\d+(.\d+)*)?$/);
 const namePattern = ref("^[a-zA-Zа-яА-Я]+$")
 const binPattern = ref("^[0-9]")
+const formRef = ref(null);
 
 onBeforeMount(async () => {
   if (mode === "read") {
@@ -151,41 +153,66 @@ function onClickEditContrAgent() {
 }
 async function onClickSaveChanges() {
   try {
-    if (mode === "read") {
-      const updatedData = {
-        id: oid,
-        bin: dataSource["БИН"],
-        companyName: dataSource["Название компании"],
-        directorName: dataSource["Имя директора"],
-        directorSurname: dataSource["Фамилия директора"],
-        directorPatronymic: dataSource["Отчество директора"],
-        amplificationFactor: dataSource["Коэффициент усиления"],
-      };
-      await contrAgentService.updateContrAgent(updatedData);
-      isFormDisabled.value = true;
-    } else {
-      const createdData = {
-        bin: dataSource["БИН"],
-        companyName: dataSource["Название компании"],
-        directorName: dataSource["Имя директора"],
-        directorSurname: dataSource["Фамилия директора"],
-        directorPatronymic: dataSource["Отчество директора"],
-        amplificationFactor: dataSource["Коэффициент усиления"],
-      };
-      const response = await contrAgentService.createContrAgent(createdData);
-      if (response.data.success) {
-        notify({
-          message: 'Контрагент успешно создан',
-          position: {
-            my: 'center top',
-            at: 'center top',
-          },
-        }, 'success', 1000);
-        await router.push(routeParams);
+    const formInstance = formRef.value.instance;
+    const isFormValid = await formInstance.validate();
+    if (isFormValid.isValid === false) {
+      notify({
+        message: 'Данные не корректны',
+        position: {
+          my: 'center top',
+          at: 'center top',
+        },
+      }, 'warning', 1000);
+    }
+    else {
+      if (mode === "read") {
+        const updatedData = {
+          id: oid,
+          bin: dataSource["БИН"],
+          companyName: dataSource["Название компании"],
+          directorName: dataSource["Имя директора"],
+          directorSurname: dataSource["Фамилия директора"],
+          directorPatronymic: dataSource["Отчество директора"],
+          amplificationFactor: dataSource["Коэффициент усиления"],
+        };
+        const responseUpdate = await contrAgentService.updateContrAgent(updatedData);
+        if (responseUpdate.data.success) {
+          notify({
+            message: 'Контрагент успешно отредактирован',
+            position: {
+              my: 'center top',
+              at: 'center top',
+            },
+          }, 'success', 1000);
+          isFormDisabled.value = true;
+        } else {
+          notify(responseUpdate.data.messages, 'error', 2000);
+        }
       } else {
-        notify(response.data.messages, 'error', 2000);
+        const createdData = {
+          bin: dataSource["БИН"],
+          companyName: dataSource["Название компании"],
+          directorName: dataSource["Имя директора"],
+          directorSurname: dataSource["Фамилия директора"],
+          directorPatronymic: dataSource["Отчество директора"],
+          amplificationFactor: dataSource["Коэффициент усиления"],
+        };
+        const response = await contrAgentService.createContrAgent(createdData);
+        if (response.data.success) {
+          notify({
+            message: 'Контрагент успешно создан',
+            position: {
+              my: 'center top',
+              at: 'center top',
+            },
+          }, 'success', 1000);
+          await router.push(routeParams);
+        } else {
+          notify(response.data.messages, 'error', 2000);
+        }
       }
     }
+
   } catch (error) {
     console.error("Ошибка при сохранении изменений:", error);
   }
