@@ -8,7 +8,7 @@ public class ContrAgentMapProfile : Profile
 {
     public ContrAgentMapProfile()
     {
-        CreateMap<ContrAgent, ContrAgentDto>()
+        CreateMap<CounterAgent, ContrAgentDto>()
             .ForMember(dest => dest.Id, opt =>
                 opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Created, opt =>
@@ -20,7 +20,7 @@ public class ContrAgentMapProfile : Profile
             .ForMember(dest => dest.CreatedBy, opt =>
                 opt.MapFrom(src => src.CreatedBy))
             .ForMember(dest => dest.AmplificationFactor, opt =>
-                opt.MapFrom(src => src.AmplificationFactor))
+                opt.MapFrom(src => src.TransmitLossFactor))
             .ForMember(dest => dest.CompanyName, opt =>
                 opt.MapFrom(src => src.CompanyName))
             .ForMember(dest => dest.DirectorName, opt =>

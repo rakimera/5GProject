@@ -107,7 +107,7 @@ public class ProjectService : IProjectService
                 Success: false);
         }
 
-        Project project = await _repositoryWrapper.ProjectRepository.GetByCondition(x => x.Id.Equals(model.Oid));
+        Project project = await _repositoryWrapper.ProjectRepository.GetByCondition(x => x.Id.Equals(model.Id));
         if (project == null)
         {
             return new BaseResponse<string>(

@@ -1,10 +1,11 @@
+using Domain.Entities;
+
 namespace Application.Interfaces;
 
-public interface IEnergyFlowService
+public interface   IEnergyFlowService
 {
-    decimal EnergyFlowSummation();
-    decimal EnergyFlowOnLevels();
-    decimal RMaxBoz();
-    decimal EuclideanDistanceCalculation(); //R,m
-    decimal AntennaRadiationPattern();
+    decimal PowerDensitySummation(EnergyResult energyResult);
+    EnergyResult PowerDensity(decimal powerSignal, decimal gain, decimal transmitLossFactor);
+    decimal EuclideanDistance(); //R,m
+    decimal NormalizedVerticalPower(); //F(θ)
 }

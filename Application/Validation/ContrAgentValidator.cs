@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Application.Validation;
 
-public class ContrAgentValidator : AbstractValidator<ContrAgent>
+public class ContrAgentValidator : AbstractValidator<CounterAgent>
 {
     public ContrAgentValidator()
     {
@@ -11,7 +11,7 @@ public class ContrAgentValidator : AbstractValidator<ContrAgent>
             .NotEmpty().WithMessage("Название компании должно быть заполнено");
         RuleFor(contrAgent => contrAgent.BIN)
             .NotEmpty().WithMessage("БИН компании должнен быть заполнен");
-        RuleFor(contrAgent => contrAgent.AmplificationFactor)
+        RuleFor(contrAgent => contrAgent.TransmitLossFactor)
             .NotEmpty().WithMessage("Коэффициент усиления компании должнен быть заполнен");
         RuleFor(contrAgent => contrAgent.DirectorName)
             .NotEmpty().WithMessage("Имя директора компании должно быть заполнено");

@@ -12,7 +12,7 @@ public class ProjectMapProfile : Profile
             .ForMember(dest => dest.ContrAgentId, opt =>
                 opt.MapFrom(src => src.ContrAgentId))
             .ForMember(dest => dest.ContrAgent, opt =>
-                opt.MapFrom(src => src.ContrAgent))
+                opt.MapFrom(src => src.CounterAgent))
             .ForMember(dest => dest.ExecutorId, opt =>
                 opt.MapFrom(src => src.ExecutorId))
             .ForMember(dest => dest.Executor, opt =>
@@ -20,26 +20,12 @@ public class ProjectMapProfile : Profile
             .ForMember(dest => dest.ProjectStatusId, opt =>
                 opt.MapFrom(src => src.ProjectStatusId))
             .ForMember(dest => dest.ProjectStatus, opt =>
-                opt.MapFrom(src => src.ProjectStatus))
-            .ForMember(dest => dest.DistrictId, opt =>
-                opt.MapFrom(src => src.DistrictId))
-            .ForMember(dest => dest.District, opt =>
-                opt.MapFrom(src => src.District))
-            .ForMember(dest => dest.TownId, opt =>
-                opt.MapFrom(src => src.TownId))
-            .ForMember(dest => dest.Town, opt =>
-                opt.MapFrom(src => src.Town))
-            .ForMember(dest => dest.ProjectAntennae, opt =>
-                opt.MapFrom(src => src.ProjectAntennae))
-            .ForMember(dest => dest.Street, opt =>
-                opt.MapFrom(src => src.Street))
-            .ForMember(dest => dest.House, opt =>
-                opt.MapFrom(src => src.House));
+                opt.MapFrom(src => src.ProjectStatus));
         
         CreateMap<ProjectDto, Project>()
             .ForMember(dest => dest.ContrAgentId, opt =>
                 opt.MapFrom(src => src.ContrAgentId))
-            .ForMember(dest => dest.ContrAgent, opt =>
+            .ForMember(dest => dest.CounterAgent, opt =>
                 opt.Ignore())
             .ForMember(dest => dest.ExecutorId, opt =>
                 opt.MapFrom(src => src.ExecutorId))
@@ -49,25 +35,13 @@ public class ProjectMapProfile : Profile
                 opt.MapFrom(src => src.ProjectStatusId))
             .ForMember(dest => dest.ProjectStatus, opt =>
                 opt.Ignore())
-            .ForMember(dest => dest.DistrictId, opt =>
-                opt.MapFrom(src => src.DistrictId))
-            .ForMember(dest => dest.District, opt =>
-                opt.Ignore())
-            .ForMember(dest => dest.TownId, opt =>
-                opt.MapFrom(src => src.TownId))
-            .ForMember(dest => dest.Town, opt =>
-                opt.Ignore())
             .ForMember(dest => dest.ProjectAntennae, opt =>
-                opt.Ignore())
-            .ForMember(dest => dest.Street, opt =>
-                opt.MapFrom(src => src.Street))
-            .ForMember(dest => dest.House, opt =>
-                opt.MapFrom(src => src.House));
+                opt.Ignore());
         
         CreateMap<CreateProjectDto, ProjectDto>()
             .ForMember(dest => dest.ContrAgentId, opt =>
                 opt.MapFrom(src => src.ContrAgentId))
-            .ForMember(dest => dest.DistrictId, opt =>
+            .ForMember(dest => dest.AddressId, opt =>
                 opt.MapFrom(src => src.DistrictId))
             .ForMember(dest => dest.TownId, opt =>
                 opt.MapFrom(src => src.TownId))

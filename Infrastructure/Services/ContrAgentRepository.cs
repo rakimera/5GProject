@@ -5,7 +5,7 @@ using Infrastructure.Repositories;
 
 namespace Infrastructure.Services;
 
-public class ContrAgentRepository : BaseRepository<ContrAgent>, IContrAgentRepository
+public class ContrAgentRepository : BaseRepository<CounterAgent>, IContrAgentRepository
 {
     public ContrAgentRepository(Project5GDbContext dbContext) : base(dbContext)
     {

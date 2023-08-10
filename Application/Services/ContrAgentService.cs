@@ -25,7 +25,7 @@ public class ContrAgentService : IContrAgentService
 
     public BaseResponse<IEnumerable<ContrAgentDto>> GetAll()
     {
-        IQueryable<ContrAgent> contrAgents = _repositoryWrapper.ContrAgentRepository.GetAll();
+        IQueryable<CounterAgent> contrAgents = _repositoryWrapper.ContrAgentRepository.GetAll();
         List<ContrAgentDto> models = _mapper.Map<List<ContrAgentDto>>(contrAgents);
         if (models.Count > 0)
         {
@@ -42,16 +42,16 @@ public class ContrAgentService : IContrAgentService
 
     public async Task<BaseResponse<string>> CreateAsync(ContrAgentDto model, string creator)
     {
-        ContrAgent contrAgent = _mapper.Map<ContrAgent>(model);
-        var result = await _contrAgentValidator.ValidateAsync(contrAgent);
+        CounterAgent counterAgent = _mapper.Map<CounterAgent>(model);
+        var result = await _contrAgentValidator.ValidateAsync(counterAgent);
         if (result.IsValid)
         {
-            contrAgent.CreatedBy = creator;
-            await _repositoryWrapper.ContrAgentRepository.CreateAsync(contrAgent);
+            counterAgent.CreatedBy = creator;
+            await _repositoryWrapper.ContrAgentRepository.CreateAsync(counterAgent);
             await _repositoryWrapper.Save();
 
             return new BaseResponse<string>(
-                Result: contrAgent.Id.ToString(),
+                Result: counterAgent.Id.ToString(),
                 Success: true,
                 Messages: new List<string>{"Контрагент успешно создан"});
         }
@@ -64,7 +64,7 @@ public class ContrAgentService : IContrAgentService
 
     public async Task<BaseResponse<ContrAgentDto>> GetByOid(string oid)
     {
-        ContrAgent? contrAgent = await _repositoryWrapper.ContrAgentRepository.GetByCondition(x => x.Id.ToString() == oid);
+        CounterAgent? contrAgent = await _repositoryWrapper.ContrAgentRepository.GetByCondition(x => x.Id.ToString() == oid);
         ContrAgentDto model = _mapper.Map<ContrAgentDto>(contrAgent);
         if (contrAgent is null)
             return new BaseResponse<ContrAgentDto>(
@@ -89,9 +89,9 @@ public class ContrAgentService : IContrAgentService
         }
         ContrAgentDto existingContrAgentDto = getContrAgentResponse.Result;
         _mapper.Map(model, existingContrAgentDto);
-        ContrAgent contrAgent =
+        CounterAgent counterAgent =
             await _repositoryWrapper.ContrAgentRepository.GetByCondition(x => x.Id.Equals(existingContrAgentDto.Id));
-        if (contrAgent == null)
+        if (counterAgent == null)
         {
             return new BaseResponse<ContrAgentDto>(
                 Result: null,
@@ -100,15 +100,15 @@ public class ContrAgentService : IContrAgentService
         }
         
         existingContrAgentDto.LastModifiedBy = "Admin";
-        _mapper.Map(existingContrAgentDto, contrAgent);
-        var result = await _contrAgentValidator.ValidateAsync(contrAgent);
+        _mapper.Map(existingContrAgentDto, counterAgent);
+        var result = await _contrAgentValidator.ValidateAsync(counterAgent);
         if (!result.IsValid)
             return new BaseResponse<ContrAgentDto>(
                 Result: null,
                 Messages: _mapper.Map<List<string>>(result.Errors),
                 Success: false);
         
-        _repositoryWrapper.ContrAgentRepository.Update(contrAgent);
+        _repositoryWrapper.ContrAgentRepository.Update(counterAgent);
         await _repositoryWrapper.Save();
         
         return new BaseResponse<ContrAgentDto>(
@@ -125,7 +125,7 @@ public class ContrAgentService : IContrAgentService
 
     public async Task<BaseResponse<bool>> Delete(string oid)
     {
-        ContrAgent? contrAgent = await _repositoryWrapper.ContrAgentRepository.GetByCondition(x => x.Id.ToString() == oid);
+        CounterAgent? contrAgent = await _repositoryWrapper.ContrAgentRepository.GetByCondition(x => x.Id.ToString() == oid);
         if (contrAgent is not null)
         {
             contrAgent.IsDelete = true;
