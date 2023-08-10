@@ -154,25 +154,7 @@ const router = new createRouter({
         layout: defaultLayout
       },
       component: ContrAgentDetail
-    },
-    // {
-    //   path: '/contrAgent/:mode',
-    //   name: 'contrAgentCreate',
-    //   meta: {
-    //     requiresAuth: true,
-    //     layout: defaultLayout
-    //   },
-    //   component: ContrAgentDetail
-    // },
-    // {
-    //   path: '/user/:mode',
-    //   name: 'userCreate',
-    //   meta: {
-    //     requiresAuth: true,
-    //     layout: defaultLayout
-    //   },
-    //   component: UserDetail
-    // },
+    }
   ],
   history: createWebHashHistory()
 });
