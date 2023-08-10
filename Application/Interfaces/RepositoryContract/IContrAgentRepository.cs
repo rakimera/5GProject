@@ -3,7 +3,7 @@ using Domain.Entities;
 
 namespace Application.Interfaces.RepositoryContract;
 
-public interface IContrAgentRepository : IBaseRepository<ContrAgent>
+public interface IContrAgentRepository : IBaseRepository<CounterAgent>
 {
     
 }

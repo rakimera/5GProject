@@ -7,24 +7,35 @@ namespace Infrastructure.Persistence.DataContext;
 
 public class Project5GDbContext : DbContext
 {
-    public DbSet<Antenna> Antennae { get; set; }
-    public DbSet<ContrAgent> ContrAgents { get; set; }
+    public DbSet<Address> Addresses { get; set; }
+    public DbSet<Antenna> Antennas { get; set; }
+    public DbSet<AntennaTranslator> AntennaTranslators { get; set; }
+    public DbSet<CompanyLicense> CompanyLicenses { get; set; }
+    public DbSet<CounterAgent> CounterAgents { get; set; }
+    public DbSet<CounterAgentPowerFrequency> CounterAgentPowerFrequencies { get; set; }
     public DbSet<District> Districts { get; set; }
+    public DbSet<EnergyResult> EnergyResults { get; set; }
+    public DbSet<ExecutiveCompany> ExecutiveCompanies { get; set; }
     public DbSet<Location> Locations { get; set; }
     public DbSet<Project> Projects { get; set; }
     public DbSet<ProjectAntenna> ProjectsAntennae { get; set; }
     public DbSet<ProjectStatus> ProjectsStatuses { get; set; }
-    public DbSet<Town> Towns { get; set; }
-    public DbSet<User> Users { get; set; }
-    public DbSet<Role> Roles { get; set; }
+    public DbSet<RadiationZone> RadiationZones { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<Role> Roles { get; set; }
+    public DbSet<SanPinDock> SanPinDocks { get; set; }
+    public DbSet<TotalFluxDensity> TotalFluxDensities { get; set; }
+    public DbSet<Town> Towns { get; set; }
+    public DbSet<TranslatorSpecs> TranslatorsSpecs { get; set; }
+    public DbSet<User> Users { get; set; }
+    public DbSet<UserRole> UserRoles { get; set; }
 
     public Project5GDbContext(DbContextOptions<Project5GDbContext> options) : base(options) {}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>().HasIndex(x => x.Login).IsUnique();
-        modelBuilder.Entity<ContrAgent>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<CounterAgent>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<User>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<District>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<Town>().HasQueryFilter(x => x.IsDelete == false);
@@ -35,6 +46,16 @@ public class Project5GDbContext : DbContext
         modelBuilder.Entity<ProjectAntenna>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<ProjectStatus>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<TranslatorSpecs>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<Address>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<AntennaTranslator>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<CompanyLicense>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<CounterAgentPowerFrequency>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<EnergyResult>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<ExecutiveCompany>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<RadiationZone>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<SanPinDock>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<TotalFluxDensity>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<UserRole>().HasQueryFilter(x => x.IsDelete == false);
         base.OnModelCreating(modelBuilder);
     }
 
