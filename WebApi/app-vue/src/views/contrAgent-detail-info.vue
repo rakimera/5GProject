@@ -36,7 +36,7 @@
         />
         <DxPatternRule
             :pattern="namePattern"
-            message="Нельзя использовать цифры в имени"
+            message="Имя должно состоять только из букв"
         />
       </DxSimpleItem>
       <DxSimpleItem
@@ -48,11 +48,15 @@
         />
         <DxPatternRule
             :pattern="namePattern"
-            message="Нельзя использовать цифры в фамилии"
+            message="Фамилия должна состоять только из букв"
         />
       </DxSimpleItem>
       <DxSimpleItem
           data-field="Отчество директора">
+        <DxPatternRule
+            :pattern="namePattern"
+            message="Отчество должно состоять только из букв"
+        />
       </DxSimpleItem>
       <DxSimpleItem
           data-field="Коэффициент усиления">
