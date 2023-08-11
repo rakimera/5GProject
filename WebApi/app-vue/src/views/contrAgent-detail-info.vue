@@ -53,15 +53,6 @@
       </DxSimpleItem>
       <DxSimpleItem
           data-field="Отчество директора">
-        <DxRequiredRule message="Отчество должно быть заполнено"/>
-        <DxStringLengthRule
-            :min=4
-            message="Отчество не может содержать менее 4 символов"
-        />
-        <DxPatternRule
-            :pattern="namePattern"
-            message="Нельзя использовать цифры в отчестве"
-        />
       </DxSimpleItem>
       <DxSimpleItem
           data-field="Коэффициент усиления">
