@@ -23,7 +23,7 @@ export default [
       {
         text: "ContrAgents",
         path: "/contrAgents"
-      }
+      },
     ]
   },
   {
@@ -37,6 +37,20 @@ export default [
       {
         text: "Новый проект",
         path: "/create-projects"
+      }
+    ]
+  },
+  {
+    text: "Антенны",
+    icon: "folder",
+    items: [
+      {
+        text: "Список антенн",
+        path: "/antennae_table"
+      },
+      {
+        text: "Тест",
+        path: "/antennae"
       }
     ]
   }
