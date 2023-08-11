@@ -1,6 +1,8 @@
 using Application.Interfaces;
 using Application.Models.Antennae;
 using AutoMapper;
+using DevExtreme.AspNet.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -65,5 +67,13 @@ public class AntennasController : Controller
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
+    }
+    
+    // [HttpGet("index"), Authorize(Roles = "Admin")]
+    [HttpGet("index")]
+    public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
+    {
+        var loadResult = await _service.AntennaService.GetLoadResult(loadOptions);
+        return Ok(loadResult);
     }
 }
