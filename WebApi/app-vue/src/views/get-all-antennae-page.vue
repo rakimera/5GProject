@@ -1,20 +1,21 @@
 <template>
   <DxDataGrid
-      :data-source="store"
+      :data-source="dataSource"
       :show-borders="true"
       :remote-operations="true"
       key-expr="ID"
       @row-click="onRowClick"
   >
     <DxColumn
+        caption="Модель"
         data-field="model"
         data-type="string"
     />
     <DxColumn
-        data-field="vertical diameter"
-        data-type="string"
+        data-field="Вертикальный размер(диаметр антенны)"
+        data-type="decimal"
     />
-    <DxPaging :page-size="2"/>
+    <DxPaging :page-size="5"/>
     <DxPager
         :show-page-size-selector="true"
         :allowed-page-sizes="[8, 12, 20]"
@@ -37,24 +38,13 @@ import {
 import CustomStore from "devextreme/data/custom_store";
 import "whatwg-fetch";
 import antennaService from "@/api/antennaService";
-import AuthenticationService from "@/api/AuthenticationService";
 
 const store = new CustomStore({
   key: 'id',
   load: async (loadOptions) => {
-    return await antennaService.getAntennaeForGrid(loadOptions);
-  },
-  insert: async (antenna) => {
-    const baseResponse = await antennaService.createAntenna(antenna);
-    return {data: baseResponse.result};
-  },
-  update: async (id) => {
-    try {
-      const baseResponse = await antennaService.updateAntenna(id);
-      return {data: baseResponse.result};
-    } catch (error) {
-      console.log(error);
-    }
+    var test = await antennaService.getAntennaeForGrid(loadOptions);
+    console.log(test);
+    return test;
   },
   remove: async (oid) => {
     const baseResponse = await antennaService.deleteAntenna(oid);
@@ -80,8 +70,6 @@ export default {
     async onRowClick(e) {
       try {
         const antennaId = e.key;
-        let role = await AuthenticationService.getRole();
-        console.log(role)
         this.$router.push({name: 'antennaDetail', params: {mode: "read", id: antennaId}});
       } catch (error) {
         console.log(error)

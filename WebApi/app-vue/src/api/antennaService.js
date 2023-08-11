@@ -43,7 +43,7 @@ const antennaService = {
     async getAntennaeForGrid(loadOptions) {
         try {
             let options = storeExtension.getParams(loadOptions);
-            const response = await axios.get(`/api/antennae_table/${options}`);
+            const response = await axios.get(`/api/antennae/index/${options}`);
             console.log(response)
             return response.data;
         } catch (error) {
