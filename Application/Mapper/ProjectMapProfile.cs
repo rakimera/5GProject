@@ -20,7 +20,11 @@ public class ProjectMapProfile : Profile
             .ForMember(dest => dest.ProjectStatusId, opt =>
                 opt.MapFrom(src => src.ProjectStatusId))
             .ForMember(dest => dest.ProjectStatus, opt =>
-                opt.MapFrom(src => src.ProjectStatus));
+                opt.MapFrom(src => src.ProjectStatus))
+            .ForMember(dest => dest.AddressId, opt =>
+                opt.MapFrom(src => src.AddressId))
+            .ForMember(dest => dest.Address, opt =>
+                opt.MapFrom(src => src.Address));
         
         CreateMap<ProjectDto, Project>()
             .ForMember(dest => dest.ContrAgentId, opt =>
@@ -35,7 +39,13 @@ public class ProjectMapProfile : Profile
                 opt.MapFrom(src => src.ProjectStatusId))
             .ForMember(dest => dest.ProjectStatus, opt =>
                 opt.Ignore())
+            .ForMember(dest => dest.AddressId, opt =>
+                opt.MapFrom(src => src.AddressId))
+            .ForMember(dest => dest.Address, opt =>
+                opt.Ignore())
             .ForMember(dest => dest.ProjectAntennae, opt =>
+                opt.Ignore())
+            .ForMember(dest => dest.TotalFluxDensity, opt =>
                 opt.Ignore());
         
         CreateMap<CreateProjectDto, ProjectDto>()
