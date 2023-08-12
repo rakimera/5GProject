@@ -132,9 +132,7 @@ const formRef = ref(null);
 onBeforeMount(async () => {
   if (mode === "read") {
     const response = await contrAgentService.getContrAgent(oid);
-    const contrAgentData = response.data.result;
-    console.log(contrAgentData)
-    Object.assign(dataSource, contrAgentData);
+    Object.assign(dataSource, response.data.result);
   } else {
     isFormDisabled.value = false;
     pageDescription.value = "Создание контрагента"
