@@ -10,67 +10,68 @@
         :show-colon-after-label="true"
         :show-validation-summary="true"
     >
-      <DxSimpleItem
-          data-field="Название компании">
-        <DxRequiredRule message="Название компании должно быть заполнено"/>
-      </DxSimpleItem>
-      <DxSimpleItem
-          data-field="БИН">
-        <DxRequiredRule message="БИН должнен быть заполнен"/>
-        <DxStringLengthRule
+      <dx-simple-item
+          data-field="companyName">
+        <dx-label :text="'Название компании'"/>
+        <dx-required-rule message="Название компании должно быть заполнено"/>
+      </dx-simple-item>
+      <dx-simple-item
+          data-field="bin">
+        <dx-label :text="'БИН'"/>
+        <dx-required-rule message="БИН должнен быть заполнен"/>
+        <dx-string-length-rule
             :min=12
             :max=12
             message="БИН состоит из 12 чисел"
         />
-        <DxPatternRule
+        <dx-pattern-rule
             :pattern="binPattern"
             message="Некорректный БИН"
         />
-      </DxSimpleItem>
-      <DxSimpleItem
-          data-field="Имя директора">
-        <DxRequiredRule message="Имя должно быть заполнено"/>
-        <DxStringLengthRule
+      </dx-simple-item>
+      <dx-simple-item
+          data-field="directorName">
+        <dx-label :text="'Имя директора'"/>
+        <dx-required-rule message="Имя должно быть заполнено"/>
+        <dx-string-length-rule
             :min=2
             message="Имя не может содержать менее 2 символов"
         />
-        <DxPatternRule
+        <dx-pattern-rule
             :pattern="namePattern"
-            message="Нельзя использовать цифры в имени"
+            message="Имя должно состоять только из букв"
         />
-      </DxSimpleItem>
-      <DxSimpleItem
-          data-field="Фамилия директора">
-        <DxRequiredRule message="Фамилия должна быть заполнено"/>
-        <DxStringLengthRule
+      </dx-simple-item>
+      <dx-simple-item
+          data-field="directorSurname">
+        <dx-label :text="'Фамилия директора'"/>
+        <dx-required-rule message="Фамилия должна быть заполнено"/>
+        <dx-string-length-rule
             :min="2"
             message="Фамилия не может содержать менее 2 символов"
         />
-        <DxPatternRule
+        <dx-pattern-rule
             :pattern="namePattern"
-            message="Нельзя использовать цифры в фамилии"
+            message="Фамилия должна состоять только из букв"
         />
-      </DxSimpleItem>
-      <DxSimpleItem
-          data-field="Отчество директора">
-        <DxRequiredRule message="Отчество должно быть заполнено"/>
-        <DxStringLengthRule
-            :min=4
-            message="Отчество не может содержать менее 4 символов"
-        />
-        <DxPatternRule
+      </dx-simple-item>
+      <dx-simple-item
+          data-field="directorPatronymic">
+        <dx-label :text="'Отчество директора'"/>
+        <dx-pattern-rule
             :pattern="namePattern"
-            message="Нельзя использовать цифры в отчестве"
+            message="Отчество должно состоять только из букв"
         />
-      </DxSimpleItem>
-      <DxSimpleItem
-          data-field="Коэффициент усиления">
-        <DxRequiredRule message="Коэффициент усиления должнен быть заполнен"/>
-        <DxPatternRule
+      </dx-simple-item>
+      <dx-simple-item
+          data-field="amplificationFactor">
+        <dx-label :text="'Коэффициент усиления'"/>
+        <dx-required-rule message="Коэффициент усиления должнен быть заполнен"/>
+        <dx-pattern-rule
             :pattern="ampPattern"
             message="Коэффициент усиление это числовое значение с возможностью разделение через точку"
         />
-      </DxSimpleItem>
+      </dx-simple-item>
       <dx-button-item>
         <dx-button-options
             width="100%"
@@ -102,6 +103,7 @@
 
 import {
   DxForm,
+  DxLabel,
   DxSimpleItem,
   DxPatternRule,
   DxRequiredRule,
@@ -116,14 +118,7 @@ import notify from "devextreme/ui/notify";
 
 const route = useRoute();
 const router = useRouter();
-let dataSource = reactive({
-  'Название компании':"",
-  'БИН': "",
-  'Имя директора':"",
-  'Фамилия директора': "",
-  'Отчество директора':"",
-  'Коэффициент усиления': "",
-});
+let dataSource = reactive({});
 const routeParams = {name: "Журнал контрагентов"};
 let isFormDisabled = ref(true);
 let oid = route.params.id;
@@ -137,12 +132,7 @@ const formRef = ref(null);
 onBeforeMount(async () => {
   if (mode === "read") {
     const response = await contrAgentService.getContrAgent(oid);
-    dataSource["БИН"] = response.data.result.bin;
-    dataSource["Название компании"] = response.data.result.companyName;
-    dataSource["Имя директора"] = response.data.result.directorName;
-    dataSource["Фамилия директора"] = response.data.result.directorSurname;
-    dataSource["Отчество директора"] = response.data.result.directorPatronymic;
-    dataSource["Коэффициент усиления"] = response.data.result.amplificationFactor;
+    Object.assign(dataSource, response.data.result);
   } else {
     isFormDisabled.value = false;
     pageDescription.value = "Создание контрагента"
@@ -166,16 +156,7 @@ async function onClickSaveChanges() {
     }
     else {
       if (mode === "read") {
-        const updatedData = {
-          id: oid,
-          bin: dataSource["БИН"],
-          companyName: dataSource["Название компании"],
-          directorName: dataSource["Имя директора"],
-          directorSurname: dataSource["Фамилия директора"],
-          directorPatronymic: dataSource["Отчество директора"],
-          amplificationFactor: dataSource["Коэффициент усиления"],
-        };
-        const responseUpdate = await contrAgentService.updateContrAgent(updatedData);
+        const responseUpdate = await contrAgentService.updateContrAgent(dataSource);
         if (responseUpdate.data.success) {
           notify({
             message: 'Контрагент успешно отредактирован',
@@ -189,15 +170,7 @@ async function onClickSaveChanges() {
           notify(responseUpdate.data.messages, 'error', 2000);
         }
       } else {
-        const createdData = {
-          bin: dataSource["БИН"],
-          companyName: dataSource["Название компании"],
-          directorName: dataSource["Имя директора"],
-          directorSurname: dataSource["Фамилия директора"],
-          directorPatronymic: dataSource["Отчество директора"],
-          amplificationFactor: dataSource["Коэффициент усиления"],
-        };
-        const response = await contrAgentService.createContrAgent(createdData);
+        const response = await contrAgentService.createContrAgent(dataSource);
         if (response.data.success) {
           notify({
             message: 'Контрагент успешно создан',

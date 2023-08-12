@@ -18,7 +18,7 @@
         >
           <div class="fileuploader-container">
             <DxSelectBox
-                :data-source="dataSource"
+                :data-source="contrAgents"
                 :input-attr="{ 'aria-label': 'Контрагенты' }"
                 label="Выберите контрагента"
                 display-expr="companyName"
@@ -102,12 +102,13 @@ const formData = reactive({});
 const route = useRoute();
 const router = useRouter();
 const loading = ref(false);
-const counterAgents = ref([]);
+const contrAgents = ref([]);
 
 onBeforeMount(async () => {
   loading.value = true;
   const response = await contrAgentService.getContrAgents();
-  counterAgents.value = response.data.result;
+  contrAgents.value = response.data.result;
+  console.log(contrAgents)
   loading.value = false;
 })
 async function onSubmit() {

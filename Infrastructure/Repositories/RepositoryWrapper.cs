@@ -15,6 +15,7 @@ public class RepositoryWrapper : IRepositoryWrapper
     private IRoleRepository _roleRepository;
     private IDistrictRepository _districtRepository;
     private ITownRepository _townRepository;
+    private IAntennaRepository _antennaRepository;
 
     public RepositoryWrapper(Project5GDbContext db)
     {
@@ -112,6 +113,18 @@ public class RepositoryWrapper : IRepositoryWrapper
         }
     }
 
+    public IAntennaRepository AntennaRepository
+    {
+        get
+        {
+            if (_antennaRepository == null)
+            {
+                _antennaRepository = new AntennaRepository(_db);
+            }
+
+            return _antennaRepository;
+        }
+    }
 
     public async Task Save()
     {
