@@ -1,29 +1,30 @@
 <template>
-  <DxDataGrid
+  <dx-data-grid
       :data-source="dataSource"
       :show-borders="true"
       :remote-operations="true"
       key-expr="ID"
       @row-click="onRowClick"
   >
-    <DxColumn
+    <dx-column
         caption="Модель"
         data-field="model"
         data-type="string"
     />
-    <DxColumn
-        data-field="Вертикальный размер(диаметр антенны)"
+    <dx-column
+        caption="Вертикальный размер(диаметр антенны)"
+        data-field="verticalSizeDiameter"
         data-type="decimal"
     />
-    <DxPaging :page-size="5"/>
-    <DxPager
+    <dx-paging :page-size="5"/>
+    <dx-pager
         :show-page-size-selector="true"
         :allowed-page-sizes="[8, 12, 20]"
     />
-    <DxEditing
+    <dx-editing
         :allow-deleting="true"
     />
-  </DxDataGrid>
+  </dx-data-grid>
 </template>
 
 <script>
@@ -42,9 +43,7 @@ import antennaService from "@/api/antennaService";
 const store = new CustomStore({
   key: 'id',
   load: async (loadOptions) => {
-    var test = await antennaService.getAntennaeForGrid(loadOptions);
-    console.log(test);
-    return test;
+    return await antennaService.getAntennaeForGrid(loadOptions);
   },
   remove: async (oid) => {
     const baseResponse = await antennaService.deleteAntenna(oid);
@@ -78,54 +77,3 @@ export default {
   }
 };
 </script>
-
-<style>
-#events {
-  background-color: rgba(191, 191, 191, 0.15);
-  padding: 20px;
-  margin-top: 20px;
-}
-
-#events > div {
-  padding-bottom: 5px;
-}
-
-#events > div::after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-#events #clear {
-  float: right;
-}
-
-#events .caption {
-  float: left;
-  font-weight: bold;
-  font-size: 115%;
-  line-height: 115%;
-  padding-top: 7px;
-}
-
-#events ul {
-  list-style: none;
-  max-height: 100px;
-  overflow: auto;
-  margin: 0;
-}
-
-#events ul li {
-  padding: 7px 0;
-  border-bottom: 1px solid #ddd;
-}
-
-#events ul li:last-child {
-  border-bottom: none;
-}
-
-.dx-datagrid .dx-row:hover {
-  background-color: #f2f2f2;
-  cursor: pointer;
-}
-</style>
