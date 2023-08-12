@@ -12,7 +12,7 @@ public class ProjectMapProfile : Profile
             .ForMember(dest => dest.ContrAgentId, opt =>
                 opt.MapFrom(src => src.ContrAgentId))
             .ForMember(dest => dest.ContrAgent, opt =>
-                opt.MapFrom(src => src.CounterAgent))
+                opt.MapFrom(src => src.ContrAgent))
             .ForMember(dest => dest.ExecutorId, opt =>
                 opt.MapFrom(src => src.ExecutorId))
             .ForMember(dest => dest.Executor, opt =>
@@ -25,7 +25,7 @@ public class ProjectMapProfile : Profile
         CreateMap<ProjectDto, Project>()
             .ForMember(dest => dest.ContrAgentId, opt =>
                 opt.MapFrom(src => src.ContrAgentId))
-            .ForMember(dest => dest.CounterAgent, opt =>
+            .ForMember(dest => dest.ContrAgent, opt =>
                 opt.Ignore())
             .ForMember(dest => dest.ExecutorId, opt =>
                 opt.MapFrom(src => src.ExecutorId))

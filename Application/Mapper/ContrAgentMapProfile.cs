@@ -8,7 +8,7 @@ public class ContrAgentMapProfile : Profile
 {
     public ContrAgentMapProfile()
     {
-        CreateMap<CounterAgent, ContrAgentDto>()
+        CreateMap<ContrAgent, ContrAgentDto>()
             .ForMember(dest => dest.Id, opt =>
                 opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Created, opt =>

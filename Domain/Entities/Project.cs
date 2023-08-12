@@ -5,9 +5,10 @@ namespace Domain.Entities;
 public class Project : BaseEntity
 {
     public Guid ContrAgentId { get; set; }
-    public CounterAgent CounterAgent { get; set; }
+    public ContrAgent ContrAgent { get; set; }
     public Guid ExecutorId { get; set; }
     public User Executor { get; set; }
+    public Guid? SanPinDockId { get; set; }
     public SanPinDock? SanPinDock { get; set; }
     public DateTime? YearOfInitial { get; set; }
     public Guid ProjectStatusId { get; set; }

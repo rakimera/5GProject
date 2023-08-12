@@ -11,8 +11,7 @@ public class Project5GDbContext : DbContext
     public DbSet<Antenna> Antennas { get; set; }
     public DbSet<AntennaTranslator> AntennaTranslators { get; set; }
     public DbSet<CompanyLicense> CompanyLicenses { get; set; }
-    public DbSet<CounterAgent> CounterAgents { get; set; }
-    public DbSet<CounterAgentPowerFrequency> CounterAgentPowerFrequencies { get; set; }
+    public DbSet<ContrAgent> CounterAgents { get; set; }
     public DbSet<District> Districts { get; set; }
     public DbSet<EnergyResult> EnergyResults { get; set; }
     public DbSet<ExecutiveCompany> ExecutiveCompanies { get; set; }
@@ -35,7 +34,7 @@ public class Project5GDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>().HasIndex(x => x.Login).IsUnique();
-        modelBuilder.Entity<CounterAgent>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<ContrAgent>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<User>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<District>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<Town>().HasQueryFilter(x => x.IsDelete == false);
@@ -49,7 +48,6 @@ public class Project5GDbContext : DbContext
         modelBuilder.Entity<Address>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<AntennaTranslator>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<CompanyLicense>().HasQueryFilter(x => x.IsDelete == false);
-        modelBuilder.Entity<CounterAgentPowerFrequency>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<EnergyResult>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<ExecutiveCompany>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<RadiationZone>().HasQueryFilter(x => x.IsDelete == false);

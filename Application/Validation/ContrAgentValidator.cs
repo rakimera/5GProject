@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Application.Validation;
 
-public class ContrAgentValidator : AbstractValidator<CounterAgent>
+public class ContrAgentValidator : AbstractValidator<ContrAgent>
 {
     public ContrAgentValidator()
     {

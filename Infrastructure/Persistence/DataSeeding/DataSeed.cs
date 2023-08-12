@@ -67,7 +67,7 @@ public class DataSeed
     
     public async Task SeedContrAgents()
     {
-        List<CounterAgent>? contrs = _repositoryWrapper.ContrAgentRepository.GetAll().ToList();
+        List<ContrAgent>? contrs = _repositoryWrapper.ContrAgentRepository.GetAll().ToList();
         if (contrs.Count == 0)
         {
             List<ContrAgentDto> contrAgents = new List<ContrAgentDto>

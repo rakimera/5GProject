@@ -53,8 +53,7 @@ public class ProjectService : IProjectService
         User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Login.Equals(creator));
         model.ExecutorId = user.Id.ToString();
         model.ProjectStatusId = "c2d0c703-8864-4847-9d20-84200de0ebc4"; //заглушка
-        model.DistrictId = "652ced75-bdbb-41af-a7b3-12548fa0f17a"; //заглушка
-        model.TownId = "15750865-d58f-4fff-98ba-99e5dc45b607"; //заглушк
+        model.AddressId = "652ced75-bdbb-41af-a7b3-12548fa0f17a"; //заглушка
         var result = await _projectValidator.ValidateAsync(model);
         if (result.IsValid)
         {
