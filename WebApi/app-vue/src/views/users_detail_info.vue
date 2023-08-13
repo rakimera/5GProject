@@ -10,60 +10,64 @@
         :show-colon-after-label="true"
         :show-validation-summary="true"
     >
-      <DxSimpleItem
-          data-field="Логин"
+      <dx-simple-item
+          data-field="login"
           :editor-options="{ stylingMode: 'filled', placeholder: 'Логин' }"
       >
+        <dx-label :text="'Логин'"/>
         <dx-required-rule message="Пожалуйста, введите email"/>
         <dx-email-rule message="Пожалуйста, введите корректный email"/>
-      </DxSimpleItem>
-      <DxSimpleItem
-          data-field="Имя"
+      </dx-simple-item>
+      <dx-simple-item
+          data-field="name"
           :editor-options="{ stylingMode: 'filled', placeholder: 'Имя' }"
       >
+        <dx-label :text="'Имя'"/>
         <dx-required-rule message="Пожалуйста, введите имя"/>
-        <DxStringLengthRule
+        <dx-string-length-rule
             :min=2
             message="Имя не может содержать менее 2 символов"
         />
-        <DxPatternRule
+        <dx-pattern-rule
             :pattern="namePattern"
             message="Нельзя использовать цифры в имени"
         />
-      </DxSimpleItem>
-      <DxSimpleItem
-          data-field="Фамилия"
+      </dx-simple-item>
+      <dx-simple-item
+          data-field="surname"
           :editor-options="{ stylingMode: 'filled', placeholder: 'Фамилия' }"
       >
+        <dx-label :text="'Фамилия'"/>
         <dx-required-rule message="Пожалуйста, введите фамилию"/>
-        <DxRequiredRule message="Фамилия должна быть заполнено"/>
-        <DxStringLengthRule
+        <dx-string-length-rule
             :min="2"
             message="Фамилия не может содержать менее 2 символов"
         />
-        <DxPatternRule
+        <dx-pattern-rule
             :pattern="namePattern"
             message="Нельзя использовать цифры в фамилии"
         />
-      </DxSimpleItem>
-      <DxSimpleItem
-          data-field="Роль"
+      </dx-simple-item>
+      <dx-simple-item
+          data-field="role"
           :editor-options="{ stylingMode: 'filled', placeholder: 'Роль' }"
       >
+        <dx-label :text="'Роль'"/>
         <dx-required-rule message="Пожалуйста, введите роль"/>
-      </DxSimpleItem>
-      <DxSimpleItem
+      </dx-simple-item>
+      <dx-simple-item
           v-if="mode === 'create'"
-          data-field="Пароль"
+          data-field="password"
           editor-type="dxTextBox"
           :editor-options="{ stylingMode: 'filled', placeholder: 'Пароль', mode: 'password' }"
       >
+        <dx-label :text="'Пароль'"/>
         <dx-required-rule message="Пожалуйста, введите пароль"/>
-        <DxPatternRule
+        <dx-pattern-rule
             :pattern="passwordPattern"
             message="Пароль должен содержать минимум 8 символов, включая строчную букву, заглавную букву, цифру и специальный символ"
         />
-      </DxSimpleItem>
+      </dx-simple-item>
       <dx-button-item>
         <dx-button-options
             width="100%"
@@ -100,7 +104,7 @@ import {
   DxButtonItem,
   DxButtonOptions,
   DxStringLengthRule,
-  DxPatternRule
+  DxPatternRule, DxLabel
 } from "devextreme-vue/form";
 import {onBeforeMount, reactive, ref} from "vue";
 import userService from "@/api/userService";
@@ -109,13 +113,7 @@ import notify from "devextreme/ui/notify";
 
 const route = useRoute();
 const router = useRouter();
-const formData = reactive({
-  'Логин': "",
-  'Имя': "",
-  'Фамилия': "",
-  'Роль': "",
-  'Пароль': "",
-});
+const formData = reactive({});
 const routeParams = {name: "users_table"};
 let isFormDisabled = ref(true);
 let oid = route.params.id;
@@ -130,12 +128,8 @@ const passwordPattern = ref(
 
 onBeforeMount(async () => {
   if (mode === "read") {
-    const response = await userService.getUser(route.params.id);
-    const userData = response.data.result;
-    formData["Логин"] = userData.login
-    formData["Имя"] = userData.name
-    formData["Фамилия"] = userData.surname
-    formData["Роль"] = userData.role
+    const response = await userService.getUser(oid);
+    Object.assign(formData, response.data.result);
   } else {
     isFormDisabled.value = false;
     created.value = true;
@@ -160,14 +154,7 @@ async function onClickSaveChanges() {
       }, 'warning', 1000);
     } else {
       if (mode === "read") {
-        const updatedData = {
-          id: oid,
-          login: formData["Логин"],
-          name: formData["Имя"],
-          surname: formData["Фамилия"],
-          role: formData["Роль"],
-        };
-        const responseUpdate = await userService.updateUser(updatedData);
+        const responseUpdate = await userService.updateUser(formData);
         if (responseUpdate.data.success) {
           notify({
             message: 'Пользователь успешно отредактирован',
@@ -181,14 +168,7 @@ async function onClickSaveChanges() {
           notify(responseUpdate.data.messages, 'error', 2000);
         }
       } else {
-        const createdData = {
-          login: formData["Логин"],
-          name: formData["Имя"],
-          surname: formData["Фамилия"],
-          role: formData["Роль"],
-          password: formData["Пароль"],
-        };
-        const response = await userService.createUser(createdData);
+        const response = await userService.createUser(formData);
         console.log(response.data.result + " <==== response.data.result")
         console.log(response.data.success + " <==== response.data.success")
         if (response.data.success) {
