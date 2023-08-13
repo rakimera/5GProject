@@ -15,6 +15,7 @@ public class RepositoryWrapper : IRepositoryWrapper
     private IRoleRepository _roleRepository;
     private IDistrictRepository _districtRepository;
     private ITownRepository _townRepository;
+    private IEnergyFlowRepository _energyFlowRepository;
 
     public RepositoryWrapper(Project5GDbContext db)
     {
@@ -111,7 +112,19 @@ public class RepositoryWrapper : IRepositoryWrapper
             return _townRepository;
         }
     }
+    
+    public IEnergyFlowRepository EnergyFlowRepository
+    {
+        get
+        {
+            if (_energyFlowRepository == null)
+            {
+                _energyFlowRepository = new EnergyFlowRepository(_db);
+            }
 
+            return _energyFlowRepository;
+        }
+    }
 
     public async Task Save()
     {

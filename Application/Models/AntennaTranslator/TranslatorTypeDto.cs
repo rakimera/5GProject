@@ -1,6 +1,6 @@
-namespace Domain.Entities;
+namespace Application.Models.AntennaTranslator;
 
-public class TranslatorType
+public class TranslatorTypeDto
 {
     public Guid Id { get; set; }
     public required string Type { get; set; }

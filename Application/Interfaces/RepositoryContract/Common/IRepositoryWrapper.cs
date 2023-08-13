@@ -9,5 +9,6 @@ public interface IRepositoryWrapper
     IRoleRepository RoleRepository { get; }
     IDistrictRepository DistrictRepository { get; }
     ITownRepository TownRepository { get; }
+    IEnergyFlowRepository EnergyFlowRepository { get; }
     Task Save();
 }

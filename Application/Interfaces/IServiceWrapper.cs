@@ -9,4 +9,5 @@ public interface IServiceWrapper
     IContrAgentService ContrAgentService { get; }
     IDistrictService DistrictService { get; }
     ITownService TownService { get; }
+    IEnergyFlowService EnergyFlowService { get; }
 }

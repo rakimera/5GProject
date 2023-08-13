@@ -1,5 +1,4 @@
 using Application.Interfaces;
-using Application.Interfaces.RepositoryContract;
 using Application.Interfaces.RepositoryContract.Common;
 using Application.Validation;
 using AutoMapper;
@@ -15,6 +14,7 @@ public class ServiceWrapper : IServiceWrapper
     private readonly Lazy<IContrAgentService> _contrAgentService;
     private readonly Lazy<IDistrictService> _districtService;
     private readonly Lazy<ITownService> _townService;
+    private readonly Lazy<IEnergyFlowService> _energyFlowService;
 
     public ServiceWrapper(
         IRepositoryWrapper repository,
@@ -31,6 +31,7 @@ public class ServiceWrapper : IServiceWrapper
         _authorizationService = new Lazy<IAuthorizationService>(()=> new AuthorizationService(repository,tokenService));
         _contrAgentService = new Lazy<IContrAgentService>(() => new ContrAgentService(repository, mapper, contrAgentValidator));
         _townService = new Lazy<ITownService>(() => new TownService(repository,mapper));
+        _energyFlowService = new Lazy<IEnergyFlowService>(() => new EnergyFlowService());
     }
 
     public IUserService UserService => _userService.Value;
@@ -40,4 +41,5 @@ public class ServiceWrapper : IServiceWrapper
     public IContrAgentService ContrAgentService => _contrAgentService.Value;
     public IDistrictService DistrictService => _districtService.Value;
     public ITownService TownService => _townService.Value;
+    public IEnergyFlowService EnergyFlowService => _energyFlowService.Value;
 }
