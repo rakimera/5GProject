@@ -1,98 +1,100 @@
 <template>
-  <h2 v-text="pageDescription"></h2>
   <div class="user-form">
-    <dx-form
-        id="form"
-        ref="formRef"
-        label-location="top"
-        :form-data="formData"
-        :read-only="isFormDisabled"
-        :show-colon-after-label="true"
-        :show-validation-summary="true"
-    >
-      <dx-simple-item
-          data-field="login"
-          :editor-options="{ stylingMode: 'filled', placeholder: 'Логин' }"
+    <h2 v-text="pageDescription"></h2>
+    <div class="user-form">
+      <dx-form
+          id="form"
+          ref="formRef"
+          label-location="top"
+          :form-data="formData"
+          :read-only="isFormDisabled"
+          :show-colon-after-label="true"
+          :show-validation-summary="true"
       >
-        <dx-label :text="'Логин'"/>
-        <dx-required-rule message="Пожалуйста, введите email"/>
-        <dx-email-rule message="Пожалуйста, введите корректный email"/>
-      </dx-simple-item>
-      <dx-simple-item
-          data-field="name"
-          :editor-options="{ stylingMode: 'filled', placeholder: 'Имя' }"
-      >
-        <dx-label :text="'Имя'"/>
-        <dx-required-rule message="Пожалуйста, введите имя"/>
-        <dx-string-length-rule
-            :min=2
-            message="Имя не может содержать менее 2 символов"
-        />
-        <dx-pattern-rule
-            :pattern="namePattern"
-            message="Нельзя использовать цифры в имени"
-        />
-      </dx-simple-item>
-      <dx-simple-item
-          data-field="surname"
-          :editor-options="{ stylingMode: 'filled', placeholder: 'Фамилия' }"
-      >
-        <dx-label :text="'Фамилия'"/>
-        <dx-required-rule message="Пожалуйста, введите фамилию"/>
-        <dx-string-length-rule
-            :min="2"
-            message="Фамилия не может содержать менее 2 символов"
-        />
-        <dx-pattern-rule
-            :pattern="namePattern"
-            message="Нельзя использовать цифры в фамилии"
-        />
-      </dx-simple-item>
-      <dx-simple-item
-          data-field="role"
-          :editor-options="{ stylingMode: 'filled', placeholder: 'Роль' }"
-      >
-        <dx-label :text="'Роль'"/>
-        <dx-required-rule message="Пожалуйста, введите роль"/>
-      </dx-simple-item>
-      <dx-simple-item
-          v-if="mode === 'create'"
-          data-field="password"
-          editor-type="dxTextBox"
-          :editor-options="{ stylingMode: 'filled', placeholder: 'Пароль', mode: 'password' }"
-      >
-        <dx-label :text="'Пароль'"/>
-        <dx-required-rule message="Пожалуйста, введите пароль"/>
-        <dx-pattern-rule
-            :pattern="passwordPattern"
-            message="Пароль должен содержать минимум 8 символов, включая строчную букву, заглавную букву, цифру и специальный символ"
-        />
-      </dx-simple-item>
-      <dx-button-item>
-        <dx-button-options
-            width="100%"
-            type="default"
-            styling-mode="outlined"
-            template="Редактировать"
-            :on-click="onClickEditUser"
-            :visible="isFormDisabled"
-            :use-submit-behavior="true"
+        <dx-simple-item
+            data-field="login"
+            :editor-options="{ stylingMode: 'filled', placeholder: 'Логин' }"
         >
-        </dx-button-options>
-      </dx-button-item>
-      <dx-button-item>
-        <dx-button-options
-            width="100%"
-            type="success"
-            styling-mode="outlined"
-            :template="mode === 'create' ? 'Создать' : 'Сохранить изменения'"
-            :on-click="onClickSaveChanges"
-            :visible="!isFormDisabled"
-            :use-submit-behavior="true"
+          <dx-label :text="'Логин'"/>
+          <dx-required-rule message="Пожалуйста, введите email"/>
+          <dx-email-rule message="Пожалуйста, введите корректный email"/>
+        </dx-simple-item>
+        <dx-simple-item
+            v-if="mode === 'create'"
+            data-field="password"
+            editor-type="dxTextBox"
+            :editor-options="{ stylingMode: 'filled', placeholder: 'Пароль', mode: 'password' }"
         >
-        </dx-button-options>
-      </dx-button-item>
-    </dx-form>
+          <dx-label :text="'Пароль'"/>
+          <dx-required-rule message="Пожалуйста, введите пароль"/>
+          <dx-pattern-rule
+              :pattern="passwordPattern"
+              message="Пароль должен содержать минимум 8 символов, включая строчную букву, заглавную букву, цифру и специальный символ"
+          />
+        </dx-simple-item>
+        <dx-simple-item
+            data-field="name"
+            :editor-options="{ stylingMode: 'filled', placeholder: 'Имя' }"
+        >
+          <dx-label :text="'Имя'"/>
+          <dx-required-rule message="Пожалуйста, введите имя"/>
+          <dx-string-length-rule
+              :min=2
+              message="Имя не может содержать менее 2 символов"
+          />
+          <dx-pattern-rule
+              :pattern="namePattern"
+              message="Нельзя использовать цифры в имени"
+          />
+        </dx-simple-item>
+        <dx-simple-item
+            data-field="surname"
+            :editor-options="{ stylingMode: 'filled', placeholder: 'Фамилия' }"
+        >
+          <dx-label :text="'Фамилия'"/>
+          <dx-required-rule message="Пожалуйста, введите фамилию"/>
+          <dx-string-length-rule
+              :min="2"
+              message="Фамилия не может содержать менее 2 символов"
+          />
+          <dx-pattern-rule
+              :pattern="namePattern"
+              message="Нельзя использовать цифры в фамилии"
+          />
+        </dx-simple-item>
+        <dx-simple-item
+            data-field="role"
+            :editor-options="{ stylingMode: 'filled', placeholder: 'Роль' }"
+        >
+          <dx-label :text="'Роль'"/>
+          <dx-required-rule message="Пожалуйста, введите роль"/>
+        </dx-simple-item>
+        <dx-button-item>
+          <dx-button-options
+              width="100%"
+              type="default"
+              styling-mode="outlined"
+              template="Редактировать"
+              :on-click="onClickEditUser"
+              :visible="isFormDisabled"
+              :use-submit-behavior="true"
+          >
+          </dx-button-options>
+        </dx-button-item>
+        <dx-button-item>
+          <dx-button-options
+              width="100%"
+              type="success"
+              styling-mode="outlined"
+              :template="mode === 'create' ? 'Создать' : 'Сохранить изменения'"
+              :on-click="onClickSaveChanges"
+              :visible="!isFormDisabled"
+              :use-submit-behavior="true"
+          >
+          </dx-button-options>
+        </dx-button-item>
+      </dx-form>
+    </div>
   </div>
 </template>
 <script setup>
@@ -169,8 +171,6 @@ async function onClickSaveChanges() {
         }
       } else {
         const response = await userService.createUser(formData);
-        console.log(response.data.result + " <==== response.data.result")
-        console.log(response.data.success + " <==== response.data.success")
         if (response.data.success) {
           notify({
             message: 'Пользователь успешно создан',
