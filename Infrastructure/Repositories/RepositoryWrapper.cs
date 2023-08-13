@@ -13,6 +13,7 @@ public class RepositoryWrapper : IRepositoryWrapper
     private ITokenRepository _tokenRepository;
     private IContrAgentRepository _contrAgentRepository;
     private IRoleRepository _roleRepository;
+    private IUserRoleRepository _userRoleRepository;
     private IDistrictRepository _districtRepository;
     private ITownRepository _townRepository;
 
@@ -112,6 +113,18 @@ public class RepositoryWrapper : IRepositoryWrapper
         }
     }
 
+    public IUserRoleRepository UserRoleRepository
+    {
+        get
+        {
+            if (_userRoleRepository == null)
+            {
+                _userRoleRepository = new UserRoleRepository(_db);
+            }
+
+            return _userRoleRepository;
+        }
+    }
 
     public async Task Save()
     {

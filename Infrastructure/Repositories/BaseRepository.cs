@@ -29,6 +29,11 @@ public abstract class BaseRepository <T> : IBaseRepository<T> where T : class
         return await DbContext.Set<T>().FirstOrDefaultAsync(expression);
     }
 
+    public IQueryable<T> GetAllByCondition(Expression<Func<T, bool>> expression)
+    {
+        return DbContext.Set<T>().Where(expression);
+    }
+
     public void Update(T entity)
     {
         DbContext.Set<T>().Update(entity);
