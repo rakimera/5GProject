@@ -69,27 +69,69 @@ public class EnergyFlowService : IEnergyFlowService
         throw new NotImplementedException();
     }
 
-    public BaseResponse<IEnumerable<EnergyResultDto>> GetAll()
+    public async Task<BaseResponse<string>> CreateAsync(CreateEnergyResultDto createEnergyResultDto, string creator)
     {
-        throw new NotImplementedException();
-    }
+        var validationResult = await _energyResultValidator.ValidateAsync(createEnergyResultDto);
+        if (validationResult.IsValid)
+        {
+            List<EnergyResult> calculationResults = PowerDensity(createEnergyResultDto);
+            
+            foreach (var calculationResult in calculationResults)
+            {
+                calculationResult.CreatedBy = creator;
+                await _repositoryWrapper.EnergyFlowRepository.CreateAsync(calculationResult);
+            }
 
-    public Task<BaseResponse<string>> CreateAsync(CreateEnergyResultDto createEnergyResultDto, string creator)
-    {
+            await _repositoryWrapper.Save();
+            return new BaseResponse<string>(
+                Result: "",
+                Success: true,
+                Messages: new List<string>{"Просчеты плотности потока энергии успешно созданы"});
+        }
         
-        List<EnergyResult> calculationResult = PowerDensity(createEnergyResultDto);
-        
-        throw new NotImplementedException();
+        List<string> messages = _mapper.Map<List<string>>(validationResult.Errors);
+        return new BaseResponse<string>(
+            Result: "", 
+            Messages: messages,
+            Success: false);
     }
 
-    public Task<BaseResponse<EnergyResultDto>> GetByOid(string oid)
+    public BaseResponse<List<EnergyResultDto>> GetAllByOid(string oid)
     {
-        throw new NotImplementedException();
+        var energyResults =  _repositoryWrapper.EnergyFlowRepository.GetAllByCondition(x => x.AntennaTranslatorId.ToString() == oid);
+        List<EnergyResultDto> model = _mapper.Map<List<EnergyResultDto>>(energyResults);
+        if (energyResults is null)
+            return new BaseResponse<List<EnergyResultDto>>(
+                Result: null,
+                Messages: new List<string>{"Просчеты плотности потока энергии не найдены"},
+                Success: true);
+        return new BaseResponse<List<EnergyResultDto>>(
+            Result: model,
+            Success: true,
+            Messages: new List<string>{"Просчеты плотности потока энергии успешно найдены"});
     }
 
-    public Task<BaseResponse<bool>> Delete(string oid)
+    public async Task<BaseResponse<bool>> Delete(List<EnergyResult> energyResults)
     {
-        throw new NotImplementedException();
+        if (energyResults.Count > 0)
+        {
+            foreach (var energyResult in energyResults)
+            {
+                energyResult.IsDelete = true;
+                _repositoryWrapper.EnergyFlowRepository.Update(energyResult);
+            }
+            
+            await _repositoryWrapper.Save();
+
+            return new BaseResponse<bool>(
+                Result: true,
+                Success: true,
+                Messages: new List<string>{"Просчеты плотности потока энергии успешно удалены"});
+        }
+        return new BaseResponse<bool>(
+            Result: false, 
+            Messages: new List<string>{"Просчеты плотности потока энергии не существуют"},
+            Success: false);
     }
     
     private decimal Multiplier(decimal value) //перевод в разы
