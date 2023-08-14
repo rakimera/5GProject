@@ -10,5 +10,6 @@ public interface IRepositoryWrapper
     IDistrictRepository DistrictRepository { get; }
     ITownRepository TownRepository { get; }
     IEnergyFlowRepository EnergyFlowRepository { get; }
+    IRadiationZoneRepository RadiationZoneRepository { get; }
     Task Save();
 }

@@ -16,10 +16,24 @@ public class RepositoryWrapper : IRepositoryWrapper
     private IDistrictRepository _districtRepository;
     private ITownRepository _townRepository;
     private IEnergyFlowRepository _energyFlowRepository;
+    private IRadiationZoneRepository _radiationZoneRepository;
 
     public RepositoryWrapper(Project5GDbContext db)
     {
         _db = db;
+    }
+    
+    public IRadiationZoneRepository RadiationZoneRepository
+    {
+        get
+        {
+            if (_radiationZoneRepository == null)
+            {
+                _radiationZoneRepository = new RadiationZoneRepository(_db);
+            }
+
+            return _radiationZoneRepository;
+        }
     }
 
     public IUserRepository UserRepository
