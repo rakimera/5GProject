@@ -5,6 +5,7 @@ using Application.Models.EnergyResult;
 using Application.Validation;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Enums;
 
 namespace Application.Services;
 
@@ -30,17 +31,20 @@ public class EnergyFlowService : IEnergyFlowService
         throw new NotImplementedException();
     }
 
-    private List<EnergyResult> PowerDensity(CreateEnergyResultDto inputData)
+    private async Task<List<EnergyResult>> PowerDensity(CreateEnergyResultDto inputData)
     {
         List<EnergyResult> energyResults = new List<EnergyResult>();
         decimal gainInMultiplier = Multiplier(inputData.Gain);
         decimal transmitLossFactorInMultiplier = Multiplier(inputData.TransmitLossFactor);
         decimal heightInstall = inputData.HeightInstall;
         decimal powerSignal = inputData.PowerSignal;
+        AntennaTranslator? antennaTranslator =
+           await _repositoryWrapper.AntennaTranslatorRepository.GetByCondition(x => x.Id == inputData.AntennaTranslatorId);
+        var translatorId = antennaTranslator.TranslatorSpecsId;
         
         foreach (var distance in _distances)
         {
-            decimal normalizedVerticalPowerResult = (decimal)Math.Pow((double)NormalizedVerticalPower(), 2);
+            decimal normalizedVerticalPowerResult = (decimal)Math.Pow((double)NormalizedVerticalPower(distance, heightInstall, translatorId), 2);
             decimal euclideanDistanceResult = (decimal)Math.Pow((double)EuclideanDistance(heightInstall, distance), 2);
             
             var result = 8 * powerSignal * gainInMultiplier * GroundInfluenceFactor * transmitLossFactorInMultiplier *
@@ -64,9 +68,14 @@ public class EnergyFlowService : IEnergyFlowService
         return result;
     }
 
-    private decimal NormalizedVerticalPower() //F(θ)
+    private decimal NormalizedVerticalPower(decimal distance, decimal heightInstall, Guid translatorId) //F(θ)
     {
-        throw new NotImplementedException();
+        int degree = (int)Math.Ceiling(Math.Atan((double)((heightInstall - HumanHeight) / distance)) * 180 / Math.PI);
+        var radiationZones = _repositoryWrapper.RadiationZoneRepository.GetAllByCondition(x => x.Id == translatorId).Where(x=> x.DirectionType == DirectionType.Vertical);
+        RadiationZone? verticalRadiation = radiationZones.FirstOrDefault(x => x.Degree == degree);
+        var verticalRadiationInMultiplier = Multiplier(verticalRadiation.Value);
+        
+        return verticalRadiationInMultiplier;
     }
 
     public async Task<BaseResponse<string>> CreateAsync(CreateEnergyResultDto createEnergyResultDto, string creator)
@@ -74,7 +83,7 @@ public class EnergyFlowService : IEnergyFlowService
         var validationResult = await _energyResultValidator.ValidateAsync(createEnergyResultDto);
         if (validationResult.IsValid)
         {
-            List<EnergyResult> calculationResults = PowerDensity(createEnergyResultDto);
+            List<EnergyResult> calculationResults = await PowerDensity(createEnergyResultDto);
             
             foreach (var calculationResult in calculationResults)
             {
