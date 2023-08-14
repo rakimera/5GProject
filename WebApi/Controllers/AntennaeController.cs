@@ -1,49 +1,48 @@
 using Application.Interfaces;
-using Application.Models.Users;
+using Application.Models.Antennae;
 using AutoMapper;
-using DevExtreme.AspNet.Data;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
 
 [ApiController]
-[Route("api/users")]
-public class AccountController : Controller
+[Route("api/antennae")]
+public class AntennasController : Controller
 {
     private readonly IServiceWrapper _service;
     private readonly IMapper _mapper;
-
-    public AccountController(IServiceWrapper service, IMapper mapper)
+   
+    public AntennasController(IServiceWrapper service, IMapper mapper)
     {
         _service = service;
         _mapper = mapper;
     }
-    
-    [HttpGet, Authorize(Roles = "Admin")]
+
+    [HttpGet]
+    // [HttpGet, Authorize(Roles = "Admin")]
     public IActionResult Get()
     {
-        var baseResponse = _service.UserService.GetAll();
+        var baseResponse = _service.AntennaService.GetAll();
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
     }
-
-
+    
+    
     [HttpGet("{oid}")]
     public async Task<IActionResult> Get(string oid)
     {
-        var baseResponse = await _service.UserService.GetByOid(oid);
+        var baseResponse = await _service.AntennaService.GetByOid(oid);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(CreateUserDto model)
+    public async Task<IActionResult> Post(CreateAntennaDto model)
     {
-        UserDto userDto = _mapper.Map<UserDto>(model);
-        var baseResponse = await _service.UserService.CreateAsync(userDto, User.Identity.Name);
+        AntennaDto antennaDto = _mapper.Map<AntennaDto>(model);
+        var baseResponse = await _service.AntennaService.CreateAsync(antennaDto, User.Identity.Name);
         
         if (baseResponse.Success)
             return Ok(baseResponse);
@@ -51,27 +50,20 @@ public class AccountController : Controller
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put(UpdateUserDto model)
+    public async Task<IActionResult> Put(UpdateAntennaDto model)
     {
-        var baseResponse = await _service.UserService.UpdateUser(model);
+        var baseResponse = await _service.AntennaService.Update(model);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);
     }
-
+        
     [HttpDelete("{oid}")]
     public async Task<IActionResult> Delete(string oid)
     {
-        var baseResponse = await _service.UserService.Delete(oid);
+        var baseResponse = await _service.AntennaService.Delete(oid);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
-    }
-    
-    [HttpGet("index"), Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
-    {
-        var loadResult = await _service.UserService.GetLoadResult(loadOptions);
-        return Ok(loadResult);
     }
 }

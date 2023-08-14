@@ -1,6 +1,6 @@
 using Domain.Common;
 
-namespace Application.Models.Antennas;
+namespace Application.Models.Antennae;
 
 public class ProjectAntennaDto : BaseEntity
 {
