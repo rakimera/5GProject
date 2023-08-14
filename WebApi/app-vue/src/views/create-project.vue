@@ -18,7 +18,7 @@
         >
           <div class="fileuploader-container">
             <DxSelectBox
-                :data-source="dataSource"
+                :data-source="contrAgents"
                 :input-attr="{ 'aria-label': 'Контрагенты' }"
                 label="Выберите контрагента"
                 display-expr="companyName"
@@ -95,19 +95,20 @@ import {
 } from 'devextreme-vue/form';
 import {reactive, ref, onBeforeMount} from "vue";
 import { useRoute, useRouter } from 'vue-router';
-import counterAgentService from "@/api/counterAgentService";
+import contrAgentService from "@/api/contrAgentService";
 import projectService from "@/api/projectService";
 
 const formData = reactive({});
 const route = useRoute();
 const router = useRouter();
 const loading = ref(false);
-const counterAgents = ref([]);
+const contrAgents = ref([]);
 
 onBeforeMount(async () => {
   loading.value = true;
-  const response = await counterAgentService.getContrAgents();
-  counterAgents.value = response.data.result;
+  const response = await contrAgentService.getContrAgents();
+  contrAgents.value = response.data.result;
+  console.log(contrAgents)
   loading.value = false;
 })
 async function onSubmit() {
