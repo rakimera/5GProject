@@ -16,6 +16,7 @@ public class RepositoryWrapper : IRepositoryWrapper
     private IUserRoleRepository _userRoleRepository;
     private IDistrictRepository _districtRepository;
     private ITownRepository _townRepository;
+    private IAntennaRepository _antennaRepository;
 
     public RepositoryWrapper(Project5GDbContext db)
     {
@@ -34,7 +35,7 @@ public class RepositoryWrapper : IRepositoryWrapper
             return _userRepository;
         }
     }
-    
+
     public IContrAgentRepository ContrAgentRepository
     {
         get
@@ -60,7 +61,7 @@ public class RepositoryWrapper : IRepositoryWrapper
             return _projectRepository;
         }
     }
-    
+
     public ITokenRepository TokenRepository
     {
         get
@@ -73,7 +74,7 @@ public class RepositoryWrapper : IRepositoryWrapper
             return _tokenRepository;
         }
     }
-    
+
     public IRoleRepository RoleRepository
     {
         get
@@ -86,7 +87,7 @@ public class RepositoryWrapper : IRepositoryWrapper
             return _roleRepository;
         }
     }
-    
+
     public IDistrictRepository DistrictRepository
     {
         get
@@ -99,7 +100,7 @@ public class RepositoryWrapper : IRepositoryWrapper
             return _districtRepository;
         }
     }
-    
+
     public ITownRepository TownRepository
     {
         get
@@ -110,6 +111,19 @@ public class RepositoryWrapper : IRepositoryWrapper
             }
 
             return _townRepository;
+        }
+    }
+
+    public IAntennaRepository AntennaRepository
+    {
+        get
+        {
+            if (_antennaRepository == null)
+            {
+                _antennaRepository = new AntennaRepository(_db);
+            }
+
+            return _antennaRepository;
         }
     }
 

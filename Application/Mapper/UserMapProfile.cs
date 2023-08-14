@@ -27,8 +27,6 @@ public class UserMapProfile : Profile
                 opt.MapFrom(src => src.Login))
             .ForMember(dest => dest.Password, opt =>
                 opt.MapFrom(src => src.Password))
-            .ForMember(dest => dest.Role, opt =>
-                opt.MapFrom(src => src.Role))
             .ReverseMap();
         
         CreateMap<UserDto, UpdateUserDto>()
