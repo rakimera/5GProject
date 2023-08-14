@@ -11,5 +11,6 @@ public interface IRepositoryWrapper
     ITownRepository TownRepository { get; }
     IEnergyFlowRepository EnergyFlowRepository { get; }
     IRadiationZoneRepository RadiationZoneRepository { get; }
+    IAntennaTranslatorRepository AntennaTranslatorRepository { get; }
     Task Save();
 }
