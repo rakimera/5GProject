@@ -1,6 +1,6 @@
 <template>
   <dx-data-grid
-      :data-source="dataSource"
+      :data-source="store"
       :show-borders="true"
       :remote-operations="true"
       key-expr="ID"
@@ -27,7 +27,7 @@
   </dx-data-grid>
 </template>
 
-<script>
+<script setup>
 
 import {
   DxDataGrid,
@@ -39,7 +39,9 @@ import {
 import CustomStore from "devextreme/data/custom_store";
 import "whatwg-fetch";
 import antennaService from "@/api/antennaService";
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const store = new CustomStore({
   key: 'id',
   load: async (loadOptions) => {
@@ -50,30 +52,12 @@ const store = new CustomStore({
     return {data: baseResponse.result};
   },
 });
-
-export default {
-  components: {
-    DxDataGrid,
-    DxColumn,
-    DxPaging,
-    DxPager,
-    DxEditing,
-  },
-  data() {
-    return {
-      dataSource: store,
-      events: [],
-    };
-  },
-  methods: {
-    async onRowClick(e) {
-      try {
-        const antennaId = e.key;
-        this.$router.push({name: 'antennaDetail', params: {mode: "read", id: antennaId}});
-      } catch (error) {
-        console.log(error)
-      }
-    }
+async function onRowClick(e) {
+  try {
+    const antennaId = e.key;
+    await router.push({name: 'antennaDetail', params: {mode: "read", id: antennaId}});
+  } catch (error) {
+    console.log(error)
   }
-};
+}
 </script>
