@@ -5,5 +5,5 @@ namespace Application.Interfaces.RepositoryContract;
 
 public interface IUserRoleRepository : IBaseRepository<UserRole>
 {
-    
+    void Delete(UserRole userRole);
 }

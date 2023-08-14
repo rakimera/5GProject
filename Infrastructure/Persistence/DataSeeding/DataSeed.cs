@@ -17,7 +17,7 @@ public class DataSeed
         _serviceWrapper = serviceWrapper;
         _repositoryWrapper = repositoryWrapper;
     }
-    
+
 
     public async Task SeedAdmin()
     {
@@ -30,13 +30,16 @@ public class DataSeed
                 Surname = "Admin",
                 Login = "admin@gmail.com",
                 Password = "Qwerty@123",
-                Role = "Admin"
+                Roles = new List<string>()
+                {
+                    "Admin"
+                }
             };
-            await _serviceWrapper.UserService.CreateAsync(admin,"Admin");
+            await _serviceWrapper.UserService.CreateAsync(admin, "Admin");
             await _repositoryWrapper.Save();
         }
     }
-    
+
     public async Task SeedRoles()
     {
         List<Role>? allRoles = _repositoryWrapper.RoleRepository.GetAll().ToList();
@@ -61,10 +64,11 @@ public class DataSeed
             {
                 await _repositoryWrapper.RoleRepository.CreateAsync(role);
             }
+
             await _repositoryWrapper.Save();
         }
     }
-    
+
     public async Task SeedContrAgents()
     {
         List<ContrAgent>? contrs = _repositoryWrapper.ContrAgentRepository.GetAll().ToList();
@@ -93,12 +97,13 @@ public class DataSeed
             };
             foreach (var contrAgent in contrAgents)
             {
-                await _serviceWrapper.ContrAgentService.CreateAsync(contrAgent,"Admin");
+                await _serviceWrapper.ContrAgentService.CreateAsync(contrAgent, "Admin");
             }
+
             await _repositoryWrapper.Save();
         }
     }
-    
+
     public async Task SeedDistricts()
     {
         List<District>? allDistricts = _repositoryWrapper.DistrictRepository.GetAll().ToList();
@@ -179,15 +184,16 @@ public class DataSeed
                     DistrictName = "Города Республиканского значения",
                 }
             };
-            
+
             foreach (var district in districts)
             {
-                await _serviceWrapper.DistrictService.CreateAsync(district,"Admin");
+                await _serviceWrapper.DistrictService.CreateAsync(district, "Admin");
             }
+
             await _repositoryWrapper.Save();
         }
     }
-    
+
     public async Task SeedTowns()
     {
         List<Town> allTowns = _repositoryWrapper.TownRepository.GetAll().ToList();
@@ -268,7 +274,8 @@ public class DataSeed
                 new Town
                 {
                     TownName = "Усть-Каменогорск",
-                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictId("Восточно-Казахстанская область"),
+                    DistrictId =
+                        await _serviceWrapper.DistrictService.GetByDistrictId("Восточно-Казахстанская область"),
                 },
                 new Town
                 {
@@ -288,23 +295,27 @@ public class DataSeed
                 new Town
                 {
                     TownName = "Алматы",
-                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictId("Города Республиканского значения"),
+                    DistrictId =
+                        await _serviceWrapper.DistrictService.GetByDistrictId("Города Республиканского значения"),
                 },
                 new Town
                 {
                     TownName = "Шымкент",
-                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictId("Города Республиканского значения"),
+                    DistrictId =
+                        await _serviceWrapper.DistrictService.GetByDistrictId("Города Республиканского значения"),
                 },
                 new Town
                 {
                     TownName = "Астана",
-                    DistrictId = await _serviceWrapper.DistrictService.GetByDistrictId("Города Республиканского значения"),
+                    DistrictId =
+                        await _serviceWrapper.DistrictService.GetByDistrictId("Города Республиканского значения"),
                 }
             };
             foreach (var town in towns)
             {
                 await _serviceWrapper.TownService.CreateTownAsync(town);
             }
+
             await _repositoryWrapper.Save();
         }
     }

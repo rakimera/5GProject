@@ -58,6 +58,8 @@ public class UserService : IUserService
             model.CreatedBy = creator;
             User user = _mapper.Map<User>(model);
             await _repositoryWrapper.UserRepository.CreateAsync(user);
+
+            await AssignRolesToUser(model, user);
             await _repositoryWrapper.Save();
 
             return new BaseResponse<string>(
@@ -128,6 +130,7 @@ public class UserService : IUserService
         }
 
         _repositoryWrapper.UserRepository.Update(user);
+        await AssignRolesToUser(existingUserDto, user);
         await _repositoryWrapper.Save();
 
         return new BaseResponse<UserDto>(
@@ -135,6 +138,8 @@ public class UserService : IUserService
             Success: true,
             Messages: new List<string> { "Пользователь успешно изменен" });
     }
+
+    public List<Role> GetRoles() => _repositoryWrapper.RoleRepository.GetAll().ToList();
 
     public async Task<BaseResponse<bool>> Delete(string oid)
     {
@@ -155,5 +160,31 @@ public class UserService : IUserService
             Result: false,
             Messages: new List<string> { "Пользователя не существует" },
             Success: false);
+    }
+
+    private async Task AssignRolesToUser(UserDto model, User user)
+    {
+        var userRoles = _repositoryWrapper.UserRoleRepository.GetAll();
+        foreach (var userRole in userRoles)
+        {
+            if (userRole.UserId == user.Id)
+            {
+                _repositoryWrapper.UserRoleRepository.Delete(userRole);
+            }
+        }
+
+        foreach (var role in model.Roles
+                     .Select(roleName => GetRoles()
+                         .FirstOrDefault(r => r.RoleName == roleName))
+                     .Where(role => role is not null))
+        {
+            await _repositoryWrapper.UserRoleRepository.CreateAsync(new UserRole
+            {
+                Role = role,
+                RoleId = role.Id,
+                User = user,
+                UserId = user.Id
+            });
+        }
     }
 }
