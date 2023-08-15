@@ -1,5 +1,6 @@
 using Application.Interfaces.RepositoryContract;
 using Application.Interfaces.RepositoryContract.Common;
+using Domain.Entities;
 using Infrastructure.Persistence.DataContext;
 using Infrastructure.Services;
 
@@ -16,10 +17,39 @@ public class RepositoryWrapper : IRepositoryWrapper
     private IUserRoleRepository _userRoleRepository;
     private IDistrictRepository _districtRepository;
     private ITownRepository _townRepository;
+    private IEnergyFlowRepository _energyFlowRepository;
+    private IRadiationZoneRepository _radiationZoneRepository;
+    private IAntennaTranslatorRepository _antennaTranslatorRepository;
 
     public RepositoryWrapper(Project5GDbContext db)
     {
         _db = db;
+    }
+    
+    public IAntennaTranslatorRepository AntennaTranslatorRepository
+    {
+        get
+        {
+            if (_antennaTranslatorRepository == null)
+            {
+                _antennaTranslatorRepository = new AntennaTranslatorRepository(_db);
+            }
+
+            return _antennaTranslatorRepository;
+        }
+    }
+    
+    public IRadiationZoneRepository RadiationZoneRepository
+    {
+        get
+        {
+            if (_radiationZoneRepository == null)
+            {
+                _radiationZoneRepository = new RadiationZoneRepository(_db);
+            }
+
+            return _radiationZoneRepository;
+        }
     }
 
     public IUserRepository UserRepository
@@ -126,6 +156,19 @@ public class RepositoryWrapper : IRepositoryWrapper
         }
     }
 
+    public IEnergyFlowRepository EnergyFlowRepository
+    {
+        get
+        {
+            if (_energyFlowRepository == null)
+            {
+                _energyFlowRepository = new EnergyFlowRepository(_db);
+            }
+
+            return _energyFlowRepository;
+        }
+    }
+    
     public async Task Save()
     {
         await _db.SaveChangesAsync();

@@ -1,11 +1,13 @@
+using Application.DataObjects;
+using Application.Models.EnergyResult;
 using Domain.Entities;
 
 namespace Application.Interfaces;
 
-public interface   IEnergyFlowService
+public interface IEnergyFlowService
 {
-    decimal PowerDensitySummation(EnergyResult energyResult);
-    EnergyResult PowerDensity(decimal powerSignal, decimal gain, decimal transmitLossFactor);
-    decimal EuclideanDistance(); //R,m
-    decimal NormalizedVerticalPower(); //F(θ)
+    Task<BaseResponse<string>> CreateAsync(CreateEnergyResultDto createEnergyResultDto, string creator);
+    BaseResponse<List<EnergyResultDto>> GetAllByOid(string oid);
+    Task<BaseResponse<bool>> Delete(List<EnergyResult> energyResults);
+    List<TotalFluxDensity> PowerDensitySummation(EnergyResult energyResult);
 }

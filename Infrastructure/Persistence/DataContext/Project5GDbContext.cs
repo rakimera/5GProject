@@ -7,7 +7,6 @@ namespace Infrastructure.Persistence.DataContext;
 
 public class Project5GDbContext : DbContext
 {
-    public DbSet<Address> Addresses { get; set; }
     public DbSet<Antenna> Antennas { get; set; }
     public DbSet<AntennaTranslator> AntennaTranslators { get; set; }
     public DbSet<CompanyLicense> CompanyLicenses { get; set; }
@@ -15,7 +14,6 @@ public class Project5GDbContext : DbContext
     public DbSet<District> Districts { get; set; }
     public DbSet<EnergyResult> EnergyResults { get; set; }
     public DbSet<ExecutiveCompany> ExecutiveCompanies { get; set; }
-    public DbSet<Location> Locations { get; set; }
     public DbSet<Project> Projects { get; set; }
     public DbSet<ProjectAntenna> ProjectsAntennae { get; set; }
     public DbSet<ProjectStatus> ProjectsStatuses { get; set; }
@@ -40,12 +38,10 @@ public class Project5GDbContext : DbContext
         modelBuilder.Entity<Town>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<Antenna>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<EnergyResult>().HasQueryFilter(x => x.IsDelete == false);
-        modelBuilder.Entity<Location>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<Project>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<ProjectAntenna>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<ProjectStatus>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<TranslatorSpecs>().HasQueryFilter(x => x.IsDelete == false);
-        modelBuilder.Entity<Address>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<AntennaTranslator>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<CompanyLicense>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<EnergyResult>().HasQueryFilter(x => x.IsDelete == false);
