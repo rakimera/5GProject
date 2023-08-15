@@ -32,7 +32,17 @@
         data-type="string"
     />
     <DxColumn
-        data-field="amplificationFactor"
+        data-field="email"
+        caption="Электронная почта компании"
+        data-type="string"
+    />
+    <DxColumn
+        data-field="phoneNumber"
+        caption="Номер телефона компании"
+        data-type="string"
+    />
+    <DxColumn
+        data-field="transmitLossFactor"
         caption="Коэффициент усиления"
         data-type="string"
     />

@@ -83,7 +83,9 @@ public class DataSeed
                     DirectorName = "Алексей",
                     DirectorSurname = "Пронин",
                     DirectorPatronymic = "Викторович",
-                    AmplificationFactor = 0.71M
+                    TransmitLossFactor = 0.71M,
+                    Email = "tele2@info.com",
+                    PhoneNumber = "+77477477477"
                 },
                 new ContrAgentDto
                 {
@@ -92,7 +94,9 @@ public class DataSeed
                     DirectorName = "Евгений",
                     DirectorSurname = "Иванов",
                     DirectorPatronymic = "Павлович",
-                    AmplificationFactor = 0.45M
+                    TransmitLossFactor = 0.45M,
+                    Email = "activ@info.com",
+                    PhoneNumber = "+77027027022"
                 },
             };
             foreach (var contrAgent in contrAgents)
