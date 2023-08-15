@@ -10,7 +10,6 @@
     <DxColumn data-field="name" data-type="string"/>
     <DxColumn data-field="surname" data-type="string"/>
     <DxColumn data-field="password" data-type="string"/>
-    <DxColumn data-field="role" data-type="string"/>
     <DxPaging :page-size="5"/>
     <DxPager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
     <DxEditing :allow-deleting="true"/>

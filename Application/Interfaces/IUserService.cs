@@ -11,5 +11,5 @@ public interface IUserService : ICrudService<UserDto>
 {
     Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions);
     Task<BaseResponse<UserDto>> UpdateUser(UpdateUserDto model);
-    List<Role> GetRoles();
+    BaseResponse<List<Role>> GetRoles();
 }

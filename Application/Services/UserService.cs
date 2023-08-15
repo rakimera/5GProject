@@ -80,12 +80,19 @@ public class UserService : IUserService
         User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.ToString() == oid);
         UserDto model = _mapper.Map<UserDto>(user);
 
+        model.Roles = new List<string>();
+        model.Roles = _repositoryWrapper.UserRoleRepository
+            .GetAll()
+            .Where(userRole => userRole.UserId == user.Id)
+            .Select(userRole => userRole.Role.RoleName)
+            .ToList();
+
         if (user is null)
         {
             return new BaseResponse<UserDto>(
                 Result: null,
                 Messages: new List<string> { "Пользователь не найден" },
-                Success: true);
+                Success: false);
         }
 
         return new BaseResponse<UserDto>(
@@ -139,7 +146,23 @@ public class UserService : IUserService
             Messages: new List<string> { "Пользователь успешно изменен" });
     }
 
-    public List<Role> GetRoles() => _repositoryWrapper.RoleRepository.GetAll().ToList();
+    public BaseResponse<List<Role>> GetRoles()
+    {
+        var roles = _repositoryWrapper.RoleRepository.GetAll().ToList();    
+        if (roles.Count > 0)
+        {
+            return new BaseResponse<List<Role>>(
+                Result: roles,
+                Success: true,
+                Messages: new List<string> { "Роли успешно получены" });
+        }
+
+        return new BaseResponse<List<Role>>(
+            Result: roles,
+            Success: true,
+            Messages: new List<string>
+                { "Данные не были получены, возможно роли еще не созданы или удалены" });
+    }
 
     public async Task<BaseResponse<bool>> Delete(string oid)
     {
@@ -175,6 +198,7 @@ public class UserService : IUserService
 
         foreach (var role in model.Roles
                      .Select(roleName => GetRoles()
+                         .Result!
                          .FirstOrDefault(r => r.RoleName == roleName))
                      .Where(role => role is not null))
         {
