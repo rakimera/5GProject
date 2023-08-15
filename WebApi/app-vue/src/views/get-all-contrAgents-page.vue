@@ -1,51 +1,51 @@
 <template>
-  <DxDataGrid
+  <dx-data-grid
       :data-source="dataSource"
       :show-borders="true"
       :remote-operations="true"
       key-expr="ID"
       @row-click="onRowClick"
   >
-    <DxColumn
+    <dx-column
         data-field="companyName"
         caption="Название компании"
         data-type="string"
     />
-    <DxColumn
+    <dx-column
         data-field="bin"
         caption="БИН"
         data-type="string"
     />
-    <DxColumn
+    <dx-column
         data-field="directorName"
         caption="Имя директора"
         data-type="string"
     />
-    <DxColumn
+    <dx-column
         data-field="directorSurname"
         caption="Фамилия директора"
         data-type="string"
     />
-    <DxColumn
+    <dx-column
         data-field="directorPatronymic"
         caption="Отчество директора"
         data-type="string"
     />
-    <DxColumn
+    <dx-column
         data-field="amplificationFactor"
         caption="Коэффициент усиления"
         data-type="string"
     />
-    <DxPaging :page-size="5"/>
-    <DxPager
+    <dx-paging :page-size="5"/>
+    <dx-pager
         :show-page-size-selector="true"
         :allowed-page-sizes="[8, 12, 20]"
     />
-    <DxEditing
+    <dx-editing
         :allow-deleting="true"
     />
-  </DxDataGrid>
-  <DxButton
+  </dx-data-grid>
+  <dx-button
       class="button"
       text="Создать"
       type="success"
