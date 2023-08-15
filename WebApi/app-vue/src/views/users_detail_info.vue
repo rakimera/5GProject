@@ -67,6 +67,8 @@
           <dx-tag-box
               v-model="formData.roles"
               :items="roleOptions"
+              display-expr="roleName"
+              value-expr="id"
               :show-clear-button="false"
               :show-drop-down-button="false"
               :apply-value-mode="'useButtons'"
@@ -118,6 +120,7 @@ import userService from "@/api/userService";
 import {useRoute, useRouter} from "vue-router";
 import notify from "devextreme/ui/notify";
 import {DxTagBox} from "devextreme-vue/tag-box";
+import roleService from "@/api/roleService";
 
 const route = useRoute();
 const router = useRouter();
@@ -133,14 +136,14 @@ const namePattern = ref("^[a-zA-Zа-яА-Я]+$")
 const passwordPattern = ref(
     "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
 );
-const roleOptions = ref([
-    "Admin",
-    "Analyst",
-    "Manager"
-]);
+const roleOptions = ref([]);
 const isEditMode = ref(false);
 
 onBeforeMount(async () => {
+  const response = await roleService.getRoles();
+  console.log(response + " <======= response")
+  roleOptions.value = response.data.result;
+  console.log(roleOptions)
   if (mode === "read") {
     const response = await userService.getUser(oid);
     Object.assign(formData, response.data.result);
