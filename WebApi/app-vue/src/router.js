@@ -14,6 +14,7 @@ import UserDetail from '@/views/users_detail_info.vue';
 import ContrAgentDetail from '@/views/contrAgent-detail-info.vue';
 import Antennae from './views/Antenna-page.vue';
 import GetAllAntennaePage from "@/views/get-all-antennae-page";
+import AntennaDetail from "@/views/antenna-detail-info";
 
 function loadView(view) {
   return () => import (/* webpackChunkName: "login" */ `./views/${view}.vue`)
@@ -166,6 +167,15 @@ const router = new createRouter({
           component: UserDetail
       }
     ,
+    {
+      path: '/antennae/:mode/:id?',
+      name: 'antennaDetail',
+      meta: {
+        requiresAuth: true,
+        layout: defaultLayout
+      },
+      component: AntennaDetail
+    },
     {
       path: '/contrAgent/:mode/:id?',
       name: 'contrAgentDetail',
