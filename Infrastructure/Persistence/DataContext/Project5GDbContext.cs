@@ -26,6 +26,8 @@ public class Project5GDbContext : DbContext
     public DbSet<TranslatorSpecs> TranslatorsSpecs { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
+    public DbSet<BiohazardRadius> BiohazardRadii { get; set; }
+    public DbSet<SummaryBiohazardRadius> SummaryBiohazardRadii { get; set; }
 
     public Project5GDbContext(DbContextOptions<Project5GDbContext> options) : base(options) {}
 
@@ -50,6 +52,8 @@ public class Project5GDbContext : DbContext
         modelBuilder.Entity<SanPinDock>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<TotalFluxDensity>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<UserRole>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<BiohazardRadius>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<SummaryBiohazardRadius>().HasQueryFilter(x => x.IsDelete == false);
         base.OnModelCreating(modelBuilder);
     }
 

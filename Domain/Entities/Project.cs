@@ -16,6 +16,8 @@ public class Project : BaseEntity
     public DateTime? YearOfInitial { get; set; }
     public Guid ProjectStatusId { get; set; }
     public ProjectStatus ProjectStatus { get; set; }
+    public Guid? SummaryBiohazardRadiusId { get; set; }
+    public SummaryBiohazardRadius SummaryBiohazardRadius { get; set; }
     public required string Address { get; set; }
     public List<ProjectAntenna> ProjectAntennae { get; set; } = new List<ProjectAntenna>();
     public List<TotalFluxDensity> TotalFluxDensity { get; set; } = new List<TotalFluxDensity>();

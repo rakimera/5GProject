@@ -13,4 +13,5 @@ public class AntennaTranslator : BaseEntity
     public Guid ProjectAntennaId { get; set; }
     public ProjectAntenna ProjectAntenna { get; set; }
     public List<EnergyResult> EnergyResults { get; set; } = new List<EnergyResult>();
+    public List<BiohazardRadius> BiohazardRadii { get; set; } = new List<BiohazardRadius>();
 }
