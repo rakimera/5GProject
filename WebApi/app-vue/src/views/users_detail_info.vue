@@ -68,7 +68,7 @@
               v-model="formData.roles"
               :items="roleOptions"
               display-expr="roleName"
-              value-expr="id"
+              value-expr="roleName"
               :show-clear-button="false"
               :show-drop-down-button="false"
               :apply-value-mode="'useButtons'"
@@ -141,9 +141,7 @@ const isEditMode = ref(false);
 
 onBeforeMount(async () => {
   const response = await roleService.getRoles();
-  console.log(response + " <======= response")
   roleOptions.value = response.data.result;
-  console.log(roleOptions)
   if (mode === "read") {
     const response = await userService.getUser(oid);
     Object.assign(formData, response.data.result);
@@ -157,7 +155,6 @@ onBeforeMount(async () => {
     isEditMode.value = true;
   }
 });
-
 
 function onClickEditUser() {
   isFormDisabled.value = false;
