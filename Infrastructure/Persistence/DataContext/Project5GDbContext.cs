@@ -54,6 +54,7 @@ public class Project5GDbContext : DbContext
         modelBuilder.Entity<UserRole>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<BiohazardRadius>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<SummaryBiohazardRadius>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<Role>().HasQueryFilter(x => x.IsDelete == false);
         base.OnModelCreating(modelBuilder);
     }
 

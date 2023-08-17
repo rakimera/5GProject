@@ -1,6 +1,6 @@
 export default [
   {
-    text: "Home",
+    text: "Главная",
     path: "/home",
     icon: "home"
   },
@@ -9,7 +9,7 @@ export default [
     icon: "preferences",
     items: [
       {
-        text: "Profile",
+        text: "Профиль",
         path: "/profile"
       },
       {
@@ -17,8 +17,12 @@ export default [
         path: "/users"
       },
       {
-        text: "Users Table",
+        text: "Журнал пользователей",
         path: "/users_table"
+      },
+      {
+        text: "Роли",
+        path: "/roles"
       },
       {
         text: "Журнал контрагентов",
