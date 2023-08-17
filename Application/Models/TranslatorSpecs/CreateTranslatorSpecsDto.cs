@@ -1,10 +1,9 @@
 using Application.Models.Antennae;
 using Application.Models.RadiationZone;
-using Domain.Common;
 
 namespace Application.Models.TranslatorSpecs;
 
-public class TranslatorSpecsDto : BaseEntity
+public class CreateTranslatorSpecsDto
 {
     public decimal Frequency { get; set; }
     public decimal Power { get; set; }

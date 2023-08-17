@@ -11,5 +11,6 @@ public interface IRepositoryWrapper
     IDistrictRepository DistrictRepository { get; }
     ITownRepository TownRepository { get; }
     IAntennaRepository AntennaRepository { get; }
+    ITranslatorSpecsRepository TranslatorSpecsRepository { get; }
     Task Save();
 }
