@@ -10,4 +10,6 @@ public class UserDto : BaseEntity
     public string Surname { get; set; }
     public string Password { get; set; }
     [property: JsonPropertyName("roles")] public List<string> Roles { get; set; }
+    [property: JsonPropertyName("executiveCompanyId")]
+    public Guid? ExecutiveCompanyId { get; set; }
 }

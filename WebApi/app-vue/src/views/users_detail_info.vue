@@ -76,6 +76,20 @@
           />
         </dx-simple-item>
 
+        <dx-simple-item data-field="ExecutiveCompanyId">
+          <dx-label :text="'Компания'"/>
+          <dx-select-box
+              v-model="formData.executiveCompanyId"
+              :items="executiveCompanies"
+              display-expr="companyName"
+              value-expr="id"
+              :show-clear-button="false"
+              :show-drop-down-button="false"
+              :apply-value-mode="'useButtons'"
+              :read-only="isFormDisabled && !isEditMode"
+          />
+        </dx-simple-item>
+
         <dx-button-item>
           <dx-button-options
               width="100%"
@@ -121,6 +135,7 @@ import {useRoute, useRouter} from "vue-router";
 import notify from "devextreme/ui/notify";
 import {DxTagBox} from "devextreme-vue/tag-box";
 import roleService from "@/api/roleService";
+import DxSelectBox from "devextreme-vue/select-box";
 
 const route = useRoute();
 const router = useRouter();
@@ -138,6 +153,12 @@ const passwordPattern = ref(
 );
 const roleOptions = ref([]);
 const isEditMode = ref(false);
+const executiveCompanies = ref([
+  { id: 'd8c6d9f6-2ed7-4b0f-8d83-024350bf4aab', companyName: 'Company 1' },
+  { id: 'd8c6d9f6-2ed7-4b0f-8d83-024350bf4aab', companyName: 'Company 2' },
+  { id: 'd8c6d9f6-2ed7-4b0f-8d83-024350bf4aab', companyName: 'Company 3' },
+  { id: 'd8c6d9f6-2ed7-4b0f-8d83-024350bf4aab', companyName: 'Company 4' }
+]);
 
 onBeforeMount(async () => {
   const response = await roleService.getRoles();
