@@ -20,6 +20,7 @@ public static class ConfigureService
         services.AddScoped<ProjectValidator>();
         services.AddScoped<ContrAgentValidator>();
         services.AddScoped<AntennaValidator>();
+        services.AddScoped<TranslatorSpecsValidator>();
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         
         services.AddAuthentication(opt => {

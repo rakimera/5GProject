@@ -13,9 +13,9 @@ public class TranslatorSpecsValidator : AbstractValidator<TranslatorSpecsDto>
             .NotNull().WithMessage("Мощность передатчика не задана");
         RuleFor(dto => dto.Gain)
             .NotNull().WithMessage("Коэффициент усиления передатчика не задан");
-        RuleFor(dto => dto.AntennaId)
-            .NotNull().WithMessage("Антенна передатчика не определена");
-        RuleFor(dto => dto.RadiationZones)
-            .NotNull().WithMessage("Зона покрытия 360 градусов не задана");
+        // RuleFor(dto => dto.AntennaId)
+        //     .NotNull().WithMessage("Антенна передатчика не определена");
+        // RuleFor(dto => dto.RadiationZones)
+        //     .NotNull().WithMessage("Зона покрытия 360 градусов не задана");
     }
 }

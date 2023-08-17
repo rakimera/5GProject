@@ -8,7 +8,7 @@ public class CreateTranslatorSpecsDto
     public decimal Frequency { get; set; }
     public decimal Power { get; set; }
     public decimal Gain { get; set; }
-    public Guid AntennaId { get; set; }
-    public AntennaDto Antenna { get; set; }
-    public List<RadiationZoneDto> RadiationZones { get; set; }
+    public Guid? AntennaId { get; set; }
+    public AntennaDto? Antenna { get; set; }
+    public List<RadiationZoneDto>? RadiationZones { get; set; }
 }
