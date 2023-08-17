@@ -28,7 +28,7 @@ public class ProjectsController : Controller
             return Ok(baseResponse);
         return NotFound(baseResponse);
     }
-    [HttpGet("index"), Authorize(Roles = "Admin")]
+    [HttpGet("index")/*, Authorize(Roles = "Admin")*/]
     public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
     {
         var loadResult = await _service.ProjectService.GetLoadResult(loadOptions);

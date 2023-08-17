@@ -2,16 +2,16 @@ import { createRouter, createWebHashHistory } from "vue-router";
 
 import Home from "./views/home-page";
 import Profile from "./views/profile-page";
-import Tasks from "./views/tasks-page";
 import defaultLayout from "./layouts/side-nav-outer-toolbar";
 import simpleLayout from "./layouts/single-card";
 import Users from './views/Users-page.vue';
 import GetAllUsersPage from "@/views/get-all-users-page.vue";
-import CreateProject from "@/views/create-project.vue";
 import ContrAgentJournal from "@/views/get-all-contrAgents-page.vue";
 import authorizationService from "@/api/AuthorizationService";
 import UserDetail from '@/views/users_detail_info.vue';
 import ContrAgentDetail from '@/views/contrAgent-detail-info.vue';
+import ProjectDetail from '@/views/project-detail-info.vue';
+import ProjectJournal from '@/views/get-all-projects.vue';
 import Antennae from './views/Antenna-page.vue';
 import GetAllAntennaePage from "@/views/get-all-antennae-page";
 
@@ -40,22 +40,22 @@ const router = new createRouter({
       component: Profile
     },
     {
-      path: "/projects",
-      name: "projects",
+      path: '/projects',
+      name: 'projects',
       meta: {
         requiresAuth: true,
         layout: defaultLayout
       },
-      component: Tasks
+      component: ProjectJournal
     },
     {
-      path: "/create-projects",
-      name: "create-projects",
+      path: '/project/:mode/:id?',
+      name: 'projectDetail',
       meta: {
         requiresAuth: true,
         layout: defaultLayout
       },
-      component: CreateProject
+      component: ProjectDetail
     },
     {
       path: "/login",

@@ -27,16 +27,12 @@ export default [
     ]
   },
   {
-    text: "Работа с проектами",
+    text: "Проекты",
     icon: "folder",
     items: [
       {
-        text: "Проекты",
+        text: "Список проектов",
         path: "/projects"
-      },
-      {
-        text: "Новый проект",
-        path: "/create-projects"
       }
     ]
   },
