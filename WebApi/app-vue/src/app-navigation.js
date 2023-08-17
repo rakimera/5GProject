@@ -39,5 +39,19 @@ export default [
         path: "/create-projects"
       }
     ]
+  },
+  {
+    text: "Антенны",
+    icon: "folder",
+    items: [
+      {
+        text: "Список антенн",
+        path: "/antennae_table"
+      },
+      {
+        text: "Тест",
+        path: "/antennae"
+      }
+    ]
   }
   ];

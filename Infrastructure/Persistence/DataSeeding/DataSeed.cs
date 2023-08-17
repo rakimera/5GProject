@@ -100,7 +100,7 @@ public class DataSeed
                     DirectorName = "Алексей",
                     DirectorSurname = "Пронин",
                     DirectorPatronymic = "Викторович",
-                    TransmitLossFactor = 0.71M,
+                    Address = "Address_Tele2",
                     Email = "tele2@info.com",
                     PhoneNumber = "+77477477477"
                 },
@@ -111,7 +111,7 @@ public class DataSeed
                     DirectorName = "Евгений",
                     DirectorSurname = "Иванов",
                     DirectorPatronymic = "Павлович",
-                    TransmitLossFactor = 0.45M,
+                    Address = "Address_Activ",
                     Email = "activ@info.com",
                     PhoneNumber = "+77027027022"
                 },

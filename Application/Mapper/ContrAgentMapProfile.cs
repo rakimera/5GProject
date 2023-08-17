@@ -19,8 +19,6 @@ public class ContrAgentMapProfile : Profile
                 opt.MapFrom(src => src.LastModifiedBy))
             .ForMember(dest => dest.CreatedBy, opt =>
                 opt.MapFrom(src => src.CreatedBy))
-            .ForMember(dest => dest.TransmitLossFactor, opt =>
-                opt.MapFrom(src => src.TransmitLossFactor))
             .ForMember(dest => dest.CompanyName, opt =>
                 opt.MapFrom(src => src.CompanyName))
             .ForMember(dest => dest.DirectorName, opt =>
@@ -40,8 +38,8 @@ public class ContrAgentMapProfile : Profile
         CreateMap<ContrAgentDto, UpdateContrAgentDto>()
             .ForMember(dest => dest.Id, opt =>
                 opt.MapFrom(src => src.Id))
-            .ForMember(dest => dest.TransmitLossFactor, opt =>
-                opt.MapFrom(src => src.TransmitLossFactor))
+            .ForMember(dest => dest.Address, opt =>
+                opt.MapFrom(src => src.Address))
             .ForMember(dest => dest.CompanyName, opt =>
                 opt.MapFrom(src => src.CompanyName))
             .ForMember(dest => dest.DirectorName, opt =>
@@ -60,8 +58,8 @@ public class ContrAgentMapProfile : Profile
 
 
         CreateMap<ContrAgentDto, CreateContrAgentDto>()
-            .ForMember(dest => dest.TransmitLossFactor, opt =>
-                opt.MapFrom(src => src.TransmitLossFactor))
+            .ForMember(dest => dest.Address, opt =>
+                opt.MapFrom(src => src.Address))
             .ForMember(dest => dest.CompanyName, opt =>
                 opt.MapFrom(src => src.CompanyName))
             .ForMember(dest => dest.DirectorName, opt =>

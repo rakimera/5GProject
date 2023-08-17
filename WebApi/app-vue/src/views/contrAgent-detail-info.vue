@@ -77,13 +77,9 @@
         />
       </dx-simple-item>
       <dx-simple-item
-          data-field="transmitLossFactor">
-        <dx-label :text="'Потери мощности в антенно-фидерном тракте на передачу (дБ/раз)'"/>
-        <dx-required-rule message="Потери мощности в антенно-фидерном тракте на передачу должнен быть заполнен"/>
-        <dx-pattern-rule
-            :pattern="ampPattern"
-            message="Потери мощности в антенно-фидерном тракте на передачу это числовое значение с возможностью разделение через точку"
-        />
+          data-field="address">
+        <dx-label :text="'Адрес компании'"/>
+        <dx-required-rule message="Адрес должнен быть заполнен"/>
       </dx-simple-item>
       <dx-button-item>
         <dx-button-options
@@ -137,7 +133,6 @@ let isFormDisabled = ref(true);
 let oid = route.params.id;
 const mode = route.params.mode;
 const pageDescription = ref("Подробно о контрагенте");
-const ampPattern = ref(/^(\d+(.\d+)*)?$/);
 const namePattern = ref("^[a-zA-Zа-яА-Я]+$")
 const binPattern = ref("^[0-9]")
 const phoneNumberPattern = /^[+]?\d{1,3}[-.\s]?\d{3,}[-.\s]?\d{4,}$/;

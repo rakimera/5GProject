@@ -21,8 +21,6 @@ public class ProjectMapProfile : Profile
                 opt.MapFrom(src => src.ProjectStatusId))
             .ForMember(dest => dest.ProjectStatus, opt =>
                 opt.MapFrom(src => src.ProjectStatus))
-            .ForMember(dest => dest.AddressId, opt =>
-                opt.MapFrom(src => src.AddressId))
             .ForMember(dest => dest.Address, opt =>
                 opt.MapFrom(src => src.Address));
 
@@ -39,8 +37,6 @@ public class ProjectMapProfile : Profile
                 opt.MapFrom(src => src.ProjectStatusId))
             .ForMember(dest => dest.ProjectStatus, opt =>
                 opt.Ignore())
-            .ForMember(dest => dest.AddressId, opt =>
-                opt.MapFrom(src => src.AddressId))
             .ForMember(dest => dest.Address, opt =>
                 opt.Ignore())
             .ForMember(dest => dest.ProjectAntennae, opt =>

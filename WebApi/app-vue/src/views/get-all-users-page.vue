@@ -1,20 +1,20 @@
 <template>
-  <DxDataGrid
+  <dx-data-grid
       :data-source="dataSource"
       :show-borders="true"
       :remote-operations="true"
       key-expr="ID"
       @row-click="onRowClick"
   >
-    <DxColumn data-field="login" data-type="string"/>
-    <DxColumn data-field="name" data-type="string"/>
-    <DxColumn data-field="surname" data-type="string"/>
-    <DxColumn data-field="password" data-type="string"/>
-    <DxPaging :page-size="5"/>
-    <DxPager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
-    <DxEditing :allow-deleting="true"/>
-  </DxDataGrid>
-  <DxButton
+    <dx-column data-field="login" data-type="string"/>
+    <dx-column data-field="name" data-type="string"/>
+    <dx-column data-field="surname" data-type="string"/>
+    <dx-column data-field="password" data-type="string"/>
+    <dx-paging :page-size="5"/>
+    <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
+    <dx-editing :allow-deleting="true"/>
+  </dx-data-grid>
+  <dx-button
       class="button"
       text="Создать"
       type="success"
