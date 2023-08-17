@@ -21,8 +21,8 @@ export default [
         path: "/users_table"
       },
       {
-        text: "ContrAgents",
-        path: "/contrAgents"
+        text: "Журнал контрагентов",
+        path: "/ContrAgentsJournal"
       }
     ]
   },
@@ -37,6 +37,20 @@ export default [
       {
         text: "Новый проект",
         path: "/create-projects"
+      }
+    ]
+  },
+  {
+    text: "Антенны",
+    icon: "folder",
+    items: [
+      {
+        text: "Список антенн",
+        path: "/antennae_table"
+      },
+      {
+        text: "Тест",
+        path: "/antennae"
       }
     ]
   }

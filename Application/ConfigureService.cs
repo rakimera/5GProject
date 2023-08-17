@@ -19,6 +19,7 @@ public static class ConfigureService
         services.AddScoped<UserValidator>();
         services.AddScoped<ProjectValidator>();
         services.AddScoped<ContrAgentValidator>();
+        services.AddScoped<AntennaValidator>();
         services.AddScoped<EnergyResultValidator>();
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         

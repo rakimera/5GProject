@@ -1,6 +1,5 @@
 using Application.Interfaces.RepositoryContract;
 using Application.Interfaces.RepositoryContract.Common;
-using Domain.Entities;
 using Infrastructure.Persistence.DataContext;
 using Infrastructure.Services;
 
@@ -17,6 +16,7 @@ public class RepositoryWrapper : IRepositoryWrapper
     private IUserRoleRepository _userRoleRepository;
     private IDistrictRepository _districtRepository;
     private ITownRepository _townRepository;
+    private IAntennaRepository _antennaRepository;
     private IEnergyFlowRepository _energyFlowRepository;
     private IRadiationZoneRepository _radiationZoneRepository;
     private IAntennaTranslatorRepository _antennaTranslatorRepository;
@@ -155,6 +155,20 @@ public class RepositoryWrapper : IRepositoryWrapper
             return _userRoleRepository;
         }
     }
+    
+    public IAntennaRepository AntennaRepository
+    {
+        get
+        {
+            if (_antennaRepository == null)
+            {
+                _antennaRepository = new AntennaRepository(_db);
+            }
+
+            return _antennaRepository;
+        }
+    }
+
 
     public IEnergyFlowRepository EnergyFlowRepository
     {

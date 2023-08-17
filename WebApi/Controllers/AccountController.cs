@@ -19,7 +19,7 @@ public class AccountController : Controller
         _service = service;
         _mapper = mapper;
     }
-
+    
     [HttpGet, Authorize(Roles = "Admin")]
     public IActionResult Get()
     {
@@ -67,7 +67,7 @@ public class AccountController : Controller
             return Ok(baseResponse);
         return NotFound(baseResponse);
     }
-
+    
     [HttpGet("index"), Authorize(Roles = "Admin")]
     public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
     {

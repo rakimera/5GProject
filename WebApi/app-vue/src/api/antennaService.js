@@ -1,37 +1,19 @@
-import axios from '../utils/axios';
+import axios from "@/utils/axios";
 import storeExtension from "@/utils/storeExtension";
 
-const counterAgentService = {
-    async getContrAgents() {
+const antennaService = {
+    async getAntennae() {
         try {
-            return await axios.get(`/api/contrAgents`);
-        }
-        catch (error){
-            console.log(error)
-        }
-    },
-    async createContrAgent(contrAgent) {
-        try {
-            return await axios.post('/api/contrAgents', contrAgent);
-        }
-        catch (error){
-            console.log(error)
-        }
-
-    },
-
-    async updateContrAgent(contrAgent) {
-        try {
-            return await axios.put('/api/contrAgents', contrAgent)
+            return await axios.get(`/api/antennae`);
         }
         catch (error){
             console.log(error)
         }
     },
 
-    async deleteContrAgent(oid) {
+    async createAntenna(antenna) {
         try {
-            return await axios.delete(`/api/contrAgents/${oid}`)
+            return await axios.post('/api/antennae', antenna);
         }
         catch (error){
             console.log(error)
@@ -39,10 +21,29 @@ const counterAgentService = {
 
     },
 
-    async getAllContrAgents(loadOptions) {
+    async updateAntenna(antenna) {
+        try {
+            return await axios.put('/api/antennae', antenna)
+        }
+        catch (error){
+            console.log(error)
+        }
+    },
+
+    async deleteAntenna(oid) {
+        try {
+            return await axios.delete(`/api/antennae/${oid}`)
+        }
+        catch (error){
+            console.log(error)
+        }
+
+    },
+
+    async getAntennaeForGrid(loadOptions) {
         try {
             let options = storeExtension.getParams(loadOptions);
-            const response = await axios.get(`/api/contrAgents/Index/${options}`);
+            const response = await axios.get(`/api/antennae/index/${options}`);
             console.log(response)
             return response.data;
         } catch (error) {
@@ -50,5 +51,4 @@ const counterAgentService = {
         }
     }
 };
-
-export default counterAgentService;
+export default antennaService;

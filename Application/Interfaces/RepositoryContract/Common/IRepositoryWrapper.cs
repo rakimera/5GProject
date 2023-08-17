@@ -10,6 +10,7 @@ public interface IRepositoryWrapper
     IUserRoleRepository UserRoleRepository { get; }
     IDistrictRepository DistrictRepository { get; }
     ITownRepository TownRepository { get; }
+    IAntennaRepository AntennaRepository { get; }
     IEnergyFlowRepository EnergyFlowRepository { get; }
     IRadiationZoneRepository RadiationZoneRepository { get; }
     IAntennaTranslatorRepository AntennaTranslatorRepository { get; }

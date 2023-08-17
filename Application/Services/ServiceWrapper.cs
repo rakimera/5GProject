@@ -15,6 +15,7 @@ public class ServiceWrapper : IServiceWrapper
     private readonly Lazy<IDistrictService> _districtService;
     private readonly Lazy<ITownService> _townService;
     private readonly Lazy<IEnergyFlowService> _energyFlowService;
+    private readonly Lazy<IAntennaService> _antennaService;
 
     public ServiceWrapper(
         IRepositoryWrapper repository,
@@ -22,8 +23,9 @@ public class ServiceWrapper : IServiceWrapper
         UserValidator userValidator,
         ContrAgentValidator contrAgentValidator,
         ProjectValidator projectValidator,
+        EnergyResultValidator energyResultValidator,
         ITokenService tokenService,
-        EnergyResultValidator energyResultValidator)
+        AntennaValidator antennaValidator)
     {
         _districtService = new Lazy<IDistrictService>(() => new DistrictService(repository,mapper));
         _userService = new Lazy<IUserService>(() => new UserService(repository, mapper, userValidator));
@@ -32,6 +34,7 @@ public class ServiceWrapper : IServiceWrapper
         _authorizationService = new Lazy<IAuthorizationService>(()=> new AuthorizationService(repository,tokenService));
         _contrAgentService = new Lazy<IContrAgentService>(() => new ContrAgentService(repository, mapper, contrAgentValidator));
         _townService = new Lazy<ITownService>(() => new TownService(repository,mapper));
+        _antennaService = new Lazy<IAntennaService>(() => new AntennaService(repository, mapper, antennaValidator));
         _energyFlowService = new Lazy<IEnergyFlowService>(() => new EnergyFlowService(energyResultValidator, mapper, repository));
     }
 
@@ -42,5 +45,6 @@ public class ServiceWrapper : IServiceWrapper
     public IContrAgentService ContrAgentService => _contrAgentService.Value;
     public IDistrictService DistrictService => _districtService.Value;
     public ITownService TownService => _townService.Value;
+    public IAntennaService AntennaService => _antennaService.Value;
     public IEnergyFlowService EnergyFlowService => _energyFlowService.Value;
 }

@@ -1,14 +1,10 @@
-using Application.Models.Antennas;
-using Application.Models.RadiationZone;
+using Application.Models.Antennae;
+using Domain.Common;
 
 namespace Application.Models.TranslatorSpecs;
 
-public class TranslatorSpecsDto
+public class TranslatorSpecsDto : BaseEntity
 {
-    public decimal Frequency { get; set; }
-    public decimal Power { get; set; }
-    public decimal Gain { get; set; }
     public Guid AntennaId { get; set; }
     public AntennaDto Antenna { get; set; }
-    public List<RadiationZoneDto> RadiationZones { get; set; }
 }

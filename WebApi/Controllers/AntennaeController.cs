@@ -1,29 +1,30 @@
 using Application.Interfaces;
-using Application.Models.ContrAgents;
+using Application.Models.Antennae;
 using AutoMapper;
 using DevExtreme.AspNet.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
-[Route("api/[controller]")]
+
 [ApiController]
-public class ContrAgentsController : Controller
+[Route("api/antennae")]
+public class AntennasController : Controller
 {
-    
     private readonly IServiceWrapper _service;
     private readonly IMapper _mapper;
-
-    public ContrAgentsController(IMapper mapper, IServiceWrapper service)
+   
+    public AntennasController(IServiceWrapper service, IMapper mapper)
     {
-        _mapper = mapper;
         _service = service;
+        _mapper = mapper;
     }
 
-    [HttpGet, Authorize(Roles = "Admin")]
+    [HttpGet]
+    // [HttpGet, Authorize(Roles = "Admin")]
     public IActionResult Get()
     {
-        var baseResponse = _service.ContrAgentService.GetAll();
+        var baseResponse = _service.AntennaService.GetAll();
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
@@ -33,17 +34,17 @@ public class ContrAgentsController : Controller
     [HttpGet("{oid}")]
     public async Task<IActionResult> Get(string oid)
     {
-        var baseResponse = await _service.ContrAgentService.GetByOid(oid);
+        var baseResponse = await _service.AntennaService.GetByOid(oid);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(CreateContrAgentDto model)
+    public async Task<IActionResult> Post(CreateAntennaDto model)
     {
-        ContrAgentDto contrAgentDto = _mapper.Map<ContrAgentDto>(model);
-        var baseResponse = await _service.ContrAgentService.CreateAsync(contrAgentDto, User.Identity.Name);
+        AntennaDto antennaDto = _mapper.Map<AntennaDto>(model);
+        var baseResponse = await _service.AntennaService.CreateAsync(antennaDto, User.Identity.Name);
         
         if (baseResponse.Success)
             return Ok(baseResponse);
@@ -51,9 +52,9 @@ public class ContrAgentsController : Controller
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put(UpdateContrAgentDto model)
+    public async Task<IActionResult> Put(UpdateAntennaDto model)
     {
-        var baseResponse = await _service.ContrAgentService.UpdateContrAgent(model);
+        var baseResponse = await _service.AntennaService.Update(model);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);
@@ -62,16 +63,17 @@ public class ContrAgentsController : Controller
     [HttpDelete("{oid}")]
     public async Task<IActionResult> Delete(string oid)
     {
-        var baseResponse = await _service.ContrAgentService.Delete(oid);
+        var baseResponse = await _service.AntennaService.Delete(oid);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
     }
     
-    [HttpGet("index"), Authorize(Roles = "Admin")]
+    // [HttpGet("index"), Authorize(Roles = "Admin")]
+    [HttpGet("index")]
     public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
     {
-        var loadResult = await _service.ContrAgentService.GetLoadResult(loadOptions);
+        var loadResult = await _service.AntennaService.GetLoadResult(loadOptions);
         return Ok(loadResult);
     }
 }
