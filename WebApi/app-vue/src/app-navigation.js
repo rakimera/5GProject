@@ -13,10 +13,6 @@ export default [
         path: "/profile"
       },
       {
-        text: "Users",
-        path: "/users"
-      },
-      {
         text: "Журнал пользователей",
         path: "/users_table"
       },

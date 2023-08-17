@@ -5,7 +5,6 @@ import Profile from "./views/profile-page";
 import Tasks from "./views/tasks-page";
 import defaultLayout from "./layouts/side-nav-outer-toolbar";
 import simpleLayout from "./layouts/single-card";
-import Users from './views/Users-page.vue';
 import GetAllUsersPage from "@/views/get-all-users-page.vue";
 import CreateProject from "@/views/create-project.vue";
 import ContrAgentJournal from "@/views/get-all-contrAgents-page.vue";
@@ -108,15 +107,6 @@ const router = new createRouter({
         {
             path: "/:pathMatch(.*)*",
             redirect: "/home"
-        },
-        {
-            path: "/users",
-            name: "users",
-            meta: {
-                requiresAuth: true,
-                layout: defaultLayout
-            },
-            component: Users
         },
         {
             path: "/users_table",
