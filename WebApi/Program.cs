@@ -50,6 +50,7 @@ try
         {
             var dataseed = scope.ServiceProvider.GetRequiredService<DataSeed>();
             await dataseed.SeedAdmin();
+            await dataseed.SeedAntenna();
             await dataseed.SeedRoles();
             await dataseed.SeedContrAgents();
             await dataseed.SeedDistricts();

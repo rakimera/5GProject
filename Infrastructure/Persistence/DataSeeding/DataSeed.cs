@@ -1,9 +1,11 @@
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
 using Application.Models;
+using Application.Models.Antennae;
 using Application.Models.ContrAgents;
 using Application.Models.Users;
 using Domain.Entities;
+using Domain.Enums;
 
 namespace Infrastructure.Persistence.DataSeeding;
 
@@ -36,6 +38,21 @@ public class DataSeed
                 }
             };
             await _serviceWrapper.UserService.CreateAsync(admin, "Admin");
+            await _repositoryWrapper.Save();
+        }
+    }
+    
+    public async Task SeedAntenna()
+    {
+        List<Antenna>? antenna = _repositoryWrapper.AntennaRepository.GetAll().ToList();
+        if (antenna.Count == 0)
+        {
+            AntennaDto baseAntenna = new AntennaDto()
+            {
+                Model = "TBXLHA-6565B-VTM",
+                VerticalSizeDiameter = 9.2M,
+            };
+            await _serviceWrapper.AntennaService.CreateAsync(baseAntenna, "Admin");
             await _repositoryWrapper.Save();
         }
     }
@@ -318,6 +335,32 @@ public class DataSeed
             foreach (var town in towns)
             {
                 await _serviceWrapper.TownService.CreateTownAsync(town);
+            }
+
+            await _repositoryWrapper.Save();
+        }
+    }
+    
+    public async Task SeedRadiationZone()
+    {
+        List<RadiationZone>? allRadiationZones = _repositoryWrapper.RadiationZoneRepository.GetAll().ToList();
+        TranslatorSpecs? translatorSpecs = _repositoryWrapper.TranslatorSpecsRepository.GetByCondition()
+        if (allRadiationZones.Count == 0)
+        {
+            List<RadiationZone> radiationZones = new List<RadiationZone>()
+            {
+                new RadiationZone
+                {
+                Degree = 0,
+                Value = -0.04M,
+                DirectionType = DirectionType.Horizontal,
+                
+                }
+            }
+            
+            foreach (var radiationZone in radiationZones)
+            {
+                await _repositoryWrapper.RadiationZoneRepository.CreateAsync(radiationZone);
             }
 
             await _repositoryWrapper.Save();
