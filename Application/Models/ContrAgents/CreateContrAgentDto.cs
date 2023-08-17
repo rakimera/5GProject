@@ -14,6 +14,6 @@ public class CreateContrAgentDto
     public string DirectorSurname { get; set; }
     [property: JsonPropertyName("directorPatronymic")] 
     public string DirectorPatronymic { get; set; }
-    [property: JsonPropertyName("amplificationFactor")] 
-    public decimal AmplificationFactor { get; set; }
+    [property: JsonPropertyName("address")] 
+    public required string Address { get; set; }
 }

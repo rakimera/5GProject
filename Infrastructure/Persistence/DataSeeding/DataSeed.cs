@@ -79,7 +79,7 @@ public class DataSeed
                     DirectorName = "Алексей",
                     DirectorSurname = "Пронин",
                     DirectorPatronymic = "Викторович",
-                    AmplificationFactor = 0.71M
+                    Address = "123 улица Абая, город Алматы, Казахстан"
                 },
                 new ContrAgentDto
                 {
@@ -88,7 +88,7 @@ public class DataSeed
                     DirectorName = "Евгений",
                     DirectorSurname = "Иванов",
                     DirectorPatronymic = "Павлович",
-                    AmplificationFactor = 0.45M
+                    Address = "123 улица Абая, город Алматы, Казахстан"
                 },
             };
             foreach (var contrAgent in contrAgents)

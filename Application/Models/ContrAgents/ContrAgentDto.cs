@@ -9,5 +9,5 @@ public class ContrAgentDto : BaseEntity
     public string DirectorName { get; set; }
     public string DirectorSurname { get; set; }
     public string DirectorPatronymic { get; set; }
-    public decimal AmplificationFactor { get; set; }
+    public required string Address { get; set; }
 }

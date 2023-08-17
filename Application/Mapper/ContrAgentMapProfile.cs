@@ -34,8 +34,8 @@ public class ContrAgentMapProfile : Profile
         CreateMap<ContrAgentDto, UpdateContrAgentDto>()
             .ForMember(dest => dest.Id, opt =>
                 opt.MapFrom(src => src.Id))
-            .ForMember(dest => dest.AmplificationFactor, opt =>
-                opt.MapFrom(src => src.AmplificationFactor))
+            .ForMember(dest => dest.Address, opt =>
+                opt.MapFrom(src => src.Address))
             .ForMember(dest => dest.CompanyName, opt =>
                 opt.MapFrom(src => src.CompanyName))
             .ForMember(dest => dest.DirectorName, opt =>
@@ -49,8 +49,8 @@ public class ContrAgentMapProfile : Profile
         
         
         CreateMap<ContrAgentDto, CreateContrAgentDto>()
-            .ForMember(dest => dest.AmplificationFactor, opt =>
-                opt.MapFrom(src => src.AmplificationFactor))
+            .ForMember(dest => dest.Address, opt =>
+                opt.MapFrom(src => src.Address))
             .ForMember(dest => dest.CompanyName, opt =>
                 opt.MapFrom(src => src.CompanyName))
             .ForMember(dest => dest.DirectorName, opt =>
