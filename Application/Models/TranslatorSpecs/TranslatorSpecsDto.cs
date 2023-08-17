@@ -1,4 +1,4 @@
-using Application.Models.Antennas;
+using Application.Models.Antennae;
 using Application.Models.RadiationZone;
 
 namespace Application.Models.TranslatorSpecs;
