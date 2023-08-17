@@ -42,8 +42,8 @@
         data-type="string"
     />
     <DxColumn
-        data-field="transmitLossFactor"
-        caption="Коэффициент усиления"
+        data-field="address"
+        caption="Адрес"
         data-type="string"
     />
     <DxPaging :page-size="5"/>
