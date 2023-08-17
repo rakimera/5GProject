@@ -20,7 +20,7 @@ public class ContrAgentsController : Controller
         _service = service;
     }
 
-    [HttpGet, Authorize(Roles = "Admin")]
+    [HttpGet]
     public IActionResult Get()
     {
         var baseResponse = _service.ContrAgentService.GetAll();
@@ -68,7 +68,7 @@ public class ContrAgentsController : Controller
         return NotFound(baseResponse);
     }
     
-    [HttpGet("index"), Authorize(Roles = "Admin")]
+    [HttpGet("index")]
     public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
     {
         var loadResult = await _service.ContrAgentService.GetLoadResult(loadOptions);
