@@ -7,5 +7,5 @@ namespace Application.Interfaces;
 
 public interface IDistrictService : ICrudService<DistrictDto>
 {
-    public Task<Guid?> GetByDistrictOid(string name);
+    public Task<Guid> GetByDistrictId(string name);
 }

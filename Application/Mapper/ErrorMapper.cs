@@ -8,6 +8,11 @@ public class ErrorMapper : Profile
     public ErrorMapper()
     {
         CreateMap<ValidationFailure, string>()
-            .AfterMap((src, dest) => dest = src.ErrorMessage);
+            .ConvertUsing(MapValidationFailureToString);
+    }
+
+    private string MapValidationFailureToString(ValidationFailure source, string destination, ResolutionContext context)
+    {
+        return source.ErrorMessage;
     }
 }

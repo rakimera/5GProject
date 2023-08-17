@@ -62,13 +62,34 @@
               message="Нельзя использовать цифры в фамилии"
           />
         </dx-simple-item>
-        <dx-simple-item
-            data-field="role"
-            :editor-options="{ stylingMode: 'filled', placeholder: 'Роль' }"
-        >
-          <dx-label :text="'Роль'"/>
-          <dx-required-rule message="Пожалуйста, введите роль"/>
+        <dx-simple-item data-field="roles" :editor-options="{ stylingMode: 'filled' }">
+          <dx-label :text="'Роли'"/>
+          <dx-tag-box
+              v-model="formData.roles"
+              :items="roleOptions"
+              display-expr="roleName"
+              value-expr="roleName"
+              :show-clear-button="false"
+              :show-drop-down-button="false"
+              :apply-value-mode="'useButtons'"
+              :read-only="isFormDisabled && !isEditMode"
+          />
         </dx-simple-item>
+
+        <dx-simple-item data-field="ExecutiveCompanyId">
+          <dx-label :text="'Компания'"/>
+          <dx-select-box
+              v-model="formData.executiveCompanyId"
+              :items="executiveCompanies"
+              display-expr="companyName"
+              value-expr="id"
+              :show-clear-button="false"
+              :show-drop-down-button="false"
+              :apply-value-mode="'useButtons'"
+              :read-only="isFormDisabled && !isEditMode"
+          />
+        </dx-simple-item>
+
         <dx-button-item>
           <dx-button-options
               width="100%"
@@ -112,6 +133,9 @@ import {onBeforeMount, reactive, ref} from "vue";
 import userService from "@/api/userService";
 import {useRoute, useRouter} from "vue-router";
 import notify from "devextreme/ui/notify";
+import {DxTagBox} from "devextreme-vue/tag-box";
+import roleService from "@/api/roleService";
+import DxSelectBox from "devextreme-vue/select-box";
 
 const route = useRoute();
 const router = useRouter();
@@ -127,19 +151,35 @@ const namePattern = ref("^[a-zA-Zа-яА-Я]+$")
 const passwordPattern = ref(
     "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
 );
+const roleOptions = ref([]);
+const isEditMode = ref(false);
+const executiveCompanies = ref([
+  { id: 'd8c6d9f6-2ed7-4b0f-8d83-024350bf4aab', companyName: 'Company 1' },
+  { id: 'd8c6d9f6-2ed7-4b0f-8d83-024350bf4aab', companyName: 'Company 2' },
+  { id: 'd8c6d9f6-2ed7-4b0f-8d83-024350bf4aab', companyName: 'Company 3' },
+  { id: 'd8c6d9f6-2ed7-4b0f-8d83-024350bf4aab', companyName: 'Company 4' }
+]);
 
 onBeforeMount(async () => {
+  const response = await roleService.getRoles();
+  roleOptions.value = response.data.result;
   if (mode === "read") {
     const response = await userService.getUser(oid);
     Object.assign(formData, response.data.result);
+    formData.roles = response.data.result.roles;
+    console.log(formData.roles)
+    isEditMode.value = false;
   } else {
     isFormDisabled.value = false;
     created.value = true;
+    formData.Roles = [];
+    isEditMode.value = true;
   }
 });
 
 function onClickEditUser() {
   isFormDisabled.value = false;
+  isEditMode.value = true;
 }
 
 async function onClickSaveChanges() {
