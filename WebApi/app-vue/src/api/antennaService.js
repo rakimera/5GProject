@@ -10,6 +10,15 @@ const antennaService = {
             console.log(error)
         }
     },
+    
+    async getAntenna(oid) {
+        try {
+            return await axios.get(`/api/antennae/${oid}`);
+        }
+        catch (error){
+            console.log(error)
+        }
+    },
 
     async createAntenna(antenna) {
         try {
@@ -18,9 +27,8 @@ const antennaService = {
         catch (error){
             console.log(error)
         }
-
     },
-
+    
     async updateAntenna(antenna) {
         try {
             return await axios.put('/api/antennae', antenna)
