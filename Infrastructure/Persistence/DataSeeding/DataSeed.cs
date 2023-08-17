@@ -3,6 +3,7 @@ using Application.Interfaces.RepositoryContract.Common;
 using Application.Models;
 using Application.Models.Antennae;
 using Application.Models.ContrAgents;
+using Application.Models.TranslatorSpecs;
 using Application.Models.Users;
 using Domain.Entities;
 using Domain.Enums;
@@ -53,6 +54,24 @@ public class DataSeed
                 VerticalSizeDiameter = 9.2M,
             };
             await _serviceWrapper.AntennaService.CreateAsync(baseAntenna, "Admin");
+            await _repositoryWrapper.Save();
+        }
+    }
+    
+    public async Task SeedTranslator()
+    {
+        List<TranslatorSpecs>? translatorSpecs = _repositoryWrapper.TranslatorSpecsRepository.GetAll().ToList();
+        Antenna? antenna = await _repositoryWrapper.AntennaRepository.GetByCondition(x => x.Model.Equals("TBXLHA-6565B-VTM"));
+        if (translatorSpecs.Count == 0)
+        {
+            TranslatorSpecsDto baseTranslator = new TranslatorSpecsDto()
+            {
+                Frequency = 900,
+                Power = 25,
+                Gain = 16.5M,
+                AntennaId = antenna.Id
+            };
+            await _serviceWrapper.TranslatorSpecsService.CreateAsync(baseTranslator, "Admin");
             await _repositoryWrapper.Save();
         }
     }
@@ -344,25 +363,1817 @@ public class DataSeed
     public async Task SeedRadiationZone()
     {
         List<RadiationZone>? allRadiationZones = _repositoryWrapper.RadiationZoneRepository.GetAll().ToList();
-        TranslatorSpecs? translatorSpecs = _repositoryWrapper.TranslatorSpecsRepository.GetByCondition()
+        Antenna? antenna = await _repositoryWrapper.AntennaRepository.GetByCondition(x => x.Model.Equals("TBXLHA-6565B-VTM"));
+        TranslatorSpecs? translatorSpecs = await _repositoryWrapper.TranslatorSpecsRepository
+            .GetByCondition(x => x.AntennaId == antenna.Id && x.Frequency == 900);
         if (allRadiationZones.Count == 0)
         {
             List<RadiationZone> radiationZones = new List<RadiationZone>()
             {
                 new RadiationZone
                 {
-                Degree = 0,
-                Value = -0.04M,
-                DirectionType = DirectionType.Horizontal,
+                    Degree = 0,
+                    Value = 0.000M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 1,
+                    Value = -0.210M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 2,
+                    Value = -0.790M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 3,
+                    Value = -1.740M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 4,
+                    Value = -3.140M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 5,
+                    Value = -5.110M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 6,
+                    Value = -7.680M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 7,
+                    Value = -11.510M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 8,
+                    Value = -17.740M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 9,
+                    Value = -28.130M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 10,
+                    Value = -20.420M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 11,
+                    Value = -15.490M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 12,
+                    Value = -13.190M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 13,
+                    Value = -12.110M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 14,
+                    Value = -11.770M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 15,
+                    Value = -11.920M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 16,
+                    Value = -12.440M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 17,
+                    Value = -13.190M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 18,
+                    Value = -14.110M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 19,
+                    Value = -15.080M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 20,
+                    Value = -15.940M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 21,
+                    Value = -16.570M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 22,
+                    Value = -16.850M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 23,
+                    Value = -16.850M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 24,
+                    Value = -16.680M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 25,
+                    Value = -16.500M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 26,
+                    Value = -16.450M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 27,
+                    Value = -16.630M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 28,
+                    Value = -17.120M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 29,
+                    Value = -18.040M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 30,
+                    Value = -19.460M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 31,
+                    Value = -21.550M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 32,
+                    Value = -24.640M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 33,
+                    Value = -28.480M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 34,
+                    Value = -29.410M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 35,
+                    Value = -26.120M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 36,
+                    Value = -23.120M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 37,
+                    Value = -21.080M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 38,
+                    Value = -19.880M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 39,
+                    Value = -19.200M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 40,
+                    Value = -18.970M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 41,
+                    Value = -19.150M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 42,
+                    Value = -19.720M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 43,
+                    Value = -20.600M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 44,
+                    Value = -21.880M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 45,
+                    Value = -23.530M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 46,
+                    Value = -25.440M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 47,
+                    Value = -27.490M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 48,
+                    Value = -29.230M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 49,
+                    Value = -29.870M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 50,
+                    Value = -29.390M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 51,
+                    Value = -28.430M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 52,
+                    Value = -27.610M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 53,
+                    Value = -27.080M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 54,
+                    Value = -26.920M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 55,
+                    Value = -27.070M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 56,
+                    Value = -27.530M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 57,
+                    Value = -28.300M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 58,
+                    Value = -29.310M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 59,
+                    Value = -30.630M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 60,
+                    Value = -32.200M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 61,
+                    Value = -34.090M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 62,
+                    Value = -36.150M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 63,
+                    Value = -37.940M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 64,
+                    Value = -38.920M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 65,
+                    Value = -29.420M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 66,
+                    Value = -37.260M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 67,
+                    Value = -36.070M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 68,
+                    Value = -35.000M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 69,
+                    Value = -34.160M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 70,
+                    Value = -33.550M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 71,
+                    Value = -33.060M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 72,
+                    Value = -32.670M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 73,
+                    Value = -32.420M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 74,
+                    Value = -32.250M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 75,
+                    Value = -32.200M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 76,
+                    Value = -32.180M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 77,
+                    Value = -32.250M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 78,
+                    Value = -32.320M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 79,
+                    Value = -32.510M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 80,
+                    Value = -32.760M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 81,
+                    Value = -33.110M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 82,
+                    Value = -33.530M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 83,
+                    Value = -33.990M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 84,
+                    Value = -34.420M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 85,
+                    Value = -34.830M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 86,
+                    Value = -35.180M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 87,
+                    Value = -35.420M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 88,
+                    Value = -35.680M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 89,
+                    Value = -35.920M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 90,
+                    Value = -36.160M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 91,
+                    Value = -36.300M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 92,
+                    Value = -36.470M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 93,
+                    Value = -36.550M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 94,
+                    Value = -36.610M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 95,
+                    Value = -36.840M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 96,
+                    Value = -37.210M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 97,
+                    Value = -37.670M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 98,
+                    Value = -38.310M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 99,
+                    Value = -39.110M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 100,
+                    Value = -39.910M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 101,
+                    Value = -40.570M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 102,
+                    Value = -41.020M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 103,
+                    Value = -41.050M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 104,
+                    Value = -40.560M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 105,
+                    Value = -39.770M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 106,
+                    Value = -38.790M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 107,
+                    Value = -37.840M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 108,
+                    Value = -36.910M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 109,
+                    Value = -36.140M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 110,
+                    Value = -35.420M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 111,
+                    Value = -34.900M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 112,
+                    Value = -34.540M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 113,
+                    Value = -34.270M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 114,
+                    Value = -34.130M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 115,
+                    Value = -34.080M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 116,
+                    Value = -34.150M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 117,
+                    Value = -34.250M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 118,
+                    Value = -34.470M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 119,
+                    Value = -34.730M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 120,
+                    Value = -35.150M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 121,
+                    Value = -35.740M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 122,
+                    Value = -36.490M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 123,
+                    Value = -37.500M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 124,
+                    Value = -38.840M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 125,
+                    Value = -40.520M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 126,
+                    Value = -42.670M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 127,
+                    Value = -45.420M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 128,
+                    Value = -48.260M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 129,
+                    Value = -49.860M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 130,
+                    Value = -48.850M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 131,
+                    Value = -47.060M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 132,
+                    Value = -45.770M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 133,
+                    Value = -44.580M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 134,
+                    Value = -43.480M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 135,
+                    Value = -42.300M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 136,
+                    Value = -40.750M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 137,
+                    Value = -39.390M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 138,
+                    Value = -38.190M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 139,
+                    Value = -37.320M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 140,
+                    Value = -36.870M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 141,
+                    Value = -36.800M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 142,
+                    Value = -36.940M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 143,
+                    Value = -36.950M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 144,
+                    Value = -36.610M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 145,
+                    Value = -35.770M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 146,
+                    Value = -34.500M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 147,
+                    Value = -33.340M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 148,
+                    Value = -32.420M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 149,
+                    Value = -31.890M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 150,
+                    Value = -31.800M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 151,
+                    Value = -32.120M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 152,
+                    Value = -32.900M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 153,
+                    Value = -34.120M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 154,
+                    Value = -35.800M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 155,
+                    Value = -37.930M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 156,
+                    Value = -40.380M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 157,
+                    Value = -42.640M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 158,
+                    Value = -43.890M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 159,
+                    Value = -43.860M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 160,
+                    Value = -43.210M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 161,
+                    Value = -42.840M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 162,
+                    Value = -42.770M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 163,
+                    Value = -43.150M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 164,
+                    Value = -44.290M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 165,
+                    Value = -46.200M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 166,
+                    Value = -49.550M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 167,
+                    Value = -57.070M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 168,
+                    Value = -81.800M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 169,
+                    Value = -55.700M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 170,
+                    Value = -53.310M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 171,
+                    Value = -56.350M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 172,
+                    Value = -58.240M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 173,
+                    Value = -45.780M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 174,
+                    Value = -39.180M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 175,
+                    Value = -34.960M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 176,
+                    Value = -31.820M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 177,
+                    Value = -29.590M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 178,
+                    Value = -28.030M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 179,
+                    Value = -27.050M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 180,
+                    Value = -26.600M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 181,
+                    Value = -26.560M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 182,
+                    Value = -27.220M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 183,
+                    Value = -28.460M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 184,
+                    Value = -30.560M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 185,
+                    Value = -33.440M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 186,
+                    Value = -37.480M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 187,
+                    Value = -41.420M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 188,
+                    Value = -41.310M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 189,
+                    Value = -39.210M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 190,
+                    Value = -38.100M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 191,
+                    Value = -37.830M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 192,
+                    Value = -37.770M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 193,
+                    Value = -37.020M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 194,
+                    Value = -35.490M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 195,
+                    Value = -33.650M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 196,
+                    Value = -32.320M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 197,
+                    Value = -31.530M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 198,
+                    Value = -31.260M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 199,
+                    Value = -31.650M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 200,
+                    Value = -32.650M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 201,
+                    Value = -34.330M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 202,
+                    Value = -36.460M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 203,
+                    Value = -38.470M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 204,
+                    Value = -38.930M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 205,
+                    Value = -37.570M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 206,
+                    Value = -35.840M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 207,
+                    Value = -34.300M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 208,
+                    Value = -33.010M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 209,
+                    Value = -31.880M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 210,
+                    Value = -30.980M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 211,
+                    Value = -30.370M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 212,
+                    Value = -30.080M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 213,
+                    Value = -30.180M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 214,
+                    Value = -30.760M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 215,
+                    Value = -31.920M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 216,
+                    Value = -33.800M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 217,
+                    Value = -36.590M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 218,
+                    Value = -41.080M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 219,
+                    Value = -47.160M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 220,
+                    Value = -46.520M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 221,
+                    Value = -41.930M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 222,
+                    Value = -39.460M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 223,
+                    Value = -38.180M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 224,
+                    Value = -37.770M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 225,
+                    Value = -38.060M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 226,
+                    Value = -38.570M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 227,
+                    Value = -39.480M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 228,
+                    Value = -40.610M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 229,
+                    Value = -41.540M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 230,
+                    Value = -42.230M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 231,
+                    Value = -42.440M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 232,
+                    Value = -42.010M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 233,
+                    Value = -40.820M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 234,
+                    Value = -39.270M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 235,
+                    Value = -37.700M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 236,
+                    Value = -36.240M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
+                new RadiationZone
+                {
+                    Degree = 237,
+                    Value = -34.970M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 238,
+                    Value = -33.980M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 239,
+                    Value = -33.170M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 240,
+                    Value = -32.550M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 241,
+                    Value = -32.150M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 242,
+                    Value = -31.900M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 243,
+                    Value = -31.790M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 244,
+                    Value = -31.790M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 245,
+                    Value = -31.980M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 246,
+                    Value = -32.190M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 247,
+                    Value = -32.550M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 248,
+                    Value = -33.050M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 249,
+                    Value = -33.600M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 250,
+                    Value = -34.300M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 251,
+                    Value = -35.040M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 252,
+                    Value = -35.890M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 253,
+                    Value = -36.830M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 254,
+                    Value = -37.830M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 255,
+                    Value = -38.800M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 256,
+                    Value = -39.750M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 257,
+                    Value = -40.420M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 258,
+                    Value = -41.090M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 259,
+                    Value = -42.100M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 260,
+                    Value = -42.880M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 261,
+                    Value = -43.260M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 262,
+                    Value = -43.900M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 263,
+                    Value = -44.040M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 264,
+                    Value = -44.170M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 265,
+                    Value = -44.400M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 266,
+                    Value = -44.530M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 267,
+                    Value = -44.290M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 268,
+                    Value = -43.890M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 269,
+                    Value = -43.350M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 270,
+                    Value = -42.770M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 271,
+                    Value = -41.890M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 272,
+                    Value = -40.930M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 273,
+                    Value = -39.940M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 274,
+                    Value = -39.000M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 275,
+                    Value = -38.190M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 276,
+                    Value = -37.420M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 277,
+                    Value = -36.730M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 278,
+                    Value = -36.150M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 279,
+                    Value = -35.580M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 280,
+                    Value = -35.060M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 281,
+                    Value = -34.620M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 282,
+                    Value = -34.260M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 283,
+                    Value = -33.970M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 284,
+                    Value = -33.760M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 285,
+                    Value = -33.670M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 286,
+                    Value = -33.610M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 287,
+                    Value = -33.650M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 288,
+                    Value = -33.760M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 289,
+                    Value = -33.880M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 290,
+                    Value = -34.080M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },new RadiationZone
+                {
+                    Degree = 291,
+                    Value = -34.300M,
+                    DirectionType = DirectionType.Vertical,
+                    TranslatorSpecsId = translatorSpecs.Id
+                },
                 
-                }
-            }
-            
+                
+            };
             foreach (var radiationZone in radiationZones)
             {
                 await _repositoryWrapper.RadiationZoneRepository.CreateAsync(radiationZone);
             }
-
+    
             await _repositoryWrapper.Save();
         }
     }

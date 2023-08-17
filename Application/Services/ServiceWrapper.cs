@@ -26,7 +26,6 @@ public class ServiceWrapper : IServiceWrapper
         ContrAgentValidator contrAgentValidator,
         ProjectValidator projectValidator,
         ITokenService tokenService,
-        AntennaValidator antennaValidator,
         TranslatorSpecsValidator translatorSpecsValidator,
         AntennaValidator antennaValidator,
         EnergyResultValidator energyResultValidator,
