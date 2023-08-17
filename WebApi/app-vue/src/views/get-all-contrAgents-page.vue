@@ -1,61 +1,61 @@
 <template>
-  <DxDataGrid
+  <dx-data-grid
       :data-source="dataSource"
       :show-borders="true"
       :remote-operations="true"
       key-expr="ID"
       @row-click="onRowClick"
   >
-    <DxColumn
+    <dx-column
         data-field="companyName"
         caption="Название компании"
         data-type="string"
     />
-    <DxColumn
+    <dx-column
         data-field="bin"
         caption="БИН"
         data-type="string"
     />
-    <DxColumn
+    <dx-column
         data-field="directorName"
         caption="Имя директора"
         data-type="string"
     />
-    <DxColumn
+    <dx-column
         data-field="directorSurname"
         caption="Фамилия директора"
         data-type="string"
     />
-    <DxColumn
+    <dx-column
         data-field="directorPatronymic"
         caption="Отчество директора"
         data-type="string"
     />
-    <DxColumn
+    <dx-column
         data-field="email"
         caption="Электронная почта компании"
         data-type="string"
     />
-    <DxColumn
+    <dx-column
         data-field="phoneNumber"
         caption="Номер телефона компании"
         data-type="string"
     />
-    <DxColumn
+    <dx-column
         data-field="address"
         caption="Адрес"
         data-type="string"
     />
-    <DxPaging :page-size="5"/>
-    <DxPager
+    <dx-paging :page-size="5"/>
+    <dx-pager
         :show-page-size-selector="true"
         :allowed-page-sizes="[8, 12, 20]"
     />
-    <DxEditing
+    <dx-editing
         :allow-deleting="true"
     />
-  </DxDataGrid>
-  <DxButton
+  </dx-data-grid>
+  <dx-button
       class="button"
       text="Создать"
       type="success"
@@ -75,7 +75,7 @@ import {
 import CustomStore from "devextreme/data/custom_store";
 import "whatwg-fetch";
 import contrAgentService from "@/api/contrAgentService";
-import { useRouter } from 'vue-router';
+import {useRouter} from 'vue-router';
 import {DxButton} from "devextreme-vue/button";
 
 
@@ -91,6 +91,7 @@ const dataSource = new CustomStore({
     return {data: baseResponse.result};
   },
 });
+
 async function onRowClick(e) {
   try {
     const contrAgentId = e.key;
