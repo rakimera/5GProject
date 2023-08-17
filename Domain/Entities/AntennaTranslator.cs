@@ -7,6 +7,7 @@ public class AntennaTranslator : BaseEntity
     public Guid TranslatorSpecsId { get; set; }
     public TranslatorSpecs TranslatorSpecs { get; set; }
     public decimal Power { get; set; }
+    public decimal TransmitLossFactor { get; set; }
     public Guid TranslatorTypeId { get; set; }
     public TranslatorType TranslatorType { get; set; }
     public decimal Gain { get; set; }

@@ -19,8 +19,6 @@ public class ContrAgentMapProfile : Profile
                 opt.MapFrom(src => src.LastModifiedBy))
             .ForMember(dest => dest.CreatedBy, opt =>
                 opt.MapFrom(src => src.CreatedBy))
-            .ForMember(dest => dest.AmplificationFactor, opt =>
-                opt.MapFrom(src => src.TransmitLossFactor))
             .ForMember(dest => dest.CompanyName, opt =>
                 opt.MapFrom(src => src.CompanyName))
             .ForMember(dest => dest.DirectorName, opt =>
