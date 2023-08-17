@@ -27,8 +27,8 @@ public class UserMapProfile : Profile
                 opt.MapFrom(src => src.Login))
             .ForMember(dest => dest.Password, opt =>
                 opt.MapFrom(src => src.Password))
-            .ForMember(dest => dest.Role, opt =>
-                opt.MapFrom(src => src.Role))
+            .ForMember(dest => dest.ExecutiveCompanyId, opt =>
+                opt.MapFrom(src => src.ExecutiveCompanyId))
             .ReverseMap();
         
         CreateMap<UserDto, UpdateUserDto>()
@@ -40,8 +40,11 @@ public class UserMapProfile : Profile
                 opt.MapFrom(src => src.Surname))
             .ForMember(dest => dest.Login, opt =>
                 opt.MapFrom(src => src.Login))
-            .ForMember(dest => dest.Role, opt =>
-                opt.MapFrom(src => src.Role)).ReverseMap();
+            .ForMember(dest => dest.Roles, opt =>
+                opt.MapFrom(src => src.Roles))
+            .ForMember(dest => dest.ExecutiveCompanyId, opt =>
+                opt.MapFrom(src => src.ExecutiveCompanyId))
+            .ReverseMap();
         
         CreateMap<UserDto, CreateUserDto>()
             .ForMember(dest => dest.Name, opt =>
@@ -52,7 +55,10 @@ public class UserMapProfile : Profile
                 opt.MapFrom(src => src.Login))
             .ForMember(dest => dest.Password, opt =>
                 opt.MapFrom(src => src.Password))
-            .ForMember(dest => dest.Role, opt =>
-                opt.MapFrom(src => src.Role)).ReverseMap();
+            .ForMember(dest => dest.Roles, opt =>
+                opt.MapFrom(src => src.Roles))
+            .ForMember(dest => dest.ExecutiveCompanyId, opt =>
+                opt.MapFrom(src => src.ExecutiveCompanyId))
+            .ReverseMap();
     }
 }

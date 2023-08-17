@@ -8,10 +8,9 @@
   >
     <dx-column data-field="login" data-type="string"/>
     <dx-column data-field="name" data-type="string"/>
-    <dx-column  data-field="surname" data-type="string"/>
-    <dx-column  data-field="password" data-type="string"/>
-    <dx-column  data-field="role" data-type="string"/>
-    <dx-paging  :page-size="5"/>
+    <dx-column data-field="surname" data-type="string"/>
+    <dx-column data-field="password" data-type="string"/>
+    <dx-paging :page-size="5"/>
     <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
     <dx-editing :allow-deleting="true"/>
   </dx-data-grid>

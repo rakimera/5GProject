@@ -4,10 +4,13 @@ namespace Domain.Entities;
 
 public class ProjectAntenna : BaseEntity
 {
-    public Guid LocationId { get; set; }
-    public Location Location { get; set; }
+    public decimal Azimuth { get; set; }
+    public decimal Height { get; set; }
+    public decimal Latitude { get; set; }
+    public decimal Longitude { get; set; }
+    public decimal Tilt { get; set; }
     public Guid AntennaId { get; set; }
     public Antenna Antenna { get; set; }
-    public Guid ProjectOId { get; set; }
+    public Guid ProjectId { get; set; }
     public Project Project { get; set; }
-}
+}  

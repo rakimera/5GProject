@@ -64,13 +64,22 @@
         />
       </dx-simple-item>
       <dx-simple-item
-          data-field="amplificationFactor">
-        <dx-label :text="'Коэффициент усиления'"/>
-        <dx-required-rule message="Коэффициент усиления должнен быть заполнен"/>
+          data-field="email">
+        <dx-label :text="'Электронная почта компании'"/>
+        <dx-email-rule message="Пожалуйста, введите корректный email"/>
+      </dx-simple-item>
+      <dx-simple-item
+          data-field="phoneNumber">
+        <dx-label :text="'Контактный номер компании'"/>
         <dx-pattern-rule
-            :pattern="ampPattern"
-            message="Коэффициент усиление это числовое значение с возможностью разделение через точку"
+            :pattern="phoneNumberPattern"
+            message="Пожалуйста, введите корректный номер телефона"
         />
+      </dx-simple-item>
+      <dx-simple-item
+          data-field="address">
+        <dx-label :text="'Адрес компании'"/>
+        <dx-required-rule message="Адрес должнен быть заполнен"/>
       </dx-simple-item>
       <dx-button-item>
         <dx-button-options
@@ -109,7 +118,7 @@ import {
   DxRequiredRule,
   DxStringLengthRule,
   DxButtonItem,
-  DxButtonOptions,
+  DxButtonOptions, DxEmailRule,
 } from "devextreme-vue/form";
 import {onBeforeMount, reactive, ref} from "vue";
 import contrAgentService from "@/api/contrAgentService";
@@ -124,9 +133,9 @@ let isFormDisabled = ref(true);
 let oid = route.params.id;
 const mode = route.params.mode;
 const pageDescription = ref("Подробно о контрагенте");
-const ampPattern = ref(/^(\d+(.\d+)*)?$/);
 const namePattern = ref("^[a-zA-Zа-яА-Я]+$")
 const binPattern = ref("^[0-9]")
+const phoneNumberPattern = /^[+]?\d{1,3}[-.\s]?\d{3,}[-.\s]?\d{4,}$/;
 const formRef = ref(null);
 
 onBeforeMount(async () => {

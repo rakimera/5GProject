@@ -32,8 +32,18 @@
         data-type="string"
     />
     <dx-column
-        data-field="amplificationFactor"
-        caption="Коэффициент усиления"
+        data-field="email"
+        caption="Электронная почта компании"
+        data-type="string"
+    />
+    <dx-column
+        data-field="phoneNumber"
+        caption="Номер телефона компании"
+        data-type="string"
+    />
+    <dx-column
+        data-field="address"
+        caption="Адрес"
         data-type="string"
     />
     <dx-paging :page-size="5"/>
@@ -65,7 +75,7 @@ import {
 import CustomStore from "devextreme/data/custom_store";
 import "whatwg-fetch";
 import contrAgentService from "@/api/contrAgentService";
-import { useRouter } from 'vue-router';
+import {useRouter} from 'vue-router';
 import {DxButton} from "devextreme-vue/button";
 
 
@@ -81,6 +91,7 @@ const dataSource = new CustomStore({
     return {data: baseResponse.result};
   },
 });
+
 async function onRowClick(e) {
   try {
     const contrAgentId = e.key;

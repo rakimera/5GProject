@@ -13,9 +13,5 @@ public class ProjectValidator : AbstractValidator<ProjectDto>
             .NotNull().WithMessage("Ответственный за проект не выбран");
         RuleFor(dto => dto.ProjectStatusId)
             .NotNull().WithMessage("Статус проекта не выбран");
-        RuleFor(dto => dto.DistrictId)
-            .NotNull().WithMessage("Область установки не выбрана");
-        RuleFor(dto => dto.TownId)
-            .NotNull().WithMessage("Город установки не выбран");
     }
 }
