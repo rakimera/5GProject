@@ -10,4 +10,5 @@ public interface IServiceWrapper
     IDistrictService DistrictService { get; }
     ITownService TownService { get; }
     IAntennaService AntennaService { get; }
+    IEnergyFlowService EnergyFlowService { get; }
 }

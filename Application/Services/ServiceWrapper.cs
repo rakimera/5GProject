@@ -15,6 +15,7 @@ public class ServiceWrapper : IServiceWrapper
     private readonly Lazy<IDistrictService> _districtService;
     private readonly Lazy<ITownService> _townService;
     private readonly Lazy<IAntennaService> _antennaService;
+    private readonly Lazy<IEnergyFlowService> _energyFlowService;
 
     public ServiceWrapper(
         IRepositoryWrapper repository,
@@ -23,7 +24,8 @@ public class ServiceWrapper : IServiceWrapper
         ContrAgentValidator contrAgentValidator,
         ProjectValidator projectValidator,
         ITokenService tokenService,
-        AntennaValidator antennaValidator)
+        AntennaValidator antennaValidator,
+        EnergyResultValidator energyResultValidator)
     {
         _districtService = new Lazy<IDistrictService>(() => new DistrictService(repository,mapper));
         _userService = new Lazy<IUserService>(() => new UserService(repository, mapper, userValidator));
@@ -33,6 +35,7 @@ public class ServiceWrapper : IServiceWrapper
         _contrAgentService = new Lazy<IContrAgentService>(() => new ContrAgentService(repository, mapper, contrAgentValidator));
         _townService = new Lazy<ITownService>(() => new TownService(repository,mapper));
         _antennaService = new Lazy<IAntennaService>(() => new AntennaService(repository, mapper, antennaValidator));
+        _energyFlowService = new Lazy<IEnergyFlowService>(() => new EnergyFlowService(energyResultValidator, mapper, repository));
     }
 
     public IUserService UserService => _userService.Value;
@@ -43,4 +46,5 @@ public class ServiceWrapper : IServiceWrapper
     public IDistrictService DistrictService => _districtService.Value;
     public ITownService TownService => _townService.Value;
     public IAntennaService AntennaService => _antennaService.Value;
+    public IEnergyFlowService EnergyFlowService => _energyFlowService.Value;
 }
