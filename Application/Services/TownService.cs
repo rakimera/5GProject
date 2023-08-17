@@ -3,6 +3,8 @@ using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
 using Application.Models;
 using AutoMapper;
+using DevExtreme.AspNet.Data;
+using DevExtreme.AspNet.Data.ResponseModel;
 using Domain.Entities;
 
 namespace Application.Services;
@@ -76,6 +78,12 @@ public class TownService : ITownService
             Result: model,
             Success: true,
             Messages: new List<string> { "Город успешно найден" });
+    }
+    
+    public async Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions)
+    {
+        var queryableUsers = _repositoryWrapper.UserRepository.GetAll();
+        return await DataSourceLoader.LoadAsync(queryableUsers, loadOptions);
     }
 
     public async Task<BaseResponse<bool>> Delete(string oid)
