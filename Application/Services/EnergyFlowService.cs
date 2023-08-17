@@ -26,9 +26,24 @@ public class EnergyFlowService : IEnergyFlowService
         _distances = new []{5, 10, 20, 30, 40, 60, 80, 100};
     }
 
-    public List<TotalFluxDensity> PowerDensitySummation(EnergyResult energyResult)
+    public List<CreateTotalFluxDensityDto> PowerDensitySummation(List<EnergyResult> energyResults)
     {
-        throw new NotImplementedException();
+        List<CreateTotalFluxDensityDto> totalFluxDensities = new List<CreateTotalFluxDensityDto>();
+
+        foreach (var distance in _distances)
+        {
+            var totalFluxDensity = new CreateTotalFluxDensityDto { Distance = distance };
+            foreach (var energyResult in energyResults)
+            {
+                if (energyResult.Distance == distance)
+                {
+                    totalFluxDensity.Value += energyResult.Value;
+                }
+            }
+            totalFluxDensities.Add(totalFluxDensity);
+        }
+
+        return totalFluxDensities;
     }
 
     private async Task<List<EnergyResult>> PowerDensity(CreateEnergyResultDto inputData)
