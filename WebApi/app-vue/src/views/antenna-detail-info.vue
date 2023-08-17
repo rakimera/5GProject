@@ -65,7 +65,7 @@ import notify from "devextreme/ui/notify";
 const route = useRoute();
 const router = useRouter();
 let dataSource = reactive({});
-const routeParams = {name: "Журнал антенн"};
+const routeParams = {name: "antenna_table"};
 let isFormDisabled = ref(true);
 let oid = route.params.id;
 const mode = route.params.mode;
