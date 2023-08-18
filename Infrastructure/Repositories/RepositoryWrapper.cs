@@ -22,6 +22,7 @@ public class RepositoryWrapper : IRepositoryWrapper
     private IRadiationZoneRepository _radiationZoneRepository;
     private IAntennaTranslatorRepository _antennaTranslatorRepository;
     private ICompanyLicenseRepository _companyLicenseRepository;
+    private IExecutiveCompanyRepository _executiveCompanyRepository;
 
     public RepositoryWrapper(Project5GDbContext db)
     {
@@ -51,6 +52,19 @@ public class RepositoryWrapper : IRepositoryWrapper
             }
 
             return _companyLicenseRepository;
+        }
+    }
+
+    public IExecutiveCompanyRepository ExecutiveCompanyRepository
+    {
+        get
+        {
+            if (_executiveCompanyRepository == null)
+            {
+                _executiveCompanyRepository = new ExecutiveCompanyRepository(_db);
+            }
+
+            return _executiveCompanyRepository;
         }
     }
 

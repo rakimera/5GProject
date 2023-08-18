@@ -13,4 +13,5 @@ public interface IServiceWrapper
     IEnergyFlowService EnergyFlowService { get; }
     IRoleService RoleService { get; }
     ICompanyLicenseService CompanyLicenseService { get; }
+    IExecutiveCompanyService ExecutiveCompanyService { get; }
 }

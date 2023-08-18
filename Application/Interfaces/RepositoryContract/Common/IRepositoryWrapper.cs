@@ -15,5 +15,6 @@ public interface IRepositoryWrapper
     IRadiationZoneRepository RadiationZoneRepository { get; }
     IAntennaTranslatorRepository AntennaTranslatorRepository { get; }
     ICompanyLicenseRepository CompanyLicenseRepository { get; }
+    IExecutiveCompanyRepository ExecutiveCompanyRepository { get; }
     Task Save();
 }

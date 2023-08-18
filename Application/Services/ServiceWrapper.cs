@@ -18,6 +18,7 @@ public class ServiceWrapper : IServiceWrapper
     private readonly Lazy<IEnergyFlowService> _energyFlowService;
     private readonly Lazy<IRoleService> _roleService;
     private readonly Lazy<ICompanyLicenseService> _companyLicenseService;
+    private readonly Lazy<IExecutiveCompanyService> _executiveCompanyService;
 
     public ServiceWrapper(
         IRepositoryWrapper repository,
@@ -29,10 +30,14 @@ public class ServiceWrapper : IServiceWrapper
         AntennaValidator antennaValidator,
         EnergyResultValidator energyResultValidator,
         RoleValidator roleValidator,
-        CompanyLicenseValidator licenseValidator)
+        CompanyLicenseValidator licenseValidator,
+        ExecutiveCompanyValidator executiveCompanyValidator)
     {
         _roleService = new Lazy<IRoleService>(() => new RoleService(repository, mapper, roleValidator));
-        _companyLicenseService = new Lazy<ICompanyLicenseService>(() => new CompanyLicenseService(repository, mapper, licenseValidator));
+        _companyLicenseService =
+            new Lazy<ICompanyLicenseService>(() => new CompanyLicenseService(repository, mapper, licenseValidator));
+        _executiveCompanyService = new Lazy<IExecutiveCompanyService>(() =>
+            new ExecutiveCompanyService(repository, mapper, executiveCompanyValidator));
         _districtService = new Lazy<IDistrictService>(() => new DistrictService(repository, mapper));
         _userService = new Lazy<IUserService>(() => new UserService(repository, mapper, userValidator));
         _tokenService = new Lazy<ITokenService>(() => new TokenService(repository));
@@ -58,4 +63,5 @@ public class ServiceWrapper : IServiceWrapper
     public IEnergyFlowService EnergyFlowService => _energyFlowService.Value;
     public IRoleService RoleService => _roleService.Value;
     public ICompanyLicenseService CompanyLicenseService => _companyLicenseService.Value;
+    public IExecutiveCompanyService ExecutiveCompanyService => _executiveCompanyService.Value;
 }
