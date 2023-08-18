@@ -21,12 +21,13 @@ public class RepositoryWrapper : IRepositoryWrapper
     private IEnergyFlowRepository _energyFlowRepository;
     private IRadiationZoneRepository _radiationZoneRepository;
     private IAntennaTranslatorRepository _antennaTranslatorRepository;
+    private ICompanyLicenseRepository _companyLicenseRepository;
 
     public RepositoryWrapper(Project5GDbContext db)
     {
         _db = db;
     }
-    
+
     public IAntennaTranslatorRepository AntennaTranslatorRepository
     {
         get
@@ -39,7 +40,20 @@ public class RepositoryWrapper : IRepositoryWrapper
             return _antennaTranslatorRepository;
         }
     }
-    
+
+    public ICompanyLicenseRepository CompanyLicenseRepository
+    {
+        get
+        {
+            if (_companyLicenseRepository == null)
+            {
+                _companyLicenseRepository = new CompanyLicenseRepository(_db);
+            }
+
+            return _companyLicenseRepository;
+        }
+    }
+
     public IRadiationZoneRepository RadiationZoneRepository
     {
         get
@@ -182,7 +196,7 @@ public class RepositoryWrapper : IRepositoryWrapper
             return _energyFlowRepository;
         }
     }
-    
+
     public async Task Save()
     {
         await _db.SaveChangesAsync();
