@@ -70,7 +70,8 @@ namespace Application.Services
         public async Task<BaseResponse<CompanyLicenseDto>> GetByOid(string oid)
         {
             CompanyLicense license =
-                await _repositoryWrapper.CompanyLicenseRepository.GetByCondition(x => x.Id.ToString() == oid);
+                await _repositoryWrapper.CompanyLicenseRepository
+                    .GetByCondition(x => x.Id.ToString() == oid);
             CompanyLicenseDto model = _mapper.Map<CompanyLicenseDto>(license);
             if (license == null)
             {
@@ -113,12 +114,6 @@ namespace Application.Services
             var queryableLicenses = _repositoryWrapper.CompanyLicenseRepository.GetAll();
             return await DataSourceLoader.LoadAsync(queryableLicenses, loadOptions);
         }
-
-        public Task<BaseResponse<CompanyLicenseDto>> UpdateRole(UpdateCompanyLicenseDto model)
-        {
-            throw new NotImplementedException();
-        }
-
 
         public async Task<BaseResponse<CompanyLicenseDto>> UpdateLicense(UpdateCompanyLicenseDto model)
         {
