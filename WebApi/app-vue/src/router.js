@@ -14,6 +14,7 @@ import Antennae from './views/Antenna-page.vue';
 import GetAllAntennaePage from "@/views/get-all-antennae-page";
 import ContrAgentDetail from '@/views/contrAgent-detail-info.vue';
 import Roles from '@/views/get-all-roles-page.vue'
+import CompanyLicense from "@/views/get-all-companyLicense-page.vue";
 
 function loadView(view) {
     return () => import (/* webpackChunkName: "login" */ `./views/${view}.vue`)
@@ -173,6 +174,15 @@ const router = new createRouter({
               layout: defaultLayout
           },
           component: Roles
+      },
+      {
+          path: '/CompanyLicenseJournal',
+          name: 'Лицензии компании',
+          meta: {
+              requiresAuth: true,
+              layout: defaultLayout
+          },
+          component: CompanyLicense
       }
   ],
   history: createWebHashHistory()
