@@ -38,7 +38,7 @@ public class ProjectMapProfile : Profile
             .ForMember(dest => dest.ProjectStatus, opt =>
                 opt.Ignore())
             .ForMember(dest => dest.Address, opt =>
-                opt.Ignore())
+                opt.MapFrom(src => src.Address))
             .ForMember(dest => dest.ProjectAntennae, opt =>
                 opt.Ignore())
             .ForMember(dest => dest.TotalFluxDensity, opt =>
@@ -47,7 +47,10 @@ public class ProjectMapProfile : Profile
         CreateMap<CreateProjectDto, ProjectDto>()
             .ForMember(dest => dest.ContrAgentId, opt =>
                 opt.MapFrom(src => src.ContrAgentId))
-            .ReverseMap();
+            .ForMember(dest => dest.Address, opt =>
+                opt.MapFrom(src => $"{src.TownName+", "}{src.Arial+", "}{src.Street+", "}{src.House}"))
+            .ForMember(dest => dest.ProjectNumber, opt =>
+                opt.MapFrom(src => src.ProjectNumber));
 
     }
 }

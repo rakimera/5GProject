@@ -65,6 +65,42 @@ public class DataSeed
         }
     }
     
+    public async Task ProjectStatus()
+    {
+        List<ProjectStatus>? projectStatuses = _repositoryWrapper.ProjectStatusRepository.GetAll().ToList();
+        if (projectStatuses.Count == 0)
+        {
+            projectStatuses = new List<ProjectStatus>
+            {
+                new ProjectStatus()
+                {
+                    Status = "Новый проект"
+                },
+                new ProjectStatus()
+                {
+                    Status = "Требуются данные"
+                },
+                new ProjectStatus()
+                {
+                    Status = "Ждет решения"
+                },
+                new ProjectStatus()
+                {
+                    Status = "Проект завршен успешно"
+                },
+                new ProjectStatus()
+                {
+                    Status = "Проект завершен отказом"
+                }
+            };
+            foreach (var projectStatus in projectStatuses)
+            {
+                await _repositoryWrapper.ProjectStatusRepository.CreateAsync(projectStatus);
+            }
+            await _repositoryWrapper.Save();
+        }
+    }
+    
     public async Task SeedContrAgents()
     {
         List<ContrAgent>? contrs = _repositoryWrapper.ContrAgentRepository.GetAll().ToList();

@@ -20,12 +20,25 @@ public class RepositoryWrapper : IRepositoryWrapper
     private IEnergyFlowRepository _energyFlowRepository;
     private IRadiationZoneRepository _radiationZoneRepository;
     private IAntennaTranslatorRepository _antennaTranslatorRepository;
+    private IProjectStatusRepository _projectStatusRepository;
 
     public RepositoryWrapper(Project5GDbContext db)
     {
         _db = db;
     }
     
+    public IProjectStatusRepository ProjectStatusRepository
+    {
+        get
+        {
+            if (_projectStatusRepository == null)
+            {
+                _projectStatusRepository = new ProjectStatusRepository(_db);
+            }
+
+            return _projectStatusRepository;
+        }
+    }
     public IAntennaTranslatorRepository AntennaTranslatorRepository
     {
         get

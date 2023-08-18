@@ -17,33 +17,47 @@
                 <dx-tab
                     title="Контрагент и адрес установки"
                 >
-                    <dx-item>
-                    <dx-select-box
-                        label="Контрагент"
-                        label-mode="floating"
-                        :data-source="contrAgents"
-                        display-expr="companyName"
-                        value-expr="id"
-                        name ='contrAgentId'
-                        validation-message-position="left"
-                        v-model="dataSource.contrAgentId"
+                    <dx-item
+                        data-field='projectNumber'
+                        editor-type='dxTextBox'
+                        :editor-options="{ stylingMode: 'filled', placeholder: 'Номер проекта' }"
                     >
-
-                        <DxValidator>
-                            <DxRequiredRule message="Country is required"/>
-                        </DxValidator>
-                    </dx-select-box>
+                        <dx-required-rule message="'Укажите номер проекта'"></dx-required-rule>
+                        <dx-label
+                            :text="'Номер проекта'"
+                        />
                     </dx-item>
-                    <dx-item>
-                    <dx-select-box
-                        :data-source="towns"
-                        label="Город"
-                        label-mode="floating"
-                        display-expr="townName"
-                        value-expr="id"
-                        name ='townId'
-                        v-model="dataSource.townId"
-                    />
+                    <dx-item
+                        data-field='contrAgentId'
+                        editor-type="dxSelectBox"
+                        :editor-options="{ 
+                        placeholder: 'Выберите контрагента', 
+                        items: contrAgents, 
+                        displayExpr: 'companyName', 
+                        valueExpr: 'id',
+                        labelMode: 'floating',
+                        label: 'Контрагент'}"
+                    >
+                        <dx-required-rule message="Вы не выбрали контрагента"></dx-required-rule>
+                        <dx-label
+                            :visible="false"
+                        />
+                    </dx-item>
+                    <dx-item
+                        data-field='contrAgentId'
+                        editor-type="dxSelectBox"
+                        :editor-options="{ 
+                        placeholder: 'Выберите город', 
+                        items: towns, 
+                        displayExpr: 'townName', 
+                        valueExpr: 'townName',
+                        labelMode: 'floating',
+                        label: 'Город'}"
+                    >
+                        <dx-required-rule message="Вы не выбрали город установки"></dx-required-rule>
+                        <dx-label
+                            :visible="false"
+                        />
                     </dx-item>
                     <dx-item
                         data-field='arial'
@@ -51,11 +65,6 @@
                         :editor-options="{ stylingMode: 'filled', placeholder: 'Район' }"
                     >
                         <dx-label :text="'Район'"/>
-                        <dx-required-rule message="Введите район в котором расположен объект"/>
-                        <dx-string-length-rule
-                            :min=2
-                            message="Район не может содержать менее 2 символов"
-                        />
                         <dx-pattern-rule
                             :pattern="namePattern"
                             message="Поле должно состоять только из букв"
@@ -66,7 +75,6 @@
                             editor-type='dxTextBox'
                             :editor-options="{ stylingMode: 'filled', placeholder: 'Улица' }"
                         >
-                            <dx-required-rule message="Введите утицу на которой расположен объект"/>
                             <dx-label :text="'Улица'" />
                         </dx-item>
                         <dx-item
@@ -74,34 +82,46 @@
                             editor-type='dxTextBox'
                             :editor-options="{ stylingMode: 'filled', placeholder: 'Номер здания' }"
                         >
-                            <dx-required-rule message="Введите номер здания на котором расположен объект"/>
                             <dx-label
                                 :text="'Номер здания'"
                             />
                         </dx-item>
                 </dx-tab>
-                <DxTab
-                    title="Адрес"
-                    :disabled="nextStep[i]"
+                <dx-tab
+                    title="Антенны-передатчики"
+                    :disabled="!isFormDisabled"
                 >
                     <dx-item
                         data-field='house'
                         editor-type='dxTextBox'
                         :editor-options="{ stylingMode: 'filled', placeholder: 'Номер здания' }"
                     >
-                        <dx-required-rule message="Введите номер здания на котором расположен объект"/>
                         <dx-label
                             :text="'Номер здания'"
                         />
                     </dx-item>
-                </DxTab>
+                </dx-tab>
+                <dx-tab
+                    title="Фото мест установки"
+                    :disabled="!isFormDisabled"
+                >
+                    <dx-item
+                        data-field='house'
+                        editor-type='dxTextBox'
+                        :editor-options="{ stylingMode: 'filled', placeholder: 'Номер здания' }"
+                    >
+                        <dx-label
+                            :text="'Номер здания'"
+                        />
+                    </dx-item>
+                </dx-tab>
             </dx-tabbed-item>>
             <dx-button-item>
                 <dx-button-options
                     width="100%"
                     type="success"
                     styling-mode="outlined"
-                    :template="'Сохранить и перейти к следующему шагу'"
+                    :template="mode === 'create' ? 'Создать и продолжить' : 'Сохранить изменения'"
                     :on-click="onClickSaveChanges"
                     :visible="!isFormDisabled"
                     :use-submit-behavior="true"
@@ -135,16 +155,13 @@ import {
     DxTab, DxItem
 } from "devextreme-vue/form";
 import {
-    DxValidator,
-    DxRequiredRule,
     DxPatternRule,
-    DxStringLengthRule,
+    DxRequiredRule
 } from 'devextreme-vue/validator';
 import {onBeforeMount, reactive, ref} from "vue";
 import projectService from "@/api/projectService";
 import {useRoute, useRouter} from "vue-router";
 import notify from "devextreme/ui/notify";
-import DxSelectBox from "devextreme-vue/select-box";
 import contrAgentService from "@/api/contrAgentService";
 import townService from "@/api/townService";
 
@@ -160,8 +177,6 @@ const namePattern = ref("^[a-zA-Zа-яА-Я]+$")
 const formRef = ref(null);
 const contrAgents = ref([]);
 const towns = ref([]);
-const nextStep = ref([true]);
-const i = ref(0);
 
 onBeforeMount(async () => {
     if (mode === "read") {
