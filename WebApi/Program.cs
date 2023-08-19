@@ -54,6 +54,7 @@ try
             await dataseed.SeedContrAgents();
             await dataseed.SeedDistricts();
             await dataseed.SeedTowns();
+            await dataseed.ProjectStatus();
         }
     }
 

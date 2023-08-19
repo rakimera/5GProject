@@ -44,7 +44,7 @@
                         />
                     </dx-item>
                     <dx-item
-                        data-field='contrAgentId'
+                        data-field='townName'
                         editor-type="dxSelectBox"
                         :editor-options="{ 
                         placeholder: 'Выберите город', 
@@ -236,13 +236,24 @@ async function onClickSaveChanges() {
                     }, 'success', 1000);
                     await router.push(routeParams);
                 } else {
-                    notify(response.data.messages, 'error', 2000);
+                    notify({
+                            message: response.data.messages,
+                            position: {
+                                my: 'center top',
+                                at: 'center top'}
+                            }, 'error', 2000);
                 }
             }
         }
 
     } catch (error) {
         console.error("Ошибка при сохранении изменений:", error);
+        notify({
+            message: "Ошибка сервера при сохранении изменений:",
+            position: {
+                my: 'center top',
+                at: 'center top'}
+        }, 'error', 2000);
     }
 }
 </script>

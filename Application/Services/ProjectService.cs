@@ -51,9 +51,12 @@ public class ProjectService : IProjectService
     public async Task<BaseResponse<string>> CreateAsync(ProjectDto model, string creator)
     {
         User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Login.Equals(creator));
+        var projectStatus =
+            await _repositoryWrapper.ProjectStatusRepository.GetByCondition(x => x.Status.Equals("Новый проект"));
         model.ExecutorId = user.Id.ToString();
-        model.ProjectStatusId = "c2d0c703-8864-4847-9d20-84200de0ebc4"; //заглушка
+        model.ProjectStatusId = projectStatus.Id.ToString();
         model.ExecutiveCompanyId = user.ExecutiveCompanyId.ToString();
+        
         var result = await _projectValidator.ValidateAsync(model);
         if (result.IsValid)
         {
