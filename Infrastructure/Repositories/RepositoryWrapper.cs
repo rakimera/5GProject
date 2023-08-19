@@ -21,6 +21,7 @@ public class RepositoryWrapper : IRepositoryWrapper
     private IEnergyFlowRepository _energyFlowRepository;
     private IRadiationZoneRepository _radiationZoneRepository;
     private IAntennaTranslatorRepository _antennaTranslatorRepository;
+    private ITranslatorSpecsRepository _translatorSpecsRepository;
 
     public RepositoryWrapper(Project5GDbContext db)
     {
@@ -154,6 +155,19 @@ public class RepositoryWrapper : IRepositoryWrapper
             }
 
             return _antennaRepository;
+        }
+    }
+    
+    public ITranslatorSpecsRepository TranslatorSpecsRepository
+    {
+        get
+        {
+            if (_translatorSpecsRepository == null)
+            {
+                _translatorSpecsRepository = new TranslatorSpecsRepository(_db);
+            }
+
+            return _translatorSpecsRepository;
         }
     }
 
