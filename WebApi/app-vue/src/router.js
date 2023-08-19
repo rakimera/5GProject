@@ -113,7 +113,7 @@ const router = new createRouter({
     },
     {
       path: "/users_table",
-      name: "Журнал пользователей",
+      name: "users_table",
       meta: {
         requiresAuth: false,
         layout: defaultLayout
@@ -123,7 +123,7 @@ const router = new createRouter({
     ,
     {
       path: "/ContrAgentsJournal",
-      name: "Журнал контрагентов",
+      name: "ContrAgentsJournal",
       meta: {
         requiresAuth: true,
         layout: defaultLayout
@@ -149,7 +149,7 @@ const router = new createRouter({
       component: Antennae
     },
       {
-          path: '/user/:mode/:id',
+          path: '/user/:mode/:id?',
           name: 'userDetail',
           meta: {
               requiresAuth: true,
@@ -168,7 +168,7 @@ const router = new createRouter({
       },
       {
           path: '/roles',
-          name: 'Роли',
+          name: 'roles',
           meta: {
               requiresAuth: true,
               layout: defaultLayout
@@ -177,7 +177,7 @@ const router = new createRouter({
       },
       {
           path: '/CompanyLicenseJournal',
-          name: 'Лицензии компании',
+          name: 'CompanyLicenseJournal',
           meta: {
               requiresAuth: true,
               layout: defaultLayout
