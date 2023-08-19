@@ -1,7 +1,7 @@
 using Application.Interfaces;
-using Application.Models.Antennae;
 using Application.Models.TranslatorSpecs;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -20,9 +20,8 @@ public class TranslatorSpecsController : Controller
         _service = service;
         _mapper = mapper;
     }
-
-    [HttpGet]
-    // [HttpGet, Authorize(Roles = "Admin")]
+    
+    [HttpGet, Authorize(Roles = "Admin")]
     public IActionResult Get()
     {
         var baseResponse = _service.TranslatorSpecsService.GetAll();
