@@ -23,6 +23,13 @@ public class RepositoryWrapper : IRepositoryWrapper
     private IAntennaTranslatorRepository _antennaTranslatorRepository;
     private ICompanyLicenseRepository _companyLicenseRepository;
     private IExecutiveCompanyRepository _executiveCompanyRepository;
+    private IBiohazardRadiusRepository _biohazardRadiusRepository;
+    private IProjectAntennaRepository _projectAntennaRepository;
+    private IProjectStatusRepository _projectStatusRepository;
+    private ISanPinDockRepository _sanPinDockRepository;
+    private ISummaryBiohazardRadiusRepository _summaryBiohazardRadiusRepository;
+    private ITotalFluxDensityRepository _totalFluxDensityRepository;
+    private ITranslatorTypeRepository _translatorTypeRepository;
 
     public RepositoryWrapper(Project5GDbContext db)
     {
@@ -65,6 +72,97 @@ public class RepositoryWrapper : IRepositoryWrapper
             }
 
             return _executiveCompanyRepository;
+        }
+    }
+
+    public IBiohazardRadiusRepository BiohazardRadiusRepository
+    {
+        get
+        {
+            if (_biohazardRadiusRepository == null)
+            {
+                _biohazardRadiusRepository = new BiohazardRadiusRepository(_db);
+            }
+
+            return _biohazardRadiusRepository;
+        }
+    }
+
+    public IProjectAntennaRepository ProjectAntennaRepository
+    {
+        get
+        {
+            if (_projectAntennaRepository == null)
+            {
+                _projectAntennaRepository = new ProjectAntennaRepository(_db);
+            }
+
+            return _projectAntennaRepository;
+        }
+    }
+
+    public IProjectStatusRepository ProjectStatusRepository
+    {
+        get
+        {
+            if (_projectStatusRepository == null)
+            {
+                _projectStatusRepository = new ProjectStatusRepository(_db);
+            }
+
+            return _projectStatusRepository;
+        }
+    }
+
+    public ISanPinDockRepository SanPinDockRepository
+    {
+        get
+        {
+            if (_sanPinDockRepository == null)
+            {
+                _sanPinDockRepository = new SanPinDockRepository(_db);
+            }
+
+            return _sanPinDockRepository;
+        }
+    }
+
+    public ISummaryBiohazardRadiusRepository SummaryBiohazardRadiusRepository
+    {
+        get
+        {
+            if (_summaryBiohazardRadiusRepository == null)
+            {
+                _summaryBiohazardRadiusRepository = new SummaryBiohazardRadiusRepository(_db);
+            }
+
+            return _summaryBiohazardRadiusRepository;
+        }
+    }
+
+    public ITotalFluxDensityRepository TotalFluxDensityRepository
+    {
+        get
+        {
+            if (_totalFluxDensityRepository == null)
+            {
+                _totalFluxDensityRepository = new TotalFluxDensityRepository(_db);
+            }
+
+            return _totalFluxDensityRepository;
+        }
+    }
+
+    public ITranslatorTypeRepository TranslatorTypeRepository
+    {
+        get
+        {
+            if (_translatorTypeRepository == null)
+            {
+                _translatorTypeRepository = new TranslatorTypeRepository(_db);
+            }
+
+            return _translatorTypeRepository;
         }
     }
 
