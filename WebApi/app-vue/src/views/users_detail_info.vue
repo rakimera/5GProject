@@ -154,7 +154,7 @@ const passwordPattern = ref(
 const roleOptions = ref([]);
 const isEditMode = ref(false);
 const executiveCompanies = ref([
-  { id: 'd8c6d9f6-2ed7-4b0f-8d83-024350bf4aab', companyName: 'Company 1' },
+  { id: 'b8e84c31-9baf-43f5-8ee5-3f044628eee5', companyName: 'gregreg1' },
   { id: 'd8c6d9f6-2ed7-4b0f-8d83-024350bf4aab', companyName: 'Company 2' },
   { id: 'd8c6d9f6-2ed7-4b0f-8d83-024350bf4aab', companyName: 'Company 3' },
   { id: 'd8c6d9f6-2ed7-4b0f-8d83-024350bf4aab', companyName: 'Company 4' }

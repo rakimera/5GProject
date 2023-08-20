@@ -43,6 +43,8 @@ public class Project5GDbContext : DbContext
         modelBuilder.Entity<Project>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<Project>().Navigation(e=> e.ContrAgent).AutoInclude();
         modelBuilder.Entity<Project>().Navigation(e=> e.Executor).AutoInclude();
+        modelBuilder.Entity<Project>().Navigation(e=> e.ExecutiveCompany).AutoInclude();
+        modelBuilder.Entity<Project>().Navigation(e=> e.ProjectStatus).AutoInclude();
         modelBuilder.Entity<ProjectAntenna>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<ProjectStatus>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<TranslatorSpecs>().HasQueryFilter(x => x.IsDelete == false);

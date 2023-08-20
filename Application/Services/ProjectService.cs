@@ -55,7 +55,7 @@ public class ProjectService : IProjectService
             await _repositoryWrapper.ProjectStatusRepository.GetByCondition(x => x.Status.Equals("Новый проект"));
         model.ExecutorId = user.Id.ToString();
         model.ProjectStatusId = projectStatus.Id.ToString();
-        /*model.ExecutiveCompanyId = user.ExecutiveCompanyId.ToString();*/ //Надо будет реализовать чуть позже
+        model.ExecutiveCompanyId = user.ExecutiveCompanyId.ToString();
         model.CreatedBy = creator;
 
         var result = await _projectValidator.ValidateAsync(model);

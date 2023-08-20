@@ -22,12 +22,12 @@
                 data-type="string"
         />
         <DxColumn
-                data-field="executor.executiveCompany."
+                data-field="executiveCompany.companyName"
                 caption="Управляющая компания"
                 data-type="string"
         />
         <DxColumn
-                data-field="projectStatus"
+                data-field="projectStatus.status"
                 caption="Стадия проекта"
                 data-type="string"
         />

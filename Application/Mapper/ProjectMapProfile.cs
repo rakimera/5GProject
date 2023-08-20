@@ -19,8 +19,10 @@ public class ProjectMapProfile : Profile
                 opt.MapFrom(src => src.Executor))
             .ForMember(dest => dest.ProjectStatusId, opt =>
                 opt.MapFrom(src => src.ProjectStatusId))
-            .ForMember(dest => dest.ProjectStatus, opt =>
-                opt.MapFrom(src => src.ProjectStatus))
+            .ForMember(dest => dest.ExecutiveCompany, opt =>
+                opt.MapFrom(src => src.ExecutiveCompany))
+            .ForMember(dest => dest.ExecutiveCompanyId, opt =>
+                opt.MapFrom(src => src.ExecutiveCompanyId))
             .ForMember(dest => dest.TownName, opt =>
                 opt.MapFrom(src => src.Address.Split(',', StringSplitOptions.TrimEntries)[0]))
             .ForMember(dest => dest.Arial, opt =>
@@ -34,6 +36,8 @@ public class ProjectMapProfile : Profile
         CreateMap<ProjectDto, Project>()
             .ForMember(dest => dest.ContrAgentId, opt =>
                 opt.MapFrom(src => src.ContrAgentId))
+            .ForMember(dest => dest.ExecutiveCompanyId, opt =>
+                opt.MapFrom(src => src.ExecutiveCompanyId))
             .ForMember(dest => dest.ContrAgent, opt =>
                 opt.Ignore())
             .ForMember(dest => dest.ExecutorId, opt =>
@@ -49,6 +53,8 @@ public class ProjectMapProfile : Profile
             .ForMember(dest => dest.ProjectAntennae, opt =>
                 opt.Ignore())
             .ForMember(dest => dest.TotalFluxDensity, opt =>
+                opt.Ignore())
+            .ForMember(dest => dest.ExecutiveCompany, opt =>
                 opt.Ignore());
         
         CreateMap<CreateProjectDto, ProjectDto>()

@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Application.Models.Antennae;
 using Application.Models.ContrAgents;
+using Application.Models.ExecutiveCompany;
 using Application.Models.Users;
 using Domain.Common;
 using Domain.Entities;
@@ -9,6 +10,9 @@ namespace Application.Models.Projects;
 
 public class ProjectDto : BaseEntity
 {
+    [property: JsonPropertyName("projectNumber")]
+    public int ProjectNumber { get; set; }
+    
     [property: JsonPropertyName("contrAgentId")] 
     public required string ContrAgentId { get; set; }
     public ContrAgentDto ContrAgent { get; set; }
@@ -17,21 +21,15 @@ public class ProjectDto : BaseEntity
     public string ExecutorId { get; set; }
     public UserDto Executor { get; set; }
     
-    [property: JsonPropertyName("projectStatusId")]
-    public string ProjectStatusId { get; set; }
-    
-    [property: JsonPropertyName("projectStatus")]
-    public ProjectStatusDto ProjectStatus { get; set; }
-    
-    [property: JsonPropertyName("projectNumber")]
-    public int ProjectNumber { get; set; }
-    
     [property: JsonPropertyName("executiveCompanyId")]
     public string ExecutiveCompanyId { get; set; }
     
     [property: JsonPropertyName("executiveCompany")]
-    public ExecutiveCompany ExecutiveCompany { get; set; }
+    public ExecutiveCompanyDto ExecutiveCompany { get; set; }
     
+    [property: JsonPropertyName("projectStatusId")]
+    public string ProjectStatusId { get; set; }
+
     [property: JsonPropertyName("townName")] 
     public required string TownName { get; set; }
 
