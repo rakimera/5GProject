@@ -12,17 +12,17 @@
                 data-type="string"
         />
         <DxColumn
-                data-field="counterAgent"
+                data-field="contrAgent.companyName"
                 caption="Контрагент"
                 data-type="string"
         />
         <DxColumn
-                data-field="executor"
+                data-field="executor.name"
                 caption="Управляющий специалист"
                 data-type="string"
         />
         <DxColumn
-                data-field="executiveCompany"
+                data-field="executor.executiveCompany."
                 caption="Управляющая компания"
                 data-type="string"
         />

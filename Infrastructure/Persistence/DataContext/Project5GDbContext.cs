@@ -41,6 +41,8 @@ public class Project5GDbContext : DbContext
         modelBuilder.Entity<Antenna>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<EnergyResult>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<Project>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<Project>().Navigation(e=> e.ContrAgent).AutoInclude();
+        modelBuilder.Entity<Project>().Navigation(e=> e.Executor).AutoInclude();
         modelBuilder.Entity<ProjectAntenna>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<ProjectStatus>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<TranslatorSpecs>().HasQueryFilter(x => x.IsDelete == false);
