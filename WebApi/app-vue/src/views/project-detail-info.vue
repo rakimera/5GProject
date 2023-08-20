@@ -22,7 +22,8 @@
                         editor-type='dxTextBox'
                         :editor-options="{ stylingMode: 'filled', placeholder: 'Номер проекта' }"
                     >
-                        <dx-required-rule message="'Укажите номер проекта'"></dx-required-rule>
+                        <dx-required-rule message="Укажите номер проекта"></dx-required-rule>
+                        <dx-numeric-rule message="Допустимы только цифры"></dx-numeric-rule>
                         <dx-label
                             :text="'Номер проекта'"
                         />
@@ -156,7 +157,8 @@ import {
 } from "devextreme-vue/form";
 import {
     DxPatternRule,
-    DxRequiredRule
+    DxRequiredRule,
+    DxNumericRule
 } from 'devextreme-vue/validator';
 import {onBeforeMount, reactive, ref} from "vue";
 import projectService from "@/api/projectService";

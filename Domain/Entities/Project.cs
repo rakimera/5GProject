@@ -9,7 +9,7 @@ public class Project : BaseEntity
     public ContrAgent ContrAgent { get; set; }
     public Guid ExecutorId { get; set; }
     public User Executor { get; set; }
-    public Guid ExecutiveCompanyId { get; set; }
+    public Guid? ExecutiveCompanyId { get; set; }
     public ExecutiveCompany ExecutiveCompany { get; set; }
     public Guid? SanPinDockId { get; set; }
     public SanPinDock? SanPinDock { get; set; }
