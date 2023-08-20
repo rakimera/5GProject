@@ -21,8 +21,15 @@ public class ProjectMapProfile : Profile
                 opt.MapFrom(src => src.ProjectStatusId))
             .ForMember(dest => dest.ProjectStatus, opt =>
                 opt.MapFrom(src => src.ProjectStatus))
-            .ForMember(dest => dest.Address, opt =>
-                opt.MapFrom(src => src.Address));
+            .ForMember(dest => dest.TownName, opt =>
+                opt.MapFrom(src => src.Address.Split(',', StringSplitOptions.TrimEntries)[0]))
+            .ForMember(dest => dest.Arial, opt =>
+                opt.MapFrom(src => src.Address.Split(',', StringSplitOptions.TrimEntries)[1]))
+            .ForMember(dest => dest.Street, opt =>
+                opt.MapFrom(src => src.Address.Split(',', StringSplitOptions.TrimEntries)[2]))
+            .ForMember(dest => dest.House, opt =>
+                opt.MapFrom(src => src.Address.Split(',', StringSplitOptions.TrimEntries)[3]));
+        
         
         CreateMap<ProjectDto, Project>()
             .ForMember(dest => dest.ContrAgentId, opt =>
@@ -38,7 +45,7 @@ public class ProjectMapProfile : Profile
             .ForMember(dest => dest.ProjectStatus, opt =>
                 opt.Ignore())
             .ForMember(dest => dest.Address, opt =>
-                opt.MapFrom(src => src.Address))
+                opt.MapFrom(src => $"{src.TownName+", "}{src.Arial+", "}{src.Street+", "}{src.House}"))
             .ForMember(dest => dest.ProjectAntennae, opt =>
                 opt.Ignore())
             .ForMember(dest => dest.TotalFluxDensity, opt =>
@@ -47,8 +54,14 @@ public class ProjectMapProfile : Profile
         CreateMap<CreateProjectDto, ProjectDto>()
             .ForMember(dest => dest.ContrAgentId, opt =>
                 opt.MapFrom(src => src.ContrAgentId))
-            .ForMember(dest => dest.Address, opt =>
-                opt.MapFrom(src => $"{src.TownName+", "}{src.Arial+", "}{src.Street+", "}{src.House}"))
+            .ForMember(dest => dest.Arial, opt =>
+                opt.MapFrom(src => src.Arial))
+            .ForMember(dest => dest.TownName, opt =>
+                opt.MapFrom(src => src.TownName))
+            .ForMember(dest => dest.House, opt =>
+                opt.MapFrom(src => src.House))
+            .ForMember(dest => dest.Street, opt =>
+                opt.MapFrom(src => src.Street))
             .ForMember(dest => dest.ProjectNumber, opt =>
                 opt.MapFrom(src => src.ProjectNumber));
 
