@@ -1,22 +1,23 @@
-import { createRouter, createWebHashHistory } from "vue-router";
+import {createRouter, createWebHashHistory} from "vue-router";
 
 import Home from "./views/home-page";
 import Profile from "./views/profile-page";
 import defaultLayout from "./layouts/side-nav-outer-toolbar";
 import simpleLayout from "./layouts/single-card";
-import Users from './views/Users-page.vue';
 import GetAllUsersPage from "@/views/get-all-users-page.vue";
 import ContrAgentJournal from "@/views/get-all-contrAgents-page.vue";
 import authorizationService from "@/api/AuthorizationService";
 import UserDetail from '@/views/users_detail_info.vue';
 import ContrAgentDetail from '@/views/contrAgent-detail-info.vue';
+import Roles from '@/views/get-all-roles-page.vue'
+import CompanyLicense from "@/views/get-all-companyLicense-page.vue";
 import ProjectDetail from '@/views/project-detail-info.vue';
 import ProjectJournal from '@/views/get-all-projects.vue';
 import Antennae from './views/Antenna-page.vue';
 import GetAllAntennaePage from "@/views/get-all-antennae-page";
 
 function loadView(view) {
-  return () => import (/* webpackChunkName: "login" */ `./views/${view}.vue`)
+    return () => import (/* webpackChunkName: "login" */ `./views/${view}.vue`)
 }
 
 const router = new createRouter({
@@ -111,15 +112,6 @@ const router = new createRouter({
       redirect: "/home"
     },
     {
-      path: "/users",
-      name: "users",
-      meta: {
-        requiresAuth: true,
-        layout: defaultLayout
-      },
-      component: Users
-    },
-    {
       path: "/users_table",
       name: "users_table",
       meta: {
@@ -131,7 +123,7 @@ const router = new createRouter({
     ,
     {
       path: "/ContrAgentsJournal",
-      name: "Журнал контрагентов",
+      name: "ContrAgentsJournal",
       meta: {
         requiresAuth: true,
         layout: defaultLayout
@@ -164,38 +156,55 @@ const router = new createRouter({
               layout: defaultLayout
           },
           component: UserDetail
-      }
-    ,
-    {
-      path: '/contrAgent/:mode/:id?',
-      name: 'contrAgentDetail',
-      meta: {
-        requiresAuth: true,
-        layout: defaultLayout
       },
-      component: ContrAgentDetail
-    }
+      {
+          path: '/contrAgent/:mode/:id?',
+          name: 'contrAgentDetail',
+          meta: {
+              requiresAuth: true,
+              layout: defaultLayout
+          },
+          component: ContrAgentDetail
+      },
+      {
+          path: '/roles',
+          name: 'roles',
+          meta: {
+              requiresAuth: true,
+              layout: defaultLayout
+          },
+          component: Roles
+      },
+      {
+          path: '/CompanyLicenseJournal',
+          name: 'CompanyLicenseJournal',
+          meta: {
+              requiresAuth: true,
+              layout: defaultLayout
+          },
+          component: CompanyLicense
+      }
   ],
   history: createWebHashHistory()
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.name === "login" && authorizationService.loggedIn()) {
-    next({ name: "home" });
-  }
-
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!authorizationService.loggedIn()) {
-      next({
-        name: "login",
-        query: { redirect: to.fullPath }
-      });
-    } else {
-      next();
+    if (to.name === "login" && authorizationService.loggedIn()) {
+        next({name: "home"});
     }
-  } else {
-    next();
-  }
+
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+        if (!authorizationService.loggedIn()) {
+            next({
+                name: "login",
+                query: {redirect: to.fullPath}
+            });
+        } else {
+            next();
+        }
+    } else {
+        next();
+    }
 });
 
 export default router;

@@ -29,8 +29,12 @@ public class ContrAgentMapProfile : Profile
                 opt.MapFrom(src => src.DirectorSurname))
             .ForMember(dest => dest.BIN, opt =>
                 opt.MapFrom(src => src.BIN))
+            .ForMember(dest => dest.Email, opt =>
+                opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.PhoneNumber, opt =>
+                opt.MapFrom(src => src.PhoneNumber))
             .ReverseMap();
-        
+
         CreateMap<ContrAgentDto, UpdateContrAgentDto>()
             .ForMember(dest => dest.Id, opt =>
                 opt.MapFrom(src => src.Id))
@@ -45,9 +49,14 @@ public class ContrAgentMapProfile : Profile
             .ForMember(dest => dest.DirectorSurname, opt =>
                 opt.MapFrom(src => src.DirectorSurname))
             .ForMember(dest => dest.BIN, opt =>
-                opt.MapFrom(src => src.BIN)).ReverseMap();
-        
-        
+                opt.MapFrom(src => src.BIN))
+            .ForMember(dest => dest.Email, opt =>
+                opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.PhoneNumber, opt =>
+                opt.MapFrom(src => src.PhoneNumber))
+            .ReverseMap();
+
+
         CreateMap<ContrAgentDto, CreateContrAgentDto>()
             .ForMember(dest => dest.Address, opt =>
                 opt.MapFrom(src => src.Address))
@@ -60,7 +69,11 @@ public class ContrAgentMapProfile : Profile
             .ForMember(dest => dest.DirectorSurname, opt =>
                 opt.MapFrom(src => src.DirectorSurname))
             .ForMember(dest => dest.BIN, opt =>
-                opt.MapFrom(src => src.BIN)).ReverseMap();
-        
+                opt.MapFrom(src => src.BIN))
+            .ForMember(dest => dest.Email, opt =>
+                opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.PhoneNumber, opt =>
+                opt.MapFrom(src => src.PhoneNumber))
+            .ReverseMap();
     }
 }

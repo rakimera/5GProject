@@ -9,6 +9,10 @@ public class UserRoleRepository : BaseRepository<UserRole>, IUserRoleRepository
 {
     public UserRoleRepository(Project5GDbContext dbContext) : base(dbContext)
     {
-        
+    }
+
+    public void Delete(UserRole userRole)
+    {
+        DbContext.UserRoles.Remove(userRole);
     }
 }

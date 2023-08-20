@@ -21,6 +21,9 @@ public static class ConfigureService
         services.AddScoped<ContrAgentValidator>();
         services.AddScoped<AntennaValidator>();
         services.AddScoped<EnergyResultValidator>();
+        services.AddScoped<RoleValidator>();
+        services.AddScoped<CompanyLicenseValidator>();
+        services.AddScoped<ExecutiveCompanyValidator>();
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         
         services.AddAuthentication(opt => {

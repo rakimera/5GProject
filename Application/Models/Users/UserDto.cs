@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Domain.Common;
 
 namespace Application.Models.Users;
@@ -8,5 +9,7 @@ public class UserDto : BaseEntity
     public string Name { get; set; }
     public string Surname { get; set; }
     public string Password { get; set; }
-    public string Role { get; set; }
+    [property: JsonPropertyName("roles")] public List<string> Roles { get; set; }
+    [property: JsonPropertyName("executiveCompanyId")]
+    public Guid? ExecutiveCompanyId { get; set; }
 }
