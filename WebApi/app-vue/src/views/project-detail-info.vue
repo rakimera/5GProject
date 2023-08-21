@@ -20,12 +20,15 @@
                     <dx-item
                         data-field='projectNumber'
                         editor-type='dxTextBox'
-                        :editor-options="{ stylingMode: 'filled', placeholder: 'Номер проекта' }"
+                        :editor-options="{ 
+                      stylingMode: 'filled',
+                      labelMode: 'floating',
+                      label: 'Номер проекта' }"
                     >
                         <dx-required-rule message="Укажите номер проекта"></dx-required-rule>
                         <dx-numeric-rule message="Допустимы только цифры"></dx-numeric-rule>
                         <dx-label
-                            :text="'Номер проекта'"
+                            :visible="false"
                         />
                     </dx-item>
                     <dx-item
@@ -63,9 +66,14 @@
                     <dx-item
                         data-field='arial'
                         editor-type='dxTextBox'
-                        :editor-options="{ stylingMode: 'filled', placeholder: 'Район' }"
+                        :editor-options="{ 
+                      stylingMode: 'filled', 
+                      label: 'Район', 
+                      labelMode: 'floating' }"
                     >
-                        <dx-label :text="'Район'"/>
+                      <dx-label
+                          :visible="false"
+                      />
                         <dx-pattern-rule
                             :pattern="namePattern"
                             message="Поле должно состоять только из букв"
@@ -74,18 +82,26 @@
                         <dx-item
                             data-field='street'
                             editor-type='dxTextBox'
-                            :editor-options="{ stylingMode: 'filled', placeholder: 'Улица' }"
+                            :editor-options="{ 
+                          stylingMode: 'filled', 
+                          label: 'Улица', 
+                          labelMode: 'floating' }"
                         >
-                            <dx-label :text="'Улица'" />
+                          <dx-label
+                              :visible="false"
+                          />
                         </dx-item>
                         <dx-item
                             data-field='house'
                             editor-type='dxTextBox'
-                            :editor-options="{ stylingMode: 'filled', placeholder: 'Номер здания' }"
+                            :editor-options="{ 
+                          stylingMode: 'filled', 
+                          label: 'Номер здания', 
+                          labelMode: 'floating' }"
                         >
-                            <dx-label
-                                :text="'Номер здания'"
-                            />
+                          <dx-label
+                              :visible="false"
+                          />
                         </dx-item>
                 </dx-tab>
                 <dx-tab
@@ -181,19 +197,19 @@ const contrAgents = ref([]);
 const towns = ref([]);
 
 onBeforeMount(async () => {
-    if (mode === "read") {
-        const response = await projectService.getProject(oid);
-        Object.assign(dataSource, response.data.result);
-    } else {
-        const response = await contrAgentService.getContrAgents();
-        contrAgents.value = response.data.result;
-        
-        const townResponse = await townService.getTowns();
-        towns.value = townResponse.data.result;
-        
-        isFormDisabled.value = false;
-        pageDescription.value = "Создание проекта"
-    }
+  const response = await contrAgentService.getContrAgents();
+  contrAgents.value = response.data.result;
+
+  const townResponse = await townService.getTowns();
+  towns.value = townResponse.data.result;
+  
+  if (mode === "read") {
+      const response = await projectService.getProject(oid);
+      Object.assign(dataSource, response.data.result);
+  } else {
+      isFormDisabled.value = false;
+      pageDescription.value = "Создание проекта"
+  }
 })
 function onClickEditProject() {
     isFormDisabled.value = false;
