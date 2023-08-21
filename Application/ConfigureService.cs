@@ -18,6 +18,7 @@ public static class ConfigureService
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<UserValidator>();
         services.AddScoped<ProjectValidator>();
+        services.AddScoped<UpdateProjectValidator>();
         services.AddScoped<ContrAgentValidator>();
         services.AddScoped<AntennaValidator>();
         services.AddScoped<EnergyResultValidator>();

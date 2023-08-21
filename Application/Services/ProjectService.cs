@@ -15,12 +15,14 @@ public class ProjectService : IProjectService
     private readonly IRepositoryWrapper _repositoryWrapper;
     private readonly IMapper _mapper;
     private readonly ProjectValidator _projectValidator;
+    private readonly UpdateProjectValidator _updateProjectValidator;
 
-    public ProjectService(IRepositoryWrapper repositoryWrapper, IMapper mapper, ProjectValidator projectValidator)
+    public ProjectService(IRepositoryWrapper repositoryWrapper, IMapper mapper, ProjectValidator projectValidator, UpdateProjectValidator updateProjectValidator)
     {
         _repositoryWrapper = repositoryWrapper;
         _mapper = mapper;
         _projectValidator = projectValidator;
+        _updateProjectValidator = updateProjectValidator;
     }
 
     public BaseResponse<IEnumerable<ProjectDto>> GetAll()
@@ -97,8 +99,7 @@ public class ProjectService : IProjectService
 
     public async Task<BaseResponse<string>> Update(UpdateProjectDto model)
     {
-        var projectDto = _mapper.Map<ProjectDto>(model);
-        var result = await _projectValidator.ValidateAsync(projectDto);
+        var result = await _updateProjectValidator.ValidateAsync(model);
         if (!result.IsValid)
         {
             List<string> messages = _mapper.Map<List<string>>(result.Errors);
@@ -109,7 +110,7 @@ public class ProjectService : IProjectService
                 Success: false);
         }
 
-        Project project = await _repositoryWrapper.ProjectRepository.GetByCondition(x => x.Id.Equals(model.Id));
+        Project? project = await _repositoryWrapper.ProjectRepository.GetByCondition(x => x.Id.Equals(model.Id));
         if (project == null)
         {
             return new BaseResponse<string>(

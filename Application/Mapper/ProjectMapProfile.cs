@@ -70,6 +70,18 @@ public class ProjectMapProfile : Profile
                 opt.MapFrom(src => src.Street))
             .ForMember(dest => dest.ProjectNumber, opt =>
                 opt.MapFrom(src => src.ProjectNumber));
+        
+        CreateMap<UpdateProjectDto, Project>()
+            .ForMember(dest => dest.ContrAgentId, opt =>
+                opt.MapFrom(src => src.ContrAgentId))
+            .ForMember(dest => dest.ExecutorId, opt =>
+                opt.MapFrom(src => src.ExecutorId))
+            .ForMember(dest => dest.ProjectStatusId, opt =>
+                opt.MapFrom(src => src.ProjectStatusId))
+            .ForMember(dest => dest.ExecutiveCompanyId, opt =>
+                opt.MapFrom(src => src.ExecutiveCompanyId))
+            .ForMember(dest => dest.Address, opt =>
+                opt.MapFrom(src => $"{src.TownName+", "}{src.Arial+", "}{src.Street+", "}{src.House}"));
 
     }
 }

@@ -26,6 +26,7 @@ public class ServiceWrapper : IServiceWrapper
         UserValidator userValidator,
         ContrAgentValidator contrAgentValidator,
         ProjectValidator projectValidator,
+        UpdateProjectValidator updateProjectValidator,
         ITokenService tokenService,
         AntennaValidator antennaValidator,
         EnergyResultValidator energyResultValidator,
@@ -41,7 +42,7 @@ public class ServiceWrapper : IServiceWrapper
         _districtService = new Lazy<IDistrictService>(() => new DistrictService(repository, mapper));
         _userService = new Lazy<IUserService>(() => new UserService(repository, mapper, userValidator));
         _tokenService = new Lazy<ITokenService>(() => new TokenService(repository));
-        _projectService = new Lazy<IProjectService>(()=> new ProjectService(repository, mapper, projectValidator));
+        _projectService = new Lazy<IProjectService>(()=> new ProjectService(repository, mapper, projectValidator, updateProjectValidator));
         _authorizationService = new Lazy<IAuthorizationService>(()=> new AuthorizationService(repository,tokenService));
         _contrAgentService = new Lazy<IContrAgentService>(() => new ContrAgentService(repository, mapper, contrAgentValidator));
         _townService = new Lazy<ITownService>(() => new TownService(repository,mapper));

@@ -109,7 +109,7 @@
                 <dx-tab
                     title="Антенны-передатчики"
                     tabIndex=1
-                    :disabled="!isFormDisabled"
+                    :disabled="isTabDisabled"
                 >
                     <dx-item
                         data-field='house'
@@ -124,7 +124,7 @@
                 <dx-tab
                     tabIndex=2
                     title="Фото мест установки"
-                    :disabled="!isFormDisabled"
+                    :disabled="isTabDisabled"
                 >
                     <dx-item
                         data-field='house'
@@ -192,6 +192,7 @@ const route = useRoute();
 let dataSource = reactive({});
 //const routeParams = {name: "projects"};
 let isFormDisabled = ref(true);
+let isTabDisabled = ref(true);
 let oid = route.params.id;
 const mode = ref(route.params.mode);
 const pageDescription = ref("Подробно о проекте");
@@ -218,6 +219,7 @@ onBeforeMount(async () => {
 })
 function onClickEditProject() {
     isFormDisabled.value = false;
+    isTabDisabled.value = false;
 }
 async function onClickSaveChanges() {
     try {
@@ -257,8 +259,9 @@ async function onClickSaveChanges() {
                             at: 'center top',
                         },
                     }, 'success', 1000);
-                  mode.value =  "read"
-                  index.value++
+                    mode.value =  "read"
+                    isTabDisabled.value = false;
+                    index.value++
                 } else {
                     notify({
                             message: response.data.messages,
