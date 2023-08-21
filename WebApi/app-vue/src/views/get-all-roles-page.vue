@@ -13,6 +13,7 @@
         :allow-deleting="true"
         :allow-adding="true"
         mode="row"
+        :texts="{confirmDeleteMessage: 'Вы уверены, что хотите удалить эту запись?'}"
     />
   </dx-data-grid>
 </template>

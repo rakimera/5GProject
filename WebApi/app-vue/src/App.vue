@@ -28,6 +28,7 @@ import {
   onBeforeUnmount,
   computed
 } from "vue";
+import "@/localization/ru";
 
 function getScreenSizeInfo() {
   const screenSizes = sizes();
