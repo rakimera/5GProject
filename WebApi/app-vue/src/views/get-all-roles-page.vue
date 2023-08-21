@@ -30,6 +30,7 @@ import {
 import CustomStore from "devextreme/data/custom_store";
 import "whatwg-fetch";
 import roleService from "@/api/roleService";
+import notify from "devextreme/ui/notify";
 
 const dataSource = ref(null);
 
@@ -40,6 +41,16 @@ const store = new CustomStore({
     return response.data;
   },
   async insert(values) {
+    if (values.roleName.length <= 2) {
+      notify({
+        message: 'Имя роли должно содержать более двух символов',
+        position: {
+          my: 'center top',
+          at: 'center top',
+        },
+      }, 'error', 2000);
+      return {error: "Имя роли должно содержать более двух символов."};
+    }
     const baseResponse = await roleService.createRole(values);
     await dataSource.value.load();
     return {data: baseResponse};
