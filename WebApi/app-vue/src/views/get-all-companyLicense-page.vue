@@ -56,11 +56,9 @@ const store = new CustomStore({
   },
   async update(oid, values) {
     const updateCompanyLicenseDto = {
-      id: oid,
-      number: values.number,
-      dateOfIssue: values.dateOfIssue
+      ...values,
+      id: oid
     };
-
     console.log(updateCompanyLicenseDto)
     const baseResponse = await companyLicenseService.updateLicense(updateCompanyLicenseDto);
     await dataSource.value.load();
