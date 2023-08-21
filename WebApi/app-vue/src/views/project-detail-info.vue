@@ -13,9 +13,11 @@
             <dx-tabbed-item>
                 <dx-tab-panel-options
                     :defer-rendering="false"
+                    :selected-index="index"
                 />
                 <dx-tab
                     title="Контрагент и адрес установки"
+                    tabIndex=0
                 >
                     <dx-item
                         data-field='projectNumber'
@@ -106,6 +108,7 @@
                 </dx-tab>
                 <dx-tab
                     title="Антенны-передатчики"
+                    tabIndex=1
                     :disabled="!isFormDisabled"
                 >
                     <dx-item
@@ -119,6 +122,7 @@
                     </dx-item>
                 </dx-tab>
                 <dx-tab
+                    tabIndex=2
                     title="Фото мест установки"
                     :disabled="!isFormDisabled"
                 >
@@ -178,23 +182,24 @@ import {
 } from 'devextreme-vue/validator';
 import {onBeforeMount, reactive, ref} from "vue";
 import projectService from "@/api/projectService";
-import {useRoute, useRouter} from "vue-router";
+import {useRoute, /*useRouter*/} from "vue-router";
 import notify from "devextreme/ui/notify";
 import contrAgentService from "@/api/contrAgentService";
 import townService from "@/api/townService";
 
 const route = useRoute();
-const router = useRouter();
+//const router = useRouter();
 let dataSource = reactive({});
-const routeParams = {name: "projects"};
+//const routeParams = {name: "projects"};
 let isFormDisabled = ref(true);
 let oid = route.params.id;
-const mode = route.params.mode;
+const mode = ref(route.params.mode);
 const pageDescription = ref("Подробно о проекте");
 const namePattern = ref("^[a-zA-Zа-яА-Я]+$")
 const formRef = ref(null);
 const contrAgents = ref([]);
 const towns = ref([]);
+const index = ref(0);
 
 onBeforeMount(async () => {
   const response = await contrAgentService.getContrAgents();
@@ -203,7 +208,7 @@ onBeforeMount(async () => {
   const townResponse = await townService.getTowns();
   towns.value = townResponse.data.result;
   
-  if (mode === "read") {
+  if (mode.value === "read") {
       const response = await projectService.getProject(oid);
       Object.assign(dataSource, response.data.result);
   } else {
@@ -228,7 +233,7 @@ async function onClickSaveChanges() {
             }, 'warning', 1000);
         }
         else {
-            if (mode === "read") {
+            if (mode.value === "read") {
                 const responseUpdate = await projectService.updateProject(dataSource);
                 if (responseUpdate.data.success) {
                     notify({
@@ -252,7 +257,8 @@ async function onClickSaveChanges() {
                             at: 'center top',
                         },
                     }, 'success', 1000);
-                    await router.push(routeParams);
+                  mode.value =  "read"
+                  index.value++
                 } else {
                     notify({
                             message: response.data.messages,
