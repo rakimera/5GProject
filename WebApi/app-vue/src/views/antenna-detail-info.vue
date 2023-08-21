@@ -10,40 +10,72 @@
         :show-colon-after-label="true"
         :show-validation-summary="true"
     >
-      <dx-simple-item
-          data-field="model">
-        <dx-label :text="'Модель'"/>
-        <dx-required-rule message="Модель антенны должны быть заполнена"/>
-      </dx-simple-item>
-      <dx-simple-item
-          data-field="verticalSizeDiameter">
-        <dx-label :text="'Вертикальный размер(диаметр антенны)'"/>
-        <dx-required-rule message="Вертикальный размер(диаметр антенны) должнен быть заполнен"/>
-      </dx-simple-item>
-      <dx-button-item>
-        <dx-button-options
-            width="100%"
-            type="default"
-            styling-mode="outlined"
-            template="Редактировать"
-            :on-click="onClickEditAntenna"
-            :visible="isFormDisabled"
-            :use-submit-behavior="true"
+      <dx-tabbed-item>
+        <dx-tab-panel-options
+            :defer-rendering="false"
+        />
+        <dx-tab
+            title="Данные антенны"
         >
-        </dx-button-options>
-      </dx-button-item>
-      <dx-button-item>
-        <dx-button-options
-            width="100%"
-            type="success"
-            styling-mode="outlined"
-            :template="mode === 'create' ? 'Создать' : 'Сохранить изменения'"
-            :on-click="onClickSaveChanges"
-            :visible="!isFormDisabled"
-            :use-submit-behavior="true"
+          <dx-item
+              data-field="model">
+            <dx-label :text="'Модель'"/>
+            <dx-required-rule message="Модель антенны должны быть заполнена"/>
+          </dx-item>
+          <dx-item
+              data-field="verticalSizeDiameter">
+            <dx-label :text="'Вертикальный размер(диаметр антенны)'"/>
+            <dx-required-rule message="Вертикальный размер(диаметр антенны) должнен быть заполнен"/>
+          </dx-item>
+        </dx-tab>
+        
+        <dx-tab
+            title="Создание передатчика"
         >
-        </dx-button-options>
-      </dx-button-item>
+          <dx-item
+              data-field="frequency">
+            <dx-label :text="'Частота'"/>
+            <dx-required-rule message="Частота передатчика должна быть заполнена"/>
+          </dx-item>
+          <dx-item
+              data-field="power">
+            <dx-label :text="'Мощность'"/>
+            <dx-required-rule message="Мощность передатчика должна быть заполнена"/>
+          </dx-item>
+          <dx-item
+              data-field="gain">
+            <dx-label :text="'Коэффициент усиления антенны'"/>
+            <dx-required-rule message="Коэффициент усиления антенны должен быть заполнен"/>
+          </dx-item>
+          
+        </dx-tab>
+        
+        <dx-button-item>
+          <dx-button-options
+              width="100%"
+              type="default"
+              styling-mode="outlined"
+              template="Редактировать"
+              :on-click="onClickEditAntenna"
+              :visible="isFormDisabled"
+              :use-submit-behavior="true"
+          >
+          </dx-button-options>
+        </dx-button-item>
+        <dx-button-item>
+          <dx-button-options
+              width="100%"
+              type="success"
+              styling-mode="outlined"
+              :template="mode === 'create' ? 'Создать' : 'Сохранить изменения'"
+              :on-click="onClickSaveChanges"
+              :visible="!isFormDisabled"
+              :use-submit-behavior="true"
+          >
+          </dx-button-options>
+        </dx-button-item>
+      </dx-tabbed-item>>
+      
     </dx-form>
   </div>
 </template>
@@ -52,11 +84,15 @@
 import {
   DxForm,
   DxLabel,
-  DxSimpleItem,
-  DxRequiredRule,
   DxButtonItem,
   DxButtonOptions,
+  DxTabbedItem,
+  DxTabPanelOptions,
+  DxTab, DxItem
 } from "devextreme-vue/form";
+import {
+  DxRequiredRule,
+} from 'devextreme-vue/validator';
 import {onBeforeMount, reactive, ref} from "vue";
 import antennaService from "@/api/antennaService";
 import {useRoute, useRouter} from "vue-router";
