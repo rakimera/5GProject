@@ -20,6 +20,7 @@ public class RepositoryWrapper : IRepositoryWrapper
     private IEnergyFlowRepository _energyFlowRepository;
     private IRadiationZoneRepository _radiationZoneRepository;
     private IAntennaTranslatorRepository _antennaTranslatorRepository;
+    private ITranslatorSpecsRepository _translatorSpecsRepository;
     private ICompanyLicenseRepository _companyLicenseRepository;
     private IExecutiveCompanyRepository _executiveCompanyRepository;
     private IBiohazardRadiusRepository _biohazardRadiusRepository;
@@ -269,19 +270,6 @@ public class RepositoryWrapper : IRepositoryWrapper
         }
     }
 
-    public IUserRoleRepository UserRoleRepository
-    {
-        get
-        {
-            if (_userRoleRepository == null)
-            {
-                _userRoleRepository = new UserRoleRepository(_db);
-            }
-
-            return _userRoleRepository;
-        }
-    }
-    
     public IAntennaRepository AntennaRepository
     {
         get
@@ -292,6 +280,32 @@ public class RepositoryWrapper : IRepositoryWrapper
             }
 
             return _antennaRepository;
+        }
+    }
+    
+    public ITranslatorSpecsRepository TranslatorSpecsRepository
+    {
+        get
+        {
+            if (_translatorSpecsRepository == null)
+            {
+                _translatorSpecsRepository = new TranslatorSpecsRepository(_db);
+            }
+
+            return _translatorSpecsRepository;
+        }
+    }
+
+    public IUserRoleRepository UserRoleRepository
+    {
+        get
+        {
+            if (_userRoleRepository == null)
+            {
+                _userRoleRepository = new UserRoleRepository(_db);
+            }
+
+            return _userRoleRepository;
         }
     }
 

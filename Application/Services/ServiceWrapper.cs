@@ -19,6 +19,7 @@ public class ServiceWrapper : IServiceWrapper
     private readonly Lazy<IRoleService> _roleService;
     private readonly Lazy<ICompanyLicenseService> _companyLicenseService;
     private readonly Lazy<IExecutiveCompanyService> _executiveCompanyService;
+    private readonly Lazy<ITranslatorSpecsService> _translatorSpecsService;
 
     public ServiceWrapper(
         IRepositoryWrapper repository,
@@ -28,6 +29,7 @@ public class ServiceWrapper : IServiceWrapper
         ProjectValidator projectValidator,
         UpdateProjectValidator updateProjectValidator,
         ITokenService tokenService,
+        TranslatorSpecsValidator translatorSpecsValidator,
         AntennaValidator antennaValidator,
         EnergyResultValidator energyResultValidator,
         RoleValidator roleValidator,
@@ -47,8 +49,12 @@ public class ServiceWrapper : IServiceWrapper
         _contrAgentService = new Lazy<IContrAgentService>(() => new ContrAgentService(repository, mapper, contrAgentValidator));
         _townService = new Lazy<ITownService>(() => new TownService(repository,mapper));
         _antennaService = new Lazy<IAntennaService>(() => new AntennaService(repository, mapper, antennaValidator));
+        _translatorSpecsService = new Lazy<ITranslatorSpecsService>(() => new TranslatorSpecsService(repository, mapper, translatorSpecsValidator));
+        _energyFlowService =
+            new Lazy<IEnergyFlowService>(() => new EnergyFlowService(energyResultValidator, mapper, repository));
         _energyFlowService = new Lazy<IEnergyFlowService>(() => new EnergyFlowService(energyResultValidator, mapper, repository));
-        }
+    }
+        
 
     public IUserService UserService => _userService.Value;
     public IProjectService ProjectService => _projectService.Value;
@@ -58,6 +64,7 @@ public class ServiceWrapper : IServiceWrapper
     public IDistrictService DistrictService => _districtService.Value;
     public ITownService TownService => _townService.Value;
     public IAntennaService AntennaService => _antennaService.Value;
+    public ITranslatorSpecsService TranslatorSpecsService => _translatorSpecsService.Value;
     public IEnergyFlowService EnergyFlowService => _energyFlowService.Value;
     public IRoleService RoleService => _roleService.Value;
     public ICompanyLicenseService CompanyLicenseService => _companyLicenseService.Value;

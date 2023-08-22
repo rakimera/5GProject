@@ -21,6 +21,7 @@ public static class ConfigureService
         services.AddScoped<UpdateProjectValidator>();
         services.AddScoped<ContrAgentValidator>();
         services.AddScoped<AntennaValidator>();
+        services.AddScoped<TranslatorSpecsValidator>();
         services.AddScoped<EnergyResultValidator>();
         services.AddScoped<RoleValidator>();
         services.AddScoped<CompanyLicenseValidator>();

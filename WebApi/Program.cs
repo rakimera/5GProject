@@ -52,11 +52,14 @@ try
             await dataseed.SeedCompanyLicense();
             await dataseed.SeedExecutiveCompany();
             await dataseed.SeedAdmin();
+            await dataseed.SeedAntenna();
+            await dataseed.SeedTranslator();
             await dataseed.SeedRoles();
             await dataseed.SeedContrAgents();
             await dataseed.SeedDistricts();
             await dataseed.SeedTowns();
             await dataseed.ProjectStatus();
+            await dataseed.SeedRadiationZone();
         }
     }
 
