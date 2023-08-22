@@ -52,10 +52,6 @@ export default [
                 text: "Список антенн",
                 path: "/antennae_table"
             },
-            {
-                text: "Тест",
-                path: "/antennae"
-            }
         ]
     }
 ];

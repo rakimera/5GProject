@@ -1,23 +1,23 @@
 <template>
   <form class="project-form" @submit.prevent="onSubmit">
-    <dx-Form
+    <dx-form
         :col-count="1"
         enctype="multipart/form-data"
         :form-data="formData"
         :disabled="loading"
     >
-    <DxGroupItem
+    <dx-group-item
         caption="Заполение нового проекта"
     >
-      <DxTabbedItem>
-        <DxTabPanelOptions
+      <dx-tabbed-item>
+        <dx-tab-panel-options
             :defer-rendering="false"
         />
-        <DxTab
+        <dx-tab
             title="Контрагент"
         >
           <div class="fileuploader-container">
-            <DxSelectBox
+            <dx-select-box
                 :data-source="contrAgents"
                 :input-attr="{ 'aria-label': 'Контрагенты' }"
                 label="Выберите контрагента"
@@ -27,8 +27,8 @@
                 v-model="formData.contrAgentId"
             />
           </div>
-        </DxTab>
-        <DxTab
+        </dx-tab>
+        <dx-tab
             title="Адрес"
         >
           <dx-item
@@ -61,22 +61,22 @@
             >
                 <dx-label :visible="false" />
             </dx-item>            
-        </DxTab>
-        <DxTab
+        </dx-tab>
+        <dx-tab
             title="Фото места установки"
         >
           <div class="fileuploader-container">
-            <DxFileUploader
+            <dx-file-uploader
                 select-button-text="Select photo"
                 label-text=""
                 accept="image/*"
                 upload-mode="useForm"
             />
           </div>
-        </DxTab>
-      </DxTabbedItem>
-    </DxGroupItem>
-    </dx-Form>
+        </dx-tab>
+      </dx-tabbed-item>
+    </dx-group-item>
+    </dx-form>
     <DxButton
         class="button"
         text="Создать"

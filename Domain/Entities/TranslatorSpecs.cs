@@ -9,5 +9,5 @@ public class TranslatorSpecs : BaseEntity
     public decimal Gain { get; set; }
     public Guid AntennaId { get; set; }
     public Antenna Antenna { get; set; }
-    public List<RadiationZone> RadiationZones { get; set; } //360 это таблица
+    public List<RadiationZone>? RadiationZones { get; set; } //360 это таблица
 }
