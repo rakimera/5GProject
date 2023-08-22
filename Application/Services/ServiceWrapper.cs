@@ -17,6 +17,8 @@ public class ServiceWrapper : IServiceWrapper
     private readonly Lazy<IAntennaService> _antennaService;
     private readonly Lazy<IEnergyFlowService> _energyFlowService;
     private readonly Lazy<IRoleService> _roleService;
+    private readonly Lazy<ICompanyLicenseService> _companyLicenseService;
+    private readonly Lazy<IExecutiveCompanyService> _executiveCompanyService;
     private readonly Lazy<ITranslatorSpecsService> _translatorSpecsService;
 
     public ServiceWrapper(
@@ -29,9 +31,15 @@ public class ServiceWrapper : IServiceWrapper
         TranslatorSpecsValidator translatorSpecsValidator,
         AntennaValidator antennaValidator,
         EnergyResultValidator energyResultValidator,
-        RoleValidator roleValidator)
+        RoleValidator roleValidator,
+        CompanyLicenseValidator licenseValidator,
+        ExecutiveCompanyValidator executiveCompanyValidator)
     {
         _roleService = new Lazy<IRoleService>(() => new RoleService(repository, mapper, roleValidator));
+        _companyLicenseService =
+            new Lazy<ICompanyLicenseService>(() => new CompanyLicenseService(repository, mapper, licenseValidator));
+        _executiveCompanyService = new Lazy<IExecutiveCompanyService>(() =>
+            new ExecutiveCompanyService(repository, mapper, executiveCompanyValidator));
         _districtService = new Lazy<IDistrictService>(() => new DistrictService(repository, mapper));
         _userService = new Lazy<IUserService>(() => new UserService(repository, mapper, userValidator));
         _tokenService = new Lazy<ITokenService>(() => new TokenService(repository));
@@ -58,4 +66,6 @@ public class ServiceWrapper : IServiceWrapper
     public ITranslatorSpecsService TranslatorSpecsService => _translatorSpecsService.Value;
     public IEnergyFlowService EnergyFlowService => _energyFlowService.Value;
     public IRoleService RoleService => _roleService.Value;
+    public ICompanyLicenseService CompanyLicenseService => _companyLicenseService.Value;
+    public IExecutiveCompanyService ExecutiveCompanyService => _executiveCompanyService.Value;
 }

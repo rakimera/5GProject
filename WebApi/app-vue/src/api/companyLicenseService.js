@@ -1,48 +1,48 @@
 import axios from '../utils/axios';
 import storeExtension from "@/utils/storeExtension";
 
-const roleService = {
+const companyLicenseService = {
 
-    async getRoles() {
+    async getLicenses() {
         try {
-            return await axios.get(`/api/roles`);
+            return await axios.get(`/api/CompanyLicenses`);
         } catch (error) {
             console.log(error)
         }
     },
 
-    async createRole(role) {
+    async createLicense(license) {
         try {
-            return await axios.post('/api/roles', role);
+            return await axios.post('/api/CompanyLicenses', license);
         } catch (error) {
             console.log(error);
         }
     },
 
-    async updateRole(role) {
+    async updateLicense(license) {
         try {
-            return await axios.put(`/api/roles/`, role);
+            return await axios.put(`/api/CompanyLicenses/`, license);
         } catch (error) {
             console.log(error);
         }
     },
 
-    async deleteRole(oid) {
+    async deleteLicense(oid) {
         try {
-            return await axios.delete(`/api/roles/${oid}`);
+            return await axios.delete(`/api/CompanyLicenses/${oid}`);
         } catch (error) {
             console.log(error);
         }
     },
 
-    async getAllRoles(loadOptions) {
+    async getAllLicenses(loadOptions) {
         try {
             let options = storeExtension.getParams(loadOptions);
-            return await axios.get(`/api/roles/Index/${options}`);
+            return await axios.get(`/api/CompanyLicenses/Index/${options}`);
         } catch (error) {
             console.log(error);
         }
     }
 };
 
-export default roleService;
+export default companyLicenseService;
