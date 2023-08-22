@@ -53,8 +53,11 @@ public class ProjectService : IProjectService
     public async Task<BaseResponse<string>> CreateAsync(ProjectDto model, string creator)
     {
         User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Login.Equals(creator));
-        var projectStatus =
-            await _repositoryWrapper.ProjectStatusRepository.GetByCondition(x => x.Status.Equals("Новый проект"));
+        var projectStatus = await _repositoryWrapper.ProjectStatusRepository.GetByCondition(x => x.Status.Equals("Новый проект"));
+        var town = await _repositoryWrapper.TownRepository.GetByCondition(x => x.TownName == model.TownName);
+        var district = await _repositoryWrapper.DistrictRepository.GetByCondition(x => x.Id == town.DistrictId);
+
+        model.DistrictName = district.DistrictName;
         model.ExecutorId = user.Id.ToString();
         model.ProjectStatusId = projectStatus.Id.ToString();
         model.ExecutiveCompanyId = user.ExecutiveCompanyId.ToString();
@@ -118,7 +121,11 @@ public class ProjectService : IProjectService
                 Messages: new List<string> { "Проект не найден" },
                 Success: false);
         }
-
+        
+        var town = await _repositoryWrapper.TownRepository.GetByCondition(x => x.TownName == model.TownName);
+        var district = await _repositoryWrapper.DistrictRepository.GetByCondition(x => x.Id == town.DistrictId);
+        model.DistrictName = district.DistrictName;
+        
         _mapper.Map(model, project);
         project.LastModifiedBy = "Admin";
 

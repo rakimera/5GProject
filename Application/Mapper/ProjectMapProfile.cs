@@ -23,14 +23,16 @@ public class ProjectMapProfile : Profile
                 opt.MapFrom(src => src.ExecutiveCompany))
             .ForMember(dest => dest.ExecutiveCompanyId, opt =>
                 opt.MapFrom(src => src.ExecutiveCompanyId))
+            .ForMember(dest => dest.DistrictName, opt =>
+                opt.MapFrom(src => src.Address.Split(',', StringSplitOptions.TrimEntries).Length < 1 ? "" : src.Address.Split(',', StringSplitOptions.TrimEntries)[0]))
             .ForMember(dest => dest.TownName, opt =>
-                opt.MapFrom(src => src.Address.Split(',', StringSplitOptions.TrimEntries)[0]))
+                opt.MapFrom(src => src.Address.Split(',', StringSplitOptions.TrimEntries).Length < 2 ? "" : src.Address.Split(',', StringSplitOptions.TrimEntries)[1]))
             .ForMember(dest => dest.Arial, opt =>
-                opt.MapFrom(src => src.Address.Split(',', StringSplitOptions.TrimEntries)[1]))
+                opt.MapFrom(src => src.Address.Split(',', StringSplitOptions.TrimEntries).Length < 3 ? "" : src.Address.Split(',', StringSplitOptions.TrimEntries)[2]))
             .ForMember(dest => dest.Street, opt =>
-                opt.MapFrom(src => src.Address.Split(',', StringSplitOptions.TrimEntries)[2]))
+                opt.MapFrom(src => src.Address.Split(',', StringSplitOptions.TrimEntries).Length < 4 ? "" : src.Address.Split(',', StringSplitOptions.TrimEntries)[3]))
             .ForMember(dest => dest.House, opt =>
-                opt.MapFrom(src => src.Address.Split(',', StringSplitOptions.TrimEntries)[3]));
+                opt.MapFrom(src => src.Address.Split(',', StringSplitOptions.TrimEntries).Length < 5 ? "" : src.Address.Split(',', StringSplitOptions.TrimEntries)[4]));
         
         
         CreateMap<ProjectDto, Project>()
@@ -49,7 +51,11 @@ public class ProjectMapProfile : Profile
             .ForMember(dest => dest.ProjectStatus, opt =>
                 opt.Ignore())
             .ForMember(dest => dest.Address, opt =>
-                opt.MapFrom(src => $"{src.TownName+", "}{src.Arial+", "}{src.Street+", "}{src.House}"))
+                opt.MapFrom(src=> 
+                    ($"{(!string.IsNullOrEmpty(src.DistrictName) ? src.DistrictName + ", " : "")}" +
+                    $"{(!string.IsNullOrEmpty(src.TownName) ? src.TownName + ", " : "")}" +
+                    $"{(!string.IsNullOrEmpty(src.Arial) ? src.Arial + ", " : "")}" +
+                    $"{(!string.IsNullOrEmpty(src.Street) ? src.Street + ", " : "")}{src.House}").Trim().Trim(',')))
             .ForMember(dest => dest.ProjectAntennae, opt =>
                 opt.Ignore())
             .ForMember(dest => dest.TotalFluxDensity, opt =>
@@ -81,7 +87,11 @@ public class ProjectMapProfile : Profile
             .ForMember(dest => dest.ExecutiveCompanyId, opt =>
                 opt.MapFrom(src => src.ExecutiveCompanyId))
             .ForMember(dest => dest.Address, opt =>
-                opt.MapFrom(src => $"{src.TownName+", "}{src.Arial+", "}{src.Street+", "}{src.House}"));
+                opt.MapFrom(src=> 
+                    ($"{(!string.IsNullOrEmpty(src.DistrictName) ? src.DistrictName + ", " : "")}" +
+                    $"{(!string.IsNullOrEmpty(src.TownName) ? src.TownName + ", " : "")}" +
+                    $"{(!string.IsNullOrEmpty(src.Arial) ? src.Arial + ", " : "")}" +
+                    $"{(!string.IsNullOrEmpty(src.Street) ? src.Street + ", " : "")}{src.House}").Trim().Trim(',')));
 
     }
 }

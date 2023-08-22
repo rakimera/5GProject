@@ -32,6 +32,9 @@ public class ProjectDto : BaseEntity
 
     [property: JsonPropertyName("townName")] 
     public required string TownName { get; set; }
+    
+    [property: JsonPropertyName("districtName")] 
+    public string? DistrictName { get; set; }
 
     [property: JsonPropertyName("arial")] 
     public string? Arial { get; set; }

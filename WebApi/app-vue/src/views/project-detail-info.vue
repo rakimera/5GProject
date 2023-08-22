@@ -76,10 +76,6 @@
                       <dx-label
                           :visible="false"
                       />
-                        <dx-pattern-rule
-                            :pattern="namePattern"
-                            message="Поле должно состоять только из букв"
-                        />
                     </dx-item>
                         <dx-item
                             data-field='street'
@@ -176,7 +172,6 @@ import {
     DxTab, DxItem
 } from "devextreme-vue/form";
 import {
-    DxPatternRule,
     DxRequiredRule,
     DxNumericRule
 } from 'devextreme-vue/validator';
@@ -196,7 +191,6 @@ let isTabDisabled = ref(true);
 let oid = route.params.id;
 const mode = ref(route.params.mode);
 const pageDescription = ref("Подробно о проекте");
-const namePattern = ref("^[a-zA-Zа-яА-Я]+$")
 const formRef = ref(null);
 const contrAgents = ref([]);
 const towns = ref([]);

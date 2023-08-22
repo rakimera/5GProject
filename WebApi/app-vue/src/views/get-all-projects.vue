@@ -1,51 +1,54 @@
 <template>
-    <DxDataGrid
+    <dx-data-grid
             :data-source="dataSource"
             :show-borders="true"
             :remote-operations="true"
             key-expr="ID"
             @row-click="onRowClick"
     >
-        <DxColumn
+        <dx-column
                 data-field="projectNumber"
                 caption="Номер проекта"
                 data-type="string"
         />
-        <DxColumn
+        <dx-column
                 data-field="contrAgent.companyName"
                 caption="Контрагент"
                 data-type="string"
         />
-        <DxColumn
+        <dx-column
                 data-field="executor.name"
                 caption="Управляющий специалист"
                 data-type="string"
         />
-        <DxColumn
+        <dx-column
                 data-field="executiveCompany.companyName"
                 caption="Управляющая компания"
                 data-type="string"
         />
-        <DxColumn
+        <dx-column
                 data-field="projectStatus.status"
                 caption="Стадия проекта"
                 data-type="string"
         />
-        <DxColumn
+        <dx-column
                 data-field="address"
                 caption="Адрес"
                 data-type="string"
         />
-        <DxPaging :page-size="5"/>
-        <DxPager
+        <dx-paging :page-size="5"/>
+        <dx-pager
                 :show-page-size-selector="true"
                 :allowed-page-sizes="[8, 12, 20]"
         />
-        <DxEditing
+        <dx-editing
                 :allow-deleting="true"
+                :texts="{confirmDeleteMessage: 'Вы уверены, что хотите удалить эту запись?'}"
         />
-    </DxDataGrid>
-    <DxButton
+
+      />
+    </dx-data-grid>
+    <dx-button
             class="button"
             text="Создать"
             type="success"
