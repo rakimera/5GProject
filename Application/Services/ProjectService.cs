@@ -102,7 +102,13 @@ public class ProjectService : IProjectService
 
     public async Task<BaseResponse<string>> Update(UpdateProjectDto model)
     {
+        
         var result = await _updateProjectValidator.ValidateAsync(model);
+        /*if (model.ProjectAntennas != null)
+        {
+            var response =
+                await _repositoryWrapper.ProjectAntennaRepository.MassCreateOrUpdateAsync(model.ProjectAntennas);
+        }*/
         if (!result.IsValid)
         {
             List<string> messages = _mapper.Map<List<string>>(result.Errors);

@@ -107,15 +107,21 @@
                     tabIndex=1
                     :disabled="isTabDisabled"
                 >
-                    <dx-item
-                        data-field='house'
-                        editor-type='dxTextBox'
-                        :editor-options="{ stylingMode: 'filled', placeholder: 'Номер здания' }"
-                    >
-                        <dx-label
-                            :text="'Номер здания'"
-                        />
-                    </dx-item>
+                  <dx-item
+                      data-field='projectAntenna.'
+                      editor-type="dxSelectBox"
+                      :editor-options="{ 
+                        placeholder: 'Выберите Антенну', 
+                        items: antennas, 
+                        displayExpr: 'model', 
+                        valueExpr: 'id',
+                        labelMode: 'floating',
+                        label: 'Антенна'}"
+                  >
+                    <dx-label
+                        :visible="false"
+                    />
+                  </dx-item>
                 </dx-tab>
                 <dx-tab
                     tabIndex=2
@@ -181,6 +187,7 @@ import {useRoute, /*useRouter*/} from "vue-router";
 import notify from "devextreme/ui/notify";
 import contrAgentService from "@/api/contrAgentService";
 import townService from "@/api/townService";
+import antennaService from "@/api/antennaService";
 
 const route = useRoute();
 //const router = useRouter();
@@ -193,6 +200,7 @@ const mode = ref(route.params.mode);
 const pageDescription = ref("Подробно о проекте");
 const formRef = ref(null);
 const contrAgents = ref([]);
+const antennas = ref([]);
 const towns = ref([]);
 const index = ref(0);
 
@@ -200,6 +208,9 @@ onBeforeMount(async () => {
   const response = await contrAgentService.getContrAgents();
   contrAgents.value = response.data.result;
 
+  const antennaResponse = await antennaService.getAntennae();
+  antennas.value = antennaResponse.data.result;
+  
   const townResponse = await townService.getTowns();
   towns.value = townResponse.data.result;
   

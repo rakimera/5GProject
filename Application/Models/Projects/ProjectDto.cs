@@ -26,7 +26,7 @@ public class ProjectDto : BaseEntity
     
     [property: JsonPropertyName("executiveCompany")]
     public ExecutiveCompanyDto ExecutiveCompany { get; set; }
-    
+
     [property: JsonPropertyName("projectStatusId")]
     public string ProjectStatusId { get; set; }
 
@@ -44,5 +44,7 @@ public class ProjectDto : BaseEntity
     
     [property: JsonPropertyName("house")] 
     public string? House { get; set; }
-    public List<ProjectAntennaDto> ProjectAntennae { get; set; } = new List<ProjectAntennaDto>();
+    
+    [property: JsonPropertyName("projectAntennas")]
+    public List<ProjectAntennaDto> ProjectAntennas { get; set; } = new List<ProjectAntennaDto>();
 }

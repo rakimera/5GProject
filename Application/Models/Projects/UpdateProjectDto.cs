@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Application.Models.Antennae;
 using Domain.Common;
 
 namespace Application.Models.Projects;
@@ -33,4 +34,8 @@ public class UpdateProjectDto : BaseEntity
     
     [property: JsonPropertyName("house")] 
     public string? House { get; set; }
+    
+    [property: JsonPropertyName("projectAntennas")]
+    public List<ProjectAntennaDto>? ProjectAntennas { get; set; }
+    
 }
