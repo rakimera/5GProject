@@ -1,7 +1,9 @@
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
 using Application.Models;
+using Application.Models.CompanyLicense;
 using Application.Models.ContrAgents;
+using Application.Models.ExecutiveCompany;
 using Application.Models.Users;
 using Domain.Entities;
 
@@ -17,13 +19,37 @@ public class DataSeed
         _serviceWrapper = serviceWrapper;
         _repositoryWrapper = repositoryWrapper;
     }
-
-
+    public async Task SeedCompanyLicense()
+    {
+        CompanyLicenseDto license = new CompanyLicenseDto()
+        {
+            Number = "1",
+            DateOfIssue = new DateTime(DateTime.Now.Day - 10)
+        };
+        await _serviceWrapper.CompanyLicenseService.CreateAsync(license, "Admin");
+        await _repositoryWrapper.Save();
+    }
+    
+    public async Task SeedExecutiveCompany()
+    {
+        var license =  _serviceWrapper.CompanyLicenseService.GetAll().Result.First().Id;
+        ExecutiveCompanyDto company = new ExecutiveCompanyDto
+        {
+            BIN = "123456789111",
+            Address = "Алматинская область, Алматы, 1 микр, 43",
+            CompanyName = "AlcaponeLTD",
+            CompanyLicenseId = license
+        };
+        await _serviceWrapper.ExecutiveCompanyService.CreateAsync(company, "Admin");
+        await _repositoryWrapper.Save();
+    }
+    
     public async Task SeedAdmin()
     {
         User? user = await _repositoryWrapper.UserRepository.GetByCondition(u => u.Login.Equals("admin@gmail.com"));
         if (user is null)
         {
+            var executiveCompany = _serviceWrapper.ExecutiveCompanyService.GetAll().Result.First().Id;
             UserDto admin = new UserDto()
             {
                 Name = "Admin",
@@ -33,7 +59,8 @@ public class DataSeed
                 Roles = new List<string>()
                 {
                     "Admin"
-                }
+                },
+                ExecutiveCompanyId = executiveCompany
             };
             await _serviceWrapper.UserService.CreateAsync(admin, "Admin");
             await _repositoryWrapper.Save();
