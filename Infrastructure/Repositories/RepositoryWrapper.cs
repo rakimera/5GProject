@@ -30,6 +30,7 @@ public class RepositoryWrapper : IRepositoryWrapper
     private ISummaryBiohazardRadiusRepository _summaryBiohazardRadiusRepository;
     private ITotalFluxDensityRepository _totalFluxDensityRepository;
     private ITranslatorTypeRepository _translatorTypeRepository;
+    private ITranslatorSpecsRepository _translatorSpecsRepository;
 
     public RepositoryWrapper(Project5GDbContext db)
     {
@@ -280,6 +281,19 @@ public class RepositoryWrapper : IRepositoryWrapper
             }
 
             return _antennaRepository;
+        }
+    }
+
+    public ITranslatorSpecsRepository TranslatorSpecsRepository
+    {
+        get
+        {
+            if (_translatorSpecsRepository == null)
+            {
+                _translatorSpecsRepository = new TranslatorSpecsRepository(_db);
+            }
+
+            return _translatorSpecsRepository;
         }
     }
 

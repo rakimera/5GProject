@@ -26,6 +26,13 @@
         :texts="{confirmDeleteMessage: 'Вы уверены, что хотите удалить эту запись?'}"
     />
   </dx-data-grid>
+  <DxButton
+      class="button"
+      text="Создать"
+      type="success"
+      :use-submit-behavior="true"
+      :on-click="onCreateAntennaClick"
+  />
 </template>
 
 <script setup>
@@ -41,10 +48,12 @@ import CustomStore from "devextreme/data/custom_store";
 import "whatwg-fetch";
 import antennaService from "@/api/antennaService";
 import { useRouter } from 'vue-router';
+import {DxButton} from "devextreme-vue/button";
 
 const router = useRouter();
 const store = new CustomStore({
   key: 'id',
+  
   load: async (loadOptions) => {
     return await antennaService.getAntennaeForGrid(loadOptions);
   },
@@ -61,4 +70,11 @@ async function onRowClick(e) {
     console.log(error)
   }
 }
+const onCreateAntennaClick = async () => {
+  try {
+    await router.push({name: 'antennaDetail', params: {mode: "create", id: null}});
+  } catch (error) {
+    console.log(error);
+  }
+};
 </script>
