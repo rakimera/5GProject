@@ -22,14 +22,17 @@ const authorizationService = {
     },
     async revoke() {
         try {
+            const refreshToken = await tokenService.getRefreshToken();
             const tokenApiModel = {
-                accessToken: null, 
-                refreshToken: await tokenService.getRefreshToken()}; 
-            console.log(tokenApiModel)
+                accessToken: null,
+                refreshToken: refreshToken
+            };
+
+            await this.refreshingToken(tokenApiModel);
             await axios.post('/api/Token/revoke', tokenApiModel);
             await tokenService.removeTokens();
-        }
-        catch (error) {
+        } catch (error) {
+            console.log("Ошибка при отзыве токена", error);
             return error;
         }        
     },
