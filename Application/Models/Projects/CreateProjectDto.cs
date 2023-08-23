@@ -11,15 +11,9 @@ public class CreateProjectDto
     [property: JsonPropertyName("townName")] 
     public required string TownName { get; set; }
 
-    [property: JsonPropertyName("arial")] 
-    public string? Arial { get; set; }
-    
-    [property: JsonPropertyName("street")] 
-    public string? Street { get; set; }
-    
-    [property: JsonPropertyName("house")] 
-    public string? House { get; set; }
-    
+    [property: JsonPropertyName("address")] 
+    public string? Address { get; set; }
+
     [property: JsonPropertyName("projectNumber")] 
-    public int ProjectNumber { get; set; }
+    public required string ProjectNumber { get; set; }
 }

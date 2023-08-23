@@ -4,7 +4,7 @@ namespace Domain.Entities;
 
 public class Project : BaseEntity
 {
-    public int ProjectNumber { get; set; }
+    public required string ProjectNumber { get; set; }
     public Guid ContrAgentId { get; set; }
     public ContrAgent ContrAgent { get; set; }
     public Guid ExecutorId { get; set; }
@@ -18,7 +18,9 @@ public class Project : BaseEntity
     public ProjectStatus ProjectStatus { get; set; }
     public Guid? SummaryBiohazardRadiusId { get; set; }
     public SummaryBiohazardRadius SummaryBiohazardRadius { get; set; }
-    public required string Address { get; set; }
+    public required string DistrictName { get; set; }
+    public required string TownName { get; set; }
+    public string? Address { get; set; }
     public List<ProjectAntenna> ProjectAntennae { get; set; } = new List<ProjectAntenna>();
     public List<TotalFluxDensity> TotalFluxDensity { get; set; } = new List<TotalFluxDensity>();
 }

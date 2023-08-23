@@ -25,10 +25,9 @@
                         :editor-options="{ 
                       stylingMode: 'filled',
                       labelMode: 'floating',
-                      label: 'Номер проекта' }"
+                      label: 'Номер проекта (сайт)' }"
                     >
-                        <dx-required-rule message="Укажите номер проекта"></dx-required-rule>
-                        <dx-numeric-rule message="Допустимы только цифры"></dx-numeric-rule>
+                        <dx-required-rule message="Укажите Sitename(номер) проекта"></dx-required-rule>
                         <dx-label
                             :visible="false"
                         />
@@ -66,41 +65,17 @@
                         />
                     </dx-item>
                     <dx-item
-                        data-field='arial'
+                        data-field='address'
                         editor-type='dxTextBox'
                         :editor-options="{ 
                       stylingMode: 'filled', 
-                      label: 'Район', 
+                      label: 'Район, улица, дом', 
                       labelMode: 'floating' }"
                     >
                       <dx-label
                           :visible="false"
                       />
                     </dx-item>
-                        <dx-item
-                            data-field='street'
-                            editor-type='dxTextBox'
-                            :editor-options="{ 
-                          stylingMode: 'filled', 
-                          label: 'Улица', 
-                          labelMode: 'floating' }"
-                        >
-                          <dx-label
-                              :visible="false"
-                          />
-                        </dx-item>
-                        <dx-item
-                            data-field='house'
-                            editor-type='dxTextBox'
-                            :editor-options="{ 
-                          stylingMode: 'filled', 
-                          label: 'Номер здания', 
-                          labelMode: 'floating' }"
-                        >
-                          <dx-label
-                              :visible="false"
-                          />
-                        </dx-item>
                 </dx-tab>
                 <dx-tab
                     title="Антенны-передатчики"
@@ -172,8 +147,7 @@ import {
     DxTab, DxItem
 } from "devextreme-vue/form";
 import {
-    DxRequiredRule,
-    DxNumericRule
+    DxRequiredRule
 } from 'devextreme-vue/validator';
 import {onBeforeMount, reactive, ref} from "vue";
 import projectService from "@/api/projectService";

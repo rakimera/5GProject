@@ -32,6 +32,16 @@
                 data-type="string"
         />
         <dx-column
+            data-field="districtName"
+            caption="Область"
+            data-type="string"
+        />
+        <dx-column
+            data-field="townName"
+            caption="Город"
+            data-type="string"
+        />
+        <dx-column
                 data-field="address"
                 caption="Адрес"
                 data-type="string"

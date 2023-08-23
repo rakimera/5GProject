@@ -6,7 +6,7 @@ namespace Application.Models.Projects;
 public class UpdateProjectDto : BaseEntity
 {
     [property: JsonPropertyName("projectNumber")]
-    public int ProjectNumber { get; set; }
+    public required string ProjectNumber { get; set; }
     
     [property: JsonPropertyName("contrAgentId")] 
     public required string ContrAgentId { get; set; }
@@ -25,12 +25,6 @@ public class UpdateProjectDto : BaseEntity
     [property: JsonPropertyName("districtName")] 
     public string? DistrictName { get; set; }
 
-    [property: JsonPropertyName("arial")] 
-    public string? Arial { get; set; }
-    
-    [property: JsonPropertyName("street")] 
-    public string? Street { get; set; }
-    
-    [property: JsonPropertyName("house")] 
-    public string? House { get; set; }
+    [property: JsonPropertyName("address")] 
+    public string? Address { get; set; }
 }
