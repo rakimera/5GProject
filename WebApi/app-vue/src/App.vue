@@ -2,16 +2,16 @@
   <div id="root">
     <div :class="cssClasses">
       <component
-        :is="$route.meta.layout"
-        :title="title"
-        :is-x-small="screen.getScreenSizeInfo.isXSmall"
-        :is-large="screen.getScreenSizeInfo.isLarge"
+          :is="$route.meta.layout"
+          :title="title"
+          :is-x-small="screen.getScreenSizeInfo.isXSmall"
+          :is-large="screen.getScreenSizeInfo.isLarge"
       >
-      <div class="content">
-        <router-view></router-view>
-      </div>
+        <div class="content">
+          <router-view></router-view>
+        </div>
         <template #footer>
-          <app-footer />
+          <app-footer/>
         </template>
       </component>
     </div>
@@ -20,7 +20,7 @@
 
 <script>
 import AppFooter from "./components/app-footer";
-import { sizes, subscribe, unsubscribe } from "./utils/media-query";
+import {sizes, subscribe, unsubscribe} from "./utils/media-query";
 import {
   getCurrentInstance,
   reactive,
@@ -28,7 +28,8 @@ import {
   onBeforeUnmount,
   computed
 } from "vue";
-import "@/localization/ru";
+import {locale, loadMessages} from "devextreme/localization";
+import ruMessages from "devextreme/localization/messages/ru.json"
 
 function getScreenSizeInfo() {
   const screenSizes = sizes();
@@ -47,11 +48,14 @@ export default {
   setup() {
     const vm = getCurrentInstance();
 
+    loadMessages(ruMessages);
+    locale("ru");
+
     const title = vm.proxy.$appInfo.title;
-    const screen = reactive({ getScreenSizeInfo: {} });
+    const screen = reactive({getScreenSizeInfo: {}});
     screen.getScreenSizeInfo = getScreenSizeInfo();
-    
-    function screenSizeChanged () {
+
+    function screenSizeChanged() {
       screen.getScreenSizeInfo = getScreenSizeInfo();
     }
 

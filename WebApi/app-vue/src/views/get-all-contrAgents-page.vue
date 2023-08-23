@@ -53,7 +53,6 @@
     />
     <dx-editing
         :allow-deleting="true"
-        :texts="{confirmDeleteMessage: 'Вы уверены, что хотите удалить эту запись?'}"
     />
   </dx-data-grid>
   <dx-button

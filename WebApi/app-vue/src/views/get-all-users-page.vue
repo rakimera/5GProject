@@ -14,7 +14,6 @@
     <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
     <dx-editing
         :allow-deleting="true"
-        :texts="{confirmDeleteMessage: 'Вы уверены, что хотите удалить эту запись?'}"
     />
   </dx-data-grid>
   <dx-button
