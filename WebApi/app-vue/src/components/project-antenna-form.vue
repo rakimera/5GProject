@@ -56,11 +56,11 @@
 </template>
 <script>
 import {
-  DxForm,
-  DxSimpleItem,
-  DxGroupItem,
-  DxButtonItem,
-  DxLabel,
+    DxForm,
+    DxSimpleItem,
+    DxGroupItem,
+    DxButtonItem,
+    DxLabel,
 } from 'devextreme-vue/form';
 
 export default {

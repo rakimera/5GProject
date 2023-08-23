@@ -102,13 +102,17 @@ import {
 import {
   DxRequiredRule
 } from 'devextreme-vue/validator';
-import {useRoute} from "vue-router";
-import {onBeforeMount, reactive, ref} from "vue";
+import {onBeforeMount, reactive, ref, defineProps} from "vue";
 import contrAgentService from "@/api/contrAgentService";
 import townService from "@/api/townService";
 import projectService from "@/api/projectService";
+import {useRoute, useRouter} from "vue-router";
 import notify from "devextreme/ui/notify";
 
+const props = defineProps({
+    onSaveProject: Function,
+})
+const router = useRouter();
 const route = useRoute();
 let dataSource = reactive({});
 let isFormDisabled = ref(true);
@@ -161,7 +165,6 @@ async function onClickSaveChanges() {
               at: 'center top',
             },
           }, 'success', 1000);
-          isFormDisabled.value = true;
         } else {
           notify(responseUpdate.data.messages, 'error', 2000);
         }
@@ -175,6 +178,8 @@ async function onClickSaveChanges() {
               at: 'center top',
             },
           }, 'success', 1000);
+            await router.push({name: 'projectDetail', params: {mode: "read", id: response.data.result}});
+            props.onSaveProject()
         } else {
           notify({
             message: response.data.messages,

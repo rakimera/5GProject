@@ -54,23 +54,23 @@
 <script setup>
 
 import {
-  DxForm,
-  DxLabel,
-  DxTabbedItem,
-  DxTabPanelOptions,
-  DxTab, DxItem
+    DxForm,
+    DxLabel,
+    DxTabbedItem,
+    DxTabPanelOptions,
+    DxTab, DxItem,
 } from "devextreme-vue/form";
 
 import {onBeforeMount, reactive, ref} from "vue";
 import projectService from "@/api/projectService";
-import {useRoute, useRouter} from "vue-router";
+import {useRoute, /*useRouter*/} from "vue-router";
 import contrAgentService from "@/api/contrAgentService";
 import townService from "@/api/townService";
 import ProjectForm from "@/components/project-form.vue";
 import ProjectAntennaForm from "@/components/project-antenna-form.vue";
 
 const route = useRoute();
-const router = useRouter();
+/*const router = useRouter();*/
 let dataSource = reactive({});
 //const routeParams = {name: "projects"};
 let isFormDisabled = ref(true);
@@ -100,8 +100,7 @@ onBeforeMount(async () => {
   }
 })
 
-async function onSaveProject(id) {
-  await router.push({name: 'projectDetail', params: {mode: "read", id: id}});
+function onSaveProject() {
   isTabDisabled.value = false;
   isFormDisabled.value = true;
   index.value++
