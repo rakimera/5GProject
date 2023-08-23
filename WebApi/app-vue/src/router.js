@@ -15,6 +15,8 @@ import GetAllAntennaePage from "@/views/get-all-antennae-page";
 import ContrAgentDetail from '@/views/contrAgent-detail-info.vue';
 import Roles from '@/views/get-all-roles-page.vue'
 import AntennaDetail from "@/views/antenna-detail-info";
+import ExecutiveCompaniesJournal from "@/views/get-all-executiveCompanies-page.vue";
+import ExecutiveCompanyDetail from '@/views/executiveCompany-detail-info.vue';
 
 function loadView(view) {
     return () => import (/* webpackChunkName: "login" */ `./views/${view}.vue`)
@@ -185,13 +187,22 @@ const router = new createRouter({
             component: AntennaDetail
         },
         {
-            path: '/contrAgent/:mode/:id?',
-            name: 'contrAgentDetail',
+            path: "/ExecutiveCompaniesJournal",
+            name: "ExecutiveCompaniesJournal",
             meta: {
                 requiresAuth: true,
                 layout: defaultLayout
             },
-            component: ContrAgentDetail
+            component: ExecutiveCompaniesJournal
+        },
+        {
+            path: '/ExecutiveCompanies/:mode/:id?',
+            name: 'executiveCompaniesDetail',
+            meta: {
+                requiresAuth: true,
+                layout: defaultLayout
+            },
+            component: ExecutiveCompanyDetail
         }
     ],
     history: createWebHashHistory()

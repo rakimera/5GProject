@@ -23,6 +23,10 @@ export default [
             {
                 text: "Журнал контрагентов",
                 path: "/ContrAgentsJournal"
+            },
+            {
+                text: "Журнал компании",
+                path: "/ExecutiveCompaniesJournal"
             }
         ]
     },
