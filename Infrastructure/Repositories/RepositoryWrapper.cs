@@ -21,7 +21,6 @@ public class RepositoryWrapper : IRepositoryWrapper
     private IEnergyFlowRepository _energyFlowRepository;
     private IRadiationZoneRepository _radiationZoneRepository;
     private IAntennaTranslatorRepository _antennaTranslatorRepository;
-    private ICompanyLicenseRepository _companyLicenseRepository;
     private IExecutiveCompanyRepository _executiveCompanyRepository;
     private IBiohazardRadiusRepository _biohazardRadiusRepository;
     private IProjectAntennaRepository _projectAntennaRepository;
@@ -47,19 +46,6 @@ public class RepositoryWrapper : IRepositoryWrapper
             }
 
             return _antennaTranslatorRepository;
-        }
-    }
-
-    public ICompanyLicenseRepository CompanyLicenseRepository
-    {
-        get
-        {
-            if (_companyLicenseRepository == null)
-            {
-                _companyLicenseRepository = new CompanyLicenseRepository(_db);
-            }
-
-            return _companyLicenseRepository;
         }
     }
 

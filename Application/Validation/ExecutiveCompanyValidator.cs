@@ -10,7 +10,7 @@ public class ExecutiveCompanyValidator : AbstractValidator<ExecutiveCompany>
         RuleFor(contrAgent => contrAgent.Address)
             .NotEmpty().WithMessage("Адрес компании должен быть заполнен");
 
-        RuleFor(contrAgent => contrAgent.CompanyLicenseId)
+        RuleFor(contrAgent => contrAgent.LicenseNumber)
             .NotEmpty().WithMessage("Поле лицензии компании должен быть заполнен");
 
         RuleFor(contrAgent => contrAgent.BIN)

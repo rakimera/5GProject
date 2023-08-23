@@ -9,7 +9,6 @@ public class Project5GDbContext : DbContext
 {
     public DbSet<Antenna> Antennas { get; set; }
     public DbSet<AntennaTranslator> AntennaTranslators { get; set; }
-    public DbSet<CompanyLicense> CompanyLicenses { get; set; }
     public DbSet<ContrAgent> CounterAgents { get; set; }
     public DbSet<District> Districts { get; set; }
     public DbSet<EnergyResult> EnergyResults { get; set; }
@@ -45,7 +44,6 @@ public class Project5GDbContext : DbContext
         modelBuilder.Entity<ProjectStatus>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<TranslatorSpecs>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<AntennaTranslator>().HasQueryFilter(x => x.IsDelete == false);
-        modelBuilder.Entity<CompanyLicense>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<EnergyResult>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<ExecutiveCompany>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<RadiationZone>().HasQueryFilter(x => x.IsDelete == false);

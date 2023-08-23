@@ -21,8 +21,10 @@ public class ExecutiveCompanyMapProfile : Profile
                 opt.MapFrom(src => src.CreatedBy))
             .ForMember(dest => dest.Address, opt =>
                 opt.MapFrom(src => src.Address))
-            .ForMember(dest => dest.CompanyLicenseId, opt =>
-                opt.MapFrom(src => src.CompanyLicenseId))
+            .ForMember(dest => dest.LicenseNumber, opt =>
+                opt.MapFrom(src => src.LicenseNumber))
+            .ForMember(dest => dest.LicenseDateOfIssue, opt =>
+                opt.MapFrom(src => src.LicenseDateOfIssue))
             .ForMember(dest => dest.BIN, opt =>
                 opt.MapFrom(src => src.BIN))
             .ForMember(dest => dest.CompanyName, opt =>
@@ -34,8 +36,10 @@ public class ExecutiveCompanyMapProfile : Profile
                 opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Address, opt =>
                 opt.MapFrom(src => src.Address))
-            .ForMember(dest => dest.CompanyLicenseId, opt =>
-                opt.MapFrom(src => src.CompanyLicenseId))
+            .ForMember(dest => dest.LicenseNumber, opt =>
+                opt.MapFrom(src => src.LicenseNumber))
+            .ForMember(dest => dest.LicenseDateOfIssue, opt =>
+                opt.MapFrom(src => src.LicenseDateOfIssue))
             .ForMember(dest => dest.BIN, opt =>
                 opt.MapFrom(src => src.BIN))
             .ForMember(dest => dest.CompanyName, opt =>
@@ -46,8 +50,10 @@ public class ExecutiveCompanyMapProfile : Profile
         CreateMap<ExecutiveCompanyDto, CreateExecutiveCompanyDto>()
             .ForMember(dest => dest.Address, opt =>
                 opt.MapFrom(src => src.Address))
-            .ForMember(dest => dest.CompanyLicenseId, opt =>
-                opt.MapFrom(src => src.CompanyLicenseId))
+            .ForMember(dest => dest.LicenseNumber, opt =>
+                opt.MapFrom(src => src.LicenseNumber))
+            .ForMember(dest => dest.LicenseDateOfIssue, opt =>
+                opt.MapFrom(src => src.LicenseDateOfIssue))
             .ForMember(dest => dest.BIN, opt =>
                 opt.MapFrom(src => src.BIN))
             .ForMember(dest => dest.CompanyName, opt =>
