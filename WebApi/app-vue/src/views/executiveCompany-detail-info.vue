@@ -11,23 +11,48 @@
         :show-validation-summary="true"
     >
       <dx-simple-item
-          data-field="companyName">
+          data-field="companyName"
+          :editor-options="{
+                      stylingMode: 'filled',
+                      placeholder: 'Название компании'}">
         <dx-label :text="'Название компании'"/>
         <dx-required-rule message="Название компании должно быть заполнено"/>
       </dx-simple-item>
 
       <dx-simple-item
-          data-field="address">
-        <dx-label :text="'Адрес компании'"/>
-        <dx-required-rule message="Адрес должнен быть заполнен"/>
+          data-field='townName'
+          editor-type="dxSelectBox"
+          :editor-options="{
+                      stylingMode: 'filled',
+                      placeholder: 'Выберите город',
+                      items: towns,
+                      displayExpr: 'townName',
+                      valueExpr: 'townName',}"
+      >
+        <dx-label :text="'Город'"/>
+        <dx-required-rule message="Вы не выбрали город"></dx-required-rule>
+      </dx-simple-item>
+      <dx-simple-item
+          data-field='address'
+          editor-type='dxTextBox'
+          :editor-options="{
+                      stylingMode: 'filled',
+                      placeholder: 'Район, улица, дом'}"
+      >
+        <dx-label :text="'Адрес'"/>
+        <dx-required-rule message="Пожалуйста укажите адрес компании"/>
       </dx-simple-item>
 
       <dx-simple-item
-          data-field="licenseNumber">
+          data-field="licenseNumber"
+          :editor-options="{
+                      stylingMode: 'filled',
+                      placeholder: 'Номер лицензии компании'}">
         <dx-label :text="'Номер лицензии компании'"/>
       </dx-simple-item>
 
-      <dx-simple-item data-field="licenseDateOfIssue">
+      <dx-simple-item
+          data-field="licenseDateOfIssue">
         <dx-label :text="'Дата выдачи номера лицензии компании'"/>
         <dx-date-box
             v-model="dataSource.licenseDateOfIssue"
@@ -38,7 +63,10 @@
       </dx-simple-item>
 
       <dx-simple-item
-          data-field="bin">
+          data-field="bin"
+          :editor-options="{
+                      stylingMode: 'filled',
+                      placeholder: 'БИН'}">
         <dx-label :text="'БИН'"/>
         <dx-required-rule message="БИН должнен быть заполнен"/>
         <dx-string-length-rule
@@ -96,6 +124,7 @@ import executiveCompanyService from "@/api/executiveCompanyService";
 import {useRoute, useRouter} from "vue-router";
 import notify from "devextreme/ui/notify";
 import DxDateBox from 'devextreme-vue/date-box';
+import townService from "@/api/townService";
 
 const route = useRoute();
 const router = useRouter();
@@ -108,8 +137,11 @@ const mode = route.params.mode;
 const pageDescription = ref("Подробно о компании");
 const binPattern = ref("^[0-9]")
 const formRef = ref(null);
+const towns = ref([]);
 
 onBeforeMount(async () => {
+  const townResponse = await townService.getTowns();
+  towns.value = townResponse.data.result;
   if (mode === "read") {
     const response = await executiveCompanyService.getExecutiveCompany(oid);
     Object.assign(dataSource, response.data.result);

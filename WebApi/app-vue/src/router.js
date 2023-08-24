@@ -2,15 +2,13 @@ import {createRouter, createWebHashHistory} from "vue-router";
 
 import Home from "./views/home-page";
 import Profile from "./views/profile-page";
-import Tasks from "./views/tasks-page";
 import defaultLayout from "./layouts/side-nav-outer-toolbar";
 import simpleLayout from "./layouts/single-card";
 import GetAllUsersPage from "@/views/get-all-users-page.vue";
-import CreateProject from "@/views/create-project.vue";
 import ContrAgentJournal from "@/views/get-all-contrAgents-page.vue";
 import authorizationService from "@/api/AuthorizationService";
 import UserDetail from '@/views/users_detail_info.vue';
-import Antennae from './views/Antenna-page.vue';
+import Antennae from './views/antenna-detail-info.vue';
 import GetAllAntennaePage from "@/views/get-all-antennae-page";
 import ContrAgentDetail from '@/views/contrAgent-detail-info.vue';
 import Roles from '@/views/get-all-roles-page.vue'
