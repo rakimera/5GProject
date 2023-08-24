@@ -13,6 +13,8 @@ import Roles from '@/views/get-all-roles-page.vue'
 import CompanyLicense from "@/views/get-all-companyLicense-page.vue";
 import GetAllAntennaePage from "@/views/get-all-antennae-page";
 import AntennaDetail from "@/views/antenna-detail-info";
+import ProjectDetail from "@/views/project-detail-info.vue";
+import ProjectJournal from "@/views/get-all-projects.vue";
 
 function loadView(view) {
     return () => import (/* webpackChunkName: "login" */ `./views/${view}.vue`)

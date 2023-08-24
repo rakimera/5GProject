@@ -168,6 +168,7 @@ async function onClickSaveChanges() {
         } else {
           notify(responseUpdate.data.messages, 'error', 2000);
         }
+        isFormDisabled.value = true;
       } else {
         const response = await projectService.createProject(dataSource);
         if (response.data.success) {
