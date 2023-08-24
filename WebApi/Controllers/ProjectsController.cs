@@ -2,7 +2,6 @@ using Application.Interfaces;
 using Application.Models.Projects;
 using AutoMapper;
 using DevExtreme.AspNet.Data;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;

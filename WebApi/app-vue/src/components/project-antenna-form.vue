@@ -2,59 +2,50 @@
   <div>
     <div class="long-title"><h3>Personal details</h3></div>
     <div id="form-container">
-      <DxForm
-          id="form"
-          :col-count="2"
-          :form-data="employee"
+      <dx-form
+          id="project-antenna-form"
+          :col-count="1"
+          :form-data="dataSource"
+          label-location="top"
+          :read-only="isFormDisabled"
+          :show-colon-after-label="true"
+          :show-validation-summary="true"
       >
-        <DxGroupItem>
-          <DxGroupItem caption="Personal Data">
-            <DxSimpleItem data-field="FirstName"/>
-            <DxSimpleItem data-field="LastName"/>
-            <DxSimpleItem
-                :editor-options="checkBoxOptions"
-                editor-type="dxCheckBox"
-            />
-          </DxGroupItem>
-          <DxGroupItem>
-            <DxGroupItem
-                :visible="isHomeAddressVisible"
-                caption="Home Address"
-                name="HomeAddress"
-            >
-              <DxSimpleItem data-field="Address"/>
-              <DxSimpleItem data-field="City"/>
-            </DxGroupItem>
-          </DxGroupItem>
-        </DxGroupItem>
-        <DxGroupItem
+        <dx-group-item
             caption="Phones"
             name="phones-container"
         >
-          <DxGroupItem
+          <dx-group-item
               item-type="group"
               name="phones"
           >
-            <DxSimpleItem
-                v-for="(phone, index) in phoneOptions"
-                :key="'Phone' + (index + 1)"
-                :data-field="'Phones[' + index + ']'"
-                :editor-options="phone"
+            <dx-simple-item
+                v-for="(antenna, index) in antennaOptions"
+                :key="'antenna' + (index + 1)"
+                :data-field="'antennas[' + index + ']'"
+                editor-type="dxSelectBox"
+                :editor-options="{ 
+                        placeholder: 'Выберите город', 
+                        items: antennas, 
+                        displayExpr: 'townName', 
+                        valueExpr: 'townName',
+                        labelMode: 'floating',
+                        label: 'Город'}"
             >
-              <DxLabel :text="'Phone ' + (index + 1)"/>
-            </DxSimpleItem>
-          </DxGroupItem>
-          <DxButtonItem
-              :button-options="addPhoneButtonOptions"
-              css-class="add-phone-button"
+              <dx-label :text="'Антенна ' + (index + 1)"/>
+            </dx-simple-item>
+          </dx-group-item>
+          <dx-button-item
+              :button-options="addAntennaButtonOptions"
+              css-class="add-antenna-button"
               horizontal-alignment="left"
           />
-        </DxGroupItem>
-      </DxForm>
+        </dx-group-item>
+      </dx-form>
     </div>
   </div>
 </template>
-<script>
+<script setup>
 import {
     DxForm,
     DxSimpleItem,
@@ -62,78 +53,63 @@ import {
     DxButtonItem,
     DxLabel,
 } from 'devextreme-vue/form';
+import {onBeforeMount, reactive, ref} from "vue";
+import antennaService from "@/api/antennaService";
+import projectAntennaService from "@/api/projectAntennaService";
+import {useRoute} from "vue-router";
 
-export default {
-  components: {
-    DxForm,
-    DxSimpleItem,
-    DxGroupItem,
-    DxButtonItem,
-    DxLabel,
-  },
-  data() {
-    
-    const employee = {
-      FirstName: 'John',
-      LastName: 'Heart',
-      Address: '351 S Hill St., Los Angeles, CA',
-      City: 'Atlanta',
-      Phones: ['8005552797', '8005953232'],
-    };
-    const isHomeAddressVisible = true;
-
-    const phoneOptions = this.getPhonesOptions(employee.Phones);
-
-    return {
-      employee,
-      isHomeAddressVisible,
-      phoneOptions,
-      checkBoxOptions: {
-        text: 'Show Address',
-        value: true,
-        onValueChanged: (e) => {
-          this.isHomeAddressVisible = e.component.option('value');
-        },
-      },
-      addPhoneButtonOptions: {
-        icon: 'add',
-        text: 'Add phone',
-        onClick: () => {
-          this.employee.Phones.push('');
-          this.phoneOptions = this.getPhonesOptions(this.employee.Phones);
-        },
-      },
-    };
-  },
-  methods: {
-    getPhonesOptions(phones) {
-      const options = [];
-      for (let i = 0; i < phones.length; i += 1) {
-        options.push(this.generateNewPhoneOptions(i));
-      }
-      return options;
-    },
-    
-    generateNewPhoneOptions(index) {
-      return {
-        mask: '+1 (X00) 000-0000',
-        maskRules: { X: /[01-9]/ },
-        buttons: [{
-          name: 'trash',
-          location: 'after',
-          options: {
-            stylingMode: 'text',
-            icon: 'trash',
-            onClick: () => {
-              this.employee.Phones.splice(index, 1);
-              this.phoneOptions = this.getPhonesOptions(this.employee.Phones);
-            },
-          },
-        }],
-      };
-    },
+let isFormDisabled = ref(false);
+const route = useRoute();
+let id = route.params.id;
+const mode = ref(route.params.mode);
+let dataSource = reactive({});
+const antennas = ref([])
+const antennaOptions = ref(getAntennasOptions(antennas.value));
+const addAntennaButtonOptions = {
+  icon: 'add',
+  text: 'добавить антенну',
+  onClick: () => {
+    antennas.value.push('');
+    antennaOptions.value = getAntennasOptions(antennas.value);
   },
 };
+
+onBeforeMount(async () => {
+  const response = await antennaService.getAntennae();
+  antennas.value = response.data.result;
+
+  if (mode.value === "read") {
+    const response = await projectAntennaService.getAllByProjectId(id);
+    Object.assign(dataSource, response.data.result);
+  } else {
+    isFormDisabled.value = false;
+  }
+})
+function getAntennasOptions(antennas) {
+  const options = [];
+  for (let i = 0; i < antennas.length; i += 1) {
+    options.push(generateNewAntennaOptions(i));
+  }
+  return options;
+}
+function generateNewAntennaOptions(index) {
+  return {
+    mask: '+1 (X00) 000-0000',
+    maskRules: { X: /[01-9]/ },
+    buttons: [{
+      name: 'trash',
+      location: 'after',
+      options: {
+        stylingMode: 'text',
+        icon: 'trash',
+        onClick: () => {
+          antennas.value.splice(index, 1);
+          antennaOptions.value = getAntennasOptions(antennas.value);
+        },
+      },
+    }],
+  };
+}
 </script>
 <style scoped>
 #form-container {
@@ -154,7 +130,7 @@ export default {
   margin-bottom: 20px;
 }
 
-.add-phone-button {
+.add-antenna-button {
   margin-top: 10px;
 }
 </style>

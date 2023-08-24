@@ -20,6 +20,7 @@ public class ServiceWrapper : IServiceWrapper
     private readonly Lazy<ICompanyLicenseService> _companyLicenseService;
     private readonly Lazy<IExecutiveCompanyService> _executiveCompanyService;
     private readonly Lazy<ITranslatorSpecsService> _translatorSpecsService;
+    private readonly Lazy<IProjectAntennaService> _projectAntennaService;
 
     public ServiceWrapper(
         IRepositoryWrapper repository,
@@ -33,14 +34,14 @@ public class ServiceWrapper : IServiceWrapper
         AntennaValidator antennaValidator,
         EnergyResultValidator energyResultValidator,
         RoleValidator roleValidator,
+        ProjectAntennaValidator projectAntennaValidator,
         CompanyLicenseValidator licenseValidator,
         ExecutiveCompanyValidator executiveCompanyValidator)
     {
+        _projectAntennaService = new Lazy<IProjectAntennaService>(() => new ProjectAntennaService(repository, mapper, projectAntennaValidator));
         _roleService = new Lazy<IRoleService>(() => new RoleService(repository, mapper, roleValidator));
-        _companyLicenseService =
-            new Lazy<ICompanyLicenseService>(() => new CompanyLicenseService(repository, mapper, licenseValidator));
-        _executiveCompanyService = new Lazy<IExecutiveCompanyService>(() =>
-            new ExecutiveCompanyService(repository, mapper, executiveCompanyValidator));
+        _companyLicenseService = new Lazy<ICompanyLicenseService>(() => new CompanyLicenseService(repository, mapper, licenseValidator));
+        _executiveCompanyService = new Lazy<IExecutiveCompanyService>(() => new ExecutiveCompanyService(repository, mapper, executiveCompanyValidator));
         _districtService = new Lazy<IDistrictService>(() => new DistrictService(repository, mapper));
         _userService = new Lazy<IUserService>(() => new UserService(repository, mapper, userValidator));
         _tokenService = new Lazy<ITokenService>(() => new TokenService(repository));
@@ -50,13 +51,13 @@ public class ServiceWrapper : IServiceWrapper
         _townService = new Lazy<ITownService>(() => new TownService(repository,mapper));
         _antennaService = new Lazy<IAntennaService>(() => new AntennaService(repository, mapper, antennaValidator));
         _translatorSpecsService = new Lazy<ITranslatorSpecsService>(() => new TranslatorSpecsService(repository, mapper, translatorSpecsValidator));
-        _energyFlowService =
-            new Lazy<IEnergyFlowService>(() => new EnergyFlowService(energyResultValidator, mapper, repository));
+        _energyFlowService = new Lazy<IEnergyFlowService>(() => new EnergyFlowService(energyResultValidator, mapper, repository));
         _energyFlowService = new Lazy<IEnergyFlowService>(() => new EnergyFlowService(energyResultValidator, mapper, repository));
     }
         
 
     public IUserService UserService => _userService.Value;
+    public IProjectAntennaService ProjectAntennaService => _projectAntennaService.Value;
     public IProjectService ProjectService => _projectService.Value;
     public ITokenService TokenService => _tokenService.Value;
     public IAuthorizationService AuthorizationService => _authorizationService.Value;
