@@ -21,7 +21,7 @@ const projectAntennaService = {
     
     async getAllByProjectId(id) {
         try {
-            return await axios.get(`/api/getAllFromThisProject/projects-antenna/${id}`);
+            return await axios.get(`/api/projects-antenna/getAll/${id}`);
         }
         catch (error){
             console.log(error)

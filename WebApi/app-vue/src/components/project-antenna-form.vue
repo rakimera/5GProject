@@ -80,6 +80,7 @@ onBeforeMount(async () => {
 
   if (mode.value === "read") {
     const response = await projectAntennaService.getAllByProjectId(id);
+    console.log(response)
     Object.assign(dataSource, response.data.result);
   } else {
     isFormDisabled.value = false;

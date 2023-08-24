@@ -4,12 +4,14 @@ using Application.Models.Antennas;
 using Application.Models.Projects.ProjectAntennas;
 using AutoMapper;
 using DevExtreme.AspNet.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/projects-antenna")]
+
 public class ProjectAntennaController : Controller
 {
     private readonly IServiceWrapper _service;
@@ -36,7 +38,7 @@ public class ProjectAntennaController : Controller
         return Ok(loadResult);
     }
 
-    [HttpGet("getAllFromThisProject")]
+    [HttpGet("getAll/{id}")]
     public IActionResult GetAll(string id)
     {
         var baseResponse = _service.ProjectAntennaService.GetAllByProjectId(id);
