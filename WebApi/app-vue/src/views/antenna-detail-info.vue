@@ -17,92 +17,46 @@
         <dx-tab
             title="Данные антенны"
         >
-          <dx-item
-              data-field="model">
-            <dx-label :text="'Модель'"/>
-            <dx-required-rule message="Модель антенны должны быть заполнена"/>
-          </dx-item>
-          <dx-item
-              data-field="verticalSizeDiameter">
-            <dx-label :text="'Вертикальный размер(диаметр антенны)'"/>
-            <dx-required-rule message="Вертикальный размер(диаметр антенны) должнен быть заполнен"/>
-          </dx-item>
+          <antenna-form
+              :on-save-antenna="onSaveAntenna">
+          </antenna-form>
         </dx-tab>
         
         <dx-tab
             title="Создание передатчика"
         >
-          <dx-item
-              data-field="frequency">
-            <dx-label :text="'Частота'"/>
-            <dx-required-rule message="Частота передатчика должна быть заполнена"/>
-          </dx-item>
-          <dx-item
-              data-field="power">
-            <dx-label :text="'Мощность'"/>
-            <dx-required-rule message="Мощность передатчика должна быть заполнена"/>
-          </dx-item>
-          <dx-item
-              data-field="gain">
-            <dx-label :text="'Коэффициент усиления антенны'"/>
-            <dx-required-rule message="Коэффициент усиления антенны должен быть заполнен"/>
-          </dx-item>
-          
+          <translator-spec-form
+              :on-save-antenna="onSaveTranslatorSpec">
+            <dx-item
+                data-field="antennaId"
+                :visible="false"
+                >
+            </dx-item>
+          </translator-spec-form>
         </dx-tab>
-        
-        <dx-button-item>
-          <dx-button-options
-              width="100%"
-              type="default"
-              styling-mode="outlined"
-              template="Редактировать"
-              :on-click="onClickEditAntenna"
-              :visible="isFormDisabled"
-              :use-submit-behavior="true"
-          >
-          </dx-button-options>
-        </dx-button-item>
-        <dx-button-item>
-          <dx-button-options
-              width="100%"
-              type="success"
-              styling-mode="outlined"
-              :template="mode === 'create' ? 'Создать' : 'Сохранить изменения'"
-              :on-click="onClickSaveChanges"
-              :visible="!isFormDisabled"
-              :use-submit-behavior="true"
-          >
-          </dx-button-options>
-        </dx-button-item>
-      </dx-tabbed-item>>
-      
+      </dx-tabbed-item>
     </dx-form>
   </div>
 </template>
 <script setup>
 
 import {
+  DxItem,
   DxForm,
-  DxLabel,
-  DxButtonItem,
-  DxButtonOptions,
   DxTabbedItem,
   DxTabPanelOptions,
-  DxTab, DxItem
+  DxTab
 } from "devextreme-vue/form";
-import {
-  DxRequiredRule,
-} from 'devextreme-vue/validator';
 import {onBeforeMount, reactive, ref} from "vue";
 import antennaService from "@/api/antennaService";
-import {useRoute, useRouter} from "vue-router";
-import notify from "devextreme/ui/notify";
+import {useRoute} from "vue-router";
+import AntennaForm from "@/components/antenna-form.vue";
+import TranslatorSpecForm from "@/components/translatorSpec-form";
 
 const route = useRoute();
-const router = useRouter();
 let dataSource = reactive({});
-const routeParams = {name: "antenna_table"};
 let isFormDisabled = ref(true);
+let isTabDisabled = ref(true);
 let oid = route.params.id;
 const mode = route.params.mode;
 const pageAntennaDescription = ref("Подробно об антенне");
@@ -117,57 +71,15 @@ onBeforeMount(async () => {
     pageAntennaDescription.value = "Создание антенны"
   }
 })
-function onClickEditAntenna() {
-  isFormDisabled.value = false;
-}
-async function onClickSaveChanges() {
-  try {
-    const formInstance = formRef.value.instance;
-    const isFormValid = await formInstance.validate();
-    if (isFormValid.isValid === false) {
-      notify({
-        message: 'Данные не корректны',
-        position: {
-          my: 'center top',
-          at: 'center top',
-        },
-      }, 'warning', 1000);
-    }
-    else {
-      if (mode === "read") {
-        const responseUpdate = await antennaService.updateAntenna(dataSource);
-        if (responseUpdate.data.success) {
-          notify({
-            message: 'Антенна успешно отредактирована',
-            position: {
-              my: 'center top',
-              at: 'center top',
-            },
-          }, 'success', 1000);
-          isFormDisabled.value = true;
-        } else {
-          notify(responseUpdate.data.messages, 'error', 2000);
-        }
-      } else {
-        const response = await antennaService.createAntenna(dataSource);
-        if (response.data.success) {
-          notify({
-            message: 'Антенна успешно создана',
-            position: {
-              my: 'center top',
-              at: 'center top',
-            },
-          }, 'success', 1000);
-          await router.push(routeParams);
-        } else {
-          notify(response.data.messages, 'error', 2000);
-        }
-      }
-    }
 
-  } catch (error) {
-    console.error("Ошибка при сохранении изменений:", error);
-  }
+function onSaveAntenna() {
+  isTabDisabled.value = false;
+  isFormDisabled.value = true;
+}
+
+function onSaveTranslatorSpec() {
+  isTabDisabled.value = false;
+  isFormDisabled.value = true;
 }
 </script>
 <style scoped>

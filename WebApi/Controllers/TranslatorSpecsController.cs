@@ -21,7 +21,8 @@ public class TranslatorSpecsController : Controller
         _mapper = mapper;
     }
     
-    [HttpGet, Authorize(Roles = "Admin")]
+    // [HttpGet, Authorize(Roles = "Admin")]
+    [HttpGet,]
     public IActionResult Get()
     {
         var baseResponse = _service.TranslatorSpecsService.GetAll();
