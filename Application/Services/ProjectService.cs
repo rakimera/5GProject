@@ -15,12 +15,14 @@ public class ProjectService : IProjectService
     private readonly IRepositoryWrapper _repositoryWrapper;
     private readonly IMapper _mapper;
     private readonly ProjectValidator _projectValidator;
+    private readonly UpdateProjectValidator _updateProjectValidator;
 
-    public ProjectService(IRepositoryWrapper repositoryWrapper, IMapper mapper, ProjectValidator projectValidator)
+    public ProjectService(IRepositoryWrapper repositoryWrapper, IMapper mapper, ProjectValidator projectValidator, UpdateProjectValidator updateProjectValidator)
     {
         _repositoryWrapper = repositoryWrapper;
         _mapper = mapper;
         _projectValidator = projectValidator;
+        _updateProjectValidator = updateProjectValidator;
     }
 
     public BaseResponse<IEnumerable<ProjectDto>> GetAll()
@@ -51,13 +53,19 @@ public class ProjectService : IProjectService
     public async Task<BaseResponse<string>> CreateAsync(ProjectDto model, string creator)
     {
         User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Login.Equals(creator));
+        var projectStatus = await _repositoryWrapper.ProjectStatusRepository.GetByCondition(x => x.Status.Equals("Новый проект"));
+        var town = await _repositoryWrapper.TownRepository.GetByCondition(x => x.TownName == model.TownName);
+        var district = await _repositoryWrapper.DistrictRepository.GetByCondition(x => x.Id == town.DistrictId);
+
+        model.DistrictName = district.DistrictName;
         model.ExecutorId = user.Id.ToString();
-        model.ProjectStatusId = "c2d0c703-8864-4847-9d20-84200de0ebc4"; //заглушка
-        model.AddressId = "652ced75-bdbb-41af-a7b3-12548fa0f17a"; //заглушка
+        model.ProjectStatusId = projectStatus.Id.ToString();
+        model.ExecutiveCompanyId = user.ExecutiveCompanyId.ToString();
+        model.CreatedBy = creator;
+
         var result = await _projectValidator.ValidateAsync(model);
         if (result.IsValid)
         {
-            model.CreatedBy = creator;
             Project project = _mapper.Map<Project>(model);
             await _repositoryWrapper.ProjectRepository.CreateAsync(project);
             await _repositoryWrapper.Save();
@@ -94,8 +102,7 @@ public class ProjectService : IProjectService
 
     public async Task<BaseResponse<string>> Update(UpdateProjectDto model)
     {
-        var projectDto = _mapper.Map<ProjectDto>(model);
-        var result = await _projectValidator.ValidateAsync(projectDto);
+        var result = await _updateProjectValidator.ValidateAsync(model);
         if (!result.IsValid)
         {
             List<string> messages = _mapper.Map<List<string>>(result.Errors);
@@ -106,7 +113,7 @@ public class ProjectService : IProjectService
                 Success: false);
         }
 
-        Project project = await _repositoryWrapper.ProjectRepository.GetByCondition(x => x.Id.Equals(model.Id));
+        Project? project = await _repositoryWrapper.ProjectRepository.GetByCondition(x => x.Id.Equals(model.Id));
         if (project == null)
         {
             return new BaseResponse<string>(
@@ -114,7 +121,11 @@ public class ProjectService : IProjectService
                 Messages: new List<string> { "Проект не найден" },
                 Success: false);
         }
-
+        
+        var town = await _repositoryWrapper.TownRepository.GetByCondition(x => x.TownName == model.TownName);
+        var district = await _repositoryWrapper.DistrictRepository.GetByCondition(x => x.Id == town.DistrictId);
+        model.DistrictName = district.DistrictName;
+        
         _mapper.Map(model, project);
         project.LastModifiedBy = "Admin";
 

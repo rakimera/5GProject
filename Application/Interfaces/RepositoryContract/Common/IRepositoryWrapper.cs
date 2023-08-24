@@ -15,10 +15,10 @@ public interface IRepositoryWrapper
     IEnergyFlowRepository EnergyFlowRepository { get; }
     IRadiationZoneRepository RadiationZoneRepository { get; }
     IAntennaTranslatorRepository AntennaTranslatorRepository { get; }
+    IProjectStatusRepository ProjectStatusRepository { get; }
     IExecutiveCompanyRepository ExecutiveCompanyRepository { get; }
     IBiohazardRadiusRepository BiohazardRadiusRepository { get; }
     IProjectAntennaRepository ProjectAntennaRepository { get; }
-    IProjectStatusRepository ProjectStatusRepository { get; }
     ISanPinDockRepository SanPinDockRepository { get; }
     ISummaryBiohazardRadiusRepository SummaryBiohazardRadiusRepository { get; }
     ITotalFluxDensityRepository TotalFluxDensityRepository { get; }

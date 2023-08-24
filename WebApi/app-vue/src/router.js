@@ -15,6 +15,8 @@ import GetAllAntennaePage from "@/views/get-all-antennae-page";
 import ContrAgentDetail from '@/views/contrAgent-detail-info.vue';
 import Roles from '@/views/get-all-roles-page.vue'
 import AntennaDetail from "@/views/antenna-detail-info";
+import ProjectDetail from "@/views/project-detail-info.vue";
+import ProjectJournal from "@/views/get-all-projects.vue";
 import ExecutiveCompaniesJournal from "@/views/get-all-executiveCompanies-page.vue";
 import ExecutiveCompanyDetail from '@/views/executiveCompany-detail-info.vue';
 
@@ -43,22 +45,22 @@ const router = new createRouter({
             component: Profile
         },
         {
-            path: "/projects",
-            name: "projects",
+            path: '/projects',
+            name: 'projects',
             meta: {
                 requiresAuth: true,
                 layout: defaultLayout
             },
-            component: Tasks
+            component: ProjectJournal
         },
         {
-            path: "/create-projects",
-            name: "create-projects",
+            path: '/project/:mode/:id?',
+            name: 'projectDetail',
             meta: {
                 requiresAuth: true,
                 layout: defaultLayout
             },
-            component: CreateProject
+            component: ProjectDetail
         },
         {
             path: "/login",

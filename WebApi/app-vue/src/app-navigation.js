@@ -37,10 +37,6 @@ export default [
             {
                 text: "Проекты",
                 path: "/projects"
-            },
-            {
-                text: "Новый проект",
-                path: "/create-projects"
             }
         ]
     },

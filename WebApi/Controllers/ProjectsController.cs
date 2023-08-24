@@ -2,7 +2,6 @@ using Application.Interfaces;
 using Application.Models.Projects;
 using AutoMapper;
 using DevExtreme.AspNet.Data;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -28,7 +27,7 @@ public class ProjectsController : Controller
             return Ok(baseResponse);
         return NotFound(baseResponse);
     }
-    [HttpGet("index"), Authorize(Roles = "Admin")]
+    [HttpGet("index")/*, Authorize(Roles = "Admin")*/]
     public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
     {
         var loadResult = await _service.ProjectService.GetLoadResult(loadOptions);

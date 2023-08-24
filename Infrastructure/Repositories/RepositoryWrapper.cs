@@ -1,6 +1,5 @@
 using Application.Interfaces.RepositoryContract;
 using Application.Interfaces.RepositoryContract.Common;
-using Domain.Entities;
 using Infrastructure.Persistence.DataContext;
 using Infrastructure.Services;
 
@@ -269,7 +268,7 @@ public class RepositoryWrapper : IRepositoryWrapper
             return _antennaRepository;
         }
     }
-
+    
     public ITranslatorSpecsRepository TranslatorSpecsRepository
     {
         get
@@ -295,6 +294,7 @@ public class RepositoryWrapper : IRepositoryWrapper
             return _userRoleRepository;
         }
     }
+
 
     public IEnergyFlowRepository EnergyFlowRepository
     {
