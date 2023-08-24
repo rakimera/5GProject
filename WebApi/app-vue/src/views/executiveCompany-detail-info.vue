@@ -101,7 +101,7 @@ const route = useRoute();
 const router = useRouter();
 let dataSource = reactive({});
 dataSource.licenseDateOfIssue = null;
-const routeParams = {name: "Журнал компании"};
+const routeParams = {name: "ExecutiveCompaniesJournal"};
 let isFormDisabled = ref(true);
 let oid = route.params.id;
 const mode = route.params.mode;
@@ -125,16 +125,25 @@ function onClickEditExecutiveCompany() {
 
 async function onClickSaveChanges() {
   try {
-    if (dataSource.licenseDateOfIssue !== null){
+    if (dataSource.licenseDateOfIssue !== null) {
       const licenseDate = new Date(dataSource.licenseDateOfIssue);
       const currentDate = new Date();
 
-      const maxDate = new Date(currentDate);
-      maxDate.setFullYear(maxDate.getFullYear() + 10);
+      if (licenseDate > currentDate) {
+        notify({
+          message: "Дата лицензии не может быть в будущем",
+          position: {
+            my: "center top",
+            at: "center top",
+          },
+        }, "warning", 2000);
+        return;
+      }
+
       const minDate = new Date(currentDate);
       minDate.setFullYear(minDate.getFullYear() - 20);
 
-      if (licenseDate > maxDate || licenseDate < minDate) {
+      if (licenseDate < minDate) {
         notify({
           message: "Дата лицензии должна быть в течение последних 20 лет",
           position: {
