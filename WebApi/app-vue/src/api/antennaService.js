@@ -5,8 +5,7 @@ const antennaService = {
     async getAntennae() {
         try {
             return await axios.get(`/api/antennae`);
-        }
-        catch (error){
+        } catch (error) {
             console.log(error)
         }
     },
@@ -32,8 +31,7 @@ const antennaService = {
     async updateAntenna(antenna) {
         try {
             return await axios.put('/api/antennae', antenna)
-        }
-        catch (error){
+        } catch (error) {
             console.log(error)
         }
     },
@@ -41,8 +39,7 @@ const antennaService = {
     async deleteAntenna(oid) {
         try {
             return await axios.delete(`/api/antennae/${oid}`)
-        }
-        catch (error){
+        } catch (error) {
             console.log(error)
         }
 

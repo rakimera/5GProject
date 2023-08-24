@@ -125,8 +125,13 @@ namespace Application.Services
                     Messages: new List<string> { "Лицензия не найдена" },
                     Success: false);
             }
-
+            
             CompanyLicenseDto existingLicenseDto = getLicenseResponse.Result;
+            if (model.DateOfIssue == DateTime.MinValue)
+            {
+                model.DateOfIssue = existingLicenseDto.DateOfIssue;
+            }
+
             _mapper.Map(model, existingLicenseDto);
             CompanyLicense license = await _repositoryWrapper.CompanyLicenseRepository
                 .GetByCondition(x => x.Id.Equals(existingLicenseDto.Id));

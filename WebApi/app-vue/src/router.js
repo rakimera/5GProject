@@ -11,8 +11,6 @@ import UserDetail from '@/views/users_detail_info.vue';
 import ContrAgentDetail from '@/views/contrAgent-detail-info.vue';
 import Roles from '@/views/get-all-roles-page.vue'
 import CompanyLicense from "@/views/get-all-companyLicense-page.vue";
-import ProjectDetail from '@/views/project-detail-info.vue';
-import ProjectJournal from '@/views/get-all-projects.vue';
 import GetAllAntennaePage from "@/views/get-all-antennae-page";
 import AntennaDetail from "@/views/antenna-detail-info";
 

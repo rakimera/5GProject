@@ -35,7 +35,7 @@ public class RepositoryWrapper : IRepositoryWrapper
     {
         _db = db;
     }
-    
+
     public IAntennaTranslatorRepository AntennaTranslatorRepository
     {
         get

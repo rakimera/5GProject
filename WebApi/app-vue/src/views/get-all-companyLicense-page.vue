@@ -18,6 +18,7 @@
         :allow-deleting="true"
         :allow-adding="true"
         mode="row"
+        :texts="{confirmDeleteMessage: 'Вы уверены, что хотите удалить эту запись?'}"
     />
   </dx-data-grid>
 </template>
@@ -55,11 +56,9 @@ const store = new CustomStore({
   },
   async update(oid, values) {
     const updateCompanyLicenseDto = {
-      id: oid,
-      number: values.number,
-      dateOfIssue: values.dateOfIssue
+      ...values,
+      id: oid
     };
-
     console.log(updateCompanyLicenseDto)
     const baseResponse = await companyLicenseService.updateLicense(updateCompanyLicenseDto);
     await dataSource.value.load();

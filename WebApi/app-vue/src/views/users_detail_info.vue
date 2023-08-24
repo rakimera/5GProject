@@ -136,6 +136,7 @@ import notify from "devextreme/ui/notify";
 import {DxTagBox} from "devextreme-vue/tag-box";
 import roleService from "@/api/roleService";
 import DxSelectBox from "devextreme-vue/select-box";
+import executiveCompanyService from "@/api/executiveCompanyService";
 
 const route = useRoute();
 const router = useRouter();
@@ -153,20 +154,18 @@ const passwordPattern = ref(
 );
 const roleOptions = ref([]);
 const isEditMode = ref(false);
-const executiveCompanies = ref([
-  { id: 'b8e84c31-9baf-43f5-8ee5-3f044628eee5', companyName: 'gregreg1' },
-  { id: 'd8c6d9f6-2ed7-4b0f-8d83-024350bf4aab', companyName: 'Company 2' },
-  { id: 'd8c6d9f6-2ed7-4b0f-8d83-024350bf4aab', companyName: 'Company 3' },
-  { id: 'd8c6d9f6-2ed7-4b0f-8d83-024350bf4aab', companyName: 'Company 4' }
-]);
+const executiveCompanies = ref([]);
 
 onBeforeMount(async () => {
-  const response = await roleService.getRoles();
-  roleOptions.value = response.data.result;
+  const roleResponse = await roleService.getRoles();
+  const executiveCompanyResponse = await executiveCompanyService.getExecutiveCompanies();
+  roleOptions.value = roleResponse.data.result;
+  executiveCompanies.value = executiveCompanyResponse.data.result;
   if (mode === "read") {
     const response = await userService.getUser(oid);
     Object.assign(formData, response.data.result);
     formData.roles = response.data.result.roles;
+    formData.executiveCompanyId = response.data.result.executiveCompanyId;
     console.log(formData.roles)
     isEditMode.value = false;
   } else {
