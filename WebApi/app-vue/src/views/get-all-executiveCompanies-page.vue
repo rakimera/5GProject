@@ -28,7 +28,7 @@
     />
     <dx-column
         data-field="bin"
-        caption="БИН> компании"
+        caption="БИН компании"
         data-type="string"
     />
     <dx-paging :page-size="5"/>
@@ -56,7 +56,7 @@ import {
   DxColumn,
   DxPager,
   DxPaging,
-  DxEditing,
+  DxEditing
 } from "devextreme-vue/data-grid";
 import CustomStore from "devextreme/data/custom_store";
 import "whatwg-fetch";
@@ -70,6 +70,8 @@ const dataSource = new CustomStore({
   key: 'id',
 
   load: async (loadOptions) => {
+    console.log("loadOptions")
+    console.log(loadOptions)
     return await executiveCompanyService.getAllExecutiveCompanies(loadOptions);
   },
   remove: async (oid) => {

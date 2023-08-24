@@ -125,23 +125,25 @@ function onClickEditExecutiveCompany() {
 
 async function onClickSaveChanges() {
   try {
-    const licenseDate = new Date(dataSource.licenseDateOfIssue);
-    const currentDate = new Date();
+    if (dataSource.licenseDateOfIssue !== null){
+      const licenseDate = new Date(dataSource.licenseDateOfIssue);
+      const currentDate = new Date();
 
-    const maxDate = new Date(currentDate);
-    maxDate.setFullYear(maxDate.getFullYear() + 10);
-    const minDate = new Date(currentDate);
-    minDate.setFullYear(minDate.getFullYear() - 20);
+      const maxDate = new Date(currentDate);
+      maxDate.setFullYear(maxDate.getFullYear() + 10);
+      const minDate = new Date(currentDate);
+      minDate.setFullYear(minDate.getFullYear() - 20);
 
-    if (licenseDate > maxDate || licenseDate < minDate) {
-      notify({
-        message: "Дата лицензии должна быть в течение последних 20 лет",
-        position: {
-          my: "center top",
-          at: "center top",
-        },
-      }, "warning", 2000);
-      return;
+      if (licenseDate > maxDate || licenseDate < minDate) {
+        notify({
+          message: "Дата лицензии должна быть в течение последних 20 лет",
+          position: {
+            my: "center top",
+            at: "center top",
+          },
+        }, "warning", 2000);
+        return;
+      }
     }
 
     const formInstance = formRef.value.instance;
@@ -170,9 +172,6 @@ async function onClickSaveChanges() {
           notify(responseUpdate.data.messages, 'error', 2000);
         }
       } else {
-        console.log("=====================")
-        console.log(dataSource)
-        console.log("=====================")
         const response = await executiveCompanyService.createExecutiveCompany(dataSource);
         if (response.data.success) {
           notify({
