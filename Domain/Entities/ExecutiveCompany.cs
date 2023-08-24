@@ -9,4 +9,5 @@ public class ExecutiveCompany : BaseEntity
     public DateTime? LicenseDateOfIssue { get; set; }
     public string BIN { get; set; }
     public string CompanyName { get; set; }
+    public required string TownName { get; set; }
 }
