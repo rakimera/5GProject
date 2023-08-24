@@ -33,6 +33,7 @@
             v-model="dataSource.licenseDateOfIssue"
             :input-attr="{ 'aria-label': 'Date' }"
             type="date"
+            :read-only="isFormDisabled"
         />
       </dx-simple-item>
 
