@@ -1,6 +1,5 @@
 <template>
   <div>
-    <div class="long-title"><h3>Personal details</h3></div>
     <div id="form-container">
       <dx-form
           id="project-antenna-form"
@@ -10,53 +9,54 @@
           label-location="top"
           :read-only="isFormDisabled"
           :show-colon-after-label="true"
-          :show-validation-summary="true"
-      >
+          :show-validation-summary="true">
         <dx-group-item
-            caption="Phones"
-            name="phones-container"
-        >
-          <dx-group-item
-              item-type="group"
-              name="phones"
-          >
-            <dx-simple-item
+                :caption="'Антенна ' + (index + 1)"
+                name="phones-container"
                 v-for="(projectAntennaDto, index) in antennaOptions"
                 :key="'projectAntennaDto' + (index + 1)"
-                :data-field="'projectAntennaDto[' + index + ']'"
-                editor-type="dxSelectBox"
-                :editor-options="{ 
+        >
+            <dx-group-item
+                    item-type="group"
+                    name="phones"
+            >
+                <dx-simple-item
+                        :itemid="antennas"
+                        :data-field="'projectAntennaDto[' + index + ']'"
+                        editor-type="dxSelectBox"
+                        :editor-options="{ 
                         placeholder: 'Выберите антенну', 
                         items: antennas, 
                         displayExpr: 'model', 
                         valueExpr: 'id',
                         labelMode: 'floating',
+                        onValueChanged: OnSelectAntenna,
                         label: 'Антенна ' + (index + 1)}"
-            >
-              <dx-label :text="'Антенна ' + (index + 1)"/>
-              <dx-simple-item
-                  v-for="(translatorSpecsDto, index) in translatorOptions"
-                  :key="'antennaTranslatorDto' + (index + 1)"
-                  :data-field="'antennaTranslatorDto[' + index + ']'"
-                  editor-type="dxSelectBox"
-                  :editor-options="{ 
-                        placeholder: 'Выберите транслятор', 
+                >
+                    <dx-label :text="'Антенна ' + (index + 1)"/>
+                    <dx-simple-item
+                            v-for="(translatorSpecsDto, index) in translatorOptions"
+                            :key="'antennaTranslatorDto' + (index + 1)"
+                            :data-field="'antennaTranslatorDto[' + index + ']'"
+                            editor-type="dxSelectBox"
+                            :editor-options="{ 
+                        placeholder: 'Выберите частоту', 
                         items: antennas, 
                         displayExpr: 'frequency', 
                         valueExpr: 'id',
                         labelMode: 'floating',
-                        label: 'Транслятор ' + (index + 1)}"
-              >
-                <dx-label :text="'Антенна ' + (index + 1)"/>
-              </dx-simple-item>
-            </dx-simple-item>
-          </dx-group-item>
-          <dx-button-item
-              :button-options="addAntennaButtonOptions"
-              css-class="add-antenna-button"
-              horizontal-alignment="left"
-          />
+                        label: 'Частота антенны' + (index + 1)}"
+                    >
+                        <dx-label :text="'Частота антенны ' + (index + 1)"/>
+                    </dx-simple-item>
+                </dx-simple-item>
+            </dx-group-item>
         </dx-group-item>
+          <dx-button-item
+                  :button-options="addAntennaButtonOptions"
+                  css-class="add-antenna-button"
+                  horizontal-alignment="left"
+          />
         <dx-button-item>
           <dx-button-options
               width="100%"
@@ -91,38 +91,42 @@ import {
   DxSimpleItem,
   DxGroupItem,
   DxButtonItem,
-  DxLabel, DxButtonOptions,
+  DxLabel, DxButtonOptions
 } from 'devextreme-vue/form';
-import {onBeforeMount, reactive, ref} from "vue";
+import {computed, onBeforeMount, reactive, ref} from "vue";
 import antennaService from "@/api/antennaService";
 import projectAntennaService from "@/api/projectAntennaService";
 import {useRoute} from "vue-router";
 import notify from "devextreme/ui/notify";
+import translatorService from "@/api/translatorService";
 
 let isFormDisabled = ref(true);
 const formRef = ref(null);
 const route = useRoute();
 let id = route.params.id;
 const mode = ref(route.params.mode);
-let dataSource = reactive({});
+let dataSource = reactive([]);
 const antennas = ref([]);
 const translators = ref([]);
-const antennaOptions = ref(getAntennasOptions(antennas.value));
+const antennaOptions = ref(getAntennasOptions(dataSource));
 const translatorOptions = ref(getAntennasOptions(translators.value));
-const addAntennaButtonOptions = {
-  icon: 'add',
-  text: 'добавить антенну',
-  onClick: () => {
-    antennas.value.push('');
-    antennaOptions.value = getAntennasOptions(antennas.value);
-  },
-};
+const addAntennaButtonOptions = computed(() =>{
+    return {
+        icon: 'add',
+        text: 'добавить антенну',
+        disabled: isFormDisabled.value,
+        onClick: () => {
+            dataSource.push('');
+            antennaOptions.value = getAntennasOptions(dataSource);
+        },
+    };
+});
 
 onBeforeMount(async () => {
   const response = await antennaService.getAntennae();
   antennas.value = response.data.result;
   
-  const translatorsResponse = await translatorService.getAntennae();
+  const translatorsResponse = await translatorService.getTranslators();
   translators.value = translatorsResponse.data.result;
 
   if (mode.value === "read") {
@@ -134,20 +138,22 @@ onBeforeMount(async () => {
   }
 })
 
+function OnSelectAntenna(e){
+    console.log(e.value)
+}
+
 function onClickEditProject() {
   isFormDisabled.value = false;
 }
-function getAntennasOptions(antennas) {
+function getAntennasOptions(dataSource) {
   const options = [];
-  for (let i = 0; i < antennas.length; i += 1) {
+  for (let i = 0; i < dataSource.length; i += 1) {
     options.push(generateNewAntennaOptions(i));
   }
   return options;
 }
 function generateNewAntennaOptions(index) {
   return {
-    mask: '+1 (X00) 000-0000',
-    maskRules: { X: /[01-9]/ },
     buttons: [{
       name: 'trash',
       location: 'after',
@@ -201,8 +207,6 @@ async function onClickSaveChanges() {
               at: 'center top',
             },
           }, 'success', 1000);
-          await router.push({name: 'projectDetail', params: {mode: "read", id: response.data.result}});
-          props.onSaveProject()
         } else {
           notify({
             message: response.data.messages,
