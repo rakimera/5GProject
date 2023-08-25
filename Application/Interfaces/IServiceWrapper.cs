@@ -13,4 +13,5 @@ public interface IServiceWrapper
     ITranslatorSpecsService TranslatorSpecsService { get; }
     IEnergyFlowService EnergyFlowService { get; }
     IRoleService RoleService { get; }
+    IRadiationZoneService RadiationZoneService { get; }
 }

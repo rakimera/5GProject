@@ -18,6 +18,7 @@ public class ServiceWrapper : IServiceWrapper
     private readonly Lazy<IEnergyFlowService> _energyFlowService;
     private readonly Lazy<IRoleService> _roleService;
     private readonly Lazy<ITranslatorSpecsService> _translatorSpecsService;
+    private readonly Lazy<IRadiationZoneService> _radiationZoneService;
 
     public ServiceWrapper(
         IRepositoryWrapper repository,
@@ -29,7 +30,8 @@ public class ServiceWrapper : IServiceWrapper
         TranslatorSpecsValidator translatorSpecsValidator,
         AntennaValidator antennaValidator,
         EnergyResultValidator energyResultValidator,
-        RoleValidator roleValidator)
+        RoleValidator roleValidator,
+        RadiationZoneValidator radiationZoneValidator)
     {
         _roleService = new Lazy<IRoleService>(() => new RoleService(repository, mapper, roleValidator));
         _districtService = new Lazy<IDistrictService>(() => new DistrictService(repository, mapper));
@@ -45,6 +47,8 @@ public class ServiceWrapper : IServiceWrapper
         _translatorSpecsService = new Lazy<ITranslatorSpecsService>(() => new TranslatorSpecsService(repository, mapper, translatorSpecsValidator));
         _energyFlowService =
             new Lazy<IEnergyFlowService>(() => new EnergyFlowService(energyResultValidator, mapper, repository));
+        _radiationZoneService =
+            new Lazy<IRadiationZoneService>(() => new RadiationZoneService(repository, mapper, radiationZoneValidator));
     }
 
     public IUserService UserService => _userService.Value;
@@ -58,4 +62,5 @@ public class ServiceWrapper : IServiceWrapper
     public ITranslatorSpecsService TranslatorSpecsService => _translatorSpecsService.Value;
     public IEnergyFlowService EnergyFlowService => _energyFlowService.Value;
     public IRoleService RoleService => _roleService.Value;
+    public IRadiationZoneService RadiationZoneService => _radiationZoneService.Value;
 }

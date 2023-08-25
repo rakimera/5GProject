@@ -3,6 +3,7 @@ using Application.Common;
 using Application.Interfaces;
 using Application.Services;
 using Application.Validation;
+using Domain.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,7 @@ public static class ConfigureService
         services.AddScoped<TranslatorSpecsValidator>();
         services.AddScoped<EnergyResultValidator>();
         services.AddScoped<RoleValidator>();
+        services.AddScoped<RadiationZoneValidator>();
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         
         services.AddAuthentication(opt => {

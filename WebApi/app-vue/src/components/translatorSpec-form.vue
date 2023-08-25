@@ -43,7 +43,18 @@
           :antenna-id="antennaIdProp">
       </antenna-form>
     </dx-item>
-    
+    <dx-button-item>
+      <dx-button-options
+          width="20%"
+          type="default"
+          styling-mode="outlined"
+          :template="'Создать 360'"
+          :on-click="onCreate360"
+          :visible="!isFormDisabled"
+          :use-submit-behavior="true"
+      >
+      </dx-button-options>
+    </dx-button-item>
     <dx-button-item>
       <dx-button-options
           width="100%"
@@ -112,6 +123,15 @@ onBeforeMount(async () => {
     pageTranslatorSpecDescription.value = "Создание передатчика"
   }
 })
+
+const onCreate360 = async () => {
+  try {
+    await router.push({name: 'radiationZone', params: {mode: "create", id: null}});
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 function onClickEditTranslatorSpec() {
   isFormDisabled.value = false;
 }
