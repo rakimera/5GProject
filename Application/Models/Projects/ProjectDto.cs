@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Application.Models.Antennae;
 using Application.Models.ContrAgents;
 using Application.Models.ExecutiveCompany;
+using Application.Models.Projects.ProjectAntennas;
 using Application.Models.Users;
 using Domain.Common;
 using Domain.Entities;
