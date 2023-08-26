@@ -21,6 +21,7 @@ public class ServiceWrapper : IServiceWrapper
     private readonly Lazy<IExecutiveCompanyService> _executiveCompanyService;
     private readonly Lazy<ITranslatorSpecsService> _translatorSpecsService;
     private readonly Lazy<IProjectAntennaService> _projectAntennaService;
+    private readonly Lazy<IAntennaTranslatorService> _antennaTranslatorService;
 
     public ServiceWrapper(
         IRepositoryWrapper repository,
@@ -32,6 +33,7 @@ public class ServiceWrapper : IServiceWrapper
         ITokenService tokenService,
         TranslatorSpecsValidator translatorSpecsValidator,
         AntennaValidator antennaValidator,
+        AntennaTranslatorValidator antennaTranslatorValidator,
         EnergyResultValidator energyResultValidator,
         RoleValidator roleValidator,
         ProjectAntennaValidator projectAntennaValidator,
@@ -49,6 +51,7 @@ public class ServiceWrapper : IServiceWrapper
         _authorizationService = new Lazy<IAuthorizationService>(()=> new AuthorizationService(repository,tokenService));
         _contrAgentService = new Lazy<IContrAgentService>(() => new ContrAgentService(repository, mapper, contrAgentValidator));
         _townService = new Lazy<ITownService>(() => new TownService(repository,mapper));
+        _antennaTranslatorService = new Lazy<IAntennaTranslatorService>(() => new AntennaTranslatorService(mapper, repository, antennaTranslatorValidator));
         _antennaService = new Lazy<IAntennaService>(() => new AntennaService(repository, mapper, antennaValidator));
         _translatorSpecsService = new Lazy<ITranslatorSpecsService>(() => new TranslatorSpecsService(repository, mapper, translatorSpecsValidator));
         _energyFlowService = new Lazy<IEnergyFlowService>(() => new EnergyFlowService(energyResultValidator, mapper, repository));
@@ -70,4 +73,5 @@ public class ServiceWrapper : IServiceWrapper
     public IRoleService RoleService => _roleService.Value;
     public ICompanyLicenseService CompanyLicenseService => _companyLicenseService.Value;
     public IExecutiveCompanyService ExecutiveCompanyService => _executiveCompanyService.Value;
+    public IAntennaTranslatorService AntennaTranslatorService => _antennaTranslatorService.Value;
 }

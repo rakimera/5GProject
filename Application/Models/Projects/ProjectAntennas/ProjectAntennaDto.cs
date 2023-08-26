@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Application.Models.Antennae;
+using Application.Models.AntennaTranslator;
 using Domain.Common;
 
 namespace Application.Models.Projects.ProjectAntennas;
@@ -29,4 +30,7 @@ public class ProjectAntennaDto : BaseEntity
     
     [property: JsonPropertyName("projectId")]
     public Guid ProjectId { get; set; }
+    
+    [property: JsonPropertyName("antennaTranslators")]
+    public List<AntennaTranslatorDto>? AntennaTranslators { get; set; }
 }

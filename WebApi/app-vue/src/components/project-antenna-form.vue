@@ -2,90 +2,74 @@
   <div>
     <div id="form-container">
       <dx-form
-          id="project-antenna-form"
-          ref="formRef"
-          :col-count="1"
-          :form-data="dataSource"
-          label-location="top"
-          :read-only="isFormDisabled"
-          :show-colon-after-label="true"
-          :show-validation-summary="true">
-        <dx-group-item
-                :caption="'Антенна ' + (index + 1)"
-                name="phones-container"
-                v-for="(projectAntennaDto, index) in antennaOptions"
-                :key="'projectAntennaDto' + (index + 1)"
-        >
-            <dx-group-item
-                    item-type="group"
-                    name="phones"
-            >
-                <dx-simple-item
-                        :itemid="antennas"
-                        :data-field="'projectAntennaDto[' + index + ']'"
-                        editor-type="dxSelectBox"
-                        :editor-options="{ 
-                        placeholder: 'Выберите антенну', 
-                        items: antennas, 
-                        displayExpr: 'model', 
-                        valueExpr: 'id',
-                        labelMode: 'floating',
-                        onValueChanged: OnSelectAntenna,
-                        label: 'Антенна ' + (index + 1)}"
-                >
-                    <dx-label :text="'Антенна ' + (index + 1)"/>
-                    <dx-simple-item
-                            v-for="(translatorSpecsDto, index) in translatorOptions"
-                            :key="'antennaTranslatorDto' + (index + 1)"
-                            :data-field="'antennaTranslatorDto[' + index + ']'"
-                            editor-type="dxSelectBox"
-                            :editor-options="{ 
-                        placeholder: 'Выберите частоту', 
-                        items: translators, 
-                        displayExpr: 'frequency', 
-                        valueExpr: 'id',
-                        labelMode: 'floating',
-                        label: 'Частота антенны' + (index + 1)}"
-                    >
-                        <dx-label :text="'Частота антенны ' + (index + 1)"/>
-                    </dx-simple-item>
-                    <dx-button-item
-                            :button-options="addATranslatorButtonOptions"
-                            css-class="add-antenna-button"
-                            horizontal-alignment="left"
-                    />
-                </dx-simple-item>
-            </dx-group-item>
-        </dx-group-item>
+        id="project-antenna-form"
+        ref="formRef"
+        :col-count="1"
+        :form-data="dataSource"
+        label-location="top"
+        :read-only="isFormDisabled"
+        :show-colon-after-label="true"
+        :show-validation-summary="true">
+          <dx-group-item
+                  :caption="'Антенна ' + (index + 1)"
+                  name="phones-container"
+                  v-for="(projectAntennaDto, index) in antennaOptions"
+                  :key="'projectAntennaDto' + (index + 1)"
+          >
+              <dx-simple-item
+                      :itemid="antennas"
+                      :data-field="'projectAntennaDto[' + index + ']'"
+                      editor-type="dxSelectBox"
+                      :editor-options="{ 
+                    placeholder: 'Выберите антенну', 
+                    items: antennas, 
+                    displayExpr: 'model', 
+                    valueExpr: 'id',
+                    labelMode: 'floating',
+                    onValueChanged: OnSelectAntenna,
+                    label: 'Антенна ' + (index + 1)}"
+              >
+                  <dx-label :text="'Антенна ' + (index + 1)"/>
+              </dx-simple-item>
+              <dx-group-item
+                      item-type="group"
+                      name="phones"
+              >
+                  <antenna-translator-form
+                          :selectedAntennaId="selectedAntennaId">
+                  </antenna-translator-form>
+                  
+              </dx-group-item>
+          </dx-group-item>
           <dx-button-item
                   :button-options="addAntennaButtonOptions"
                   css-class="add-antenna-button"
                   horizontal-alignment="left"
           />
-        <dx-button-item>
-          <dx-button-options
-              width="100%"
-              type="success"
-              styling-mode="outlined"
-              :template="mode === 'create' ? 'Создать и продолжить' : 'Сохранить изменения'"
-              :on-click="onClickSaveChanges"
-              :visible="!isFormDisabled"
-              :use-submit-behavior="true"
-          >
-          </dx-button-options>
-        </dx-button-item>
-        <dx-button-item>
-          <dx-button-options
-              width="100%"
-              type="default"
-              styling-mode="outlined"
-              template="Редактировать"
-              :on-click="onClickEditProject"
-              :visible="isFormDisabled"
-              :use-submit-behavior="true"
-          >
-          </dx-button-options>
-        </dx-button-item>
+              <dx-button-item>
+                  <dx-button-options
+                          width="100%"
+                          type="success"
+                          styling-mode="outlined"
+                          :template="mode === 'create' ? 'Создать и продолжить' : 'Сохранить изменения'"
+                          :on-click="onClickSaveChanges"
+                          :visible="!isFormDisabled"
+                          :use-submit-behavior="true"
+                  >
+                  </dx-button-options>
+              </dx-button-item>
+              <dx-button-item>
+                  <dx-button-options
+                          width="100%"
+                          type="default"
+                          styling-mode="outlined"
+                          template="Редактировать"
+                          :on-click="onClickEditProject"
+                          :visible="isFormDisabled"
+                          :use-submit-behavior="true"
+                  >
+                  </dx-button-options>
+              </dx-button-item>
       </dx-form>
     </div>
   </div>
@@ -104,7 +88,9 @@ import projectAntennaService from "@/api/projectAntennaService";
 import {useRoute} from "vue-router";
 import notify from "devextreme/ui/notify";
 import translatorService from "@/api/translatorService";
+import AntennaTranslatorForm from "@/components/antenna-translator-form.vue";
 
+let selectedAntennaId = ref();
 let isFormDisabled = ref(true);
 const formRef = ref(null);
 const route = useRoute();
@@ -114,22 +100,10 @@ let dataSource = reactive([]);
 const antennas = ref([]);
 const translators = ref([]);
 const antennaOptions = ref(getAntennasOptions(dataSource));
-const translatorOptions = ref(getTranslatorOptions(translators.value));
 const addAntennaButtonOptions = computed(() =>{
     return {
         icon: 'add',
         text: 'добавить антенну',
-        disabled: isFormDisabled.value,
-        onClick: () => {
-            dataSource.push('');
-            antennaOptions.value = getAntennasOptions(dataSource);
-        },
-    };
-});
-const addATranslatorButtonOptions = computed(() =>{
-    return {
-        icon: 'add',
-        text: 'добавить частоту',
         disabled: isFormDisabled.value,
         onClick: () => {
             dataSource.push('');
@@ -155,7 +129,8 @@ onBeforeMount(async () => {
 })
 
 function OnSelectAntenna(e){
-    console.log(e.value)
+    selectedAntennaId.value = e.value
+    emit('selectedAntennaChanged', e.value);
 }
 
 function onClickEditProject() {
@@ -169,30 +144,6 @@ function getAntennasOptions(dataSource) {
   return options;
 }
 
-function getTranslatorOptions(dataSource) {
-    const options = [];
-    for (let i = 0; i < dataSource.length; i += 1) {
-        options.push(generateNewTranslatorOptions(i));
-    }
-    return options;
-}
-
-function generateNewTranslatorOptions(index) {
-    return {
-        buttons: [{
-            name: 'trash',
-            location: 'after',
-            options: {
-                stylingMode: 'text',
-                icon: 'trash',
-                onClick: () => {
-                    translators.value.splice(index, 1);
-                    translatorOptions.value = getTranslatorOptions(translators.value);
-                },
-            },
-        }],
-    };
-}
 function generateNewAntennaOptions(index) {
   return {
     buttons: [{

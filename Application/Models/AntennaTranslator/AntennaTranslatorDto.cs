@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Application.Models.Antennae;
 using Application.Models.EnergyResult;
 using Application.Models.TranslatorSpecs;
@@ -9,7 +10,9 @@ public class AntennaTranslatorDto
     public Guid AntennaId { get; set; }
     public AntennaDto Antenna { get; set; }
     public Guid TranslatorSpecsId { get; set; }
-    public TranslatorSpecsDto TranslatorSpecs { get; set; }
+    
+    [property: JsonPropertyName("translatorSpecs")]
+    public TranslatorSpecsDto? TranslatorSpecs { get; set; }
     public decimal Power { get; set; }
     public Guid TranslatorTypeId { get; set; }
     public TranslatorTypeDto TranslatorType { get; set; }

@@ -1,6 +1,5 @@
 using Application.Interfaces;
-using Application.Models.Antennae;
-using Application.Models.Projects.ProjectAntennas;
+using Application.Models.AntennaTranslator;
 using AutoMapper;
 using DevExtreme.AspNet.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -8,14 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApi.Controllers;
 
 [ApiController]
-[Route("api/projects-antenna")]
-
-public class ProjectAntennaController : Controller
+[Route("api/antenna-translator")]
+public class AntennaTranslatorsController : Controller
 {
+
     private readonly IServiceWrapper _service;
     private readonly IMapper _mapper;
 
-    public ProjectAntennaController(IServiceWrapper service, IMapper mapper)
+    public AntennaTranslatorsController(IServiceWrapper service, IMapper mapper)
     {
         _service = service;
         _mapper = mapper;
@@ -24,7 +23,7 @@ public class ProjectAntennaController : Controller
     [HttpGet]
     public IActionResult Get()
     {
-        var baseResponse = _service.ProjectAntennaService.GetAll();
+        var baseResponse = _service.AntennaTranslatorService.GetAll();
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
@@ -32,14 +31,14 @@ public class ProjectAntennaController : Controller
     [HttpGet("index")]
     public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
     {
-        var loadResult = await _service.ProjectAntennaService.GetLoadResult(loadOptions);
+        var loadResult = await _service.AntennaTranslatorService.GetLoadResult(loadOptions);
         return Ok(loadResult);
     }
 
     [HttpGet("getAll/{id}")]
     public IActionResult GetAll(string id)
     {
-        var baseResponse = _service.ProjectAntennaService.GetAllByProjectId(id);
+        var baseResponse = _service.AntennaTranslatorService.GetAllByProjectId(id);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
@@ -48,17 +47,17 @@ public class ProjectAntennaController : Controller
     [HttpGet("{oid}")]
     public async Task<IActionResult> Get(string oid)
     {
-        var baseResponse = await _service.ProjectAntennaService.GetByOid(oid);
+        var baseResponse = await _service.AntennaTranslatorService.GetByOid(oid);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody]CreateProjectAntennaDto model)
+    public async Task<IActionResult> Post([FromBody]CreateAntennaTranslatorDto model)
     {
-        ProjectAntennaDto projectAntennaDto = _mapper.Map<ProjectAntennaDto>(model);
-        var baseResponse = await _service.ProjectAntennaService.CreateAsync(projectAntennaDto, User.Identity.Name);
+        AntennaTranslatorDto antennaTranslatorDto = _mapper.Map<AntennaTranslatorDto>(model);
+        var baseResponse = await _service.AntennaTranslatorService.CreateAsync(antennaTranslatorDto, User.Identity.Name);
         
         if (baseResponse.Success)
             return Ok(baseResponse);
@@ -66,9 +65,9 @@ public class ProjectAntennaController : Controller
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put(UpdateProjectAntennaDto model)
+    public async Task<IActionResult> Put(UpdateAntennaTranslatorDto model)
     {
-        var baseResponse = await _service.ProjectAntennaService.Update(model);
+        var baseResponse = await _service.AntennaTranslatorService.Update(model);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);
@@ -77,7 +76,7 @@ public class ProjectAntennaController : Controller
     [HttpDelete("{oid}")]
     public async Task<IActionResult> Delete(string oid)
     {
-        var baseResponse = await _service.ProjectAntennaService.Delete(oid);
+        var baseResponse = await _service.AntennaTranslatorService.Delete(oid);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);

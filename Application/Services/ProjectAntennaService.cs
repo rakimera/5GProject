@@ -1,7 +1,6 @@
 using Application.DataObjects;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
-using Application.Models.Antennae;
 using Application.Models.Projects.ProjectAntennas;
 using Application.Validation;
 using AutoMapper;
