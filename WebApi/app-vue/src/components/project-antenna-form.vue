@@ -41,7 +41,7 @@
                             editor-type="dxSelectBox"
                             :editor-options="{ 
                         placeholder: 'Выберите частоту', 
-                        items: antennas, 
+                        items: translators, 
                         displayExpr: 'frequency', 
                         valueExpr: 'id',
                         labelMode: 'floating',
@@ -49,6 +49,11 @@
                     >
                         <dx-label :text="'Частота антенны ' + (index + 1)"/>
                     </dx-simple-item>
+                    <dx-button-item
+                            :button-options="addATranslatorButtonOptions"
+                            css-class="add-antenna-button"
+                            horizontal-alignment="left"
+                    />
                 </dx-simple-item>
             </dx-group-item>
         </dx-group-item>
@@ -109,11 +114,22 @@ let dataSource = reactive([]);
 const antennas = ref([]);
 const translators = ref([]);
 const antennaOptions = ref(getAntennasOptions(dataSource));
-const translatorOptions = ref(getAntennasOptions(translators.value));
+const translatorOptions = ref(getTranslatorOptions(translators.value));
 const addAntennaButtonOptions = computed(() =>{
     return {
         icon: 'add',
         text: 'добавить антенну',
+        disabled: isFormDisabled.value,
+        onClick: () => {
+            dataSource.push('');
+            antennaOptions.value = getAntennasOptions(dataSource);
+        },
+    };
+});
+const addATranslatorButtonOptions = computed(() =>{
+    return {
+        icon: 'add',
+        text: 'добавить частоту',
         disabled: isFormDisabled.value,
         onClick: () => {
             dataSource.push('');
@@ -151,6 +167,31 @@ function getAntennasOptions(dataSource) {
     options.push(generateNewAntennaOptions(i));
   }
   return options;
+}
+
+function getTranslatorOptions(dataSource) {
+    const options = [];
+    for (let i = 0; i < dataSource.length; i += 1) {
+        options.push(generateNewTranslatorOptions(i));
+    }
+    return options;
+}
+
+function generateNewTranslatorOptions(index) {
+    return {
+        buttons: [{
+            name: 'trash',
+            location: 'after',
+            options: {
+                stylingMode: 'text',
+                icon: 'trash',
+                onClick: () => {
+                    translators.value.splice(index, 1);
+                    translatorOptions.value = getTranslatorOptions(translators.value);
+                },
+            },
+        }],
+    };
 }
 function generateNewAntennaOptions(index) {
   return {
