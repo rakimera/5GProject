@@ -138,7 +138,7 @@ async function onClickSaveChanges() {
             },
           }, 'success', 1000);
           await router.push({name: 'projectDetail', params: {mode: "read", id: response.data.result}});
-          props.onSaveAntenna();
+          props.onSaveAntenna(response.data.result);
         } else {
           notify({
             message: response.data.messages,

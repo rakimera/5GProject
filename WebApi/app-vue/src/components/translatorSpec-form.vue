@@ -39,9 +39,6 @@
         :visible="false"
         :options="{
               value: antennaIdProp}">
-      <antenna-form
-          :antenna-id="antennaIdProp">
-      </antenna-form>
     </dx-item>
     <dx-button-item>
       <dx-button-options
@@ -94,7 +91,6 @@ import {
 import {
   DxRequiredRule
 } from 'devextreme-vue/validator';
-import AntennaForm from "@/components/antenna-form.vue";
 import {onBeforeMount, reactive, ref, defineProps} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import notify from "devextreme/ui/notify";

@@ -73,9 +73,10 @@ onBeforeMount(async () => {
   }
 })
 
-function onSaveAntenna() {
+function onSaveAntenna(e) {
   isTabDisabled.value = false;
   isFormDisabled.value = true;
+  console.log(e);
 }
 
 function onSaveTranslatorSpec() {
