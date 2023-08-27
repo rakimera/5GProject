@@ -59,13 +59,13 @@ import {
     DxButtonItem,
     DxLabel, DxButtonOptions,
 } from 'devextreme-vue/form';
-import {computed, reactive, ref, defineProps, watch} from "vue";
+import {computed, reactive, ref, /*defineProps*/} from "vue";
 import projectAntennaService from "@/api/projectAntennaService";
 import {useRoute} from "vue-router";
 import notify from "devextreme/ui/notify";
 
-const props = defineProps({
-    selectedAntennaId: String})
+/*const props = defineProps({
+    selectedAntennaId: String})*/
 let isFormDisabled = ref(true);
 const formRef = ref(null);
 const route = useRoute();
