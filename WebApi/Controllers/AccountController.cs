@@ -25,7 +25,7 @@ public class AccountController : Controller
     public async Task<IActionResult> Get()
     {
         var baseResponse = _service.UserService.GetAll();
-        await _service.UserService.GetLoadXlsx();
+        // await _service.UserService.GetLoadXlsx();
         await _service.UserService.ReadExcel();
         if (baseResponse.Success)
             return Ok(baseResponse);

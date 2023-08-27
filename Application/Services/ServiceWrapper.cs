@@ -33,7 +33,8 @@ public class ServiceWrapper : IServiceWrapper
         EnergyResultValidator energyResultValidator,
         RoleValidator roleValidator,
         CompanyLicenseValidator licenseValidator,
-        ExecutiveCompanyValidator executiveCompanyValidator)
+        ExecutiveCompanyValidator executiveCompanyValidator,
+        IEnergyFlowService energyFlowService)
     {
         _roleService = new Lazy<IRoleService>(() => new RoleService(repository, mapper, roleValidator));
         _companyLicenseService =
@@ -41,7 +42,7 @@ public class ServiceWrapper : IServiceWrapper
         _executiveCompanyService = new Lazy<IExecutiveCompanyService>(() =>
             new ExecutiveCompanyService(repository, mapper, executiveCompanyValidator));
         _districtService = new Lazy<IDistrictService>(() => new DistrictService(repository, mapper));
-        _userService = new Lazy<IUserService>(() => new UserService(repository, mapper, userValidator));
+        _userService = new Lazy<IUserService>(() => new UserService(repository, mapper, userValidator,energyFlowService));
         _tokenService = new Lazy<ITokenService>(() => new TokenService(repository));
         _projectService = new Lazy<IProjectService>(() => new ProjectService(repository, mapper, projectValidator));
         _authorizationService =

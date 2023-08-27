@@ -10,4 +10,7 @@ public interface IEnergyFlowService
     BaseResponse<List<EnergyResultDto>> GetAllByOid(string oid);
     Task<BaseResponse<bool>> Delete(List<EnergyResult> energyResults);
     List<CreateTotalFluxDensityDto> PowerDensitySummation(List<EnergyResult> energyResult);
+    decimal Multiplier(decimal value);
+
+    decimal EuclideanDistanceDecimal(decimal power, decimal height, decimal lost, decimal multiplier);
 }
