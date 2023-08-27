@@ -12,6 +12,4 @@ public interface IUserService : ICrudService<UserDto>
     Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions);
     Task<BaseResponse<UserDto>> UpdateUser(UpdateUserDto model);
     BaseResponse<List<Role>> GetRoles();
-    public Task<bool> GetLoadXlsx();
-    public Task<bool> ReadExcel();
 }

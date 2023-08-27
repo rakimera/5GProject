@@ -20,6 +20,7 @@ public class ServiceWrapper : IServiceWrapper
     private readonly Lazy<ICompanyLicenseService> _companyLicenseService;
     private readonly Lazy<IExecutiveCompanyService> _executiveCompanyService;
     private readonly Lazy<ITranslatorSpecsService> _translatorSpecsService;
+    private readonly Lazy<IWordService> _wordService;
 
     public ServiceWrapper(
         IRepositoryWrapper repository,
@@ -36,13 +37,14 @@ public class ServiceWrapper : IServiceWrapper
         ExecutiveCompanyValidator executiveCompanyValidator,
         IEnergyFlowService energyFlowService)
     {
+        _wordService = new Lazy<IWordService>(() => new WordService(repository, energyFlowService));
         _roleService = new Lazy<IRoleService>(() => new RoleService(repository, mapper, roleValidator));
         _companyLicenseService =
             new Lazy<ICompanyLicenseService>(() => new CompanyLicenseService(repository, mapper, licenseValidator));
         _executiveCompanyService = new Lazy<IExecutiveCompanyService>(() =>
             new ExecutiveCompanyService(repository, mapper, executiveCompanyValidator));
         _districtService = new Lazy<IDistrictService>(() => new DistrictService(repository, mapper));
-        _userService = new Lazy<IUserService>(() => new UserService(repository, mapper, userValidator,energyFlowService));
+        _userService = new Lazy<IUserService>(() => new UserService(repository, mapper, userValidator));
         _tokenService = new Lazy<ITokenService>(() => new TokenService(repository));
         _projectService = new Lazy<IProjectService>(() => new ProjectService(repository, mapper, projectValidator));
         _authorizationService =
@@ -69,4 +71,5 @@ public class ServiceWrapper : IServiceWrapper
     public IRoleService RoleService => _roleService.Value;
     public ICompanyLicenseService CompanyLicenseService => _companyLicenseService.Value;
     public IExecutiveCompanyService ExecutiveCompanyService => _executiveCompanyService.Value;
+    public IWordService WordService => _wordService.Value;
 }

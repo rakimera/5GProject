@@ -82,12 +82,24 @@ public class EnergyFlowService : IEnergyFlowService
         var result = (decimal)Math.Sqrt(Math.Pow((double)(heightInstall - HumanHeight), 2) + Math.Pow(distance, 2));
         return result;
     }
-    public decimal EuclideanDistanceDecimal(decimal power,decimal height,decimal lost,decimal multiplier) //R,m
+    public decimal GetRB(decimal power,decimal height,decimal lost,decimal multiplier) //R,m
     {
-        var info = Math.Sqrt(8 * 25 * 44.668 * 0.849 / 10) * 1 * 0.000;
-        Console.WriteLine(info);
-        double rSqrt = Math.Sqrt(8 * (double)power * (double)Multiplier(height) * (double)Multiplier(-lost) / 10) * 1 * (double)Multiplier(multiplier);
-        double result = Math.Round(rSqrt, 3);
+        double rB = Math.Sqrt(8 * (double)power * (double)Multiplier(height) * (double)Multiplier(-lost) / 10) * 1 * (double)Multiplier(multiplier);
+        double result = Math.Round(rB, 3);
+        return (decimal)result;
+    }
+    
+    public decimal GetRZ(decimal degree,decimal rB) //Rz,m
+    {
+        double rZ = (double)rB * Math.Sin((double)-degree * Math.PI / 180);
+        double result = Math.Round(rZ, 3);
+        return (decimal)result;
+    }
+    
+    public decimal GetRX(decimal degree,decimal rB) //Rx,m
+    {
+        double rZ = (double)rB * Math.Cos((double)-degree * Math.PI / 180);
+        double result = Math.Round(rZ, 3);
         return (decimal)result;
     }
 

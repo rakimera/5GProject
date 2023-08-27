@@ -12,5 +12,7 @@ public interface IEnergyFlowService
     List<CreateTotalFluxDensityDto> PowerDensitySummation(List<EnergyResult> energyResult);
     decimal Multiplier(decimal value);
 
-    decimal EuclideanDistanceDecimal(decimal power, decimal height, decimal lost, decimal multiplier);
+    decimal GetRB(decimal power, decimal height, decimal lost, decimal multiplier);
+    decimal GetRZ(decimal degree, decimal rB);
+    decimal GetRX(decimal degree, decimal rB);
 }
