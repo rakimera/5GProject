@@ -89,6 +89,7 @@ import {useRoute} from "vue-router";
 import notify from "devextreme/ui/notify";
 import translatorService from "@/api/translatorService";
 import AntennaTranslatorForm from "@/components/antenna-translator-form.vue";
+import antennaTranslatorService from "@/api/antennaTranslatorService";
 
 let selectedAntennaId = ref();
 let isFormDisabled = ref(true);
@@ -128,9 +129,14 @@ onBeforeMount(async () => {
   }
 })
 
-function OnSelectAntenna(e){
-    selectedAntennaId.value = e.value
-    emit('selectedAntennaChanged', e.value);
+async function OnSelectAntenna(e){
+    const projectAntennaResponse = projectAntennaService
+    //проверка сужествет ли если то апдей если нет то крейт
+    //после апдейта или крейта принимаем ид проект антенны
+    const response = await antennaTranslatorService.getAllByProjectAntennaId(/*передаем сюда ид проект антенны*/);
+    //логика которая передает компаненты response для заполенеие формы если не пусто
+    console.log(response)
+    selectedAntennaId.value = e.value;
 }
 
 function onClickEditProject() {

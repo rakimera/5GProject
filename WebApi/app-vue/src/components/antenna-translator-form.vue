@@ -59,24 +59,20 @@ import {
     DxButtonItem,
     DxLabel, DxButtonOptions,
 } from 'devextreme-vue/form';
-import {computed, onBeforeMount, reactive, ref, defineProps, watch} from "vue";
+import {computed, reactive, ref, defineProps, watch} from "vue";
 import projectAntennaService from "@/api/projectAntennaService";
 import {useRoute} from "vue-router";
 import notify from "devextreme/ui/notify";
-import antennaTranslatorService from "@/api/antennaTranslatorService";
 
 const props = defineProps({
     selectedAntennaId: String})
-
 let isFormDisabled = ref(true);
 const formRef = ref(null);
 const route = useRoute();
-/*let id = route.params.id;*/
 const mode = ref(route.params.mode);
 let dataSource = reactive([]);
 const translators = ref([]);
 const translatorOptions = ref(getTranslatorOptions(dataSource));
-const currentSelectedAntennaId = ref(props.selectedAntennaId);
 
 const addATranslatorButtonOptions = computed(() =>{
     return {
@@ -90,14 +86,6 @@ const addATranslatorButtonOptions = computed(() =>{
     };
 });
 
-onBeforeMount(async () => {
-
-    const response = await antennaTranslatorService.getAllByProjectAntennaId(currentSelectedAntennaId.value);
-    translators.value = response.data.result;
-    console.log(response)
-    Object.assign(dataSource, response.data.result);
-    isFormDisabled.value = false;
-})
 function getTranslatorOptions(dataSource) {
     const options = [];
     for (let i = 0; i < dataSource.length; i += 1) {

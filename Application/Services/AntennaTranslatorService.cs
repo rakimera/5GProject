@@ -6,6 +6,7 @@ using Application.Validation;
 using AutoMapper;
 using DevExtreme.AspNet.Data;
 using DevExtreme.AspNet.Data.ResponseModel;
+using Domain.Entities;
 
 namespace Application.Services;
 
@@ -54,6 +55,17 @@ public class AntennaTranslatorService : IAntennaTranslatorService
 
     public BaseResponse<List<AntennaTranslatorDto>> GetAllByProjectId(string id)
     {
-        throw new NotImplementedException();
+        IQueryable<AntennaTranslator>? projectAntennas = _repositoryWrapper.AntennaTranslatorRepository.GetAllByCondition(x => x.Id.ToString() == id);
+        List<AntennaTranslatorDto> model = _mapper.Map<List<AntennaTranslatorDto>>(projectAntennas);
+
+        if (projectAntennas is null)
+            return new BaseResponse<List<AntennaTranslatorDto>>(
+                Result: null,
+                Messages: new List<string> { "Антенны проекта не найдены" },
+                Success: true);
+        return new BaseResponse<List<AntennaTranslatorDto>>(
+            Result: model,
+            Success: true,
+            Messages: new List<string> { "Антенны проекта успешно найдены" });
     }
 }
