@@ -10,6 +10,7 @@ public interface IServiceWrapper
     IDistrictService DistrictService { get; }
     ITownService TownService { get; }
     IAntennaService AntennaService { get; }
+    ITranslatorSpecsService TranslatorSpecsService { get; }
     IEnergyFlowService EnergyFlowService { get; }
     IRoleService RoleService { get; }
     ICompanyLicenseService CompanyLicenseService { get; }

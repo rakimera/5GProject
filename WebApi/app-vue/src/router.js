@@ -13,6 +13,7 @@ import UserDetail from '@/views/users_detail_info.vue';
 import Antennae from './views/Antenna-page.vue';
 import GetAllAntennaePage from "@/views/get-all-antennae-page";
 import ContrAgentDetail from '@/views/contrAgent-detail-info.vue';
+import AntennaDetail from "@/views/antenna-detail-info";
 import Roles from '@/views/get-all-roles-page.vue'
 
 function loadView(view) {
@@ -138,32 +139,34 @@ const router = new createRouter({
       },
       component: GetAllAntennaePage
     },
-    {
-      path: "/antennae",
-      name: "antennae",
-      meta: {
-        requiresAuth: false,
-        layout: defaultLayout
-      },
-      component: Antennae
-    },
       {
-          path: '/user/:mode/:id',
+          path: '/user/:mode/:id?',
           name: 'userDetail',
           meta: {
               requiresAuth: true,
               layout: defaultLayout
           },
           component: UserDetail
+      }
+    ,
+    {
+      path: '/antennae/:mode/:id?',
+      name: 'antennaDetail',
+      meta: {
+        requiresAuth: true,
+        layout: defaultLayout
       },
-      {
-          path: '/contrAgent/:mode/:id?',
-          name: 'contrAgentDetail',
-          meta: {
-              requiresAuth: true,
-              layout: defaultLayout
-          },
-          component: ContrAgentDetail
+      component: AntennaDetail
+    },
+    {
+      path: '/contrAgent/:mode/:id?',
+      name: 'contrAgentDetail',
+      meta: {
+        requiresAuth: true,
+        layout: defaultLayout
+      },
+      component: ContrAgentDetail
+    }
       },
       {
           path: '/roles',
