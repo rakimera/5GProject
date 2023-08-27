@@ -17,5 +17,12 @@ public interface IRepositoryWrapper
     IAntennaTranslatorRepository AntennaTranslatorRepository { get; }
     ICompanyLicenseRepository CompanyLicenseRepository { get; }
     IExecutiveCompanyRepository ExecutiveCompanyRepository { get; }
+    IBiohazardRadiusRepository BiohazardRadiusRepository { get; }
+    IProjectAntennaRepository ProjectAntennaRepository { get; }
+    IProjectStatusRepository ProjectStatusRepository { get; }
+    ISanPinDockRepository SanPinDockRepository { get; }
+    ISummaryBiohazardRadiusRepository SummaryBiohazardRadiusRepository { get; }
+    ITotalFluxDensityRepository TotalFluxDensityRepository { get; }
+    ITranslatorTypeRepository TranslatorTypeRepository { get; }
     Task Save();
 }

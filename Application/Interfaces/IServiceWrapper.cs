@@ -2,6 +2,7 @@ namespace Application.Interfaces;
 
 public interface IServiceWrapper
 {
+    IWordService WordService { get; }
     IUserService UserService { get; }
     ITokenService TokenService { get; }
     IProjectService ProjectService { get; }

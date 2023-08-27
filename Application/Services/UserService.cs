@@ -1,12 +1,22 @@
+using System.Diagnostics;
+using System.Drawing;
 using Application.DataObjects;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
 using Application.Models.Users;
 using Application.Validation;
 using AutoMapper;
+using DevExpress.Export.Xl;
+using DevExpress.Office.Utils;
+using DevExpress.Pdf;
+using DevExpress.XtraPrinting.Native;
+using DevExpress.XtraRichEdit;
+using DevExpress.XtraRichEdit.API.Native;
 using DevExtreme.AspNet.Data;
 using DevExtreme.AspNet.Data.ResponseModel;
 using Domain.Entities;
+using Domain.Enums;
+using OfficeOpenXml;
 
 namespace Application.Services;
 
@@ -48,6 +58,106 @@ public class UserService : IUserService
         var queryableUsers = _repositoryWrapper.UserRepository.GetAll();
         return await DataSourceLoader.LoadAsync(queryableUsers, loadOptions);
     }
+    
+    public async Task<bool> GetLoadXlsx()
+    {
+        IXlExporter exporter = XlExport.CreateExporter(XlDocumentFormat.Xlsx);
+
+        using (FileStream stream = new FileStream("Document.xlsx", FileMode.Create, FileAccess.ReadWrite)) {
+                using (IXlDocument document = exporter.CreateDocument(stream))
+                {
+                    using (IXlSheet sheet = document.CreateSheet())
+                    {
+                        sheet.Name = "360";
+                        
+                        using (IXlColumn column = sheet.CreateColumn()) {
+                            column.WidthInPixels = 75;
+                        }
+                        
+                        using (IXlColumn column = sheet.CreateColumn()) {
+                            column.WidthInPixels = 120;
+                        }
+                        
+                        using (IXlColumn column = sheet.CreateColumn()) {
+                            column.WidthInPixels = 120;
+                        }
+                        
+                        XlCellFormatting cellFormatting = new XlCellFormatting();
+                        cellFormatting.Font = new XlFont();
+                        cellFormatting.Font.Name = "Century Gothic";
+                        cellFormatting.Font.SchemeStyle = XlFontSchemeStyles.None;
+                        
+                        XlCellFormatting headerRowFormatting = new XlCellFormatting();
+                        headerRowFormatting.CopyFrom(cellFormatting);
+                        headerRowFormatting.Font.Bold = true;
+                        headerRowFormatting.Font.Color = XlColor.FromTheme(XlThemeColor.Light1, 0.0);
+                        headerRowFormatting.Fill = XlFill.SolidFill(XlColor.FromTheme(XlThemeColor.Accent2, 0.0));
+                        
+                        using (IXlRow row = sheet.CreateRow()) {
+                            using (IXlCell cell = row.CreateCell()) {
+                                cell.Value = "Градус";
+                                cell.ApplyFormatting(headerRowFormatting);
+                            }
+                            using (IXlCell cell = row.CreateCell()) {
+                                cell.Value = "Значение";
+                                cell.ApplyFormatting(headerRowFormatting);
+                            }
+                            using (IXlCell cell = row.CreateCell()) {
+                                cell.Value = "Тип";
+                                cell.ApplyFormatting(headerRowFormatting);
+                            }
+                        }
+                        var radiations = _repositoryWrapper.RadiationZoneRepository.GetAll().OrderBy(x=> x.Degree);
+                        foreach (var radiation in radiations)
+                        {
+                            using (IXlRow row = sheet.CreateRow()) {
+                                using (IXlCell cell = row.CreateCell()) {
+                                    cell.Value = radiation.Degree;
+                                    cell.ApplyFormatting(cellFormatting);
+                                }
+                                using (IXlCell cell = row.CreateCell()) {
+                                    cell.Value = radiation.Value.ToString();
+                                    cell.ApplyFormatting(cellFormatting);
+                                }
+                                using (IXlCell cell = row.CreateCell()) {
+                                    cell.Value = radiation.DirectionType.ToString();
+                                    cell.ApplyFormatting(cellFormatting);
+                                }
+                            }
+                            
+                        }
+
+                        sheet.AutoFilterRange = sheet.DataRange;
+                        
+                        XlCellFormatting totalRowFormatting = new XlCellFormatting();
+                        var maxAbsoluteRadiationValue = radiations.Max(radiation => Math.Abs(radiation.Value));
+                        var radiationWithMaxAbsoluteValue = radiations.First(radiation => Math.Abs(radiation.Value) == maxAbsoluteRadiationValue);
+                        totalRowFormatting.CopyFrom(cellFormatting);
+                        totalRowFormatting.Font.Bold = true;
+                        totalRowFormatting.Fill = XlFill.SolidFill(XlColor.FromTheme(XlThemeColor.Accent5, 0.6));
+                        
+                        using (IXlRow row = sheet.CreateRow()) {
+                            using (IXlCell cell = row.CreateCell()) {
+                                cell.ApplyFormatting(totalRowFormatting);
+                            }
+                            using (IXlCell cell = row.CreateCell()) {
+                                cell.Value = "Максимальное значение";
+                                cell.ApplyFormatting(totalRowFormatting);
+                                cell.ApplyFormatting(XlCellAlignment.FromHV(XlHorizontalAlignment.Right, XlVerticalAlignment.Bottom));
+                            }
+                            using (IXlCell cell = row.CreateCell()) {
+                                cell.ApplyFormatting(totalRowFormatting);
+                                cell.Value = radiationWithMaxAbsoluteValue.Value.ToString();
+                            }
+                        }
+                    }
+                }
+        }
+        Process.Start(new ProcessStartInfo("Document.xlsx"){UseShellExecute = true});
+        return true;
+    }
+
+
 
     public async Task<BaseResponse<string>> CreateAsync(UserDto model, string creator)
     {

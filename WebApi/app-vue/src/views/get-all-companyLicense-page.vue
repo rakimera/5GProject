@@ -5,7 +5,12 @@
       :remote-operations="true"
       key-expr="id"
   >
-    <dx-column data-field="roleName" data-type="string" caption="Роль"/>
+    <dx-column data-field="number" data-type="string" caption="Номер лицензии">
+      <dx-required-rule message="Пожалуйста, укажите номер лицензии"/>
+    </dx-column>
+    <dx-column data-field="dateOfIssue" data-type="datetime" caption="Дата присвоения">
+      <dx-required-rule message="Пожалуйста, укажите дату получение лицензии"/>
+    </dx-column>
     <dx-paging :page-size="5"/>
     <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
     <dx-editing
@@ -29,44 +34,33 @@ import {
 } from "devextreme-vue/data-grid";
 import CustomStore from "devextreme/data/custom_store";
 import "whatwg-fetch";
-import roleService from "@/api/roleService";
-import notify from "devextreme/ui/notify";
+import companyLicenseService from "@/api/companyLicenseService";
+import {DxRequiredRule} from "devextreme-vue/form";
 
 const dataSource = ref(null);
 
 const store = new CustomStore({
   key: "id",
   async load(loadOptions) {
-    const response = await roleService.getAllRoles(loadOptions);
+    const response = await companyLicenseService.getAllLicenses(loadOptions);
     return response.data;
   },
   async insert(values) {
-    if (values.roleName.length <= 2) {
-      notify({
-        message: 'Имя роли должно содержать более двух символов',
-        position: {
-          my: 'center top',
-          at: 'center top',
-        },
-      }, 'error', 2000);
-      return {error: "Имя роли должно содержать более двух символов."};
-    }
-    const baseResponse = await roleService.createRole(values);
+    const baseResponse = await companyLicenseService.createLicense(values);
     await dataSource.value.load();
     return {data: baseResponse};
   },
   async remove(oid) {
-    const baseResponse = await roleService.deleteRole(oid);
+    const baseResponse = await companyLicenseService.deleteLicense(oid);
     return {data: baseResponse};
   },
   async update(oid, values) {
-    const updateRoleDto = {
-      id: oid,
-      roleName: values.roleName
+    const updateCompanyLicenseDto = {
+      ...values,
+      id: oid
     };
-
-    console.log(updateRoleDto)
-    const baseResponse = await roleService.updateRole(updateRoleDto);
+    console.log(updateCompanyLicenseDto)
+    const baseResponse = await companyLicenseService.updateLicense(updateCompanyLicenseDto);
     await dataSource.value.load();
     return {data: baseResponse};
   },

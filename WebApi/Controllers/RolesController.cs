@@ -2,6 +2,7 @@ using Application.Interfaces;
 using Application.Models.Roles;
 using AutoMapper;
 using DevExtreme.AspNet.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -38,6 +39,7 @@ public class RolesController : Controller
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Post(CreateRoleDto model)
     {
         RoleDto roleDto = _mapper.Map<RoleDto>(model);

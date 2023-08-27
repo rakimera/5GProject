@@ -23,6 +23,10 @@ export default [
             {
                 text: "Журнал контрагентов",
                 path: "/ContrAgentsJournal"
+            },
+            {
+                text: "Журнал лицензии компании",
+                path: "/CompanyLicenseJournal"
             }
         ]
     },
@@ -48,10 +52,6 @@ export default [
                 text: "Список антенн",
                 path: "/antennae_table"
             },
-            {
-                text: "Тест",
-                path: "/antennae"
-            }
         ]
     }
 ];
