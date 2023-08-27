@@ -3,10 +3,12 @@ using System.Drawing;
 using Application.DataObjects;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
+using DevExpress.Drawing.Printing;
 using DevExpress.Export.Xl;
 using DevExpress.Office.Utils;
 using DevExpress.XtraRichEdit;
 using DevExpress.XtraRichEdit.API.Native;
+using DevExpress.XtraRichEdit.Commands;
 using Domain.Entities;
 using Domain.Enums;
 using OfficeOpenXml;
@@ -174,39 +176,54 @@ public class WordService : IWordService
     {
         using (var wordProcessor = new RichEditDocumentServer()) 
         { 
-            wordProcessor.LoadDocument("Arthur.docx");
-            
+            wordProcessor.LoadDocument("Шаблон.docx");
+
             Document document = wordProcessor.Document;
-            var asd = document.AppendText("Владелец радиоэлектронных средств: ");
             var contrAgent = await _repositoryWrapper.ContrAgentRepository.GetByCondition(x => x.CompanyName == "Tele2");
-            document.InsertText(asd.End,$"{contrAgent.CompanyName}");
-            ParagraphProperties pp =
-                document.BeginUpdateParagraphs(document.Paragraphs[0].Range);
-            pp.Alignment = ParagraphAlignment.Center;
-            document.EndUpdateParagraphs(pp); 
-            Table oldTable = document.Tables.Create(document.Range.End, 37, 5);
+            document.ReplaceAll("ContrAgent", $"{contrAgent.CompanyName}", SearchOptions.WholeWord);
+            document.ReplaceAll("ContrAgentPhone", $"{contrAgent.PhoneNumber}", SearchOptions.WholeWord);
+            document.ReplaceAll("ContrAgentBIN", $"{contrAgent.BIN}", SearchOptions.WholeWord);
+            document.ReplaceAll("ContrAgentFIO", 
+                    $"{contrAgent.DirectorSurname} {contrAgent.DirectorName} {contrAgent.DirectorPatronymic}", SearchOptions.WholeWord);
+            document.ReplaceAll("ContrAgentAddress", $"{contrAgent.Address}", SearchOptions.WholeWord);
+            document.ReplaceAll("DateYear", 
+                $"{DateTime.Now.Year}", SearchOptions.WholeWord);
+            // var asd = document.AppendText("Владелец радиоэлектронных средств: ");
+            // var contrAgent = await _repositoryWrapper.ContrAgentRepository.GetByCondition(x => x.CompanyName == "Tele2");
+            // document.InsertText(asd.End,$"{contrAgent.CompanyName}");
+            
+            var keywords = document.FindAll("Table",SearchOptions.WholeWord);
+            DocumentPosition insertPosition = keywords[0].Start;
+            document.InsertText(insertPosition, $"Владелец радиоэлектронных средств: {contrAgent.CompanyName}");
+            ParagraphProperties titleParagraphProperties = document.BeginUpdateParagraphs(keywords[0]);
+            titleParagraphProperties.Alignment = ParagraphAlignment.Center;
+            document.EndUpdateParagraphs(titleParagraphProperties);
+            document.Delete(keywords[0]);
+            Table oldTable = document.Tables.Create(insertPosition, 37, 5);
 
             oldTable.Rows.InsertBefore(0);
             oldTable.Rows.InsertAfter(0);
-        
+            
             oldTable.Rows[0].Cells.Append();
-            Table table = document.Tables[0];
+            Table table = document.Tables.Last;
             table.BeginUpdate();
-        
-            TableCell firstCell = table.Rows[0].FirstCell;
-            firstCell.PreferredWidthType = WidthType.Fixed;
-            firstCell.PreferredWidth = Units.InchesToDocumentsF(1.4f);
-            for (int i = 0; i <= 3; i++)
+            for (int i = 0; i <= 5; i++)
             {
-                TableCell columnCell = table[i, i+1];
+                TableCell columnCell = table[i, i];
                 columnCell.PreferredWidthType = WidthType.Fixed;
-                columnCell.PreferredWidth = Units.InchesToDocumentsF(1.4f);
+                columnCell.PreferredWidth = Units.InchesToDocumentsF(0.66f);
+                for (int j = 0; j < 39; j++)
+                {
+                    columnCell = table[j, i];
+                    columnCell.HeightType = HeightType.Exact;
+                    columnCell.Height = Units.InchesToDocumentsF(0.131f);
+                    DocumentRange cellRange = columnCell.Range;
+                    CharacterProperties cp = document.BeginUpdateCharacters(cellRange);
+                    cp.FontSize = 8;
+                    document.EndUpdateCharacters(cp);
+                }
             }
-            TableCell lastCell = table.Rows[0].LastCell;
-            lastCell.PreferredWidthType = WidthType.Fixed;
-            lastCell.PreferredWidth = Units.InchesToDocumentsF(1.4f);
-            table.BeginUpdate();
-        
+
             document.InsertSingleLineText(table[0, 0].Range.Start, "v, град");
             document.InsertSingleLineText(table[0, 1].Range.Start, "f(v), dBi");
             document.InsertSingleLineText(table[0, 2].Range.Start, "f(v), раз");
@@ -241,14 +258,15 @@ public class WordService : IWordService
                 } 
             }
             table.EndUpdate();
-            document.AppendSection();
-            document.Unit = DevExpress.Office.DocumentUnit.Inch;
-            Shape picture = document.Shapes.InsertPicture(document.Range.End, DocumentImageSource.FromFile("image.jpg"));
-            picture.Size = new SizeF(7f, 10f);
-            picture.HorizontalAlignment = ShapeHorizontalAlignment.Center;
-            picture.VerticalAlignment = ShapeVerticalAlignment.Center;
-            picture.Line.Color = Color.Black;
-            wordProcessor.SaveDocument("Arthur2.docx", DocumentFormat.OpenXml);
+            // document.AppendSection();
+            // document.Unit = DevExpress.Office.DocumentUnit.Inch;
+            // Shape picture = document.Shapes.InsertPicture(document.Range.End, DocumentImageSource.FromFile("image.jpg"));
+            // picture.Size = new SizeF(7f, 10f);
+            // picture.HorizontalAlignment = ShapeHorizontalAlignment.Center;
+            // picture.VerticalAlignment = ShapeVerticalAlignment.Center;
+            // picture.Line.Color = Color.Black;
+            // wordProcessor.SaveDocument("Arthur2.docx", DocumentFormat.OpenXml);
+            wordProcessor.SaveDocument("Project.docx", DocumentFormat.OpenXml);
         }
         return new BaseResponse<bool>(
             Result: true,
