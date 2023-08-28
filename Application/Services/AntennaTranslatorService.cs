@@ -2,6 +2,7 @@ using Application.DataObjects;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
 using Application.Models.AntennaTranslator;
+using Application.Models.EnergyResult;
 using Application.Validation;
 using AutoMapper;
 using DevExtreme.AspNet.Data;
@@ -38,9 +39,25 @@ public class AntennaTranslatorService : IAntennaTranslatorService
         throw new NotImplementedException();
     }
 
-    public Task<BaseResponse<bool>> Delete(string oid)
+    public async Task<BaseResponse<bool>> Delete(string oid)
     {
-        throw new NotImplementedException();
+        AntennaTranslator? antennaTranslator = await _repositoryWrapper.AntennaTranslatorRepository.GetByCondition(x => x.Id.ToString() == oid);
+        if (antennaTranslator is not null)
+        {
+            antennaTranslator.IsDelete = true;
+            _repositoryWrapper.AntennaTranslatorRepository.Update(antennaTranslator);
+            await _repositoryWrapper.Save();
+
+            return new BaseResponse<bool>(
+                Result: true,
+                Success: true,
+                Messages: new List<string> { "Антенна проекта успешно удалена" });
+        }
+
+        return new BaseResponse<bool>(
+            Result: false,
+            Messages: new List<string> { "Антенна проекта не существует" },
+            Success: false);
     }
 
     public Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions)
@@ -53,7 +70,7 @@ public class AntennaTranslatorService : IAntennaTranslatorService
         throw new NotImplementedException();
     }
 
-    public BaseResponse<List<AntennaTranslatorDto>> GetAllByProjectId(string id)
+    public BaseResponse<List<AntennaTranslatorDto>> GetAllByProjectAntennaId(string id)
     {
         IQueryable<AntennaTranslator>? projectAntennas = _repositoryWrapper.AntennaTranslatorRepository.GetAllByCondition(x => x.Id.ToString() == id);
         List<AntennaTranslatorDto> model = _mapper.Map<List<AntennaTranslatorDto>>(projectAntennas);
@@ -61,11 +78,11 @@ public class AntennaTranslatorService : IAntennaTranslatorService
         if (projectAntennas is null)
             return new BaseResponse<List<AntennaTranslatorDto>>(
                 Result: null,
-                Messages: new List<string> { "Антенны проекта не найдены" },
+                Messages: new List<string> { "Свойства антенны не найдены" },
                 Success: true);
         return new BaseResponse<List<AntennaTranslatorDto>>(
             Result: model,
             Success: true,
-            Messages: new List<string> { "Антенны проекта успешно найдены" });
+            Messages: new List<string> { "Свойства антенны успешно найдены" });
     }
 }

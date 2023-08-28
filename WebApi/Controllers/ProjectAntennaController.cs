@@ -3,13 +3,14 @@ using Application.Models.Antennae;
 using Application.Models.Projects.ProjectAntennas;
 using AutoMapper;
 using DevExtreme.AspNet.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/projects-antenna")]
-
+[Authorize]
 public class ProjectAntennaController : Controller
 {
     private readonly IServiceWrapper _service;
@@ -30,9 +31,9 @@ public class ProjectAntennaController : Controller
         return NotFound(baseResponse);
     }
     [HttpGet("index")]
-    public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
+    public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions, string id)
     {
-        var loadResult = await _service.ProjectAntennaService.GetLoadResult(loadOptions);
+        var loadResult = await _service.ProjectAntennaService.GetLoadResult(loadOptions, id);
         return Ok(loadResult);
     }
 
@@ -66,9 +67,9 @@ public class ProjectAntennaController : Controller
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put(UpdateProjectAntennaDto model)
+    public async Task<IActionResult> Put(ProjectAntennaDto model)
     {
-        var baseResponse = await _service.ProjectAntennaService.Update(model);
+        var baseResponse = await _service.ProjectAntennaService.Update(model, User.Identity.Name);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);

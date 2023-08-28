@@ -38,7 +38,7 @@ public class AntennaTranslatorsController : Controller
     [HttpGet("getAll/{id}")]
     public IActionResult GetAll(string id)
     {
-        var baseResponse = _service.AntennaTranslatorService.GetAllByProjectId(id);
+        var baseResponse = _service.AntennaTranslatorService.GetAllByProjectAntennaId(id);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);

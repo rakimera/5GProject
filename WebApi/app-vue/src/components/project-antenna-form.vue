@@ -1,316 +1,172 @@
 <template>
     <div>
-        <div id="form-container">
-            <dx-form
-                id="project-antenna-form"
-                ref="formRef"
-                :col-count="1"
-                :form-data="dataSource"
-                label-location="top"
-                :read-only="isFormDisabled"
-                :show-colon-after-label="true"
-                :show-validation-summary="true">
-                <!--          <dx-group-item
-                                  :caption="'Антенна ' + (index + 1)"
-                                  name="phones-container"
-                                  v-for="(projectAntennaDto, index) in antennaOptions"
-                                  :key="'projectAntennaDto' + (index + 1)"
-                          >
-                              <dx-simple-item
-                                      :itemid="antennas"
-                                      :data-field="'projectAntennaDto[' + index + ']'"
-                                      editor-type="dxSelectBox"
-                                      :editor-options="{ 
-                                    placeholder: 'Выберите антенну', 
-                                    items: antennas, 
-                                    displayExpr: 'model', 
-                                    valueExpr: 'id',
-                                    labelMode: 'floating',
-                                    onValueChanged: OnSelectAntenna,
-                                    label: 'Антенна ' + (index + 1)}"
-                              >
-                                  <dx-label :text="'Антенна ' + (index + 1)"/>
-                              </dx-simple-item>
-                              <dx-group-item
-                                      item-type="group"
-                                      name="phones"
-                              >
-                                  <antenna-translator-form
-                                          :selectedAntennaId="selectedAntennaId">
-                                  </antenna-translator-form>
-                                    
-                              </dx-group-item>
-                          </dx-group-item>-->
-
-                <dx-popup
-                    :visible="popupVisible"
-                    :drag-enabled="false"
-                    :hide-on-outside-click="true"
-                    :show-close-button="false"
-                    :show-title="true"
-                    :width="300"
-                    :height="280"
-                    container=".dx-viewport"
-                    title="Information"
-                >
-                    <dx-position
-                        at="center"
-                        my="center"
-                        collision="fit"
-                    />
-                    <dx-toolbar-item
-                        widget="dxButton"
-                        toolbar="bottom"
-                        location="before"
-                        :options="saveButtonOptions"
-                    />
-                    <dx-toolbar-item
-                        widget="dxButton"
-                        toolbar="bottom"
-                        location="after"
-                        :options="closeButtonOptions"
-                    />
-                    <dx-simple-item
-                        :itemid="antennas"
-                        :data-field="'projectAntennaDto[' + index + ']'"
-                        editor-type="dxSelectBox"
-                        :editor-options="{ 
-                    placeholder: 'Выберите антенну', 
-                    items: antennas, 
-                    displayExpr: 'model', 
-                    valueExpr: 'id',
-                    labelMode: 'floating',
-                    label: 'Антенна ' + (index + 1)}"
-                    >
-                        <dx-label :text="'Антенна ' + (index + 1)"/>
-                    </dx-simple-item>
-                </dx-popup>
-
-
-                <dx-button-item
-                    :button-options="addAntennaButtonOptions"
-                    css-class="add-antenna-button"
-                    horizontal-alignment="left"
-                />
-                <dx-button-item>
-                    <dx-button-options
-                        width="100%"
-                        type="success"
-                        styling-mode="outlined"
-                        :template="mode === 'create' ? 'Создать и продолжить' : 'Сохранить изменения'"
-                        :on-click="onClickSaveChanges"
-                        :visible="!isFormDisabled"
-                        :use-submit-behavior="true"
-                    >
-                    </dx-button-options>
-                </dx-button-item>
-                <dx-button-item>
-                    <dx-button-options
-                        width="100%"
-                        type="default"
-                        styling-mode="outlined"
-                        template="Редактировать"
-                        :on-click="onClickEditProject"
-                        :visible="isFormDisabled"
-                        :use-submit-behavior="true"
-                    >
-                    </dx-button-options>
-                </dx-button-item>
-            </dx-form>
-        </div>
+      <div id="data-grid-demo">
+        <dx-data-grid
+            :data-source="dataSource"
+            :show-borders="true"
+            :remote-operations="true"
+            key-expr="id"
+        >
+          <dx-editing
+              :allow-updating="true"
+              :allow-adding="true"
+              :allow-deleting="true"
+              :texts="{confirmDeleteMessage: 'Вы уверены, что хотите удалить эту запись?'}"
+              mode="form"
+          />
+          <dx-column
+              data-field="antennaId"
+              caption="Антенна"
+              data-type="string"
+          >
+            <dx-required-rule message="Вы не выбрали антенну"></dx-required-rule>
+            <dx-lookup
+                :data-source="antennas"
+                value-expr="id"
+                display-expr="model"
+            />
+          </dx-column>
+          <dx-column data-field="azimuth" data-type="number" caption="Азимут"
+                     :editor-options="{stylingMode: 'filled', labelMode: 'floating'}">
+            <dx-label :visible="false"/>
+              <dx-required-rule message="Вы не запонели азимут"></dx-required-rule>
+          </dx-column>
+          <dx-column data-field="height" data-type="number" caption="Высота установки"
+                     :editor-options="{stylingMode: 'filled', labelMode: 'floating'}">
+            <dx-required-rule message="Вы не запонели высоту установки антенны"></dx-required-rule>
+          </dx-column>
+          <dx-column data-field="latitude" data-type="number" caption="Широта"
+                     :editor-options="{stylingMode: 'filled', labelMode: 'floating'}">
+            <dx-required-rule message="Вы не запонели широту установки антенны"></dx-required-rule>
+          </dx-column>
+          <dx-column data-field="longitude" data-type="number" caption="Долгота"
+                     :editor-options="{stylingMode: 'filled', labelMode: 'floating'}">
+            <dx-required-rule message="Вы не запонели долготу установки антенны"></dx-required-rule>
+          </dx-column>
+          <dx-column data-field="tilt" data-type="number" caption="Тильт"
+                     :editor-options="{stylingMode: 'filled', labelMode: 'floating'}">
+            <dx-required-rule message="Вы не запонели тильт антенны"></dx-required-rule>
+          </dx-column>
+          <dx-column data-field="projectId" data-type="string" :visible="false">
+            <dx-form-item
+                :editor-options="{
+                disabled: true}"
+                editor-type="dxTextArea"
+                :visible="false"
+                :data="projectId"
+            />
+          </dx-column>
+          <dx-paging :page-size="5"/>
+          <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
+        </dx-data-grid>
+      </div>
     </div>
 </template>
 <script setup>
 import {
-    DxForm,
-    DxSimpleItem,
-    DxButtonItem,
-    DxLabel, DxButtonOptions
+  DxLabel
 } from 'devextreme-vue/form';
-import { DxPopup, DxPosition, DxToolbarItem } from 'devextreme-vue/popup';
-import {computed, onBeforeMount, reactive, ref, watch} from "vue";
+import {onMounted, ref} from "vue";
 import antennaService from "@/api/antennaService";
 import projectAntennaService from "@/api/projectAntennaService";
 import {useRoute} from "vue-router";
+import {
+  DxDataGrid,
+  DxColumn,
+  DxFormItem,
+  DxPaging,
+  DxEditing,
+  DxPager,
+  DxLookup
+} from 'devextreme-vue/data-grid';
+import 'devextreme-vue/text-area';
+import {DxRequiredRule} from "devextreme-vue/validator";
+import CustomStore from "devextreme/data/custom_store";
 import notify from "devextreme/ui/notify";
-import translatorService from "@/api/translatorService";
-/*import antennaTranslatorService from "@/api/antennaTranslatorService";*/
 
-/*let selectedAntennaId = ref();*/
-let isFormDisabled = ref(true);
-let popupVisible = ref(true);
-const formRef = ref(null);
 const route = useRoute();
-let id = route.params.id;
-const mode = ref(route.params.mode);
-let dataSource = reactive([]);
+let projectId = route.params.id;
+let dataSource = ref(null);
 const antennas = ref([]);
-let index = ref(antennas.value.length);
-const translators = ref([]);
-const antennaOptions = ref(getAntennasOptions(dataSource));
-const addAntennaButtonOptions = computed(() =>{
-    return {
-        icon: 'add',
-        text: 'добавить антенну',
-        disabled: isFormDisabled.value,
-        onClick: () => {
-            dataSource.push('');
-            antennaOptions.value = getAntennasOptions(dataSource);
-            popupVisible.value = true
+
+const store = new CustomStore({
+  key: "id",
+  async load(loadOptions) {
+    const response = await projectAntennaService.getProjectAntennaeForGrid(loadOptions, projectId);
+    if (response.data.success) {
+      notify({
+        message: 'Данные сохранены',
+        position: {
+          my: 'center top',
+          at: 'center top',
         },
-    };
+      }, 'success', 1000);
+    } else {
+      notify(response.data.messages, 'error', 2000);
+    }
+    return response.data;
+  },
+  async insert(values) {
+    values.projectId = projectId;
+    const baseResponse = await projectAntennaService.createProjectAntenna(values)
+    await dataSource.value.load();
+    if (baseResponse.data.success) {
+      notify({
+        message: 'Данные сохранены',
+        position: {
+          my: 'center top',
+          at: 'center top',
+        },
+      }, 'success', 1000);
+    } else {
+      notify(baseResponse.data.messages, 'error', 2000);
+    }
+    return {data: baseResponse};
+  },
+  async remove(id) {
+    const baseResponse = await projectAntennaService.deleteProjectAntenna(id);
+    if (baseResponse.data.success) {
+      notify({
+        message: 'Антенна удалена',
+        position: {
+          my: 'center top',
+          at: 'center top',
+        },
+      }, 'success', 1000);
+    } else {
+      notify(baseResponse.data.messages, 'error', 2000);
+    }
+    return {data: baseResponse};
+  },
+  async update(id, values) {
+    values.id = id;
+    const baseResponse = await projectAntennaService.updateProjectAntenna(values);
+    await dataSource.value.load();
+    if (baseResponse.data.success) {
+      notify({
+        message: 'Данные сохранены',
+        position: {
+          my: 'center top',
+          at: 'center top',
+        },
+      }, 'success', 1000);
+    } else {
+      notify(baseResponse.data.messages, 'error', 2000);
+    }
+    return {data: baseResponse};
+  },
 });
 
-const saveButtonOptions = {
-    icon: 'email',
-    text: 'Send',
-    onClick: () => {
-        onClickSaveChanges()}
-};
+onMounted(async () => {
+  dataSource.value = store;
 
-const closeButtonOptions = {
-    text: 'Close',
-    onClick: () => {
-        popupVisible.value = false;}
-};
-
-onBeforeMount(async () => {
-    const response = await antennaService.getAntennae();
-    antennas.value = response.data.result;
-
-    const translatorsResponse = await translatorService.getTranslators();
-    translators.value = translatorsResponse.data.result;
-
-    if (mode.value === "read") {
-        const response = await projectAntennaService.getAllByProjectId(id);
-        console.log(response)
-        Object.assign(dataSource, response.data.result);
-    } else {
-        isFormDisabled.value = false;
-    }
+  const antennaResponse = await antennaService.getAntennae();
+  antennas.value = antennaResponse.data.result;
 })
 
-watch(antennas, (newAntennas) => {
-    index.value = newAntennas.length;
-});
-/*async function OnSelectAntenna(e){
-    const projectAntennaResponse = projectAntennaService
-    //проверка сужествет ли если то апдей если нет то крейт
-    //после апдейта или крейта принимаем ид проект антенны
-    const response = await antennaTranslatorService.getAllByProjectAntennaId(/!*передаем сюда ид проект антенны*!/);
-    //логика которая передает компаненты response для заполенеие формы если не пусто
-    console.log(response)
-    selectedAntennaId.value = e.value;
-}*/
-
-function onClickEditProject() {
-    isFormDisabled.value = false;
-}
-function getAntennasOptions(dataSource) {
-    const options = [];
-    for (let i = 0; i < dataSource.length; i += 1) {
-        options.push(generateNewAntennaOptions(i));
-    }
-    return options;
-}
-
-function generateNewAntennaOptions(index) {
-    return {
-        buttons: [{
-            name: 'trash',
-            location: 'after',
-            options: {
-                stylingMode: 'text',
-                icon: 'trash',
-                onClick: () => {
-                    antennas.value.splice(index, 1);
-                    antennaOptions.value = getAntennasOptions(antennas.value);
-                },
-            },
-        }],
-    };
-}
-
-async function onClickSaveChanges() {
-    try {
-        const formInstance = formRef.value.instance;
-        const isFormValid = await formInstance.validate();
-        if (isFormValid.isValid === false) {
-            notify({
-                message: 'Данные не корректны',
-                position: {
-                    my: 'center top',
-                    at: 'center top',
-                },
-            }, 'warning', 1000);
-        }
-        else {
-            if (mode.value === "read") {
-                const responseUpdate = await projectAntennaService.updateProjectAntenna(dataSource);
-                if (responseUpdate.data.success) {
-                    notify({
-                        message: 'Проект успешно отредактирован',
-                        position: {
-                            my: 'center top',
-                            at: 'center top',
-                        },
-                    }, 'success', 1000);
-                } else {
-                    notify(responseUpdate.data.messages, 'error', 2000);
-                }
-                isFormDisabled.value = true;
-            } else {
-                const response = await projectAntennaService.createProjectAntenna(dataSource);
-                if (response.data.success) {
-                    notify({
-                        message: 'Проект успешно создан',
-                        position: {
-                            my: 'center top',
-                            at: 'center top',
-                        },
-                    }, 'success', 1000);
-                } else {
-                    notify({
-                        message: response.data.messages,
-                        position: {
-                            my: 'center top',
-                            at: 'center top'}
-                    }, 'error', 2000);
-                }
-            }
-        }
-
-    } catch (error) {
-        console.error("Ошибка при сохранении изменений:", error);
-        notify({
-            message: "Ошибка сервера при сохранении изменений:",
-            position: {
-                my: 'center top',
-                at: 'center top'}
-        }, 'error', 2000);
-    }
-}
 </script>
 <style scoped>
 #form-container {
     margin: 10px 10px 30px;
-}
-
-.long-title h3 {
-    font-family:
-        'Segoe UI Light',
-        'Helvetica Neue Light',
-        'Segoe UI',
-        'Helvetica Neue',
-        'Trebuchet MS',
-        Verdana;
-    font-weight: 200;
-    font-size: 28px;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.add-antenna-button {
-    margin-top: 10px;
 }
 </style>

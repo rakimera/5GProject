@@ -1,6 +1,7 @@
 using Application.DataObjects;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
+using Application.Models.AntennaTranslator;
 using Application.Models.Projects.ProjectAntennas;
 using Application.Validation;
 using AutoMapper;
@@ -15,7 +16,6 @@ public class ProjectAntennaService : IProjectAntennaService
     private readonly IMapper _mapper;
     private readonly IRepositoryWrapper _repositoryWrapper;
     private readonly ProjectAntennaValidator _projectAntennaValidator;
-
 
     public ProjectAntennaService(IRepositoryWrapper repositoryWrapper, IMapper mapper, ProjectAntennaValidator projectAntennaValidator)
     {
@@ -43,14 +43,78 @@ public class ProjectAntennaService : IProjectAntennaService
             Messages: new List<string> { "Данные не были получены, возможно антенны проекта еще не созданы или удалены" });
     }
 
-    public Task<BaseResponse<string>> CreateAsync(ProjectAntennaDto model, string creator)
+    public async Task<BaseResponse<string>> CreateAsync(ProjectAntennaDto model, string creator)
     {
-        throw new NotImplementedException();
+        model.CreatedBy = creator;
+
+        var result = await _projectAntennaValidator.ValidateAsync(model);
+        if (result.IsValid)
+        {
+            ProjectAntenna project = _mapper.Map<ProjectAntenna>(model);
+            await _repositoryWrapper.ProjectAntennaRepository.CreateAsync(project);
+            await _repositoryWrapper.Save();
+
+            return new BaseResponse<string>(
+                Result: project.Id.ToString(),
+                Success: true,
+                Messages: new List<string> { "Антенна успешно добавлена" });
+        }
+
+        List<string> messages = _mapper.Map<List<string>>(result.Errors);
+
+        return new BaseResponse<string>(
+            Result: "",
+            Messages: messages,
+            Success: false);
     }
     
-    public Task<BaseResponse<ProjectAntennaDto>> Update(UpdateProjectAntennaDto model)
+    public async Task<BaseResponse<string>> Update(ProjectAntennaDto model, string modifare)
     {
-        throw new NotImplementedException();
+        var result = await _projectAntennaValidator.ValidateAsync(model);
+        if (!result.IsValid)
+        {
+            List<string> messages = _mapper.Map<List<string>>(result.Errors);
+
+            return new BaseResponse<string>(
+                Result: "",
+                Messages: messages,
+                Success: false);
+        }
+
+        ProjectAntenna? projectAntenna = await _repositoryWrapper.ProjectAntennaRepository.GetByCondition(x => x.Id.Equals(model.Id));
+        if (projectAntenna == null)
+        {
+            return new BaseResponse<string>(
+                Result: null,
+                Messages: new List<string> { "Антенна проекта не найдена" },
+                Success: false);
+        }
+
+        if (projectAntenna.Height != model.Height)
+        {
+            //логика обновления просчетов EnergyResult
+        }
+
+        if (projectAntenna.AntennaId != model.AntennaId)
+        {
+            var response = await Delete(projectAntenna.Id.ToString());
+            if (response.Result)
+            {
+                var createResponse = await CreateAsync(model, modifare);
+                return createResponse;
+            }
+        }
+        
+        _mapper.Map(model, projectAntenna);
+        projectAntenna.LastModifiedBy = modifare;
+
+        _repositoryWrapper.ProjectAntennaRepository.Update(projectAntenna);
+        await _repositoryWrapper.Save();
+
+        return new BaseResponse<string>(
+            Result: projectAntenna.Id.ToString(),
+            Success: true,
+            Messages: new List<string> { "Антенна успешно изменена" });
     }
 
     public async Task<BaseResponse<ProjectAntennaDto>> GetByOid(string oid)
@@ -106,9 +170,9 @@ public class ProjectAntennaService : IProjectAntennaService
             Success: false);
     }
 
-    public async Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions)
+    public async Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions, string id)
     {
-        var queryableUsers = _repositoryWrapper.ProjectRepository.GetAll();
+        var queryableUsers = _repositoryWrapper.ProjectRepository.GetAllByCondition(x => x.Id.ToString() == id);
         return await DataSourceLoader.LoadAsync(queryableUsers, loadOptions);
     }
 }

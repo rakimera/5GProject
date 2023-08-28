@@ -10,5 +10,5 @@ public interface IAntennaTranslatorService : ICrudService<AntennaTranslatorDto>
 {
     Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions);
     Task<BaseResponse<AntennaTranslatorDto>> Update(UpdateAntennaTranslatorDto model);
-    BaseResponse<List<AntennaTranslatorDto>> GetAllByProjectId(string id);
+    BaseResponse<List<AntennaTranslatorDto>> GetAllByProjectAntennaId(string id);
 }
