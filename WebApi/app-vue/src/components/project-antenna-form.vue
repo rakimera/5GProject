@@ -93,18 +93,7 @@ const store = new CustomStore({
   key: "id",
   async load(loadOptions) {
     const response = await projectAntennaService.getProjectAntennaeForGrid(loadOptions, projectId);
-    if (response.data.success) {
-      notify({
-        message: 'Данные сохранены',
-        position: {
-          my: 'center top',
-          at: 'center top',
-        },
-      }, 'success', 1000);
-    } else {
-      notify(response.data.messages, 'error', 2000);
-    }
-    return response.data;
+    return response;
   },
   async insert(values) {
     values.projectId = projectId;

@@ -172,7 +172,7 @@ public class ProjectAntennaService : IProjectAntennaService
 
     public async Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions, string id)
     {
-        var queryableUsers = _repositoryWrapper.ProjectRepository.GetAllByCondition(x => x.Id.ToString() == id);
+        var queryableUsers = _repositoryWrapper.ProjectAntennaRepository.GetAllByCondition(x => x.ProjectId.ToString() == id);
         return await DataSourceLoader.LoadAsync(queryableUsers, loadOptions);
     }
 }

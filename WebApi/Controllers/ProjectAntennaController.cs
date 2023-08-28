@@ -30,8 +30,8 @@ public class ProjectAntennaController : Controller
             return Ok(baseResponse);
         return NotFound(baseResponse);
     }
-    [HttpGet("index")]
-    public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions, string id)
+    [HttpGet("index/{id}")]
+    public async Task<IActionResult> Get(string id, [FromQuery]DataSourceLoadOptionsBase loadOptions)
     {
         var loadResult = await _service.ProjectAntennaService.GetLoadResult(loadOptions, id);
         return Ok(loadResult);
