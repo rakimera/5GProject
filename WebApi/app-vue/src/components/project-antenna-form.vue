@@ -6,6 +6,7 @@
             :show-borders="true"
             :remote-operations="true"
             key-expr="id"
+            @row-updating="onRowUpdating"
         >
           <dx-editing
               :allow-updating="true"
@@ -128,23 +129,27 @@ const store = new CustomStore({
     return {data: baseResponse};
   },
   async update(id, values) {
-    values.id = id;
-    const baseResponse = await projectAntennaService.updateProjectAntenna(values);
+      console.log(id + values)
+  }
+});
+
+async function onRowUpdating(options) {
+    options.newData = Object.assign(options.oldData, options.newData);
+    const baseResponse = await projectAntennaService.updateProjectAntenna(options.newData);
     await dataSource.value.load();
     if (baseResponse.data.success) {
-      notify({
-        message: 'Данные сохранены',
-        position: {
-          my: 'center top',
-          at: 'center top',
-        },
-      }, 'success', 1000);
+        notify({
+            message: 'Данные сохранены',
+            position: {
+                my: 'center top',
+                at: 'center top',
+            },
+        }, 'success', 1000);
     } else {
-      notify(baseResponse.data.messages, 'error', 2000);
+        notify(baseResponse.data.messages, 'error', 2000);
     }
     return {data: baseResponse};
-  },
-});
+}
 
 onMounted(async () => {
   dataSource.value = store;
