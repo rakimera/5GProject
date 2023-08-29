@@ -34,19 +34,23 @@
       <dx-label :text="false"/>
       <dx-required-rule message="Коэффициент усиления антенны должен быть заполнен"/>
     </dx-item>
-    <dx-item
+<!--    <dx-item-->
+<!--        data-field="antennaId"-->
+<!--        :visible="false"-->
+<!--        :options="{}">-->
+<!--    </dx-item>-->
+    <antenna-form
         data-field="antennaId"
         :visible="false"
-        :options="{
-              value: antennaIdProp}">
-    </dx-item>
+        :antenna-id="'antennaId'">
+    </antenna-form>
     <dx-button-item>
       <dx-button-options
           width="20%"
           type="default"
           styling-mode="outlined"
-          :template="'Создать 360'"
-          :on-click="onCreate360"
+          :template="'Загрузить360'"
+          :on-click="load360"
           :visible="!isFormDisabled"
           :use-submit-behavior="true"
       >
@@ -95,11 +99,10 @@ import {onBeforeMount, reactive, ref, defineProps} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import notify from "devextreme/ui/notify";
 import translatorSpecsService from "@/api/translatorSpecsService";
-
+import AntennaForm from "@/components/antenna-form.vue";
 
 const props = defineProps({
   onSaveTranslatorSpec: Function,
-  antennaIdProp: String
 })
 const router = useRouter();
 const route = useRoute();
@@ -119,14 +122,6 @@ onBeforeMount(async () => {
     pageTranslatorSpecDescription.value = "Создание передатчика"
   }
 })
-
-const onCreate360 = async () => {
-  try {
-    await router.push({name: 'radiationZone', params: {mode: "create", id: null}});
-  } catch (error) {
-    console.log(error);
-  }
-};
 
 function onClickEditTranslatorSpec() {
   isFormDisabled.value = false;
@@ -169,8 +164,7 @@ async function onClickSaveChanges() {
               at: 'center top',
             },
           }, 'success', 1000);
-          await router.push({name: 'projectDetail', params: {mode: "read", id: response.data.result}});
-          props.antennaIdProp();
+          await router.push({name: 'antennaForm', params: {mode: "read", id: response.data.result}});
           props.onSaveTranslatorSpec();
         } else {
           notify({

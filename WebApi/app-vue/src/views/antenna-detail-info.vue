@@ -76,7 +76,7 @@ onBeforeMount(async () => {
 function onSaveAntenna(e) {
   isTabDisabled.value = false;
   isFormDisabled.value = true;
-  console.log(e);
+  console.log(e + '<--- это айдишник антенны ' );
 }
 
 function onSaveTranslatorSpec() {

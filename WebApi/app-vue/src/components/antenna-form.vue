@@ -74,9 +74,9 @@ import {useRoute, useRouter} from "vue-router";
 import notify from "devextreme/ui/notify";
 import antennaService from "@/api/antennaService";
 
-
 const props = defineProps({
   onSaveAntenna: Function,
+  antennaId: String
 })
 const router = useRouter();
 const route = useRoute();
@@ -137,7 +137,7 @@ async function onClickSaveChanges() {
               at: 'center top',
             },
           }, 'success', 1000);
-          await router.push({name: 'projectDetail', params: {mode: "read", id: response.data.result}});
+          await router.push({name: 'antennaDetail', params: {mode: "read", id: response.data.result}});
           props.onSaveAntenna(response.data.result);
         } else {
           notify({
