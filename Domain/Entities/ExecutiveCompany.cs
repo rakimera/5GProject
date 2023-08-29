@@ -9,6 +9,4 @@ public class ExecutiveCompany : BaseEntity
     public CompanyLicense CompanyLicense { get; set; }
     public string BIN { get; set; }
     public string CompanyName { get; set; }
-    public List<Project> Projects { get; set; }
-    public List<User> Users { get; set; }
 }

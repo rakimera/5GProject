@@ -1,4 +1,6 @@
 using Application.Models.CompanyLicense;
+using Application.Models.Projects;
+using Application.Models.Users;
 using Domain.Common;
 using Domain.Entities;
 
@@ -11,6 +13,4 @@ public class ExecutiveCompanyDto : BaseEntity
     public CompanyLicenseDto? CompanyLicense { get; set; }
     public string BIN { get; set; }
     public string CompanyName { get; set; }
-    public List<Project?> Projects { get; set; }
-    public List<User?> Users { get; set; }
 }

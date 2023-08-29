@@ -1,6 +1,5 @@
 using Application.Interfaces.RepositoryContract;
 using Application.Interfaces.RepositoryContract.Common;
-using Domain.Entities;
 using Infrastructure.Persistence.DataContext;
 using Infrastructure.Services;
 
@@ -21,6 +20,7 @@ public class RepositoryWrapper : IRepositoryWrapper
     private IEnergyFlowRepository _energyFlowRepository;
     private IRadiationZoneRepository _radiationZoneRepository;
     private IAntennaTranslatorRepository _antennaTranslatorRepository;
+    private ITranslatorSpecsRepository _translatorSpecsRepository;
     private ICompanyLicenseRepository _companyLicenseRepository;
     private IExecutiveCompanyRepository _executiveCompanyRepository;
     private IBiohazardRadiusRepository _biohazardRadiusRepository;
@@ -30,7 +30,6 @@ public class RepositoryWrapper : IRepositoryWrapper
     private ISummaryBiohazardRadiusRepository _summaryBiohazardRadiusRepository;
     private ITotalFluxDensityRepository _totalFluxDensityRepository;
     private ITranslatorTypeRepository _translatorTypeRepository;
-    private ITranslatorSpecsRepository _translatorSpecsRepository;
 
     public RepositoryWrapper(Project5GDbContext db)
     {
@@ -283,7 +282,7 @@ public class RepositoryWrapper : IRepositoryWrapper
             return _antennaRepository;
         }
     }
-
+    
     public ITranslatorSpecsRepository TranslatorSpecsRepository
     {
         get
@@ -309,6 +308,7 @@ public class RepositoryWrapper : IRepositoryWrapper
             return _userRoleRepository;
         }
     }
+
 
     public IEnergyFlowRepository EnergyFlowRepository
     {

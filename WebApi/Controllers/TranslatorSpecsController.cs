@@ -21,7 +21,7 @@ public class TranslatorSpecsController : Controller
         _mapper = mapper;
     }
     
-    [HttpGet, Authorize(Roles = "Admin")]
+    [HttpGet]
     public IActionResult Get()
     {
         var baseResponse = _service.TranslatorSpecsService.GetAll();
@@ -30,6 +30,14 @@ public class TranslatorSpecsController : Controller
         return NotFound(baseResponse);
     }
     
+    [HttpGet("getAll/{id}")]
+    public IActionResult GetAll(string id)
+    {
+        var baseResponse = _service.TranslatorSpecsService.GetAllByProjectId(id);
+        if (baseResponse.Success)
+            return Ok(baseResponse);
+        return NotFound(baseResponse);
+    }
     
     [HttpGet("{oid}")]
     public async Task<IActionResult> Get(string oid)

@@ -21,7 +21,7 @@
 
 <script>
 import DxTreeView from 'devextreme-vue/tree-view';
-import { sizes } from '../utils/media-query';
+import { sizes } from '@/utils/media-query';
 import navigation from '../app-navigation';
 import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
