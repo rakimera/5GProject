@@ -15,27 +15,35 @@ namespace WebApi.Tests.Controllers
 {
     public class AccountControllerTests
     {
+        private readonly Mock<IUserService> _userServiceMock;
+        private readonly Mock<IMapper> _mapperMock;
+        private readonly Mock<IServiceWrapper> _serviceWrapperMock;
+        private readonly AccountController _accountController;
+
+        public AccountControllerTests()
+        {
+            _userServiceMock = new Mock<IUserService>();
+            _mapperMock = new Mock<IMapper>();
+            _serviceWrapperMock = new Mock<IServiceWrapper>();
+            _serviceWrapperMock.Setup(s => s.UserService).Returns(_userServiceMock.Object);
+            _accountController = new AccountController(_serviceWrapperMock.Object, _mapperMock.Object);
+        }
+
         [Fact]
         public Task Get_ReturnsOkResult_WhenServiceReturnsSuccess()
         {
             // Arrange
-            var userServiceMock = new Mock<IUserService>();
-            var mapperMock = new Mock<IMapper>();
-
             var baseResponse = new BaseResponse<IEnumerable<UserDto>>(
                 Result: new List<UserDto>(),
                 Success: true,
                 Messages: new List<string> { "Пользователи успешно получены" });
 
-            userServiceMock.Setup(s => s.GetAll()).Returns(baseResponse);
+            _userServiceMock.Setup(s => s.GetAll()).Returns(baseResponse);
 
-            var serviceWrapperMock = new Mock<IServiceWrapper>();
-            serviceWrapperMock.Setup(s => s.UserService).Returns(userServiceMock.Object);
-
-            var accountController = new AccountController(serviceWrapperMock.Object, mapperMock.Object);
+            _serviceWrapperMock.Setup(s => s.UserService).Returns(_userServiceMock.Object);
 
             // Act
-            var result = accountController.Get() as OkObjectResult;
+            var result = _accountController.Get() as OkObjectResult;
 
             // Assert
             Assert.NotNull(result);
@@ -52,23 +60,18 @@ namespace WebApi.Tests.Controllers
         public Task Get_ReturnsNotFound_WhenServiceReturnsFailure()
         {
             // Arrange
-            var userServiceMock = new Mock<IUserService>();
-            var mapperMock = new Mock<IMapper>();
 
             var baseResponse = new BaseResponse<IEnumerable<UserDto>>(
                 Result: null,
                 Success: false,
                 Messages: new List<string> { "Данные не были получены" });
 
-            userServiceMock.Setup(s => s.GetAll()).Returns(baseResponse);
+            _userServiceMock.Setup(s => s.GetAll()).Returns(baseResponse);
 
-            var serviceWrapperMock = new Mock<IServiceWrapper>();
-            serviceWrapperMock.Setup(s => s.UserService).Returns(userServiceMock.Object);
-
-            var accountController = new AccountController(serviceWrapperMock.Object, mapperMock.Object);
+            _serviceWrapperMock.Setup(s => s.UserService).Returns(_userServiceMock.Object);
 
             // Act
-            var result = accountController.Get() as NotFoundObjectResult;
+            var result = _accountController.Get() as NotFoundObjectResult;
 
             // Assert
             Assert.NotNull(result);
@@ -86,23 +89,18 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var oid = "some_oid";
-            var userServiceMock = new Mock<IUserService>();
-            var mapperMock = new Mock<IMapper>();
 
             var baseResponse = new BaseResponse<UserDto>(
                 Result: new UserDto(),
                 Success: true,
                 Messages: new List<string> { "Пользователь успешно найден" });
 
-            userServiceMock.Setup(s => s.GetByOid(oid)).ReturnsAsync(baseResponse);
+            _userServiceMock.Setup(s => s.GetByOid(oid)).ReturnsAsync(baseResponse);
 
-            var serviceWrapperMock = new Mock<IServiceWrapper>();
-            serviceWrapperMock.Setup(s => s.UserService).Returns(userServiceMock.Object);
-
-            var accountController = new AccountController(serviceWrapperMock.Object, mapperMock.Object);
+            _serviceWrapperMock.Setup(s => s.UserService).Returns(_userServiceMock.Object);
 
             // Act
-            var result = await accountController.Get(oid) as OkObjectResult;
+            var result = await _accountController.Get(oid) as OkObjectResult;
 
             // Assert
             Assert.NotNull(result);
@@ -119,23 +117,18 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var oid = "some_oid";
-            var userServiceMock = new Mock<IUserService>();
-            var mapperMock = new Mock<IMapper>();
 
             var baseResponse = new BaseResponse<UserDto>(
                 Result: null,
                 Success: false,
                 Messages: new List<string> { "Пользователь не найден" });
 
-            userServiceMock.Setup(s => s.GetByOid(oid)).ReturnsAsync(baseResponse);
+            _userServiceMock.Setup(s => s.GetByOid(oid)).ReturnsAsync(baseResponse);
 
-            var serviceWrapperMock = new Mock<IServiceWrapper>();
-            serviceWrapperMock.Setup(s => s.UserService).Returns(userServiceMock.Object);
-
-            var accountController = new AccountController(serviceWrapperMock.Object, mapperMock.Object);
+            _serviceWrapperMock.Setup(s => s.UserService).Returns(_userServiceMock.Object);
 
             // Act
-            var result = await accountController.Get(oid) as NotFoundObjectResult;
+            var result = await _accountController.Get(oid) as NotFoundObjectResult;
 
             // Assert
             Assert.NotNull(result);
@@ -161,31 +154,25 @@ namespace WebApi.Tests.Controllers
             };
             var createUserDto = new CreateUserDto();
             var mappedUserDto = new UserDto();
-            var userServiceMock = new Mock<IUserService>();
-            var mapperMock = new Mock<IMapper>();
 
             var baseResponse = new BaseResponse<string>(
                 Result: "user_id",
                 Success: true,
                 Messages: new List<string> { "Пользователь успешно создан" });
 
-            mapperMock
+            _mapperMock
                 .Setup(m => m.Map<UserDto>(createUserDto))
                 .Returns(mappedUserDto);
 
-            userServiceMock.Setup(s => s.CreateAsync(mappedUserDto, It.IsAny<string>()))
+            _userServiceMock.Setup(s => s.CreateAsync(mappedUserDto, It.IsAny<string>()))
                 .ReturnsAsync(baseResponse);
 
-            var serviceWrapperMock = new Mock<IServiceWrapper>();
-            serviceWrapperMock.Setup(s => s.UserService).Returns(userServiceMock.Object);
+            _serviceWrapperMock.Setup(s => s.UserService).Returns(_userServiceMock.Object);
 
-            var accountController = new AccountController(serviceWrapperMock.Object, mapperMock.Object)
-            {
-                ControllerContext = controllerContext
-            };
+            _accountController.ControllerContext = controllerContext;
 
             // Act
-            var result = await accountController.Post(createUserDto) as OkObjectResult;
+            var result = await _accountController.Post(createUserDto) as OkObjectResult;
 
             // Assert
             Assert.NotNull(result);
@@ -211,29 +198,23 @@ namespace WebApi.Tests.Controllers
             };
             var createUserDto = new CreateUserDto();
             var mappedUserDto = new UserDto();
-            var userServiceMock = new Mock<IUserService>();
-            var mapperMock = new Mock<IMapper>();
 
             var baseResponse = new BaseResponse<string>(
                 Result: "",
                 Success: false,
                 Messages: new List<string> { "Ошибка при создании пользователя" });
 
-            mapperMock.Setup(m => m.Map<UserDto>(createUserDto)).Returns(mappedUserDto);
+            _mapperMock.Setup(m => m.Map<UserDto>(createUserDto)).Returns(mappedUserDto);
 
-            userServiceMock.Setup(s => s.CreateAsync(mappedUserDto, It.IsAny<string>()))
+            _userServiceMock.Setup(s => s.CreateAsync(mappedUserDto, It.IsAny<string>()))
                 .ReturnsAsync(baseResponse);
 
-            var serviceWrapperMock = new Mock<IServiceWrapper>();
-            serviceWrapperMock.Setup(s => s.UserService).Returns(userServiceMock.Object);
+            _serviceWrapperMock.Setup(s => s.UserService).Returns(_userServiceMock.Object);
 
-            var accountController = new AccountController(serviceWrapperMock.Object, mapperMock.Object)
-            {
-                ControllerContext = controllerContext
-            };
+            _accountController.ControllerContext = controllerContext;
 
             // Act
-            var result = await accountController.Post(createUserDto) as BadRequestObjectResult;
+            var result = await _accountController.Post(createUserDto) as BadRequestObjectResult;
 
             // Assert
             Assert.NotNull(result);
@@ -250,23 +231,18 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var updateUserDto = new UpdateUserDto();
-            var userServiceMock = new Mock<IUserService>();
-            var mapperMock = new Mock<IMapper>();
 
             var baseResponse = new BaseResponse<UserDto>(
                 Result: new UserDto(),
                 Success: true,
                 Messages: new List<string> { "Пользователь успешно изменен" });
 
-            userServiceMock.Setup(s => s.UpdateUser(updateUserDto)).ReturnsAsync(baseResponse);
+            _userServiceMock.Setup(s => s.UpdateUser(updateUserDto)).ReturnsAsync(baseResponse);
 
-            var serviceWrapperMock = new Mock<IServiceWrapper>();
-            serviceWrapperMock.Setup(s => s.UserService).Returns(userServiceMock.Object);
-
-            var accountController = new AccountController(serviceWrapperMock.Object, mapperMock.Object);
+            _serviceWrapperMock.Setup(s => s.UserService).Returns(_userServiceMock.Object);
 
             // Act
-            var result = await accountController.Put(updateUserDto) as OkObjectResult;
+            var result = await _accountController.Put(updateUserDto) as OkObjectResult;
 
             // Assert
             Assert.NotNull(result);
@@ -283,23 +259,18 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var updateUserDto = new UpdateUserDto();
-            var userServiceMock = new Mock<IUserService>();
-            var mapperMock = new Mock<IMapper>();
 
             var baseResponse = new BaseResponse<UserDto>(
                 Result: null,
                 Success: false,
                 Messages: new List<string> { "Ошибка при изменении пользователя" });
 
-            userServiceMock.Setup(s => s.UpdateUser(updateUserDto)).ReturnsAsync(baseResponse);
+            _userServiceMock.Setup(s => s.UpdateUser(updateUserDto)).ReturnsAsync(baseResponse);
 
-            var serviceWrapperMock = new Mock<IServiceWrapper>();
-            serviceWrapperMock.Setup(s => s.UserService).Returns(userServiceMock.Object);
-
-            var accountController = new AccountController(serviceWrapperMock.Object, mapperMock.Object);
+            _serviceWrapperMock.Setup(s => s.UserService).Returns(_userServiceMock.Object);
 
             // Act
-            var result = await accountController.Put(updateUserDto) as BadRequestObjectResult;
+            var result = await _accountController.Put(updateUserDto) as BadRequestObjectResult;
 
             // Assert
             Assert.NotNull(result);
@@ -316,23 +287,18 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var oid = "some_oid";
-            var userServiceMock = new Mock<IUserService>();
-            var mapperMock = new Mock<IMapper>();
 
             var baseResponse = new BaseResponse<bool>(
                 Result: true,
                 Success: true,
                 Messages: new List<string> { "Пользователь успешно удален" });
 
-            userServiceMock.Setup(s => s.Delete(oid)).ReturnsAsync(baseResponse);
+            _userServiceMock.Setup(s => s.Delete(oid)).ReturnsAsync(baseResponse);
 
-            var serviceWrapperMock = new Mock<IServiceWrapper>();
-            serviceWrapperMock.Setup(s => s.UserService).Returns(userServiceMock.Object);
-
-            var accountController = new AccountController(serviceWrapperMock.Object, mapperMock.Object);
+            _serviceWrapperMock.Setup(s => s.UserService).Returns(_userServiceMock.Object);
 
             // Act
-            var result = await accountController.Delete(oid) as OkObjectResult;
+            var result = await _accountController.Delete(oid) as OkObjectResult;
 
             // Assert
             Assert.NotNull(result);
@@ -349,23 +315,18 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var oid = "some_oid";
-            var userServiceMock = new Mock<IUserService>();
-            var mapperMock = new Mock<IMapper>();
 
             var baseResponse = new BaseResponse<bool>(
                 Result: false,
                 Success: false,
                 Messages: new List<string> { "Пользователя не существует" });
 
-            userServiceMock.Setup(s => s.Delete(oid)).ReturnsAsync(baseResponse);
+            _userServiceMock.Setup(s => s.Delete(oid)).ReturnsAsync(baseResponse);
 
-            var serviceWrapperMock = new Mock<IServiceWrapper>();
-            serviceWrapperMock.Setup(s => s.UserService).Returns(userServiceMock.Object);
-
-            var accountController = new AccountController(serviceWrapperMock.Object, mapperMock.Object);
+            _serviceWrapperMock.Setup(s => s.UserService).Returns(_userServiceMock.Object);
 
             // Act
-            var result = await accountController.Delete(oid) as NotFoundObjectResult;
+            var result = await _accountController.Delete(oid) as NotFoundObjectResult;
 
             // Assert
             Assert.NotNull(result);
@@ -382,19 +343,14 @@ namespace WebApi.Tests.Controllers
         {
             // Arrange
             var loadOptions = new DataSourceLoadOptionsBase();
-            var userServiceMock = new Mock<IUserService>();
-            var mapperMock = new Mock<IMapper>();
 
             var loadResult = new LoadResult();
-            userServiceMock.Setup(s => s.GetLoadResult(loadOptions)).ReturnsAsync(loadResult);
+            _userServiceMock.Setup(s => s.GetLoadResult(loadOptions)).ReturnsAsync(loadResult);
 
-            var serviceWrapperMock = new Mock<IServiceWrapper>();
-            serviceWrapperMock.Setup(s => s.UserService).Returns(userServiceMock.Object);
-
-            var accountController = new AccountController(serviceWrapperMock.Object, mapperMock.Object);
+            _serviceWrapperMock.Setup(s => s.UserService).Returns(_userServiceMock.Object);
 
             // Act
-            var result = await accountController.Get(loadOptions) as OkObjectResult;
+            var result = await _accountController.Get(loadOptions) as OkObjectResult;
 
             // Assert
             Assert.NotNull(result);
