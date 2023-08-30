@@ -20,7 +20,7 @@ public class ServiceWrapper : IServiceWrapper
     private readonly Lazy<ICompanyLicenseService> _companyLicenseService;
     private readonly Lazy<IExecutiveCompanyService> _executiveCompanyService;
     private readonly Lazy<ITranslatorSpecsService> _translatorSpecsService;
-    private readonly Lazy<IWordService> _wordService;
+    private readonly Lazy<IFileService> _fileService;
 
     public ServiceWrapper(
         IRepositoryWrapper repository,
@@ -37,7 +37,7 @@ public class ServiceWrapper : IServiceWrapper
         ExecutiveCompanyValidator executiveCompanyValidator,
         IEnergyFlowService energyFlowService)
     {
-        _wordService = new Lazy<IWordService>(() => new WordService(repository, energyFlowService));
+        _fileService = new Lazy<IFileService>(() => new FileService(repository, energyFlowService));
         _roleService = new Lazy<IRoleService>(() => new RoleService(repository, mapper, roleValidator));
         _companyLicenseService =
             new Lazy<ICompanyLicenseService>(() => new CompanyLicenseService(repository, mapper, licenseValidator));
@@ -71,5 +71,5 @@ public class ServiceWrapper : IServiceWrapper
     public IRoleService RoleService => _roleService.Value;
     public ICompanyLicenseService CompanyLicenseService => _companyLicenseService.Value;
     public IExecutiveCompanyService ExecutiveCompanyService => _executiveCompanyService.Value;
-    public IWordService WordService => _wordService.Value;
+    public IFileService FileService => _fileService.Value;
 }

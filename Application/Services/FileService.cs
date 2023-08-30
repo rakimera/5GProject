@@ -3,25 +3,31 @@ using System.Drawing;
 using Application.DataObjects;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
-using DevExpress.Drawing.Printing;
 using DevExpress.Export.Xl;
+using DevExpress.Office.Services;
 using DevExpress.Office.Utils;
 using DevExpress.XtraRichEdit;
 using DevExpress.XtraRichEdit.API.Native;
-using DevExpress.XtraRichEdit.Commands;
 using Domain.Entities;
 using Domain.Enums;
 using OfficeOpenXml;
+using DevExpress.Spreadsheet;
+using DevExpress.Spreadsheet.Charts;
+using DevExpress.XtraSpreadsheet.Services;
+using ChartType = DevExpress.XtraRichEdit.API.Native.ChartType;
+using DocumentFormat = DevExpress.XtraRichEdit.DocumentFormat;
+using SearchOptions = DevExpress.XtraRichEdit.API.Native.SearchOptions;
+using Table = DevExpress.XtraRichEdit.API.Native.Table;
 
 namespace Application.Services;
 
-public class WordService : IWordService
+public class FileService : IFileService
 {
     private readonly IRepositoryWrapper _repositoryWrapper;
     private readonly IEnergyFlowService _energyFlowService;
 
 
-    public WordService(IRepositoryWrapper repositoryWrapper, IEnergyFlowService energyFlowService)
+    public FileService(IRepositoryWrapper repositoryWrapper, IEnergyFlowService energyFlowService)
     {
         _repositoryWrapper = repositoryWrapper;
         _energyFlowService = energyFlowService;
@@ -146,7 +152,7 @@ public class WordService : IWordService
         
                 Antenna? antenna = await _repositoryWrapper.AntennaRepository.GetByCondition(x => x.Model.Equals("TBXLHA-6565B-VTM"));
                 TranslatorSpecs? translatorSpecs = await _repositoryWrapper.TranslatorSpecsRepository
-                    .GetByCondition(x => x.AntennaId == antenna.Id && x.Frequency == 900);
+                    .GetByCondition(x => x.AntennaId == antenna.Id && x.Frequency == 900 );
                 for (int row = 1; row <= rowCount-1; row++)
                 {
                     var degreeCellValue = worksheet.Cells[row, 1].Value;
@@ -174,6 +180,7 @@ public class WordService : IWordService
 
     public async Task<BaseResponse<bool>> ProjectWord()
     {
+        // OfficeCharts.Instance.ActivateCrossPlatformCharts();
         using (var wordProcessor = new RichEditDocumentServer()) 
         { 
             wordProcessor.LoadDocument("Шаблон.docx");
@@ -232,7 +239,7 @@ public class WordService : IWordService
             document.InsertSingleLineText(table[0, 5].Range.Start, "Rx, м");
             
             var radiations = _repositoryWrapper.RadiationZoneRepository
-                .GetAllByCondition(x => x.TranslatorSpecsId.ToString() == "da9edb91-e301-4fc2-baff-2e1ec5f5570e")!
+                .GetAllByCondition(x => x.TranslatorSpecsId.ToString() == "da9edb91-e301-4fc2-baff-2e1ec5f5570e" && x.DirectionType == DirectionType.Vertical)!
                 .OrderBy(x=> x.Degree).ToList();
             var translator = await _repositoryWrapper.TranslatorSpecsRepository
                 .GetByCondition(x => x.Id.ToString() == "da9edb91-e301-4fc2-baff-2e1ec5f5570e");
@@ -255,9 +262,10 @@ public class WordService : IWordService
                     document.InsertText(table[y, 4].Range.Start, rZ.ToString("F3"));
                     document.InsertText(table[y, 5].Range.Start, rX.ToString("F3"));
                     y++; 
-                } 
+                }
             }
             table.EndUpdate();
+            
             // document.AppendSection();
             // document.Unit = DevExpress.Office.DocumentUnit.Inch;
             // Shape picture = document.Shapes.InsertPicture(document.Range.End, DocumentImageSource.FromFile("image.jpg"));
@@ -266,11 +274,67 @@ public class WordService : IWordService
             // picture.VerticalAlignment = ShapeVerticalAlignment.Center;
             // picture.Line.Color = Color.Black;
             // wordProcessor.SaveDocument("Arthur2.docx", DocumentFormat.OpenXml);
+            
             wordProcessor.SaveDocument("Project.docx", DocumentFormat.OpenXml);
         }
         return new BaseResponse<bool>(
             Result: true,
             Messages: new List<string> { "Файл успешно создан" },
             Success: true);
+    }
+
+
+    public async Task<BaseResponse<bool>> CreateGrafic()
+    {
+        OfficeCharts.Instance.ActivateCrossPlatformCharts();
+        using (var wordProcessor = new RichEditDocumentServer())
+        {
+            Document document = wordProcessor.Document;
+            document.Unit = DevExpress.Office.DocumentUnit.Inch;
+            var chartShape = document.Shapes.InsertChart(document.Range.Start,ChartType.ScatterLine);
+            chartShape.Name = "Scatter Line chart";
+            
+            chartShape.Size = new SizeF(4f, 3.2f);
+            chartShape.RelativeHorizontalPosition = ShapeRelativeHorizontalPosition.Column;
+            chartShape.RelativeVerticalPosition = ShapeRelativeVerticalPosition.Paragraph;
+            chartShape.Offset = new PointF(0, 0);
+            ChartObject chart = (ChartObject)chartShape.ChartFormat.Chart;
+            Worksheet worksheet = (Worksheet)chartShape.ChartFormat.Worksheet;
+            await SpecifyChartData(worksheet);
+            chart.SelectData(worksheet.Range.FromLTRB(0, 0, 1, 360));
+            chart.Legend.Visible = false;
+            wordProcessor.SaveDocument("Ar222.docx", DocumentFormat.OpenXml);
+        }
+        return new BaseResponse<bool>(
+            Result: true,
+            Messages: new List<string> { "Файл успешно создан" },
+            Success: true);
+    }
+    
+    private async Task<bool> SpecifyChartData(Worksheet sheet)
+    {
+        var radiations = _repositoryWrapper.RadiationZoneRepository
+            .GetAllByCondition(x => x.TranslatorSpecsId.ToString() == "da9edb91-e301-4fc2-baff-2e1ec5f5570e" && x.DirectionType == DirectionType.Vertical)!
+            .OrderBy(x=> x.Degree).ToList();
+        var translator = await _repositoryWrapper.TranslatorSpecsRepository
+            .GetByCondition(x => x.Id.ToString() == "da9edb91-e301-4fc2-baff-2e1ec5f5570e");
+        // var radiations = _repositoryWrapper.RadiationZoneRepository
+        //     .GetAllByCondition(x => x.TranslatorSpecsId == antennaTranslator.TranslatorSpecsId && x.DirectionType == DirectionType.Vertical)!
+        //     .OrderBy(x=> x.Degree).ToList();  
+        // var translator = await _repositoryWrapper.TranslatorSpecsRepository
+        //     .GetByCondition(x => x.Id == antennaTranslator.TranslatorSpecsId);  Как будет
+        
+        for (int i = 0; i < radiations.Count; i++)
+        {
+            // var rB = _energyFlowService.GetRB(antennaTranslator.Power, antennaTranslator.Gain, antennaTranslator.TransmitLossFactor, radiations[i].Value);  Как будет
+            var rB = _energyFlowService.GetRB(translator.Power, translator.Gain, 0.71M, radiations[i].Value);
+            var rZ = _energyFlowService.GetRZ(radiations[i].Degree, rB);
+            var rX = _energyFlowService.GetRX(radiations[i].Degree, rB);
+    
+            sheet[i, 0].Value = rX;
+            sheet[i, 1].Value = rZ;
+        }
+
+        return true;
     }
 }
