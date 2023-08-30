@@ -26,7 +26,8 @@
             title="Создание передатчика"
         >
           <translator-spec-form
-              :on-save-antenna="onSaveTranslatorSpec">
+              :on-save-antenna="onSaveTranslatorSpec"
+              :antenaId="antennaId">
             <dx-item
                 data-field="antennaId"
                 :visible="false"
@@ -60,6 +61,7 @@ let isFormDisabled = ref(true);
 let isTabDisabled = ref(true);
 let oid = route.params.id;
 const mode = route.params.mode;
+var antennaId = ref(null);
 const pageAntennaDescription = ref("Подробно об антенне");
 const formRef = ref(null);
 
@@ -77,6 +79,7 @@ function onSaveAntenna(e) {
   isTabDisabled.value = false;
   isFormDisabled.value = true;
   console.log(e + '<--- это айдишник антенны ' );
+  antennaId.value = e;
 }
 
 function onSaveTranslatorSpec() {

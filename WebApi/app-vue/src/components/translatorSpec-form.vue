@@ -34,16 +34,6 @@
       <dx-label :text="false"/>
       <dx-required-rule message="Коэффициент усиления антенны должен быть заполнен"/>
     </dx-item>
-<!--    <dx-item-->
-<!--        data-field="antennaId"-->
-<!--        :visible="false"-->
-<!--        :options="{}">-->
-<!--    </dx-item>-->
-    <antenna-form
-        data-field="antennaId"
-        :visible="false"
-        :antenna-id="'antennaId'">
-    </antenna-form>
     <dx-button-item>
       <dx-button-options
           width="20%"
@@ -99,10 +89,10 @@ import {onBeforeMount, reactive, ref, defineProps} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import notify from "devextreme/ui/notify";
 import translatorSpecsService from "@/api/translatorSpecsService";
-import AntennaForm from "@/components/antenna-form.vue";
 
 const props = defineProps({
   onSaveTranslatorSpec: Function,
+  antennaId: String
 })
 const router = useRouter();
 const route = useRoute();
@@ -114,6 +104,7 @@ const pageTranslatorSpecDescription = ref("Подробно о передатч�
 const formRef = ref(null);
 
 onBeforeMount(async () => {
+  console.log(props.antennaId);
   if (mode.value === "read") {
     const response = await translatorSpecsService.getTranslatorSpec(oid);
     Object.assign(dataSource, response.data.result);
@@ -155,6 +146,8 @@ async function onClickSaveChanges() {
         }
         isFormDisabled.value = true;
       } else {
+        dataSource.antennaId = props.antennaId;
+        console.log(dataSource);
         const response = await translatorSpecsService.createTranslatorSpec(dataSource);
         if (response.data.success) {
           notify({
