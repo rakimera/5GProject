@@ -1,8 +1,10 @@
 using System.Text.Json.Serialization;
+using Application.Models.AntennaTranslator;
+using Application.Models.Location;
 
 namespace Application.Models.Projects.ProjectAntennas;
 
-public class UpdateProjectAntennaDto
+public class CreateProjectAntennaDto
 {
     [property: JsonPropertyName("azimuth")]
     public decimal Azimuth { get; set; }

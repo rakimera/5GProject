@@ -1,39 +1,44 @@
 using Application.Interfaces;
-using Application.Models.TranslatorSpecs;
+using Application.Models.AntennaTranslator;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+using DevExtreme.AspNet.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
 
 [ApiController]
-[Route("api/translators")]
-public class TranslatorSpecsController : Controller
+[Route("api/antenna-translator")]
+public class AntennaTranslatorsController : Controller
 {
+
     private readonly IServiceWrapper _service;
     private readonly IMapper _mapper;
-   
-    public TranslatorSpecsController(
-        IServiceWrapper service, 
-        IMapper mapper)
+
+    public AntennaTranslatorsController(IServiceWrapper service, IMapper mapper)
     {
         _service = service;
         _mapper = mapper;
     }
-    
+
     [HttpGet]
     public IActionResult Get()
     {
-        var baseResponse = _service.TranslatorSpecsService.GetAll();
+        var baseResponse = _service.AntennaTranslatorService.GetAll();
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
     }
-    
+    [HttpGet("index")]
+    public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
+    {
+        var loadResult = await _service.AntennaTranslatorService.GetLoadResult(loadOptions);
+        return Ok(loadResult);
+    }
+
     [HttpGet("getAll/{id}")]
     public IActionResult GetAll(string id)
     {
-        var baseResponse = _service.TranslatorSpecsService.GetAllByProjectId(id);
+        var baseResponse = _service.AntennaTranslatorService.GetAllByProjectAntennaId(id);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
@@ -42,17 +47,17 @@ public class TranslatorSpecsController : Controller
     [HttpGet("{oid}")]
     public async Task<IActionResult> Get(string oid)
     {
-        var baseResponse = await _service.TranslatorSpecsService.GetByOid(oid);
+        var baseResponse = await _service.AntennaTranslatorService.GetByOid(oid);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(CreateTranslatorSpecsDto model)
+    public async Task<IActionResult> Post([FromBody]CreateAntennaTranslatorDto model)
     {
-        TranslatorSpecsDto translatorSpecsDto = _mapper.Map<TranslatorSpecsDto>(model);
-        var baseResponse = await _service.TranslatorSpecsService.CreateAsync(translatorSpecsDto, User.Identity.Name);
+        AntennaTranslatorDto antennaTranslatorDto = _mapper.Map<AntennaTranslatorDto>(model);
+        var baseResponse = await _service.AntennaTranslatorService.CreateAsync(antennaTranslatorDto, User.Identity.Name);
         
         if (baseResponse.Success)
             return Ok(baseResponse);
@@ -60,18 +65,18 @@ public class TranslatorSpecsController : Controller
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put(UpdateTranslatorSpecsDto model)
+    public async Task<IActionResult> Put(UpdateAntennaTranslatorDto model)
     {
-        var baseResponse = await _service.TranslatorSpecsService.Update(model);
+        var baseResponse = await _service.AntennaTranslatorService.Update(model);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);
     }
-        
+
     [HttpDelete("{oid}")]
     public async Task<IActionResult> Delete(string oid)
     {
-        var baseResponse = await _service.TranslatorSpecsService.Delete(oid);
+        var baseResponse = await _service.AntennaTranslatorService.Delete(oid);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);

@@ -21,7 +21,7 @@ const projectAntennaService = {
     
     async getAllByProjectId(id) {
         try {
-            return await axios.get(`/api/getAllFromThisProject/projects-antenna/${id}`);
+            return await axios.get(`/api/projects-antenna/getAll/${id}`);
         }
         catch (error){
             console.log(error)
@@ -54,11 +54,10 @@ const projectAntennaService = {
 
     },
 
-    async getProjectAntennaeForGrid(loadOptions) {
+    async getProjectAntennaeForGrid(loadOptions, id) {
         try {
             let options = storeExtension.getParams(loadOptions);
-            const response = await axios.get(`/api/projects-antenna/index/${options}`);
-            console.log(response)
+            const response = await axios.get(`/api/projects-antenna/index/${id}/${options}`);
             return response.data;
         } catch (error) {
             console.log(error)

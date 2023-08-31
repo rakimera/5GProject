@@ -48,7 +48,8 @@ const router = useRouter();
 const store = new CustomStore({
   key: "id",
   async load(loadOptions) {
-    return await userService.getAllUsers(loadOptions);
+    const response = await userService.getAllUsers(loadOptions);
+    return response;
   },
   async remove(oid) {
     const baseResponse = await userService.deleteUser(oid);
