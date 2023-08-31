@@ -5,8 +5,9 @@ namespace Domain.Entities;
 public class ExecutiveCompany : BaseEntity
 {
     public required string Address { get; set; }
-    public Guid CompanyLicenseId { get; set; }
-    public CompanyLicense CompanyLicense { get; set; }
+    public string? LicenseNumber { get; set; }
+    public DateTime? LicenseDateOfIssue { get; set; }
     public string BIN { get; set; }
     public string CompanyName { get; set; }
+    public required string TownName { get; set; }
 }

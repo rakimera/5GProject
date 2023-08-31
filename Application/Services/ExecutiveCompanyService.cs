@@ -69,7 +69,7 @@ namespace Application.Services
 
         public async Task<BaseResponse<ExecutiveCompanyDto>> GetByOid(string oid)
         {
-            ExecutiveCompany company =
+            ExecutiveCompany? company =
                 await _repositoryWrapper.ExecutiveCompanyRepository
                     .GetByCondition(x => x.Id.ToString() == oid);
             ExecutiveCompanyDto model = _mapper.Map<ExecutiveCompanyDto>(company);
@@ -89,7 +89,7 @@ namespace Application.Services
 
         public async Task<BaseResponse<bool>> Delete(string oid)
         {
-            ExecutiveCompany company =
+            ExecutiveCompany? company =
                 await _repositoryWrapper.ExecutiveCompanyRepository
                     .GetByCondition(x => x.Id.ToString() == oid);
             if (company != null)
@@ -116,7 +116,8 @@ namespace Application.Services
             return await DataSourceLoader.LoadAsync(queryableCompanies, loadOptions);
         }
 
-        public async Task<BaseResponse<ExecutiveCompanyDto>> UpdateExecutiveCompany(UpdateExecutiveCompanyDto model)
+        public async Task<BaseResponse<ExecutiveCompanyDto>> UpdateExecutiveCompany(UpdateExecutiveCompanyDto? model,
+            string editor)
         {
             BaseResponse<ExecutiveCompanyDto> getCompanyResponse = await GetByOid(model.Id);
             if (!getCompanyResponse.Success || getCompanyResponse.Result == null)
@@ -129,7 +130,7 @@ namespace Application.Services
 
             ExecutiveCompanyDto existingCompanyDto = getCompanyResponse.Result;
             _mapper.Map(model, existingCompanyDto);
-            ExecutiveCompany company =
+            ExecutiveCompany? company =
                 await _repositoryWrapper.ExecutiveCompanyRepository
                     .GetByCondition(x =>
                         x.Id.Equals(existingCompanyDto.Id));
@@ -141,7 +142,7 @@ namespace Application.Services
                     Success: false);
             }
 
-            existingCompanyDto.LastModifiedBy = "Admin";
+            existingCompanyDto.LastModifiedBy = editor;
             _mapper.Map(existingCompanyDto, company);
             var result = await _executiveCompanyValidator.ValidateAsync(company);
             if (!result.IsValid)

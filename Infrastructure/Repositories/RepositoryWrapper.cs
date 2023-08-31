@@ -20,8 +20,6 @@ public class RepositoryWrapper : IRepositoryWrapper
     private IEnergyFlowRepository _energyFlowRepository;
     private IRadiationZoneRepository _radiationZoneRepository;
     private IAntennaTranslatorRepository _antennaTranslatorRepository;
-    private ITranslatorSpecsRepository _translatorSpecsRepository;
-    private ICompanyLicenseRepository _companyLicenseRepository;
     private IExecutiveCompanyRepository _executiveCompanyRepository;
     private IBiohazardRadiusRepository _biohazardRadiusRepository;
     private IProjectAntennaRepository _projectAntennaRepository;
@@ -30,6 +28,7 @@ public class RepositoryWrapper : IRepositoryWrapper
     private ISummaryBiohazardRadiusRepository _summaryBiohazardRadiusRepository;
     private ITotalFluxDensityRepository _totalFluxDensityRepository;
     private ITranslatorTypeRepository _translatorTypeRepository;
+    private ITranslatorSpecsRepository _translatorSpecsRepository;
 
     public RepositoryWrapper(Project5GDbContext db)
     {
@@ -46,19 +45,6 @@ public class RepositoryWrapper : IRepositoryWrapper
             }
 
             return _antennaTranslatorRepository;
-        }
-    }
-
-    public ICompanyLicenseRepository CompanyLicenseRepository
-    {
-        get
-        {
-            if (_companyLicenseRepository == null)
-            {
-                _companyLicenseRepository = new CompanyLicenseRepository(_db);
-            }
-
-            return _companyLicenseRepository;
         }
     }
 

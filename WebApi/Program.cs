@@ -49,7 +49,6 @@ try
         using (var scope = app.Services.CreateScope())
         {
             var dataseed = scope.ServiceProvider.GetRequiredService<DataSeed>();
-            await dataseed.SeedCompanyLicense();
             await dataseed.SeedExecutiveCompany();
             await dataseed.SeedAdmin();
             await dataseed.SeedAntenna();
