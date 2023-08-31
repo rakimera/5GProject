@@ -1,6 +1,7 @@
 using Application.Interfaces;
 using Application.Models.TranslatorSpecs;
 using AutoMapper;
+using DevExtreme.AspNet.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -68,5 +69,13 @@ public class TranslatorSpecsController : Controller
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
+    }
+    
+    // [HttpGet("index"), Authorize(Roles = "Admin")]
+    [HttpGet("index")]
+    public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
+    {
+        var loadResult = await _service.TranslatorSpecsService.GetLoadResult(loadOptions);
+        return Ok(loadResult);
     }
 }

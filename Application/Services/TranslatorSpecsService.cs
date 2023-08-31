@@ -4,6 +4,8 @@ using Application.Interfaces.RepositoryContract.Common;
 using Application.Models.TranslatorSpecs;
 using Application.Validation;
 using AutoMapper;
+using DevExtreme.AspNet.Data;
+using DevExtreme.AspNet.Data.ResponseModel;
 using Domain.Entities;
 
 namespace Application.Services;
@@ -126,5 +128,11 @@ public class TranslatorSpecsService : ITranslatorSpecsService
             Result: translatorSpecs.Id.ToString(),
             Success: true,
             Messages: new List<string> { "Передатчик успешно изменен" });
+    }
+
+    public async Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions)
+    {
+        var queryableAntennae = _repository.TranslatorSpecsRepository.GetAll();
+        return await DataSourceLoader.LoadAsync(queryableAntennae, loadOptions);
     }
 }

@@ -1,76 +1,77 @@
 <template>
-  <h2 v-text="pageTranslatorSpecDescription"></h2>
-  <dx-form
-      id="translatorSpec-form"
-      ref="formRef"
-      label-location="top"
-      :form-data="dataSource"
-      :read-only="isFormDisabled"
-      :show-colon-after-label="true"
-      :show-validation-summary="true"
-  >
-    <dx-item
-        data-field="frequency"
-        editor-type='dxTextBox'
-        :editor-options="{ 
-                      stylingMode: 'filled',
-                      labelMode: 'floating',
-                      label: 'Частота' }">
-      <dx-label :text="false"/>
-      <dx-required-rule message="Частота передатчика должна быть заполнена"/>
-    </dx-item>
-    <dx-item
-        data-field="power">
-      <dx-label :text="'Мощность'"/>
-      <dx-required-rule message="Мощность передатчика должна быть заполнена"/>
-    </dx-item>
-    <dx-item
-        data-field="gain"
-        editor-type='dxTextBox'
-        :editor-options="{ 
-                      stylingMode: 'filled',
-                      labelMode: 'floating',
-                      label: 'Коэффициент усиления антенны' }">
-      <dx-label :text="false"/>
-      <dx-required-rule message="Коэффициент усиления антенны должен быть заполнен"/>
-    </dx-item>
-    <dx-button-item>
-      <dx-button-options
-          width="20%"
-          type="default"
-          styling-mode="outlined"
-          :template="'Загрузить360'"
-          :on-click="load360"
-          :visible="!isFormDisabled"
-          :use-submit-behavior="true"
+  <div>
+    <div id="data-grid-demo">
+      <dx-data-grid
+          :data-source="dataSource"
+          :show-borders="true"
+          :remote-operations="true"
+          key-expr="id"
+          @row-updating="onRowUpdating"
       >
-      </dx-button-options>
-    </dx-button-item>
-    <dx-button-item>
-      <dx-button-options
-          width="100%"
-          type="success"
-          styling-mode="outlined"
-          :template="mode === 'create' ? 'Создать и продолжить' : 'Сохранить изменения'"
-          :on-click="onClickSaveChanges"
-          :visible="!isFormDisabled"
-          :use-submit-behavior="true"
-      >
-      </dx-button-options>
-    </dx-button-item>
-    <dx-button-item>
-      <dx-button-options
-          width="100%"
-          type="default"
-          styling-mode="outlined"
-          template="Редактировать"
-          :on-click="onClickEditTranslatorSpec"
-          :visible="isFormDisabled"
-          :use-submit-behavior="true"
-      >
-      </dx-button-options>
-    </dx-button-item>
-  </dx-form>
+        <dx-editing
+            :allow-updating="true"
+            :allow-adding="true"
+            :allow-deleting="true"
+            :texts="{confirmDeleteMessage: 'Вы уверены, что хотите удалить эту запись?'}"
+            mode="form"
+        />
+        <dx-column
+            data-field="frequency"
+            caption="Частота"
+            data-type="number"
+            :editor-options="{
+                stylingMode: 'filled', 
+                labelMode: 'floating'}"
+        >
+          <dx-label :visible="false"/>
+          <dx-required-rule message="Частота не задана"></dx-required-rule>
+        </dx-column>
+        <dx-column 
+            data-field="power" 
+            data-type="number" 
+            caption="Мощность"
+            :editor-options="{
+                stylingMode: 'filled', 
+                labelMode: 'floating'}">
+          <dx-label :visible="false"/>
+          <dx-required-rule message="Мощность не задана"></dx-required-rule>
+        </dx-column>
+        <dx-column
+            data-field="gain"
+            data-type="number"
+            caption="Коэффициент усиления антенны"
+            :editor-options="{
+                stylingMode: 'filled', 
+                labelMode: 'floating'}">
+          <dx-label :visible="false"/>
+          <dx-required-rule message="Коэффициент усиления антенны не задан"></dx-required-rule>
+        </dx-column>
+        <dx-column data-field="antennaId" data-type="string" :visible="false">
+          <dx-form-item
+              :editor-options="{
+                disabled: true}"
+              editor-type="dxTextArea"
+              :visible="false"
+              :data="antennaId"
+          />
+        </dx-column>
+        <dx-paging :page-size="5"/>
+        <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
+      </dx-data-grid>
+    </div>
+  </div>
+  
+  <dx-button-item>
+    <dx-button-options
+        width="20%"
+        type="default"
+        styling-mode="outlined"
+        :template="'Загрузить360'"
+        :on-click="load360"
+        :use-submit-behavior="true"
+    >
+    </dx-button-options>
+  </dx-button-item>
 </template>
 
 <script setup>
@@ -78,108 +79,100 @@
 import {
   DxButtonItem,
   DxButtonOptions,
-  DxForm,
-  DxItem,
   DxLabel
 } from "devextreme-vue/form";
 import {
+  DxDataGrid,
+  DxColumn,
+  DxFormItem,
+  DxPaging,
+  DxEditing,
+  DxPager
+} from 'devextreme-vue/data-grid';
+import 'devextreme-vue/text-area';
+import {
   DxRequiredRule
 } from 'devextreme-vue/validator';
-import {onBeforeMount, reactive, ref, defineProps} from "vue";
-import {useRoute, useRouter} from "vue-router";
+import {ref, defineProps, onMounted} from "vue";
+import {useRoute} from "vue-router";
+import CustomStore from "devextreme/data/custom_store";
 import notify from "devextreme/ui/notify";
 import translatorSpecsService from "@/api/translatorSpecsService";
-
 const props = defineProps({
   onSaveTranslatorSpec: Function,
   antennaId: String
 })
-const router = useRouter();
 const route = useRoute();
-let dataSource = reactive({});
-let isFormDisabled = ref(true);
 let oid = route.params.id;
-const mode = ref(route.params.mode);
-const pageTranslatorSpecDescription = ref("Подробно о передатчике");
-const formRef = ref(null);
+let dataSource = ref(null);
+const translatorSpecs = ref([]);
 
-onBeforeMount(async () => {
-  console.log(props.antennaId);
-  if (mode.value === "read") {
-    const response = await translatorSpecsService.getTranslatorSpec(oid);
-    Object.assign(dataSource, response.data.result);
-  } else {
-    isFormDisabled.value = false;
-    pageTranslatorSpecDescription.value = "Создание передатчика"
-  }
-})
-
-function onClickEditTranslatorSpec() {
-  isFormDisabled.value = false;
-}
-async function onClickSaveChanges() {
-  try {
-    const formInstance = formRef.value.instance;
-    const isFormValid = await formInstance.validate();
-    if (isFormValid.isValid === false) {
+const store = new CustomStore({
+  key: "id",
+  async load(loadOptions) {
+    return await translatorSpecsService.getTranslatorSpecsForGrid(loadOptions, oid);
+  },
+  async insert(values) {
+    values.antennaId = props.antennaId;
+    const baseResponse = await translatorSpecsService.createTranslatorSpec(values);
+    await dataSource.value.load();
+    if (baseResponse.data.success) {
       notify({
-        message: 'Данные не корректны',
+        message: 'Данные сохранены',
         position: {
           my: 'center top',
           at: 'center top',
         },
-      }, 'warning', 1000);
+      }, 'success', 1000);
+    } else {
+      notify(baseResponse.data.messages, 'error', 2000);
     }
-    else {
-      if (mode.value === "read") {
-        const responseUpdate = await translatorSpecsService.updateTranslatorSpec(dataSource);
-        if (responseUpdate.data.success) {
-          notify({
-            message: 'Передатчик успешно отредактирован',
-            position: {
-              my: 'center top',
-              at: 'center top',
-            },
-          }, 'success', 1000);
-        } else {
-          notify(responseUpdate.data.messages, 'error', 2000);
-        }
-        isFormDisabled.value = true;
-      } else {
-        dataSource.antennaId = props.antennaId;
-        console.log(dataSource);
-        const response = await translatorSpecsService.createTranslatorSpec(dataSource);
-        if (response.data.success) {
-          notify({
-            message: 'Передатчик успешно создан',
-            position: {
-              my: 'center top',
-              at: 'center top',
-            },
-          }, 'success', 1000);
-          await router.push({name: 'antennaForm', params: {mode: "read", id: response.data.result}});
-          props.onSaveTranslatorSpec();
-        } else {
-          notify({
-            message: response.data.messages,
-            position: {
-              my: 'center top',
-              at: 'center top'}
-          }, 'error', 2000);
-        }
-      }
+    return {data: baseResponse};
+  },
+  async remove(id) {
+    const baseResponse = await translatorSpecsService.deleteTranslatorSpec(id);
+    if (baseResponse.data.success) {
+      notify({
+        message: 'Передатчик удалён',
+        position: {
+          my: 'center top',
+          at: 'center top',
+        },
+      }, 'success', 1000);
+    } else {
+      notify(baseResponse.data.messages, 'error', 2000);
     }
+    return {data: baseResponse};
+  },
+  async update(id, values) {
+    console.log(id + values)
+  }
+});
 
-  } catch (error) {
-    console.error("Ошибка при сохранении изменений:", error);
+async function onRowUpdating(options) {
+  options.newData = Object.assign(options.oldData, options.newData);
+  const baseResponse = await translatorSpecsService.updateTranslatorSpec(options.newData);
+  await dataSource.value.load();
+  if (baseResponse.data.success) {
     notify({
-      message: "Ошибка сервера при сохранении изменений:",
+      message: 'Данные изменены',
       position: {
         my: 'center top',
-        at: 'center top'}
-    }, 'error', 2000);
+        at: 'center top',
+      },
+    }, 'success', 1000);
+  } else {
+    notify(baseResponse.data.messages, 'error', 2000);
   }
+  return {data: baseResponse};
 }
+
+onMounted(async () => {
+  dataSource.value = store;
+
+  const response = await translatorSpecsService.getTranslatorSpecs();
+  translatorSpecs.value = response.data.result;
+})
 
 </script>
 
@@ -190,3 +183,4 @@ async function onClickSaveChanges() {
   font-size: 35px;
 }
 </style>
+

@@ -11,23 +11,24 @@
   >
     <dx-item
         data-field="model"
+        caption="'Модель антенны'"
         editor-type='dxTextBox'
         :editor-options="{ 
                       stylingMode: 'filled',
-                      labelMode: 'floating',
-                      label: 'Модель антенны' }"
+                      labelMode: 'floating' }"
     >
-      <dx-label :visible="false"/>
-      <dx-required-rule message="Модель антенны должны быть заполнена"/>
+      <dx-label :visible="true"/>
+      <dx-required-rule message="Модель антенны должна быть заполнена"/>
     </dx-item>
     <dx-item
         data-field="verticalSizeDiameter"
         editor-type='dxTextBox'
+        caption="'Вертикальный размер(диаметр антенны)'"
         :editor-options="{ 
                       stylingMode: 'filled',
-                      labelMode: 'floating',
-                      label: 'Вертикальный размер(диаметр антенны)' }">
-      <dx-label :text="false"/>
+                      labelMode: 'floating'}"
+    >
+      <dx-label :visible="true"/>
       <dx-required-rule message="Вертикальный размер(диаметр антенны) должнен быть заполнен"/>
     </dx-item>
     <dx-button-item>
@@ -74,9 +75,11 @@ import {useRoute, useRouter} from "vue-router";
 import notify from "devextreme/ui/notify";
 import antennaService from "@/api/antennaService";
 
+
 const props = defineProps({
   onSaveAntenna: Function,
-  antennaId: String
+  antennaId: String,
+  translatorSpecId: String
 })
 const router = useRouter();
 const route = useRoute();
@@ -86,6 +89,8 @@ let oid = route.params.id;
 const mode = ref(route.params.mode);
 const pageAntennaDescription = ref("Подробно об антенне");
 const formRef = ref(null);
+// let isTabDisabled = ref(true);
+// const translatorSpecs = ref([]);
 
 onBeforeMount(async () => {
   if (mode.value === "read") {
@@ -98,6 +103,7 @@ onBeforeMount(async () => {
 })
 function onClickEditAntenna() {
   isFormDisabled.value = false;
+  // isTabDisabled.value = false;
 }
 async function onClickSaveChanges() {
   try {

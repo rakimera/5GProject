@@ -16,23 +16,23 @@
         />
         <dx-tab
             title="Данные антенны"
+            tabIndex=0
         >
           <antenna-form
-              :on-save-antenna="onSaveAntenna">
+              :on-save-antenna="onSaveAntenna"
+              :translatorSpecId="translatorSpecId">
+              
           </antenna-form>
         </dx-tab>
         
         <dx-tab
-            title="Создание передатчика"
+            title="Передатчики"
+            tabIndex=1
+            :disabled="isTabDisabled"
         >
           <translator-spec-form
-              :on-save-antenna="onSaveTranslatorSpec"
-              :antenaId="antennaId">
-            <dx-item
-                data-field="antennaId"
-                :visible="false"
-                >
-            </dx-item>
+              :on-save-translatorSpec="onSaveTranslatorSpec"
+              :antennaId="antennaId">
           </translator-spec-form>
         </dx-tab>
       </dx-tabbed-item>
@@ -42,7 +42,6 @@
 <script setup>
 
 import {
-  DxItem,
   DxForm,
   DxTabbedItem,
   DxTabPanelOptions,
@@ -56,14 +55,17 @@ import TranslatorSpecForm from "@/components/translatorSpec-form";
 
 
 const route = useRoute();
+// const router = useRouter();
 let dataSource = reactive({});
 let isFormDisabled = ref(true);
 let isTabDisabled = ref(true);
 let oid = route.params.id;
 const mode = route.params.mode;
-var antennaId = ref(null);
+let antennaId = ref(null);
+let translatorSpecId = ref(null);
 const pageAntennaDescription = ref("Подробно об антенне");
 const formRef = ref(null);
+const index = ref(0);
 
 onBeforeMount(async () => {
   if (mode === "read") {
@@ -78,13 +80,15 @@ onBeforeMount(async () => {
 function onSaveAntenna(e) {
   isTabDisabled.value = false;
   isFormDisabled.value = true;
-  console.log(e + '<--- это айдишник антенны ' );
+  index.value++
   antennaId.value = e;
+  // router.push({name: 'translatorSpecForm', params: {mode: "insert", id: null}});
 }
 
-function onSaveTranslatorSpec() {
+function onSaveTranslatorSpec(e) {
   isTabDisabled.value = false;
   isFormDisabled.value = true;
+  translatorSpecId.value = e;
 }
 </script>
 <style scoped>

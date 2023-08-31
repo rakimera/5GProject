@@ -55,7 +55,7 @@ public class AntennaService : IAntennaService
             Success: true,
             Messages: new List<string> { "Антенна успешна создана" });
     }
-    
+
     public async Task<BaseResponse<AntennaDto>> GetByOid(string oid)
     {
         Antenna? antenna = await _repositoryWrapper.AntennaRepository.GetByCondition(x => x.Id.ToString() == oid);

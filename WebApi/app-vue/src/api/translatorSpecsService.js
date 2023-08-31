@@ -52,7 +52,6 @@ const translatorSpecsService = {
         try {
             let options = storeExtension.getParams(loadOptions);
             const response = await axios.get(`/api/translators/index/${options}`);
-            console.log(response)
             return response.data;
         } catch (error) {
             console.log(error)
