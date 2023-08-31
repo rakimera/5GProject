@@ -25,8 +25,8 @@ export default [
                 path: "/ContrAgentsJournal"
             },
             {
-                text: "Журнал лицензии компании",
-                path: "/CompanyLicenseJournal"
+                text: "Журнал компании",
+                path: "/ExecutiveCompaniesJournal"
             }
         ]
     },
@@ -37,10 +37,6 @@ export default [
             {
                 text: "Проекты",
                 path: "/projects"
-            },
-            {
-                text: "Новый проект",
-                path: "/create-projects"
             }
         ]
     },

@@ -3,6 +3,7 @@ using Application.Interfaces.RepositoryContract.Common;
 using Application.Models;
 using Application.Models.Antennae;
 using Application.Models.ContrAgents;
+using Application.Models.ExecutiveCompany;
 using Application.Models.TranslatorSpecs;
 using Application.Models.Users;
 using Domain.Entities;
@@ -20,13 +21,27 @@ public class DataSeed
         _serviceWrapper = serviceWrapper;
         _repositoryWrapper = repositoryWrapper;
     }
-
-
+    public async Task SeedExecutiveCompany()
+    {
+        ExecutiveCompanyDto company = new ExecutiveCompanyDto
+        {
+            BIN = "123456789111",
+            Address = "Алматинская область, Алматы, 1 микр, 43",
+            CompanyName = "AlcaponeLTD",
+            LicenseNumber = "№123123132ФЫВ123123АВЫ",
+            LicenseDateOfIssue = DateTime.Today.AddDays(-10),
+            TownName = "Алматы"
+        };
+        await _serviceWrapper.ExecutiveCompanyService.CreateAsync(company, "Admin");
+        await _repositoryWrapper.Save();
+    }
+    
     public async Task SeedAdmin()
     {
         User? user = await _repositoryWrapper.UserRepository.GetByCondition(u => u.Login.Equals("admin@gmail.com"));
         if (user is null)
         {
+            var executiveCompany = _serviceWrapper.ExecutiveCompanyService.GetAll().Result.First().Id;
             UserDto admin = new UserDto()
             {
                 Name = "Admin",
@@ -36,7 +51,8 @@ public class DataSeed
                 Roles = new List<string>()
                 {
                     "Admin"
-                }
+                },
+                ExecutiveCompanyId = executiveCompany
             };
             await _serviceWrapper.UserService.CreateAsync(admin, "Admin");
             await _repositoryWrapper.Save();
@@ -104,7 +120,43 @@ public class DataSeed
             await _repositoryWrapper.Save();
         }
     }
-
+    
+    public async Task ProjectStatus()
+    {
+        List<ProjectStatus>? projectStatuses = _repositoryWrapper.ProjectStatusRepository.GetAll().ToList();
+        if (projectStatuses.Count == 0)
+        {
+            projectStatuses = new List<ProjectStatus>
+            {
+                new ProjectStatus()
+                {
+                    Status = "Новый проект"
+                },
+                new ProjectStatus()
+                {
+                    Status = "Требуются данные"
+                },
+                new ProjectStatus()
+                {
+                    Status = "Ждет решения"
+                },
+                new ProjectStatus()
+                {
+                    Status = "Проект завршен успешно"
+                },
+                new ProjectStatus()
+                {
+                    Status = "Проект завершен отказом"
+                }
+            };
+            foreach (var projectStatus in projectStatuses)
+            {
+                await _repositoryWrapper.ProjectStatusRepository.CreateAsync(projectStatus);
+            }
+            await _repositoryWrapper.Save();
+        }
+    }
+    
     public async Task SeedContrAgents()
     {
         List<ContrAgent>? contrs = _repositoryWrapper.ContrAgentRepository.GetAll().ToList();

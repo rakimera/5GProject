@@ -22,12 +22,12 @@ const antennaService = {
     async createAntenna(antenna) {
         try {
             return await axios.post('/api/antennae', antenna);
-        } catch (error) {
+        }
+        catch (error){
             console.log(error)
         }
-
     },
-
+    
     async updateAntenna(antenna) {
         try {
             return await axios.put('/api/antennae', antenna)
