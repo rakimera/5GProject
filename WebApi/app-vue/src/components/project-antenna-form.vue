@@ -1,10 +1,10 @@
 <template>
     <div>
-      <div id="data-grid-demo">
         <dx-data-grid
             :data-source="dataSource"
             :show-borders="true"
             :remote-operations="true"
+            :column-auto-width="true"
             key-expr="id"
             @row-updating="onRowUpdating"
         >
@@ -19,7 +19,8 @@
               data-field="antennaId"
               caption="Антенна"
               data-type="string"
-          >
+              alignment="left"
+              :width="200">
             <dx-required-rule message="Вы не выбрали антенну"></dx-required-rule>
             <dx-lookup
                 :data-source="antennas"
@@ -27,28 +28,51 @@
                 display-expr="model"
             />
           </dx-column>
-          <dx-column data-field="azimuth" data-type="number" caption="Азимут"
-                     :editor-options="{stylingMode: 'filled', labelMode: 'floating'}">
+          <dx-column 
+              data-field="azimuth" 
+              data-type="number" 
+              caption="Азимут"
+              :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
+              alignment="left">
             <dx-label :visible="false"/>
               <dx-required-rule message="Вы не запонели азимут"></dx-required-rule>
           </dx-column>
-          <dx-column data-field="height" data-type="number" caption="Высота установки"
-                     :editor-options="{stylingMode: 'filled', labelMode: 'floating'}">
+          <dx-column 
+              data-field="height" 
+              data-type="number" 
+              caption="Высота"
+              :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
+              alignment="left">
             <dx-required-rule message="Вы не запонели высоту установки антенны"></dx-required-rule>
           </dx-column>
-          <dx-column data-field="latitude" data-type="number" caption="Широта"
-                     :editor-options="{stylingMode: 'filled', labelMode: 'floating'}">
+          <dx-column 
+              data-field="latitude" 
+              data-type="number" 
+              caption="Широта"
+              :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
+              alignment="left">
             <dx-required-rule message="Вы не запонели широту установки антенны"></dx-required-rule>
           </dx-column>
-          <dx-column data-field="longitude" data-type="number" caption="Долгота"
-                     :editor-options="{stylingMode: 'filled', labelMode: 'floating'}">
+          <dx-column 
+              data-field="longitude" 
+              data-type="number" 
+              caption="Долгота"
+              :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
+              alignment="left">
             <dx-required-rule message="Вы не запонели долготу установки антенны"></dx-required-rule>
           </dx-column>
-          <dx-column data-field="tilt" data-type="number" caption="Тильт"
-                     :editor-options="{stylingMode: 'filled', labelMode: 'floating'}">
+          <dx-column 
+              data-field="tilt" 
+              data-type="number" 
+              caption="Тильт"
+              :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
+              alignment="left">
             <dx-required-rule message="Вы не запонели тильт антенны"></dx-required-rule>
           </dx-column>
-          <dx-column data-field="projectId" data-type="string" :visible="false">
+          <dx-column 
+              data-field="projectId" 
+              data-type="string" 
+              :visible="false">
             <dx-form-item
                 :editor-options="{
                 disabled: true}"
@@ -57,10 +81,15 @@
                 :data="projectId"
             />
           </dx-column>
+          <DxMasterDetail
+              :enabled="true"
+          >
+            <antenna-translator-form :antenna-data="dataSource">
+            </antenna-translator-form>
+          </DxMasterDetail>
           <dx-paging :page-size="5"/>
           <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
         </dx-data-grid>
-      </div>
     </div>
 </template>
 <script setup>
@@ -78,12 +107,13 @@ import {
   DxPaging,
   DxEditing,
   DxPager,
-  DxLookup
+  DxLookup, DxMasterDetail
 } from 'devextreme-vue/data-grid';
 import 'devextreme-vue/text-area';
 import {DxRequiredRule} from "devextreme-vue/validator";
 import CustomStore from "devextreme/data/custom_store";
 import notify from "devextreme/ui/notify";
+import AntennaTranslatorForm from "@/components/antenna-translator-form.vue";
 
 const route = useRoute();
 let projectId = route.params.id;
@@ -160,7 +190,4 @@ onMounted(async () => {
 
 </script>
 <style scoped>
-#form-container {
-    margin: 10px 10px 30px;
-}
 </style>
