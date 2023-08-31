@@ -1,4 +1,5 @@
 using Application.Interfaces;
+using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -18,8 +19,8 @@ public class FilesController : Controller
     public async Task<IActionResult> Get()
     {
         // await _service.WordService.GetLoadXlsx();
-        // var baseResponse = await _service.WordService.ProjectWord();
-        var baseResponse = await _service.FileService.CreateGrafic();
+        var baseResponse = await _service.FileService.ProjectWord();
+        // var baseResponse = await _service.FileService.CreateGrafic();
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
