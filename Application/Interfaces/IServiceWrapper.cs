@@ -17,4 +17,5 @@ public interface IServiceWrapper
     ICompanyLicenseService CompanyLicenseService { get; }
     IExecutiveCompanyService ExecutiveCompanyService { get; }
     IAntennaTranslatorService AntennaTranslatorService { get; }
+    ITranslatorTypeService TranslatorTypeService { get; }
 }

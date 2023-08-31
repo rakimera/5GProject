@@ -83,10 +83,11 @@
           </dx-column>
           <DxMasterDetail
               :enabled="true"
-          >
-            <antenna-translator-form :antenna-data="dataSource">
-            </antenna-translator-form>
-          </DxMasterDetail>
+              template="master-detail"
+          />
+          <template #master-detail="{ data }">
+            <antenna-translator-form :master-detail-data="data"/>
+          </template>
           <dx-paging :page-size="5"/>
           <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
         </dx-data-grid>

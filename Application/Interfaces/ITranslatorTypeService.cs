@@ -6,9 +6,8 @@ using DevExtreme.AspNet.Data.ResponseModel;
 
 namespace Application.Interfaces;
 
-public interface IAntennaTranslatorService : ICrudService<AntennaTranslatorDto> 
+public interface ITranslatorTypeService : ICrudService<TranslatorTypeDto>
 {
     Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions);
-    Task<BaseResponse<string>> Update(AntennaTranslatorDto model, string author);
-    BaseResponse<List<AntennaTranslatorDto>> GetAllByProjectAntennaId(string id);
+    Task<BaseResponse<string>> Update(TranslatorTypeDto model, string author);
 }
