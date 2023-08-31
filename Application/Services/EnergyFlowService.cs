@@ -155,26 +155,23 @@ public class EnergyFlowService : IEnergyFlowService
             Messages: new List<string>{"Просчеты плотности потока энергии успешно найдены"});
     }
 
-    public async Task<BaseResponse<bool>> Delete(List<EnergyResult> energyResults)
+    public async Task<BaseResponse<bool>> Delete(string id)
     {
-        if (energyResults.Count > 0)
+        EnergyResult? energyResult = await _repositoryWrapper.EnergyFlowRepository.GetByCondition(x => x.Id.ToString() == id);
+        if (energyResult is not null)
         {
-            foreach (var energyResult in energyResults)
-            {
-                energyResult.IsDelete = true;
-                _repositoryWrapper.EnergyFlowRepository.Update(energyResult);
-            }
-            
+            energyResult.IsDelete = true;
+            _repositoryWrapper.EnergyFlowRepository.Update(energyResult);
             await _repositoryWrapper.Save();
 
             return new BaseResponse<bool>(
                 Result: true,
                 Success: true,
-                Messages: new List<string>{"Просчеты плотности потока энергии успешно удалены"});
+                Messages: new List<string>{"Просчет плотности потока энергии успешно удален"});
         }
         return new BaseResponse<bool>(
             Result: false, 
-            Messages: new List<string>{"Просчеты плотности потока энергии не существуют"},
+            Messages: new List<string>{"Просчет плотности потока энергии не существует"},
             Success: false);
     }
     

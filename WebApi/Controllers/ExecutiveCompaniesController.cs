@@ -2,6 +2,7 @@ using Application.Interfaces;
 using Application.Models.ExecutiveCompany;
 using AutoMapper;
 using DevExtreme.AspNet.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
@@ -38,6 +39,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Post(CreateExecutiveCompanyDto model)
         {
             ExecutiveCompanyDto companyDto = _mapper.Map<ExecutiveCompanyDto>(model);
@@ -49,9 +51,10 @@ namespace WebApi.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> Put(UpdateExecutiveCompanyDto model)
         {
-            var baseResponse = await _service.ExecutiveCompanyService.UpdateExecutiveCompany(model);
+            var baseResponse = await _service.ExecutiveCompanyService.UpdateExecutiveCompany(model, User.Identity.Name);
             if (baseResponse.Success)
                 return Ok(baseResponse);
             return BadRequest(baseResponse);

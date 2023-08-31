@@ -4,6 +4,7 @@ using Application.Interfaces.RepositoryContract.Common;
 using Application.Models.TranslatorSpecs;
 using Application.Validation;
 using AutoMapper;
+
 using Domain.Entities;
 
 namespace Application.Services;
@@ -126,5 +127,21 @@ public class TranslatorSpecsService : ITranslatorSpecsService
             Result: translatorSpecs.Id.ToString(),
             Success: true,
             Messages: new List<string> { "Передатчик успешно изменен" });
+    }
+
+    public BaseResponse<List<TranslatorSpecsDto>> GetAllByProjectId(string id)
+    {
+        IQueryable<TranslatorSpecs>? projectAntennas = _repository.TranslatorSpecsRepository.GetAllByCondition(x => x.Id.ToString() == id);
+        List<TranslatorSpecsDto> model = _mapper.Map<List<TranslatorSpecsDto>>(projectAntennas);
+
+        if (projectAntennas is null)
+            return new BaseResponse<List<TranslatorSpecsDto>>(
+                Result: null,
+                Messages: new List<string> { "Трансляторы антенны не найдены" },
+                Success: true);
+        return new BaseResponse<List<TranslatorSpecsDto>>(
+            Result: model,
+            Success: true,
+            Messages: new List<string> { "Трансляторы антенны успешно найдены" });
     }
 }

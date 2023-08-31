@@ -9,5 +9,5 @@ namespace Application.Interfaces;
 public interface IExecutiveCompanyService : ICrudService<ExecutiveCompanyDto>
 {
     Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions);
-    Task<BaseResponse<ExecutiveCompanyDto>> UpdateExecutiveCompany(UpdateExecutiveCompanyDto model);
+    Task<BaseResponse<ExecutiveCompanyDto>> UpdateExecutiveCompany(UpdateExecutiveCompanyDto model, string editor);
 }

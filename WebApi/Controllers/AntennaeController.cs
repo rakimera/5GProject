@@ -21,7 +21,6 @@ public class AntennasController : Controller
     }
 
     [HttpGet]
-    // [HttpGet, Authorize(Roles = "Admin")]
     public IActionResult Get()
     {
         var baseResponse = _service.AntennaService.GetAll();

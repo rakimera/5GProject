@@ -12,8 +12,9 @@ public interface IServiceWrapper
     ITownService TownService { get; }
     IAntennaService AntennaService { get; }
     ITranslatorSpecsService TranslatorSpecsService { get; }
+    IProjectAntennaService ProjectAntennaService { get; }
     IEnergyFlowService EnergyFlowService { get; }
     IRoleService RoleService { get; }
-    ICompanyLicenseService CompanyLicenseService { get; }
     IExecutiveCompanyService ExecutiveCompanyService { get; }
+    IAntennaTranslatorService AntennaTranslatorService { get; }
 }

@@ -8,7 +8,7 @@ public interface IEnergyFlowService
 {
     Task<BaseResponse<string>> CreateAsync(CreateEnergyResultDto createEnergyResultDto, string creator);
     BaseResponse<List<EnergyResultDto>> GetAllByOid(string oid);
-    Task<BaseResponse<bool>> Delete(List<EnergyResult> energyResults);
+    Task<BaseResponse<bool>> Delete(string id);
     List<CreateTotalFluxDensityDto> PowerDensitySummation(List<EnergyResult> energyResult);
     decimal Multiplier(decimal value);
 

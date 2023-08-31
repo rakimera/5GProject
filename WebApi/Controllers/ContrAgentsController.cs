@@ -20,7 +20,6 @@ public class ContrAgentsController : Controller
         _service = service;
     }
 
-    // [HttpGet, Authorize(Roles = "Admin")]
     [HttpGet]
     public IActionResult Get()
     {
@@ -69,7 +68,6 @@ public class ContrAgentsController : Controller
         return NotFound(baseResponse);
     }
     
-    // [HttpGet("index"), Authorize(Roles = "Admin")]
     [HttpGet("index")]
     public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
     {
