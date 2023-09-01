@@ -14,15 +14,14 @@ public class UserServiceIntegrationTests
 {
     private readonly Mock<IRepositoryWrapper> _repositoryWrapperMock;
     private readonly Mock<IMapper> _mapperMock;
-    private readonly Mock<UserValidator> _userValidatorMock;
     private readonly IUserService _userService;
 
     public UserServiceIntegrationTests()
     {
-        _userValidatorMock = new Mock<UserValidator>();
+        UserValidator userValidatorMock = new();
         _mapperMock = new Mock<IMapper>();
         _repositoryWrapperMock = new Mock<IRepositoryWrapper>();
-        _userService = new UserService(_repositoryWrapperMock.Object, _mapperMock.Object, _userValidatorMock.Object);
+        _userService = new UserService(_repositoryWrapperMock.Object, _mapperMock.Object, userValidatorMock);
     }
 
     [Fact]
