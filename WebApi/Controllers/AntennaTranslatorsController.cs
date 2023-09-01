@@ -9,7 +9,7 @@ namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/antenna-translator")]
-[Authorize]
+/*[Authorize]*/
 public class AntennaTranslatorsController : Controller
 {
 

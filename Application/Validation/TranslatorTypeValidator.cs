@@ -8,6 +8,6 @@ public class TranslatorTypeValidator : AbstractValidator<TranslatorTypeDto>
     public TranslatorTypeValidator()
     {
         RuleFor(dto => dto.Type)
-            .NotNull().WithMessage("Тип передатчика не задан");
+            .NotEmpty().WithMessage("Тип передатчика не задан");
     }
 }

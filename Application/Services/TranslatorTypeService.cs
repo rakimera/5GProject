@@ -44,6 +44,16 @@ public class TranslatorTypeService : ITranslatorTypeService
 
     public async Task<BaseResponse<string>> CreateAsync(TranslatorTypeDto model, string creator)
     {
+        var result = await _translatorTypeValidator.ValidateAsync(model);
+        if (!result.IsValid)
+        {
+            List<string> messages = _mapper.Map<List<string>>(result.Errors);
+
+            return new BaseResponse<string>(
+                Result: null,
+                Messages: messages,
+                Success: false);
+        }
         TranslatorType translatorType = _mapper.Map<TranslatorType>(model);
         translatorType.CreatedBy = creator;
         await _repository.TranslatorTypeRepository.CreateAsync(translatorType);
@@ -93,7 +103,7 @@ public class TranslatorTypeService : ITranslatorTypeService
 
     public async Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions)
     {
-        var queryableUsers = _repository.UserRepository.GetAll();
+        var queryableUsers = _repository.TranslatorTypeRepository.GetAll();
         return await DataSourceLoader.LoadAsync(queryableUsers, loadOptions);
     }
 
