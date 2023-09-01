@@ -109,8 +109,7 @@ function onSaveProject() {
 <style scoped>
 
 .project-form {
-    max-width: 1100px;
-    margin: 50px auto auto;
+    margin: 50px 50px auto;
 }
 #form h2 {
     margin-left: 40px;

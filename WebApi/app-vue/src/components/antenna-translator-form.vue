@@ -15,6 +15,10 @@
           :texts="{confirmDeleteMessage: 'Вы уверены, что хотите удалить эту запись?'}"
           mode="form"
       />
+        <dx-toolbar>
+            <dx-item name="addRowButton" show-text="always" location="before" widget="dxButton" :options="addButton">
+            </dx-item>
+        </dx-toolbar>
       <dx-column
           data-field="translatorSpecsId"
           caption="Частота"
@@ -87,13 +91,13 @@ import {
 } from 'devextreme-vue/form';
 import {onMounted, ref, defineProps} from "vue";
 import {
-  DxColumn,
-  DxDataGrid,
-  DxEditing,
-  DxFormItem,
-  DxLookup,
-  DxPager,
-  DxPaging
+    DxColumn,
+    DxDataGrid,
+    DxEditing,
+    DxFormItem, DxItem,
+    DxLookup,
+    DxPager,
+    DxPaging, DxToolbar
 } from "devextreme-vue/data-grid";
 import {DxRequiredRule} from "devextreme-vue/validator";
 import translatorService from "@/api/translatorService";
@@ -112,6 +116,12 @@ const projectAntennaId = ref();
 const translatorTypes = ref();
 let dataSource = ref(null);
 const translators = ref([]);
+const addButton = {
+    text: "Добавить передатчики",
+    icon: 'login',
+    type: 'success',
+    stylingMode:"contained"
+}
 
 const store = new CustomStore({
   key: "id",

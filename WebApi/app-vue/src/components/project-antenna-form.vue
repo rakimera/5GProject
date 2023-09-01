@@ -15,6 +15,10 @@
               :texts="{confirmDeleteMessage: 'Вы уверены, что хотите удалить эту запись?'}"
               mode="form"
           />
+            <dx-toolbar>
+                <dx-item name="addRowButton" show-text="always" location="after" widget="dxButton" :options="addButton">
+                </dx-item>
+            </dx-toolbar>
           <dx-column
               data-field="antennaId"
               caption="Антенна"
@@ -107,7 +111,7 @@ import {
   DxFormItem,
   DxPaging,
   DxEditing,
-  DxPager,
+  DxPager, DxToolbar, DxItem,
   DxLookup, DxMasterDetail
 } from 'devextreme-vue/data-grid';
 import 'devextreme-vue/text-area';
@@ -120,6 +124,12 @@ const route = useRoute();
 let projectId = route.params.id;
 let dataSource = ref(null);
 const antennas = ref([]);
+const addButton = {
+    text: "Добавить антенну",
+    icon: 'add',
+    type: 'success',
+    stylingMode:"contained"
+}
 
 const store = new CustomStore({
   key: "id",
