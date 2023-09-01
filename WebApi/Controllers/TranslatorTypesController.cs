@@ -2,12 +2,14 @@ using Application.Interfaces;
 using Application.Models.AntennaTranslator;
 using AutoMapper;
 using DevExtreme.AspNet.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/translatorTypes")]
+[Authorize]
 public class TranslatorTypesController : Controller
 {
     private readonly IServiceWrapper _service;

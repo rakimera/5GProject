@@ -92,9 +92,9 @@ public class AntennaTranslatorService : IAntennaTranslatorService
             Success: false);
     }
 
-    public async Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions)
+    public async Task<LoadResult> GetLoadResult(string id, DataSourceLoadOptionsBase loadOptions)
     {
-        var queryableUsers = _repositoryWrapper.TranslatorTypeRepository.GetAll();
+        var queryableUsers = _repositoryWrapper.AntennaTranslatorRepository.GetAllByCondition(x => x.ProjectAntennaId.ToString() == id);
         return await DataSourceLoader.LoadAsync(queryableUsers, loadOptions);
 
     }

@@ -53,7 +53,7 @@
         <dx-lookup
             :data-source="translatorTypes"
             value-expr="id"
-            display-expr="frequency"
+            display-expr="type"
         />
       </dx-column>
       <dx-column
@@ -85,8 +85,7 @@
 import {
     DxLabel
 } from 'devextreme-vue/form';
-import {onMounted, reactive, ref, defineProps} from "vue";
-import {useRoute} from "vue-router";
+import {onMounted, ref, defineProps} from "vue";
 import {
   DxColumn,
   DxDataGrid,
@@ -98,6 +97,10 @@ import {
 } from "devextreme-vue/data-grid";
 import {DxRequiredRule} from "devextreme-vue/validator";
 import translatorService from "@/api/translatorService";
+import translatorTypeService from "@/api/transaltorTypeService";
+import notify from "devextreme/ui/notify";
+import antennaTranslatorService from "@/api/antennaTranslatorService";
+import CustomStore from "devextreme/data/custom_store";
 
 const props = defineProps({
   masterDetailData: {
@@ -107,17 +110,77 @@ const props = defineProps({
 const antennaId = ref();
 const projectAntennaId = ref();
 const translatorTypes = ref();
-const route = useRoute();
-const mode = ref(route.params.mode);
-let dataSource = reactive([]);
+let dataSource = ref(null);
 const translators = ref([]);
 
+const store = new CustomStore({
+  key: "id",
+  async load(loadOptions) {
+    const response = await antennaTranslatorService.getAntennaTranslatorForGrid(loadOptions, projectAntennaId.value);
+    return response;
+  },
+  async insert(values) {
+    values.projectAntennaId = projectAntennaId.value;
+    const baseResponse = await antennaTranslatorService.createAntennaTranslator(values)
+    await dataSource.value.load();
+    if (baseResponse.data.success) {
+      notify({
+        message: 'Данные сохранены',
+        position: {
+          my: 'center top',
+          at: 'center top',
+        },
+      }, 'success', 1000);
+    } else {
+      notify(baseResponse.data.messages, 'error', 2000);
+    }
+    return {data: baseResponse};
+  },
+  async remove(id) {
+    const baseResponse = await antennaTranslatorService.deleteAntennaTranslator(id);
+    if (baseResponse.data.success) {
+      notify({
+        message: 'Антенна удалена',
+        position: {
+          my: 'center top',
+          at: 'center top',
+        },
+      }, 'success', 1000);
+    } else {
+      notify(baseResponse.data.messages, 'error', 2000);
+    }
+    return {data: baseResponse};
+  },
+  async update(id, values) {
+    console.log(id + values)
+  }
+});
+async function onRowUpdating(options) {
+  options.newData = Object.assign(options.oldData, options.newData);
+  const baseResponse = await antennaTranslatorService.updateAntennaTranslator(options.newData);
+  await dataSource.value.load();
+  if (baseResponse.data.success) {
+    notify({
+      message: 'Данные сохранены',
+      position: {
+        my: 'center top',
+        at: 'center top',
+      },
+    }, 'success', 1000);
+  } else {
+    notify(baseResponse.data.messages, 'error', 2000);
+  }
+  return {data: baseResponse};
+}
 
 onMounted(async () => {
-  antennaId.value = props.masterDetailData.row.antennaId;
-  projectAntennaId.value = props.masterDetailData.key
-  const response = await translatorService.getAllByAntennaId(antennaId.value)
-  const translatorTypes = await translatorService.
+  dataSource.value = store;
+  console.log(props.masterDetailData)
+  antennaId.value = props.masterDetailData.row.data.antennaId;
+  projectAntennaId.value = props.masterDetailData.key;
+  const response = await translatorService.getAllByAntennaId(antennaId.value);
+  const translatorTypesResponse = await translatorTypeService.getTranslatorTypes();
+  translatorTypes.value = translatorTypesResponse.data.result;
   translators.value = response.data.result;
 })
 

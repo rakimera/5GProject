@@ -9,7 +9,7 @@ namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/antenna-translator")]
-/*[Authorize]*/
+[Authorize]
 public class AntennaTranslatorsController : Controller
 {
 
@@ -31,10 +31,10 @@ public class AntennaTranslatorsController : Controller
         return NotFound(baseResponse);
     }
     
-    [HttpGet("index")]
-    public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
+    [HttpGet("index/{id}")]
+    public async Task<IActionResult> Get(string id, [FromQuery]DataSourceLoadOptionsBase loadOptions)
     {
-        var loadResult = await _service.AntennaTranslatorService.GetLoadResult(loadOptions);
+        var loadResult = await _service.AntennaTranslatorService.GetLoadResult(id, loadOptions);
         return Ok(loadResult);
     }
 
@@ -57,9 +57,9 @@ public class AntennaTranslatorsController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody]AntennaTranslatorDto model)
+    public async Task<IActionResult> Post(AntennaTranslatorDto antennaTranslator)
     {
-        AntennaTranslatorDto antennaTranslatorDto = _mapper.Map<AntennaTranslatorDto>(model);
+        AntennaTranslatorDto antennaTranslatorDto = _mapper.Map<AntennaTranslatorDto>(antennaTranslator);
         var baseResponse = await _service.AntennaTranslatorService.CreateAsync(antennaTranslatorDto, User.Identity.Name);
         
         if (baseResponse.Success)
