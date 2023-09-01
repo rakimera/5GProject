@@ -1,7 +1,6 @@
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
 using Application.Models;
-using Application.Models.CompanyLicense;
 using Application.Models.Antennae;
 using Application.Models.ContrAgents;
 using Application.Models.ExecutiveCompany;
@@ -22,26 +21,16 @@ public class DataSeed
         _serviceWrapper = serviceWrapper;
         _repositoryWrapper = repositoryWrapper;
     }
-    public async Task SeedCompanyLicense()
-    {
-        CompanyLicenseDto license = new CompanyLicenseDto()
-        {
-            Number = "1",
-            DateOfIssue = new DateTime(DateTime.Now.Day - 10)
-        };
-        await _serviceWrapper.CompanyLicenseService.CreateAsync(license, "Admin");
-        await _repositoryWrapper.Save();
-    }
-    
     public async Task SeedExecutiveCompany()
     {
-        var license =  _serviceWrapper.CompanyLicenseService.GetAll().Result.First().Id;
         ExecutiveCompanyDto company = new ExecutiveCompanyDto
         {
             BIN = "123456789111",
             Address = "Алматинская область, Алматы, 1 микр, 43",
             CompanyName = "AlcaponeLTD",
-            CompanyLicenseId = license
+            LicenseNumber = "№123123132ФЫВ123123АВЫ",
+            LicenseDateOfIssue = DateTime.Today.AddDays(-10),
+            TownName = "Алматы"
         };
         await _serviceWrapper.ExecutiveCompanyService.CreateAsync(company, "Admin");
         await _repositoryWrapper.Save();
