@@ -20,7 +20,7 @@ public class AntennaTranslatorDto : BaseEntity
     public decimal TransmitLossFactor { get; set; }
     
     [property: JsonPropertyName("translatorTypeId")]
-    public Guid TranslatorTypeId { get; set; }
+    public Guid? TranslatorTypeId { get; set; }
     
     [property: JsonPropertyName("translatorType")]
     public TranslatorTypeDto? TranslatorType { get; set; }
