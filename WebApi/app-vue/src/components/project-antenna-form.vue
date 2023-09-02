@@ -7,6 +7,7 @@
             :column-auto-width="true"
             key-expr="id"
             @row-updating="onRowUpdating"
+            @editor-preparing="editorPreparing"
         >
           <dx-editing
               :allow-updating="true"
@@ -24,6 +25,7 @@
               caption="Антенна"
               data-type="string"
               alignment="left"
+              :allow-updating="false"
               :width="200">
             <dx-required-rule message="Вы не выбрали антенну"></dx-required-rule>
             <dx-lookup
@@ -191,6 +193,13 @@ async function onRowUpdating(options) {
     }
     return {data: baseResponse};
 }
+
+function editorPreparing(e) {
+    console.log(e)
+    if (e.dataField === 'antennaId' && e.parentType === 'dataRow' && e.row.isNewRow
+     !== true) {
+        e.editorOptions.readOnly = true;
+}}
 
 onMounted(async () => {
   dataSource.value = store;
