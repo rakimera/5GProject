@@ -1,5 +1,5 @@
 <template>
-  <h2 v-text="pageDescription"></h2>
+  <div class="project-form">
   <dx-form
       id="project-form"
       ref="formRef"
@@ -89,6 +89,7 @@
       </dx-button-options>
     </dx-button-item>
   </dx-form>
+  </div>
 </template>
 <script setup>
 
@@ -118,7 +119,6 @@ let dataSource = reactive({});
 let isFormDisabled = ref(true);
 let oid = route.params.id;
 const mode = ref(route.params.mode);
-const pageDescription = ref("Подробно о проекте");
 const formRef = ref(null);
 const contrAgents = ref([]);
 const towns = ref([]);
@@ -135,7 +135,6 @@ onBeforeMount(async () => {
     Object.assign(dataSource, response.data.result);
   } else {
     isFormDisabled.value = false;
-    pageDescription.value = "Создание проекта"
   }
 })
 function onClickEditProject() {
@@ -205,9 +204,7 @@ async function onClickSaveChanges() {
 </script>
 
 <style scoped>
-#form h2 {
-  margin-left: 40px;
-  font-weight: normal;
-  font-size: 35px;
+.project-form {
+    margin: 50px 50px auto;
 }
 </style>

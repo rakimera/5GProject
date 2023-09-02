@@ -3,10 +3,13 @@
         <dx-data-grid
             :data-source="dataSource"
             :show-borders="true"
-            :remote-operations="true"
+            :remote-operations="false"
             key-expr="ID"
             @row-click="onRowClick"
         >
+            <DxSearchPanel
+                :visible="true"
+            />
             <dx-column
                 data-field="projectNumber"
                 caption="Номер проекта"
@@ -31,7 +34,8 @@
                 data-field="projectStatus.status"
                 caption="Стадия проекта"
                 data-type="string"
-            />
+            >
+            </dx-column>
             <dx-column
                 data-field="districtName"
                 caption="Область"
@@ -58,6 +62,7 @@
             />
 
             />
+            <dx-header-filter :visible="true"/>
         </dx-data-grid>
     </div>
         <dx-button
@@ -76,6 +81,7 @@ import {
     DxPager,
     DxPaging,
     DxEditing,
+    DxHeaderFilter, DxSearchPanel
 } from "devextreme-vue/data-grid";
 import CustomStore from "devextreme/data/custom_store";
 import "whatwg-fetch";

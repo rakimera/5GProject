@@ -3,7 +3,7 @@
         <dx-data-grid
             :data-source="dataSource"
             :show-borders="true"
-            :remote-operations="true"
+            :remote-operations="false"
             :column-auto-width="true"
             key-expr="id"
             @row-updating="onRowUpdating"
@@ -96,6 +96,7 @@
           </template>
           <dx-paging :page-size="5"/>
           <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
+          <dx-sorting mode="multiple"/>
         </dx-data-grid>
     </div>
 </template>
@@ -113,7 +114,10 @@ import {
   DxFormItem,
   DxPaging,
   DxEditing,
-  DxPager, DxToolbar, DxItem,
+  DxPager, 
+  DxToolbar, 
+  DxItem, 
+  DxSorting,
   DxLookup, DxMasterDetail
 } from 'devextreme-vue/data-grid';
 import 'devextreme-vue/text-area';

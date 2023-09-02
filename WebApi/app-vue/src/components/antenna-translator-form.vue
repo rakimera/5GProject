@@ -82,6 +82,7 @@
       </dx-column>
       <dx-paging :page-size="5"/>
       <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
+      <dx-sorting mode="multiple"/>
     </dx-data-grid>
   </div>
 </template>
@@ -94,7 +95,9 @@ import {
     DxColumn,
     DxDataGrid,
     DxEditing,
-    DxFormItem, DxItem,
+    DxFormItem, 
+    DxItem, 
+    DxSorting,
     DxLookup,
     DxPager,
     DxPaging, DxToolbar
