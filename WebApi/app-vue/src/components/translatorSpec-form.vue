@@ -129,6 +129,9 @@ const store = new CustomStore({
     }
     return {data: baseResponse};
   },
+  // async mounted() {
+  //   dataSource.invoke('Add', { fieldName: oid }, 'POST');
+  // },
   async remove(id) {
     const baseResponse = await translatorSpecsService.deleteTranslatorSpec(id);
     if (baseResponse.data.success) {

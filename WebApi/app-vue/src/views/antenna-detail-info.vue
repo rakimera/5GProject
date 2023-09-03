@@ -13,28 +13,28 @@
       <dx-tabbed-item>
         <dx-tab-panel-options
             :defer-rendering="false"
+            :selectedIndex="selectedIndex"
         />
-        <dx-tab
-            title="Данные антенны"
-            tabIndex=0
-        >
-          <antenna-form
-              :on-save-antenna="onSaveAntenna"
-              :translatorSpecId="translatorSpecId">
-              
-          </antenna-form>
-        </dx-tab>
-        
-        <dx-tab
-            title="Передатчики"
-            tabIndex=1
-            :disabled="isTabDisabled"
-        >
-          <translator-spec-form
-              :on-save-translatorSpec="onSaveTranslatorSpec"
-              :antennaId="antennaId">
-          </translator-spec-form>
-        </dx-tab>
+          <dx-tab
+              title="Данные антенны"
+              tabIndex=0
+          >
+            <antenna-form
+                :on-save-antenna="onSaveAntenna"
+                :translatorSpecId="translatorSpecId">
+                
+            </antenna-form>
+          </dx-tab>
+          <dx-tab
+              title="Передатчики"
+              tabIndex=1
+              :disabled="isTabDisabled"
+          >
+            <translator-spec-form
+                :on-save-translatorSpec="onSaveTranslatorSpec"
+                :antennaId="antennaId">
+            </translator-spec-form>
+          </dx-tab>
       </dx-tabbed-item>
     </dx-form>
   </div>
@@ -66,6 +66,7 @@ let translatorSpecId = ref(null);
 const pageAntennaDescription = ref("Подробно об антенне");
 const formRef = ref(null);
 const index = ref(0);
+const selectedIndex = ref(0);
 
 onBeforeMount(async () => {
   if (mode === "read") {
@@ -82,6 +83,7 @@ function onSaveAntenna(e) {
   isFormDisabled.value = true;
   index.value++
   antennaId.value = e;
+  selectedIndex.value = 1;
   // router.push({name: 'translatorSpecForm', params: {mode: "insert", id: null}});
 }
 
