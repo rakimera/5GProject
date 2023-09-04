@@ -10,6 +10,6 @@ public class TranslatorSpecsDto : BaseEntity
     public decimal Power { get; set; }
     public decimal Gain { get; set; }
     public Guid AntennaId { get; set; }
-    public AntennaDto Antenna { get; set; }
-    public List<RadiationZoneDto> RadiationZones { get; set; }
+    public AntennaDto? Antenna { get; set; }
+    public List<RadiationZoneDto>? RadiationZones { get; set; }
 }

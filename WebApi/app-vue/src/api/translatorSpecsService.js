@@ -48,14 +48,24 @@ const translatorSpecsService = {
 
     },
 
-    async getTranslatorSpecsForGrid(loadOptions) {
+    async getTranslatorSpecsForGrid(id, loadOptions) {
         try {
             let options = storeExtension.getParams(loadOptions);
-            const response = await axios.get(`/api/translators/index/${options}`);
+            const response = await axios.get(`/api/translators/index/${id}/${options}`);
             return response.data;
         } catch (error) {
             console.log(error)
         }
-    }
+    },
+
+    async getAllByAntennaId(id) {
+        try {
+            return await axios.get(`/api/translators/getAll/${id}`);
+        }
+        catch (error){
+            console.log(error)
+        }
+    },
+    
 };
 export default translatorSpecsService;

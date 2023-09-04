@@ -95,7 +95,6 @@ import {
 import {DxRequiredRule} from "devextreme-vue/validator";
 import translatorSpecService from "@/api/translatorSpecsService";
 import notify from "devextreme/ui/notify";
-// import antennaTranslatorService from "@/api/antennaTranslatorService";
 import CustomStore from "devextreme/data/custom_store";
 
 const props = defineProps({
@@ -105,7 +104,7 @@ const props = defineProps({
   }})
 const antennaId = ref();
 let dataSource = ref(null);
-// const translators = ref([]);
+const translators = ref([]);
 const addButton = {
   text: "Добавить передатчики",
   icon: 'login',
@@ -116,7 +115,9 @@ const addButton = {
 const store = new CustomStore({
   key: "id",
   async load(loadOptions) {
-    return await translatorSpecService.getTranslatorSpecsForGrid(loadOptions);
+    const response = await translatorSpecService.getTranslatorSpecsForGrid(antennaId.value, loadOptions);
+    console.log(response);
+    return response;
   },
   async insert(values) {
     values.antennaId = antennaId.value;
@@ -151,7 +152,7 @@ const store = new CustomStore({
     return {data: baseResponse};
   },
   async update(id, values) {
-    console.log(id + values)
+    console.log(id + values);
   }
 });
 async function onRowUpdating(options) {
@@ -175,10 +176,9 @@ async function onRowUpdating(options) {
 onMounted(async () => {
   dataSource.value = store;
   console.log(props.masterDetailData);
-  antennaId.value = props.masterDetailData.row.data.antennaId;
-  // projectAntennaId.value = props.masterDetailData.key;
-  // const response = await translatorService.getAllByAntennaId(antennaId.value);
-  // translators.value = response.data.result;
+  antennaId.value = props.masterDetailData.key;
+  const response = await translatorSpecService.getAllByAntennaId(antennaId.value);
+  translators.value = response.data.result;
 })
 
 </script>

@@ -12,7 +12,6 @@ import ContrAgentJournal from "@/views/get-all-contrAgents-page.vue";
 import authorizationService from "@/api/AuthorizationService";
 import UserDetail from '@/views/users_detail_info.vue';
 import ContrAgentDetail from '@/views/contrAgent-detail-info.vue';
-import GetAllAntennaePage from "@/views/get-all-antennae-page";
 import AntennaDetail from "@/views/antenna-detail-info";
 
 function loadView(view) {
@@ -145,7 +144,7 @@ const router = new createRouter({
         requiresAuth: false,
         layout: defaultLayout
       },
-      component: GetAllAntennaePage
+      component: AntennaDetail
     },
       {
           path: '/user/:mode/:id?',
