@@ -1,171 +1,169 @@
 <template>
-  <h2 v-text="pageAntennaDescription"></h2>
-  <dx-form
-      id="antenna-form"
-      ref="formRef"
-      label-location="top"
-      :form-data="dataSource"
-      :read-only="isFormDisabled"
-      :show-colon-after-label="true"
-      :show-validation-summary="true"
-  >
-    <dx-item
-        data-field="model"
-        caption="'Модель антенны'"
-        editor-type='dxTextBox'
-        :editor-options="{ 
-                      stylingMode: 'filled',
-                      labelMode: 'floating' }"
+  <div>
+    <dx-data-grid
+        :data-source="dataSource"
+        :show-borders="true"
+        :remote-operations="false"
+        :column-auto-width="true"
+        key-expr="id"
+        @row-updating="onRowUpdating"
+        @editor-preparing="editorPreparing"
     >
-      <dx-label :visible="true"/>
-      <dx-required-rule message="Модель антенны должна быть заполнена"/>
-    </dx-item>
-    <dx-item
-        data-field="verticalSizeDiameter"
-        editor-type='dxTextBox'
-        caption="'Вертикальный размер(диаметр антенны)'"
-        :editor-options="{ 
-                      stylingMode: 'filled',
-                      labelMode: 'floating'}"
-    >
-      <dx-label :visible="true"/>
-      <dx-required-rule message="Вертикальный размер(диаметр антенны) должнен быть заполнен"/>
-    </dx-item>
-    <dx-button-item>
-      <dx-button-options
-          width="100%"
-          type="success"
-          styling-mode="outlined"
-          :template="mode === 'create' ? 'Создать и продолжить' : 'Сохранить изменения'"
-          :on-click="onClickSaveChanges"
-          :visible="!isFormDisabled"
-          :use-submit-behavior="true"
-      >
-      </dx-button-options>
-    </dx-button-item>
-    <dx-button-item>
-      <dx-button-options
-          width="100%"
-          type="default"
-          styling-mode="outlined"
-          template="Редактировать"
-          :on-click="onClickEditAntenna"
-          :visible="isFormDisabled"
-          :use-submit-behavior="true"
-      >
-      </dx-button-options>
-    </dx-button-item>
-  </dx-form>
+      <dx-editing
+          :allow-updating="true"
+          :allow-adding="true"
+          :allow-deleting="true"
+          :texts="{confirmDeleteMessage: 'Вы уверены, что хотите удалить эту запись?'}"
+          mode="form"
+      />
+      <dx-toolbar>
+        <dx-item name="addRowButton" show-text="always" location="after" widget="dxButton" :options="addButton">
+        </dx-item>
+      </dx-toolbar>
+      <dx-column
+          data-field="model"
+          caption="Модель антенны"
+          data-type="string"
+          alignment="left"
+          :editor-options="{stylingMode: 'filled', labelMode: 'floating'}">
+        <dx-label :visible="false"/>
+        <dx-required-rule message="Модель антенны должна быть заполнена"></dx-required-rule>
+      </dx-column>
+      <dx-column
+          data-field="verticalSizeDiameter"
+          data-type="number"
+          caption="Вертикальный размер(диаметр антенны)"
+          :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
+          alignment="left">
+        <dx-label :visible="false"/>
+        <dx-required-rule message="Вертикальный размер(диаметр антенны) должнен быть заполнен"></dx-required-rule>
+      </dx-column>
+      <DxMasterDetail
+          :enabled="true"
+          template="master-detail"
+      />
+      <template #master-detail="{ data }">
+        <translator-spec-form :master-detail-data="data"/>
+      </template>
+      <dx-paging :page-size="5"/>
+      <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
+      <dx-sorting mode="multiple"/>
+    </dx-data-grid>
+  </div>
 </template>
 
 <script setup>
 
 import {
-  DxButtonItem,
-  DxButtonOptions,
-  DxForm,
-  DxItem,
   DxLabel
-} from "devextreme-vue/form";
-import {
-  DxRequiredRule
-} from 'devextreme-vue/validator';
-import {onBeforeMount, reactive, ref, defineProps} from "vue";
-import {useRoute, useRouter} from "vue-router";
-import notify from "devextreme/ui/notify";
+} from 'devextreme-vue/form';
+import {onMounted, ref} from "vue";
 import antennaService from "@/api/antennaService";
+// import {useRoute} from "vue-router";
+import {
+  DxDataGrid,
+  DxColumn,
+  DxPaging,
+  DxEditing,
+  DxPager,
+  DxToolbar,
+  DxItem,
+  DxSorting,
+  DxMasterDetail
+} from 'devextreme-vue/data-grid';
+import 'devextreme-vue/text-area';
+import {DxRequiredRule} from "devextreme-vue/validator";
+import CustomStore from "devextreme/data/custom_store";
+import notify from "devextreme/ui/notify";
+import TranslatorSpecForm from "@/components/translator-spec-form.vue";
 
 
-const props = defineProps({
-  onSaveAntenna: Function,
-  antennaId: String,
-  translatorSpecId: String
-})
-const router = useRouter();
-const route = useRoute();
-let dataSource = reactive({});
-let isFormDisabled = ref(true);
-let oid = route.params.id;
-const mode = ref(route.params.mode);
-const pageAntennaDescription = ref("Подробно об антенне");
-const formRef = ref(null);
-// let isTabDisabled = ref(true);
-// const translatorSpecs = ref([]);
-
-onBeforeMount(async () => {
-  if (mode.value === "read") {
-    const response = await antennaService.getAntenna(oid);
-    Object.assign(dataSource, response.data.result);
-  } else {
-    isFormDisabled.value = false;
-    pageAntennaDescription.value = "Создание антенны"
-  }
-})
-function onClickEditAntenna() {
-  isFormDisabled.value = false;
-  // isTabDisabled.value = false;
+// const route = useRoute();
+let dataSource = ref(null);
+const antennas = ref([]);
+const addButton = {
+  text: "Добавить антенну",
+  icon: 'add',
+  type: 'success',
+  stylingMode:"contained"
 }
-async function onClickSaveChanges() {
-  try {
-    const formInstance = formRef.value.instance;
-    const isFormValid = await formInstance.validate();
-    if (isFormValid.isValid === false) {
+
+
+const store = new CustomStore({
+  key: "id",
+  async load(loadOptions) {
+    const response = await antennaService.getAntennaeForGrid(loadOptions);
+    return response;
+  },
+  async insert(values) {
+    const baseResponse = await antennaService.createAntenna(values);
+    await dataSource.value.load();
+    if (baseResponse.data.success) {
       notify({
-        message: 'Данные не корректны',
+        message: 'Данные сохранены',
         position: {
           my: 'center top',
           at: 'center top',
         },
-      }, 'warning', 1000);
+      }, 'success', 1000);
+    } else {
+      notify(baseResponse.data.messages, 'error', 2000);
     }
-    else {
-      if (mode.value === "read") {
-        const responseUpdate = await antennaService.updateAntenna(dataSource);
-        if (responseUpdate.data.success) {
-          notify({
-            message: 'Антенна успешно отредактирована',
-            position: {
-              my: 'center top',
-              at: 'center top',
-            },
-          }, 'success', 1000);
-        } else {
-          notify(responseUpdate.data.messages, 'error', 2000);
-        }
-        isFormDisabled.value = true;
-      } else {
-        const response = await antennaService.createAntenna(dataSource);
-        if (response.data.success) {
-          notify({
-            message: 'Антенна успешно создана',
-            position: {
-              my: 'center top',
-              at: 'center top',
-            },
-          }, 'success', 1000);
-          await router.push({name: 'antennaDetail', params: {mode: "read", id: response.data.result}});
-          props.onSaveAntenna(response.data.result);
-        } else {
-          notify({
-            message: response.data.messages,
-            position: {
-              my: 'center top',
-              at: 'center top'}
-          }, 'error', 2000);
-        }
-      }
+    return {data: baseResponse};
+  },
+  async remove(id) {
+    const baseResponse = await antennaService.deleteAntenna(id);
+    if (baseResponse.data.success) {
+      notify({
+        message: 'Антенна удалена',
+        position: {
+          my: 'center top',
+          at: 'center top',
+        },
+      }, 'success', 1000);
+    } else {
+      notify(baseResponse.data.messages, 'error', 2000);
     }
+    return {data: baseResponse};
+  },
+  async update(id, values) {
+    console.log(id + values)
+  }
+});
 
-  } catch (error) {
-    console.error("Ошибка при сохранении изменений:", error);
+async function onRowUpdating(options) {
+  options.newData = Object.assign(options.oldData, options.newData);
+  const baseResponse = await antennaService.updateAntenna(options.newData);
+  await dataSource.value.load();
+  if (baseResponse.data.success) {
     notify({
-      message: "Ошибка сервера при сохранении изменений:",
+      message: 'Данные сохранены',
       position: {
         my: 'center top',
-        at: 'center top'}
-    }, 'error', 2000);
+        at: 'center top',
+      },
+    }, 'success', 1000);
+  } else {
+    notify(baseResponse.data.messages, 'error', 2000);
   }
+  return {data: baseResponse};
 }
+
+function editorPreparing(e) {
+  console.log(e);
+  if (e.dataField === 'antennaId' && e.parentType === 'dataRow' && e.row.isNewRow
+      !== true) {
+    e.editorOptions.readOnly = true;
+  }}
+
+onMounted(async () => {
+  dataSource.value = store;
+
+  const antennaResponse = await antennaService.getAntennae();
+  console.log(antennaResponse);
+  antennas.value = antennaResponse.data.result;
+  console.log(antennas);
+})
 
 </script>
 
