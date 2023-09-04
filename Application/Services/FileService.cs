@@ -3,7 +3,6 @@ using System.Drawing;
 using Application.DataObjects;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
-using Application.Models.Projects;
 using DevExpress.Export.Xl;
 using DevExpress.Office.Services;
 using DevExpress.Office.Utils;
@@ -26,12 +25,14 @@ public class FileService : IFileService
 {
     private readonly IRepositoryWrapper _repositoryWrapper;
     private readonly IEnergyFlowService _energyFlowService;
+    private readonly IBiohazardRadiusService _biohazardRadiusService;
 
 
-    public FileService(IRepositoryWrapper repositoryWrapper, IEnergyFlowService energyFlowService)
+    public FileService(IRepositoryWrapper repositoryWrapper, IEnergyFlowService energyFlowService, IBiohazardRadiusService biohazardRadiusService)
     {
         _repositoryWrapper = repositoryWrapper;
         _energyFlowService = energyFlowService;
+        _biohazardRadiusService = biohazardRadiusService;
     }
 
     public async Task<BaseResponse<bool>> GetLoadXlsx()
@@ -183,7 +184,7 @@ public class FileService : IFileService
     {
         OfficeCharts.Instance.ActivateCrossPlatformCharts();
         var project = await  _repositoryWrapper.ProjectRepository.GetByCondition(x =>
-            x.Id.ToString() ==oid);
+            x.Id.ToString() == oid);
         var contrAgent = project.ContrAgent;
         var executor = project.Executor;
         var executiveCompany = project.ExecutiveCompany;
@@ -192,9 +193,7 @@ public class FileService : IFileService
         using (var wordProcessor = new RichEditDocumentServer()) 
         { 
             wordProcessor.LoadDocument("Шаблон.docx");
-
             Document document = wordProcessor.Document;
-            // var contrAgent = await _repositoryWrapper.ContrAgentRepository.GetByCondition(x => x.CompanyName == "Tele2");
             document.ReplaceAll("ContrAgent", $"{contrAgent.CompanyName}", SearchOptions.WholeWord);
             document.ReplaceAll("ContrAgentPhone", $"{contrAgent.PhoneNumber}", SearchOptions.WholeWord);
             document.ReplaceAll("ContrAgentBIN", $"{contrAgent.BIN}", SearchOptions.WholeWord);
@@ -203,13 +202,20 @@ public class FileService : IFileService
             document.ReplaceAll("ContrAgentAddress", $"{contrAgent.Address}", SearchOptions.WholeWord);
             document.ReplaceAll("DateYear", 
                 $"{DateTime.Now.Year}", SearchOptions.WholeWord);
-            // var asd = document.AppendText("Владелец радиоэлектронных средств: ");
-            // var contrAgent = await _repositoryWrapper.ContrAgentRepository.GetByCondition(x => x.CompanyName == "Tele2");
-            // document.InsertText(asd.End,$"{contrAgent.CompanyName}");
             
+            var projectAntennae = project.ProjectAntennae;
             var keywords = document.FindAll("Table",SearchOptions.WholeWord);
             DocumentPosition insertPosition = keywords[0].Start;
-            document.InsertText(insertPosition, $"Владелец радиоэлектронных средств: {contrAgent.CompanyName}");
+            for (int l = 0; l < projectAntennae.Count; l++)
+            {
+                if (l != 0)
+                {
+                    var asd = document.AppendSection();
+                    asd.StartType = SectionStartType.NextPage;
+                    Paragraph appendedParagraph = document.Paragraphs.Append();
+                    // document.InsertText(appendedParagraph.Range.Start, "Appended paragraph");
+                }
+                document.InsertText(insertPosition, $"Владелец радиоэлектронных средств: {contrAgent.CompanyName}");
             ParagraphProperties titleParagraphProperties = document.BeginUpdateParagraphs(keywords[0]);
             titleParagraphProperties.Alignment = ParagraphAlignment.Center;
             document.EndUpdateParagraphs(titleParagraphProperties);
@@ -245,23 +251,16 @@ public class FileService : IFileService
             document.InsertSingleLineText(table[0, 3].Range.Start, "Rб, м");
             document.InsertSingleLineText(table[0, 4].Range.Start, "Rz, м");
             document.InsertSingleLineText(table[0, 5].Range.Start, "Rx, м");
-
-            var projectAntennae = project.ProjectAntennae;
-            foreach (var value in projectAntennae)
-            {
-                var ant = _repositoryWrapper
-                    .AntennaTranslatorRepository.GetAllByCondition(x => x.ProjectAntennaId == value.Id).ToList();
+            var ant = _repositoryWrapper
+                    .AntennaTranslatorRepository.GetAllByCondition(x => x.ProjectAntennaId == projectAntennae[l].Id).ToList();
                 foreach (var item in ant)
                 {
                     var bio = _repositoryWrapper.BiohazardRadiusRepository.GetAllByCondition(x =>
-                        x.AntennaTranslatorId == item.Id).ToList();
+                        x.AntennaTranslatorId == item.Id && x.DirectionType == DirectionType.Vertical).OrderBy(x=>x.Degree).ToList();
                     var y = 1;
                     for (int i = 0; i < bio.Count; i++) 
                     {
                         var x = i % 10;
-                        // var rB = _energyFlowService.GetRB(translator.Power, translator.Gain, 0.71M, radiations[i].Value);
-                        // var rZ = _energyFlowService.GetRZ(radiations[i].Degree, rB);
-                        // var rX = _energyFlowService.GetRX(radiations[i].Degree, rB);
                         if (i == 0 || i == 4 || x == 0) 
                         {
                             document.InsertText(table[y, 0].Range.Start, bio[i].Degree.ToString());
@@ -272,6 +271,7 @@ public class FileService : IFileService
                             document.InsertText(table[y, 5].Range.Start, bio[i].BiohazardRadiusX.ToString("F3"));
                             y++; 
                         }
+                        
                     }
                     document.InsertText(table.Range.End,"Максимальный радиус биологически-опасной зоны от секторных " +
                                                         "антенн TBXLHA-6565B-VTM в направлении излучения равен 27,5432381892065 м" +
@@ -282,11 +282,23 @@ public class FileService : IFileService
                                                         "В горизонтальном сечении БОЗ повторяет диаграмму направленности. Максимальное отклонение от оси в горизонтальном сечении составляет 8,662 м." +
                                                         " на расстоянии 16,291 м. от центра излучения. Максимальный радиус биологически-опасного излучения от заднего лепестка антенны составил 0,015 м.");
                     table.EndUpdate();
+                    var bioVertical = _repositoryWrapper.BiohazardRadiusRepository.GetAllByCondition(x =>
+                        x.AntennaTranslatorId == item.Id && x.DirectionType == DirectionType.Vertical).OrderBy(x=>x.Degree).ToList();
+                    var bioHorizontal = _repositoryWrapper.BiohazardRadiusRepository.GetAllByCondition(x =>
+                        x.AntennaTranslatorId == item.Id && x.DirectionType == DirectionType.Horizontal).OrderBy(x=>x.Degree).ToList();
+                    var diagram = document.FindAll("Diagram",SearchOptions.WholeWord);
+                    ParagraphProperties titleParagraphPropertiesSecond = document.BeginUpdateParagraphs(diagram[0]);
+                    titleParagraphPropertiesSecond.Alignment = ParagraphAlignment.Center;
+                    document.EndUpdateParagraphs(titleParagraphPropertiesSecond);
+                    document.Delete(diagram[0]);
+                    DocumentPosition insertPositionSecond = diagram[0].Start;
+                    
+                    await CreateGrafic(document,insertPositionSecond,bioVertical);
+                    // await CreateGrafic(document,insertPositionSecond,bioHorizontal);
+                    document.Delete(diagram[0]);
+                    table.EndUpdate();
                 }
-                
-                // var qwe = value.
-                // var asd = value.;
-                // asd.TranslatorSpecsList
+
             }
             // var radiations = _repositoryWrapper.RadiationZoneRepository
             //     .GetAllByCondition(x => x.TranslatorSpecsId.ToString() == "f8edf3ec-733a-4d82-bb13-d88548616368" && x.DirectionType == DirectionType.Vertical)!
@@ -323,12 +335,7 @@ public class FileService : IFileService
             //                     "В горизонтальном сечении БОЗ повторяет диаграмму направленности. Максимальное отклонение от оси в горизонтальном сечении составляет 8,662 м." +
             //                     " на расстоянии 16,291 м. от центра излучения. Максимальный радиус биологически-опасного излучения от заднего лепестка антенны составил 0,015 м.");
             // table.EndUpdate();
-            var diagram = document.FindAll("Diagram",SearchOptions.WholeWord);
-            ParagraphProperties titleParagraphPropertiesSecond = document.BeginUpdateParagraphs(diagram[0]);
-            titleParagraphPropertiesSecond.Alignment = ParagraphAlignment.Center;
-            document.EndUpdateParagraphs(titleParagraphPropertiesSecond);
-            document.Delete(diagram[0]);
-            DocumentPosition insertPositionSecond = diagram[0].Start;
+            
             // DocumentPosition insertPositionThird = diagram[0].End;
             // if (radiations.Find(x=>x.DirectionType == DirectionType.Horizontal) is null)
             //     document.InsertText(insertPositionThird, $"Ширина БОЗ в вертикальной плоскости на расстоянии Rx от " +
@@ -337,9 +344,7 @@ public class FileService : IFileService
             //     document.InsertText(insertPositionThird, $"Ширина БОЗ в горизонтальной плоскости на расстоянии Rx от " +
             //                                               $"антенны вдоль линии горизонта по направлению излучения");
             
-            await CreateGrafic(document,insertPositionSecond,project);
-            document.Delete(diagram[0]);
-            table.EndUpdate();
+            
             // if (radiations.Find(x=>x.DirectionType == DirectionType.Horizontal) is null)
             //     document.InsertText(table.Range.End, $"Ширина БОЗ в вертикальной плоскости на расстоянии Rx от " +
             //                                          $"антенны вдоль линии горизонта по направлению излучения");
@@ -365,65 +370,45 @@ public class FileService : IFileService
     }
 
 
-    public async Task<BaseResponse<bool>> CreateGrafic(Document document,DocumentPosition position,Project project)
+    private async Task<BaseResponse<bool>> CreateGrafic(Document document,DocumentPosition position,List<BiohazardRadius> biohazardRadii)
     {
-        // using (var wordProcessor = new RichEditDocumentServer())
-        // {
-            // Document document = wordProcessor.Document;
-            document.Unit = DevExpress.Office.DocumentUnit.Inch;
-            var chartShape = document.Shapes.InsertChart(position,ChartType.ScatterSmooth);
-            chartShape.Name = "Scatter Line chart";
-            chartShape.Size = new SizeF(4f, 3.2f);
-            chartShape.RelativeHorizontalPosition = ShapeRelativeHorizontalPosition.Margin;
-            chartShape.RelativeVerticalPosition = ShapeRelativeVerticalPosition.Paragraph;
-            chartShape.Offset = new PointF(0, 0);
-            ChartObject chart = (ChartObject)chartShape.ChartFormat.Chart;
-            Worksheet worksheet = (Worksheet)chartShape.ChartFormat.Worksheet;
-            await SpecifyChartData(worksheet);
-            chart.SelectData(worksheet.Range.FromLTRB(0, 0, 1, 360));
-            chart.Legend.Visible = false;
-            Axis valueAxisX = chart.PrimaryAxes[1];
-            Axis valueAxisY = chart.PrimaryAxes[0];
-            valueAxisX.Scaling.AutoMax = false;
-            valueAxisX.Scaling.Max = 10;
-            valueAxisX.Scaling.AutoMin = false;
-            valueAxisX.Scaling.Min = -10;
-            valueAxisY.Scaling.AutoMin = false;
-            valueAxisY.Scaling.Min = -1;
-            
-            chart.Series[0].Outline.SetSolidFill(Color.FromArgb(0x00, 0x00, 0x00));
-            chart.Series[0].Outline.Width = 1.2;
-            
-            // wordProcessor.SaveDocument("Ar222.docx", DocumentFormat.OpenXml);
-        // }
+        document.Unit = DevExpress.Office.DocumentUnit.Inch;
+        var chartShape = document.Shapes.InsertChart(position,ChartType.ScatterSmooth);
+        chartShape.Name = "Scatter Line chart";
+        chartShape.Size = new SizeF(4f, 3.2f);
+        chartShape.RelativeHorizontalPosition = ShapeRelativeHorizontalPosition.LeftMargin;
+        chartShape.RelativeVerticalPosition = ShapeRelativeVerticalPosition.Line;
+        chartShape.Offset = new PointF(0, 0);
+        ChartObject chart = (ChartObject)chartShape.ChartFormat.Chart;
+        Worksheet worksheet = (Worksheet)chartShape.ChartFormat.Worksheet;
+        
+        await SpecifyChartData(worksheet,biohazardRadii);
+        chart.SelectData(worksheet.Range.FromLTRB(0, 0, 1, 360));
+        chart.Legend.Visible = false;
+        Axis valueAxisX = chart.PrimaryAxes[1];
+        Axis valueAxisY = chart.PrimaryAxes[0];
+        valueAxisX.Scaling.AutoMax = false;
+        valueAxisX.Scaling.Max = 10;
+        valueAxisX.Scaling.AutoMin = false;
+        valueAxisX.Scaling.Min = -10;
+        valueAxisY.Scaling.AutoMin = false;
+        valueAxisY.Scaling.Min = -1;
+        
+        chart.Series[0].Outline.SetSolidFill(Color.FromArgb(0x00, 0x00, 0x00));
+        chart.Series[0].Outline.Width = 1.2;
+        
         return new BaseResponse<bool>(
             Result: true,
             Messages: new List<string> { "Файл успешно создан" },
             Success: true);
     }
     
-    private async Task<bool> SpecifyChartData(Worksheet sheet)
+    private async Task<bool> SpecifyChartData(Worksheet sheet,List<BiohazardRadius> biohazard)
     {
-        var radiations = _repositoryWrapper.RadiationZoneRepository
-            .GetAllByCondition(x => x.TranslatorSpecsId.ToString() == "f8edf3ec-733a-4d82-bb13-d88548616368" && x.DirectionType == DirectionType.Vertical)!
-            .OrderBy(x=> x.Degree).ToList();
-        var translator = await _repositoryWrapper.TranslatorSpecsRepository
-            .GetByCondition(x => x.Id.ToString() == "f8edf3ec-733a-4d82-bb13-d88548616368");
-        // var radiations = _repositoryWrapper.RadiationZoneRepository
-        //     .GetAllByCondition(x => x.TranslatorSpecsId == antennaTranslator.TranslatorSpecsId && x.DirectionType == DirectionType.Vertical)!
-        //     .OrderBy(x=> x.Degree).ToList();  
-        // var translator = await _repositoryWrapper.TranslatorSpecsRepository
-        //     .GetByCondition(x => x.Id == antennaTranslator.TranslatorSpecsId);  Как будет
-        
-        for (int i = 0; i < radiations.Count; i++)
+        for (int i = 0; i < biohazard.Count; i++)
         {
-            // var rB = _energyFlowService.GetRB(antennaTranslator.Power, antennaTranslator.Gain, antennaTranslator.TransmitLossFactor, radiations[i].Value);  Как будет
-            var rB = _energyFlowService.GetRB(translator.Power, translator.Gain, 0.71M, radiations[i].Value);
-            var rZ = _energyFlowService.GetRZ(radiations[i].Degree, rB);
-            var rX = _energyFlowService.GetRX(radiations[i].Degree, rB);
-    
-            sheet[i, 0].Value = rX;
-            sheet[i, 1].Value = rZ;
+            sheet[i, 0].Value = biohazard[i].BiohazardRadiusX;
+            sheet[i, 1].Value = biohazard[i].BiohazardRadiusZ;
         }
 
         return true;

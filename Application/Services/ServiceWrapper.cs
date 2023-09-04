@@ -41,9 +41,10 @@ public class ServiceWrapper : IServiceWrapper
         TranslatorTypeValidator translatorTypeValidator,
         ExecutiveCompanyValidator executiveCompanyValidator,
         IEnergyFlowService energyFlowService,
+        IBiohazardRadiusService biohazardRadiusService,
         ProjectAntennaValidator projectAntennaValidator)
     {
-        _fileService = new Lazy<IFileService>(() => new FileService(repository, energyFlowService));
+        _fileService = new Lazy<IFileService>(() => new FileService(repository, energyFlowService,biohazardRadiusService));
         _projectAntennaService = new Lazy<IProjectAntennaService>(() => new ProjectAntennaService(repository, mapper, projectAntennaValidator));
         _roleService = new Lazy<IRoleService>(() => new RoleService(repository, mapper, roleValidator));
         _executiveCompanyService = new Lazy<IExecutiveCompanyService>(() =>

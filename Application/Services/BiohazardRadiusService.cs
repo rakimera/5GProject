@@ -14,21 +14,18 @@ public class BiohazardRadiusService : IBiohazardRadiusService
         _repositoryWrapper = repositoryWrapper;
     }
 
-    public async Task<BaseResponse<bool>> Create(Project project)
+    public async Task<BaseResponse<bool>> Create(string id)
     {
-        var projectAntennae = project.ProjectAntennae;
+        var projectAntennae = _repositoryWrapper.ProjectAntennaRepository.GetAllByCondition(x => x.Id.ToString() == id).ToList();
         foreach (var projectAntenna in projectAntennae)
         {
             var antennaTranslators = _repositoryWrapper
                 .AntennaTranslatorRepository.GetAllByCondition(x=>x.ProjectAntenna == projectAntenna).ToList();
             foreach (var value in antennaTranslators)
             {
-                var antenna = value.ProjectAntenna;
                 var translator = value.TranslatorSpecs;
-                // var lossFactor = value.TransmitLossFactor;
-                // var gain = value.Gain;
-                // var power = value.Power;
-                var radiationZones = translator.RadiationZones;
+                var radiationZones = _repositoryWrapper
+                    .RadiationZoneRepository.GetAllByCondition(x=> x.TranslatorSpecsId == translator.Id);
                 foreach (var radiationZone in radiationZones)
                 {
                     var dbRaz = Multiplier(radiationZone.Value);
@@ -36,15 +33,17 @@ public class BiohazardRadiusService : IBiohazardRadiusService
                     BiohazardRadius biohazardRadius = new BiohazardRadius()
                     {
                         Degree = radiationZone.Degree,
-                        Dbi = radiationZone.Value,
-                        DbiRaz = dbRaz,
+                        Db = radiationZone.Value,
+                        DbRaz = dbRaz,
                         MaximumBiohazardRadius = maxRadius,
                         BiohazardRadiusX = GetRX(radiationZone.Degree, maxRadius),
-                        BiohazardRadiusZ = GetRZ(radiationZone.Degree, maxRadius)
+                        BiohazardRadiusZ = GetRZ(radiationZone.Degree, maxRadius),
+                        DirectionType = radiationZone.DirectionType,
+                        AntennaTranslatorId = value.Id
                     };
                     await _repositoryWrapper.BiohazardRadiusRepository.CreateAsync(biohazardRadius);
                 }
-                
+
             }
             
         }
@@ -56,10 +55,14 @@ public class BiohazardRadiusService : IBiohazardRadiusService
     }
     public decimal GetRB(decimal power,decimal height,decimal lost,decimal multiplier) //Rb,m
     {
-        double rB = Math.Sqrt(8 * (double)power * (double)Multiplier(height) * (double)Multiplier(-lost) / 10) * 1 * (double)Multiplier(multiplier);
+        var h = Multiplier(height);
+        var l = Multiplier(-lost);
+        var m = Multiplier(multiplier);
+        double rB = Math.Sqrt(8 * (double)power * (double)h * (double)l / 10) * 1 * (double)multiplier;
         double result = Math.Round(rB, 3);
         return (decimal)result;
     }
+    
     
     public decimal GetRZ(decimal degree,decimal rB) //Rz,m
     {
@@ -74,8 +77,12 @@ public class BiohazardRadiusService : IBiohazardRadiusService
         double result = Math.Round(rZ, 3);
         return (decimal)result;
     }
-    public decimal Multiplier(decimal value)
+    public decimal Multiplier(decimal value) //перевод в разы
     {
-        return (decimal)Math.Pow(10, (double)value / 10);
+        double baseNumber = 10;
+        double exponent = (double)value / baseNumber;
+
+        double result = Math.Pow(baseNumber, exponent);
+        return (decimal)result;
     }
 }

@@ -61,6 +61,7 @@ public class AntennaTranslatorsController : Controller
     {
         AntennaTranslatorDto antennaTranslatorDto = _mapper.Map<AntennaTranslatorDto>(antennaTranslator);
         var baseResponse = await _service.AntennaTranslatorService.CreateAsync(antennaTranslatorDto, User.Identity.Name);
+        await _service.BiohazardRadiusService.Create(antennaTranslator.ProjectAntennaId.ToString());
         
         if (baseResponse.Success)
             return Ok(baseResponse);

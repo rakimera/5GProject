@@ -16,6 +16,7 @@ public static class ConfigureService
     {
         services.AddScoped<IServiceWrapper, ServiceWrapper>();
         services.AddScoped<IEnergyFlowService, EnergyFlowService>();
+        services.AddScoped<IBiohazardRadiusService, BiohazardRadiusService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<UserValidator>();
         services.AddScoped<ProjectValidator>();

@@ -18,4 +18,5 @@ public interface IServiceWrapper
     IExecutiveCompanyService ExecutiveCompanyService { get; }
     IAntennaTranslatorService AntennaTranslatorService { get; }
     ITranslatorTypeService TranslatorTypeService { get; }
+    IBiohazardRadiusService BiohazardRadiusService { get; }
 }

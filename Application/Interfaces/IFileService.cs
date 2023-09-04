@@ -11,7 +11,5 @@ public interface IFileService
 
     public Task<BaseResponse<bool>> ReadExcel(string filePath, TranslatorSpecs translatorSpecs, DirectionType type);
     public Task<BaseResponse<bool>> ProjectWord(string oid);
-    public Task<BaseResponse<bool>> CreateGrafic(Document document,DocumentPosition position,Project project);
-
 
 }
