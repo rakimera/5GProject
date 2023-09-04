@@ -77,7 +77,7 @@ public class EnergyFlowService : IEnergyFlowService
         return energyResults;
     }
 
-    public decimal EuclideanDistance(decimal heightInstall, int distance) //R,m
+    private decimal EuclideanDistance(decimal heightInstall, int distance) //R,m
     {
         var result = (decimal)Math.Sqrt(Math.Pow((double)(heightInstall - HumanHeight), 2) + Math.Pow(distance, 2));
         return result;
@@ -177,10 +177,6 @@ public class EnergyFlowService : IEnergyFlowService
     
     public decimal Multiplier(decimal value) //перевод в разы
     {
-        double baseNumber = 10;
-        double exponent = (double)value / baseNumber;
-
-        double result = Math.Pow(baseNumber, exponent);
-        return (decimal)result;
+        return (decimal)Math.Pow(10, (double)value / 10);
     }
 }

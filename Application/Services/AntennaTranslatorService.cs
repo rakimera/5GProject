@@ -2,7 +2,6 @@ using Application.DataObjects;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
 using Application.Models.AntennaTranslator;
-using Application.Models.EnergyResult;
 using Application.Validation;
 using AutoMapper;
 using DevExtreme.AspNet.Data;
@@ -26,17 +25,50 @@ public class AntennaTranslatorService : IAntennaTranslatorService
 
     public BaseResponse<IEnumerable<AntennaTranslatorDto>> GetAll()
     {
-        throw new NotImplementedException();
+        IQueryable<AntennaTranslator> antennaTranslators = _repositoryWrapper.AntennaTranslatorRepository.GetAll();
+        List<AntennaTranslatorDto> models = _mapper.Map<List<AntennaTranslatorDto>>(antennaTranslators);
+        
+        if (models.Count > 0)
+        {
+            return new BaseResponse<IEnumerable<AntennaTranslatorDto>>(
+                Result: models,
+                Success: true,
+                Messages: new List<string> { "Передатчики антенны успешно получены" });
+        }
+
+        return new BaseResponse<IEnumerable<AntennaTranslatorDto>>(
+            Result: models,
+            Success: true,
+            Messages: new List<string> { "Передатчики антенны не найдены, возможно они еще не созданы или удалены" });
     }
 
-    public Task<BaseResponse<string>> CreateAsync(AntennaTranslatorDto model, string creator)
+    public async Task<BaseResponse<string>> CreateAsync(AntennaTranslatorDto model, string creator)
     {
-        throw new NotImplementedException();
+        AntennaTranslator antennaTranslator = _mapper.Map<AntennaTranslator>(model);
+        antennaTranslator.CreatedBy = creator;
+        await _repositoryWrapper.AntennaTranslatorRepository.CreateAsync(antennaTranslator);
+        await _repositoryWrapper.Save();
+
+        return new BaseResponse<string>(
+            Result: antennaTranslator.Id.ToString(),
+            Success: true,
+            Messages: new List<string> { "Передатчик антенны успешно создан" });
     }
 
-    public Task<BaseResponse<AntennaTranslatorDto>> GetByOid(string oid)
+    public async Task<BaseResponse<AntennaTranslatorDto>> GetByOid(string id)
     {
-        throw new NotImplementedException();
+        AntennaTranslator? antennaTranslator = await _repositoryWrapper.AntennaTranslatorRepository.GetByCondition(x => x.Id.ToString() == id);
+        AntennaTranslatorDto model = _mapper.Map<AntennaTranslatorDto>(antennaTranslator);
+        if (antennaTranslator is null)
+            return new BaseResponse<AntennaTranslatorDto>(
+                Result: null,
+                Messages: new List<string> { "Передатчик анетнны не найден" },
+                Success: true);
+
+        return new BaseResponse<AntennaTranslatorDto>(
+            Result: model,
+            Success: true,
+            Messages: new List<string> { "Передатчик антенны успешно найден" });
     }
 
     public async Task<BaseResponse<bool>> Delete(string oid)
@@ -60,14 +92,48 @@ public class AntennaTranslatorService : IAntennaTranslatorService
             Success: false);
     }
 
-    public Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions)
+    public async Task<LoadResult> GetLoadResult(string id, DataSourceLoadOptionsBase loadOptions)
     {
-        throw new NotImplementedException();
+        var queryableUsers = _repositoryWrapper.AntennaTranslatorRepository.GetAllByCondition(x => x.ProjectAntennaId.ToString() == id);
+        return await DataSourceLoader.LoadAsync(queryableUsers, loadOptions);
+
     }
 
-    public Task<BaseResponse<AntennaTranslatorDto>> Update(UpdateAntennaTranslatorDto model)
+    public async Task<BaseResponse<string>> Update(AntennaTranslatorDto model, string author)
     {
-        throw new NotImplementedException();
+        {
+            var result = await _antennaTranslatorValidator.ValidateAsync(model);
+            if (!result.IsValid)
+            {
+                List<string> messages = _mapper.Map<List<string>>(result.Errors);
+
+                return new BaseResponse<string>(
+                    Result: null,
+                    Messages: messages,
+                    Success: false);
+            }
+
+            AntennaTranslator? antennaTranslator =
+                await _repositoryWrapper.AntennaTranslatorRepository.GetByCondition(x => x.Id.Equals(model.Id));
+            if (antennaTranslator == null)
+            {
+                return new BaseResponse<string>(
+                    Result: null,
+                    Messages: new List<string> { "Транслятор антенны не найден" },
+                    Success: false);
+            }
+
+            _mapper.Map(model, antennaTranslator);
+            antennaTranslator.LastModifiedBy = author;
+
+            _repositoryWrapper.AntennaTranslatorRepository.Update(antennaTranslator);
+            await _repositoryWrapper.Save();
+
+            return new BaseResponse<string>(
+                Result: antennaTranslator.Id.ToString(),
+                Success: true,
+                Messages: new List<string> { "Транслятор антенны изменен" });
+        }
     }
 
     public BaseResponse<List<AntennaTranslatorDto>> GetAllByProjectAntennaId(string id)

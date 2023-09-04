@@ -1,12 +1,13 @@
 <template>
     <div>
-      <div id="data-grid-demo">
         <dx-data-grid
             :data-source="dataSource"
             :show-borders="true"
-            :remote-operations="true"
+            :remote-operations="false"
+            :column-auto-width="true"
             key-expr="id"
             @row-updating="onRowUpdating"
+            @editor-preparing="editorPreparing"
         >
           <dx-editing
               :allow-updating="true"
@@ -15,11 +16,17 @@
               :texts="{confirmDeleteMessage: 'Вы уверены, что хотите удалить эту запись?'}"
               mode="form"
           />
+            <dx-toolbar>
+                <dx-item name="addRowButton" show-text="always" location="after" :options="addButton">
+                </dx-item>
+            </dx-toolbar>
           <dx-column
               data-field="antennaId"
               caption="Антенна"
               data-type="string"
-          >
+              alignment="left"
+              :allow-updating="false"
+              :width="200">
             <dx-required-rule message="Вы не выбрали антенну"></dx-required-rule>
             <dx-lookup
                 :data-source="antennas"
@@ -27,28 +34,51 @@
                 display-expr="model"
             />
           </dx-column>
-          <dx-column data-field="azimuth" data-type="number" caption="Азимут"
-                     :editor-options="{stylingMode: 'filled', labelMode: 'floating'}">
+          <dx-column 
+              data-field="azimuth" 
+              data-type="number" 
+              caption="Азимут"
+              :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
+              alignment="left">
             <dx-label :visible="false"/>
               <dx-required-rule message="Вы не запонели азимут"></dx-required-rule>
           </dx-column>
-          <dx-column data-field="height" data-type="number" caption="Высота установки"
-                     :editor-options="{stylingMode: 'filled', labelMode: 'floating'}">
+          <dx-column 
+              data-field="height" 
+              data-type="number" 
+              caption="Высота"
+              :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
+              alignment="left">
             <dx-required-rule message="Вы не запонели высоту установки антенны"></dx-required-rule>
           </dx-column>
-          <dx-column data-field="latitude" data-type="number" caption="Широта"
-                     :editor-options="{stylingMode: 'filled', labelMode: 'floating'}">
+          <dx-column 
+              data-field="latitude" 
+              data-type="number" 
+              caption="Широта"
+              :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
+              alignment="left">
             <dx-required-rule message="Вы не запонели широту установки антенны"></dx-required-rule>
           </dx-column>
-          <dx-column data-field="longitude" data-type="number" caption="Долгота"
-                     :editor-options="{stylingMode: 'filled', labelMode: 'floating'}">
+          <dx-column 
+              data-field="longitude" 
+              data-type="number" 
+              caption="Долгота"
+              :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
+              alignment="left">
             <dx-required-rule message="Вы не запонели долготу установки антенны"></dx-required-rule>
           </dx-column>
-          <dx-column data-field="tilt" data-type="number" caption="Тильт"
-                     :editor-options="{stylingMode: 'filled', labelMode: 'floating'}">
+          <dx-column 
+              data-field="tilt" 
+              data-type="number" 
+              caption="Тильт"
+              :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
+              alignment="left">
             <dx-required-rule message="Вы не запонели тильт антенны"></dx-required-rule>
           </dx-column>
-          <dx-column data-field="projectId" data-type="string" :visible="false">
+          <dx-column 
+              data-field="projectId" 
+              data-type="string" 
+              :visible="false">
             <dx-form-item
                 :editor-options="{
                 disabled: true}"
@@ -57,10 +87,17 @@
                 :data="projectId"
             />
           </dx-column>
+          <DxMasterDetail
+              :enabled="true"
+              template="master-detail"
+          />
+          <template #master-detail="{ data }">
+            <antenna-translator-form :master-detail-data="data"/>
+          </template>
           <dx-paging :page-size="5"/>
           <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
+          <dx-sorting mode="multiple"/>
         </dx-data-grid>
-      </div>
     </div>
 </template>
 <script setup>
@@ -77,18 +114,28 @@ import {
   DxFormItem,
   DxPaging,
   DxEditing,
-  DxPager,
-  DxLookup
+  DxPager, 
+  DxToolbar, 
+  DxItem, 
+  DxSorting,
+  DxLookup, DxMasterDetail
 } from 'devextreme-vue/data-grid';
 import 'devextreme-vue/text-area';
 import {DxRequiredRule} from "devextreme-vue/validator";
 import CustomStore from "devextreme/data/custom_store";
 import notify from "devextreme/ui/notify";
+import AntennaTranslatorForm from "@/components/antenna-translator-form.vue";
 
 const route = useRoute();
 let projectId = route.params.id;
 let dataSource = ref(null);
 const antennas = ref([]);
+const addButton = {
+    text: "Добавить антенну",
+    icon: 'add',
+    type: 'success',
+    stylingMode:"contained"
+}
 
 const store = new CustomStore({
   key: "id",
@@ -151,6 +198,12 @@ async function onRowUpdating(options) {
     return {data: baseResponse};
 }
 
+function editorPreparing(e) {
+    if (e.dataField === 'antennaId' && e.parentType === 'dataRow' && e.row.isNewRow
+     !== true) {
+        e.editorOptions.readOnly = true;
+}}
+
 onMounted(async () => {
   dataSource.value = store;
 
@@ -160,7 +213,4 @@ onMounted(async () => {
 
 </script>
 <style scoped>
-#form-container {
-    margin: 10px 10px 30px;
-}
 </style>

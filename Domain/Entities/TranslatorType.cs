@@ -1,7 +1,8 @@
+using Domain.Common;
+
 namespace Domain.Entities;
 
-public class TranslatorType
+public class TranslatorType : BaseEntity
 {
-    public Guid Id { get; set; }
     public required string Type { get; set; }
 }

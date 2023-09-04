@@ -7,12 +7,6 @@ namespace Application.Models.AntennaTranslator;
 
 public class AntennaTranslatorDto : BaseEntity
 {
-    [property: JsonPropertyName("projectAntennaId")]
-    public Guid ProjectAntennaId { get; set; }
-    
-    [property: JsonPropertyName("projectAntenna")]
-    public ProjectAntennaDto? ProjectAntenna { get; set; }
-    
     [property: JsonPropertyName("translatorSpecsId")]
     public Guid TranslatorSpecsId { get; set; }
     
@@ -22,13 +16,20 @@ public class AntennaTranslatorDto : BaseEntity
     [property: JsonPropertyName("power")]
     public decimal Power { get; set; }
     
+    [property: JsonPropertyName("transmitLossFactor")]
+    public decimal TransmitLossFactor { get; set; }
+    
     [property: JsonPropertyName("translatorTypeId")]
-    public Guid TranslatorTypeId { get; set; }
+    public Guid? TranslatorTypeId { get; set; }
     
     [property: JsonPropertyName("translatorType")]
     public TranslatorTypeDto? TranslatorType { get; set; }
-    
+
     [property: JsonPropertyName("gain")]
     public decimal Gain { get; set; }
+    [property: JsonPropertyName("projectAntennaId")]
+    public Guid ProjectAntennaId { get; set; }
     
+    [property: JsonPropertyName("projectAntenna")]
+    public ProjectAntennaDto? ProjectAntenna { get; set; }
 }

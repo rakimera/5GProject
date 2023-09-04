@@ -2,12 +2,14 @@ using Application.Interfaces;
 using Application.Models.AntennaTranslator;
 using AutoMapper;
 using DevExtreme.AspNet.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/antenna-translator")]
+[Authorize]
 public class AntennaTranslatorsController : Controller
 {
 
@@ -28,10 +30,11 @@ public class AntennaTranslatorsController : Controller
             return Ok(baseResponse);
         return NotFound(baseResponse);
     }
-    [HttpGet("index")]
-    public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
+    
+    [HttpGet("index/{id}")]
+    public async Task<IActionResult> Get(string id, [FromQuery]DataSourceLoadOptionsBase loadOptions)
     {
-        var loadResult = await _service.AntennaTranslatorService.GetLoadResult(loadOptions);
+        var loadResult = await _service.AntennaTranslatorService.GetLoadResult(id, loadOptions);
         return Ok(loadResult);
     }
 
@@ -54,9 +57,9 @@ public class AntennaTranslatorsController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody]CreateAntennaTranslatorDto model)
+    public async Task<IActionResult> Post(AntennaTranslatorDto antennaTranslator)
     {
-        AntennaTranslatorDto antennaTranslatorDto = _mapper.Map<AntennaTranslatorDto>(model);
+        AntennaTranslatorDto antennaTranslatorDto = _mapper.Map<AntennaTranslatorDto>(antennaTranslator);
         var baseResponse = await _service.AntennaTranslatorService.CreateAsync(antennaTranslatorDto, User.Identity.Name);
         
         if (baseResponse.Success)
@@ -65,9 +68,9 @@ public class AntennaTranslatorsController : Controller
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put(UpdateAntennaTranslatorDto model)
+    public async Task<IActionResult> Put(AntennaTranslatorDto model)
     {
-        var baseResponse = await _service.AntennaTranslatorService.Update(model);
+        var baseResponse = await _service.AntennaTranslatorService.Update(model, User.Identity.Name);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);

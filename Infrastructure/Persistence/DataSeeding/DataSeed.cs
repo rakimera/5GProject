@@ -83,7 +83,6 @@ public class DataSeed
             TranslatorSpecsDto baseTranslator = new TranslatorSpecsDto()
             {
                 Frequency = 900,
-                Power = 25,
                 Gain = 16.5M,
                 AntennaId = antenna.Id
             };

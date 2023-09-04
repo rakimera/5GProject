@@ -54,10 +54,10 @@ const antennaTranslatorService = {
 
     },
 
-    async getAntennaTranslatorForGrid(loadOptions) {
+    async getAntennaTranslatorForGrid(loadOptions, id) {
         try {
             let options = storeExtension.getParams(loadOptions);
-            const response = await axios.get(`/api/antenna-translator/index/${options}`);
+            const response = await axios.get(`/api/antenna-translator/index/${id}/${options}`);
             console.log(response)
             return response.data;
         } catch (error) {
