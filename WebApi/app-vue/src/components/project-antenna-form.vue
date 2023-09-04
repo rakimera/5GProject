@@ -17,7 +17,7 @@
               mode="form"
           />
             <dx-toolbar>
-                <dx-item name="addRowButton" show-text="always" location="after" widget="dxButton" :options="addButton">
+                <dx-item name="addRowButton" show-text="always" location="after" :options="addButton">
                 </dx-item>
             </dx-toolbar>
           <dx-column
@@ -199,7 +199,6 @@ async function onRowUpdating(options) {
 }
 
 function editorPreparing(e) {
-    console.log(e)
     if (e.dataField === 'antennaId' && e.parentType === 'dataRow' && e.row.isNewRow
      !== true) {
         e.editorOptions.readOnly = true;
