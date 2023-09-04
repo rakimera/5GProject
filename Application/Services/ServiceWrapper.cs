@@ -22,6 +22,7 @@ public class ServiceWrapper : IServiceWrapper
     private readonly Lazy<ITranslatorSpecsService> _translatorSpecsService;
     private readonly Lazy<IProjectAntennaService> _projectAntennaService;
     private readonly Lazy<IAntennaTranslatorService> _antennaTranslatorService;
+    private readonly Lazy<IProjectImageService> _projectImageService;
 
     public ServiceWrapper(
         IRepositoryWrapper repository,
@@ -38,6 +39,7 @@ public class ServiceWrapper : IServiceWrapper
         RoleValidator roleValidator,
         TranslatorTypeValidator translatorTypeValidator,
         ProjectAntennaValidator projectAntennaValidator,
+        ProjectImageService projectImageService,
         ExecutiveCompanyValidator executiveCompanyValidator)
     {
         _projectAntennaService = new Lazy<IProjectAntennaService>(() => new ProjectAntennaService(repository, mapper, projectAntennaValidator));
@@ -56,11 +58,12 @@ public class ServiceWrapper : IServiceWrapper
         _antennaService = new Lazy<IAntennaService>(() => new AntennaService(repository, mapper, antennaValidator));
         _translatorSpecsService = new Lazy<ITranslatorSpecsService>(() => new TranslatorSpecsService(repository, mapper, translatorSpecsValidator));
         _energyFlowService = new Lazy<IEnergyFlowService>(() => new EnergyFlowService(energyResultValidator, mapper, repository));
-        _energyFlowService = new Lazy<IEnergyFlowService>(() => new EnergyFlowService(energyResultValidator, mapper, repository));
+        _projectImageService = new Lazy<IProjectImageService>(() => new ProjectImageService(repository, mapper));
     }
         
 
     public IUserService UserService => _userService.Value;
+    public IProjectImageService ProjectImageService => _projectImageService.Value;
     public IProjectAntennaService ProjectAntennaService => _projectAntennaService.Value;
     public IProjectService ProjectService => _projectService.Value;
     public ITokenService TokenService => _tokenService.Value;

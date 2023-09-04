@@ -29,6 +29,7 @@ public class ProjectsController : Controller
             return Ok(baseResponse);
         return NotFound(baseResponse);
     }
+    
     [HttpGet("index")]
     public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
     {
