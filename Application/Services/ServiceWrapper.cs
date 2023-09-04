@@ -23,6 +23,7 @@ public class ServiceWrapper : IServiceWrapper
     private readonly Lazy<IFileService> _fileService;
     private readonly Lazy<IProjectAntennaService> _projectAntennaService;
     private readonly Lazy<IAntennaTranslatorService> _antennaTranslatorService;
+    private readonly Lazy<IBiohazardRadiusService> _biohazardRadiusService;
 
     public ServiceWrapper(
         IRepositoryWrapper repository,
@@ -38,9 +39,9 @@ public class ServiceWrapper : IServiceWrapper
         EnergyResultValidator energyResultValidator,
         RoleValidator roleValidator,
         TranslatorTypeValidator translatorTypeValidator,
-        ProjectAntennaValidator projectAntennaValidator,
         ExecutiveCompanyValidator executiveCompanyValidator,
-        IEnergyFlowService energyFlowService)
+        IEnergyFlowService energyFlowService,
+        ProjectAntennaValidator projectAntennaValidator)
     {
         _fileService = new Lazy<IFileService>(() => new FileService(repository, energyFlowService));
         _projectAntennaService = new Lazy<IProjectAntennaService>(() => new ProjectAntennaService(repository, mapper, projectAntennaValidator));
@@ -60,6 +61,7 @@ public class ServiceWrapper : IServiceWrapper
         _translatorSpecsService = new Lazy<ITranslatorSpecsService>(() => new TranslatorSpecsService(repository, mapper, translatorSpecsValidator));
         _energyFlowService = new Lazy<IEnergyFlowService>(() => new EnergyFlowService(energyResultValidator, mapper, repository));
         _energyFlowService = new Lazy<IEnergyFlowService>(() => new EnergyFlowService(energyResultValidator, mapper, repository));
+        _biohazardRadiusService = new Lazy<IBiohazardRadiusService>(() => new BiohazardRadiusService(repository));
     }
         
 
@@ -79,4 +81,5 @@ public class ServiceWrapper : IServiceWrapper
     public IAntennaTranslatorService AntennaTranslatorService => _antennaTranslatorService.Value;
     public ITranslatorTypeService TranslatorTypeService => _translatorTypeService.Value;
     public IFileService FileService => _fileService.Value;
+    public IBiohazardRadiusService BiohazardRadiusService => _biohazardRadiusService.Value;
 }
