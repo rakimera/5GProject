@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApi.Controllers;
 
 [ApiController]
-[Route("api/projectImages")]
+[Route("api/project-images")]
 [Authorize]
 public class ProjectImagesControllers : Controller
 {

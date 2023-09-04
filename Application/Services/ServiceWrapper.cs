@@ -39,7 +39,6 @@ public class ServiceWrapper : IServiceWrapper
         RoleValidator roleValidator,
         TranslatorTypeValidator translatorTypeValidator,
         ProjectAntennaValidator projectAntennaValidator,
-        ProjectImageService projectImageService,
         ExecutiveCompanyValidator executiveCompanyValidator)
     {
         _projectAntennaService = new Lazy<IProjectAntennaService>(() => new ProjectAntennaService(repository, mapper, projectAntennaValidator));
