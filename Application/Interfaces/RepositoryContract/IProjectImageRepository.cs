@@ -5,4 +5,5 @@ namespace Application.Interfaces.RepositoryContract;
 
 public interface IProjectImageRepository : IBaseRepository<ProjectImage>
 {
+    void Delete(ProjectImage projectImage);
 }

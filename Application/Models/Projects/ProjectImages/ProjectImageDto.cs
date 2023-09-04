@@ -1,9 +1,10 @@
 
+using Domain.Common;
+
 namespace Application.Models.Projects.ProjectImages;
 
-public class ProjectImageDto
+public class ProjectImageDto : BaseEntity
 {
-    public Guid Id { get; set; }
     public required string Route { get; set; }
     public Guid ProjectId { get; set; }
 }

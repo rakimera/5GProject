@@ -11,4 +11,9 @@ public class ProjectImageRepository : BaseRepository<ProjectImage>, IProjectImag
     {
         
     }
+    
+    public void Delete(ProjectImage projectImage)
+    {
+        DbContext.ProjectImages.Remove(projectImage);
+    }
 }
