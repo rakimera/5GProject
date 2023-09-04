@@ -3,6 +3,7 @@ using System.Drawing;
 using Application.DataObjects;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
+using Application.Models.Projects;
 using DevExpress.Export.Xl;
 using DevExpress.Office.Services;
 using DevExpress.Office.Utils;
@@ -136,24 +137,14 @@ public class FileService : IFileService
 
     public async Task<BaseResponse<bool>> ReadExcel(string filePath,TranslatorSpecs translatorSpecs,DirectionType type)
     {
-        //Запись в базу 360 из excel
-        
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        // string filePath = "Document.xlsx";
-        
         using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
         {
             using (ExcelPackage package = new ExcelPackage(stream))
             {
                 ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-        
-                int rowCount = worksheet.Dimension.Rows;
-                // int colCount = worksheet.Dimension.Columns;
-                // Antenna? antenna = await _repositoryWrapper.AntennaRepository.GetByCondition(x => x.Model.Equals("TBXLHA-6565B-VTM"));
-                // TranslatorSpecs? translatorSpecs = await _repositoryWrapper.TranslatorSpecsRepository
-                //     .GetByCondition(x => x.AntennaId == antenna.Id && x.Frequency == 900 );
                 List<RadiationZone> list = new List<RadiationZone>();
-                for (int row = 1; row <= rowCount-1; row++)
+                for (int row = 1; row <= worksheet.Dimension.Rows-1; row++)
                 {
                     var degreeCellValue = worksheet.Cells[row, 1].Value;
                     var valueCellValue = worksheet.Cells[row, 2].Value;
@@ -178,7 +169,6 @@ public class FileService : IFileService
                         Success: false);
                 }
                 await _repositoryWrapper.Save();
-                
             }
         }
         return new BaseResponse<bool>(
@@ -186,12 +176,14 @@ public class FileService : IFileService
             Messages: new List<string> { "Файл успешно считан" },
             Success: true);
     }
+    
+    
 
-    public async Task<BaseResponse<bool>> ProjectWord()
+    public async Task<BaseResponse<bool>> ProjectWord(string oid)
     {
         OfficeCharts.Instance.ActivateCrossPlatformCharts();
         var project = await  _repositoryWrapper.ProjectRepository.GetByCondition(x =>
-            x.Id.ToString() == "d04a9412-0705-4748-a6d4-3760b2babdad");
+            x.Id.ToString() ==oid);
         var contrAgent = project.ContrAgent;
         var executor = project.Executor;
         var executiveCompany = project.ExecutiveCompany;
@@ -253,42 +245,84 @@ public class FileService : IFileService
             document.InsertSingleLineText(table[0, 3].Range.Start, "Rб, м");
             document.InsertSingleLineText(table[0, 4].Range.Start, "Rz, м");
             document.InsertSingleLineText(table[0, 5].Range.Start, "Rx, м");
-            
-            var radiations = _repositoryWrapper.RadiationZoneRepository
-                .GetAllByCondition(x => x.TranslatorSpecsId.ToString() == "f8edf3ec-733a-4d82-bb13-d88548616368" && x.DirectionType == DirectionType.Vertical)!
-                .OrderBy(x=> x.Degree).ToList();
-            var translator = await _repositoryWrapper.TranslatorSpecsRepository
-                .GetByCondition(x => x.Id.ToString() == "f8edf3ec-733a-4d82-bb13-d88548616368");
-            var antenna = await _repositoryWrapper.AntennaRepository
-                .GetByCondition(x => 
-                    x.Id.ToString() == "eeccb820-4828-488c-9eb8-21a479c73c30");
-            var y = 1;
-            for (int i = 0; i < radiations.Count; i++) 
+
+            var projectAntennae = project.ProjectAntennae;
+            foreach (var value in projectAntennae)
             {
-                var x = i % 10;
-                var rB = _energyFlowService.GetRB(translator.Power, translator.Gain, 0.71M, radiations[i].Value);
-                var rZ = _energyFlowService.GetRZ(radiations[i].Degree, rB);
-                var rX = _energyFlowService.GetRX(radiations[i].Degree, rB);
-                if (i == 0 || i == 4 || x == 0) 
+                var ant = _repositoryWrapper
+                    .AntennaTranslatorRepository.GetAllByCondition(x => x.ProjectAntennaId == value.Id).ToList();
+                foreach (var item in ant)
                 {
-                    document.InsertText(table[y, 0].Range.Start, radiations[i].Degree.ToString());
-                    document.InsertText(table[y, 1].Range.Start, radiations[i].Value.ToString());
-                    document.InsertText(table[y, 2].Range.Start, _energyFlowService.Multiplier(radiations[i].Value).ToString("F3"));
-                    document.InsertText(table[y, 3].Range.Start, rB.ToString("F3"));
-                    document.InsertText(table[y, 4].Range.Start, rZ.ToString("F3"));
-                    document.InsertText(table[y, 5].Range.Start, rX.ToString("F3"));
-                    y++; 
+                    var bio = _repositoryWrapper.BiohazardRadiusRepository.GetAllByCondition(x =>
+                        x.AntennaTranslatorId == item.Id).ToList();
+                    var y = 1;
+                    for (int i = 0; i < bio.Count; i++) 
+                    {
+                        var x = i % 10;
+                        // var rB = _energyFlowService.GetRB(translator.Power, translator.Gain, 0.71M, radiations[i].Value);
+                        // var rZ = _energyFlowService.GetRZ(radiations[i].Degree, rB);
+                        // var rX = _energyFlowService.GetRX(radiations[i].Degree, rB);
+                        if (i == 0 || i == 4 || x == 0) 
+                        {
+                            document.InsertText(table[y, 0].Range.Start, bio[i].Degree.ToString());
+                            document.InsertText(table[y, 1].Range.Start, bio[i].Db.ToString("F3"));
+                            document.InsertText(table[y, 2].Range.Start, bio[i].DbRaz.ToString("F3"));
+                            document.InsertText(table[y, 3].Range.Start, bio[i].MaximumBiohazardRadius.ToString("F3"));
+                            document.InsertText(table[y, 4].Range.Start, bio[i].BiohazardRadiusZ.ToString("F3"));
+                            document.InsertText(table[y, 5].Range.Start, bio[i].BiohazardRadiusX.ToString("F3"));
+                            y++; 
+                        }
+                    }
+                    document.InsertText(table.Range.End,"Максимальный радиус биологически-опасной зоны от секторных " +
+                                                        "антенн TBXLHA-6565B-VTM в направлении излучения равен 27,5432381892065 м" +
+                                                        " (стандарт GSM/UMTS; мощность передатчика 25 Вт; частота на передачу 900 МГц;" +
+                                                        " коэффициент усиления антенн 16,5 дБ, направление антенны в вертикальной плоскости 0°). " +
+                                                        "В вертикальном сечении БОЗ повторяет диаграмму направленности. Максимальное отклонение от оси в вертикальном сечении составляет 0,966 м." +
+                                                        " на расстоянии 18,426 м. от центра излучения. Максимальный радиус биологически-опасного излучения от заднего лепестка антенны составил 0,060 м. " +
+                                                        "В горизонтальном сечении БОЗ повторяет диаграмму направленности. Максимальное отклонение от оси в горизонтальном сечении составляет 8,662 м." +
+                                                        " на расстоянии 16,291 м. от центра излучения. Максимальный радиус биологически-опасного излучения от заднего лепестка антенны составил 0,015 м.");
+                    table.EndUpdate();
                 }
+                
+                // var qwe = value.
+                // var asd = value.;
+                // asd.TranslatorSpecsList
             }
-            document.InsertText(table.Range.End,"Максимальный радиус биологически-опасной зоны от секторных " +
-                                "антенн TBXLHA-6565B-VTM в направлении излучения равен 27,5432381892065 м" +
-                                " (стандарт GSM/UMTS; мощность передатчика 25 Вт; частота на передачу 900 МГц;" +
-                                " коэффициент усиления антенн 16,5 дБ, направление антенны в вертикальной плоскости 0°). " +
-                                "В вертикальном сечении БОЗ повторяет диаграмму направленности. Максимальное отклонение от оси в вертикальном сечении составляет 0,966 м." +
-                                " на расстоянии 18,426 м. от центра излучения. Максимальный радиус биологически-опасного излучения от заднего лепестка антенны составил 0,060 м. " +
-                                "В горизонтальном сечении БОЗ повторяет диаграмму направленности. Максимальное отклонение от оси в горизонтальном сечении составляет 8,662 м." +
-                                " на расстоянии 16,291 м. от центра излучения. Максимальный радиус биологически-опасного излучения от заднего лепестка антенны составил 0,015 м.");
-            table.EndUpdate();
+            // var radiations = _repositoryWrapper.RadiationZoneRepository
+            //     .GetAllByCondition(x => x.TranslatorSpecsId.ToString() == "f8edf3ec-733a-4d82-bb13-d88548616368" && x.DirectionType == DirectionType.Vertical)!
+            //     .OrderBy(x=> x.Degree).ToList();
+            // var translator = await _repositoryWrapper.TranslatorSpecsRepository
+            //     .GetByCondition(x => x.Id.ToString() == "f8edf3ec-733a-4d82-bb13-d88548616368");
+            // var antenna = await _repositoryWrapper.AntennaRepository
+            //     .GetByCondition(x => 
+            //         x.Id.ToString() == "eeccb820-4828-488c-9eb8-21a479c73c30");
+            // var y = 1;
+            // for (int i = 0; i < radiations.Count; i++) 
+            // {
+            //     var x = i % 10;
+            //     var rB = _energyFlowService.GetRB(translator.Power, translator.Gain, 0.71M, radiations[i].Value);
+            //     var rZ = _energyFlowService.GetRZ(radiations[i].Degree, rB);
+            //     var rX = _energyFlowService.GetRX(radiations[i].Degree, rB);
+            //     if (i == 0 || i == 4 || x == 0) 
+            //     {
+            //         document.InsertText(table[y, 0].Range.Start, radiations[i].Degree.ToString());
+            //         document.InsertText(table[y, 1].Range.Start, radiations[i].Value.ToString());
+            //         document.InsertText(table[y, 2].Range.Start, _energyFlowService.Multiplier(radiations[i].Value).ToString("F3"));
+            //         document.InsertText(table[y, 3].Range.Start, rB.ToString("F3"));
+            //         document.InsertText(table[y, 4].Range.Start, rZ.ToString("F3"));
+            //         document.InsertText(table[y, 5].Range.Start, rX.ToString("F3"));
+            //         y++; 
+            //     }
+            // }
+            // document.InsertText(table.Range.End,"Максимальный радиус биологически-опасной зоны от секторных " +
+            //                     "антенн TBXLHA-6565B-VTM в направлении излучения равен 27,5432381892065 м" +
+            //                     " (стандарт GSM/UMTS; мощность передатчика 25 Вт; частота на передачу 900 МГц;" +
+            //                     " коэффициент усиления антенн 16,5 дБ, направление антенны в вертикальной плоскости 0°). " +
+            //                     "В вертикальном сечении БОЗ повторяет диаграмму направленности. Максимальное отклонение от оси в вертикальном сечении составляет 0,966 м." +
+            //                     " на расстоянии 18,426 м. от центра излучения. Максимальный радиус биологически-опасного излучения от заднего лепестка антенны составил 0,060 м. " +
+            //                     "В горизонтальном сечении БОЗ повторяет диаграмму направленности. Максимальное отклонение от оси в горизонтальном сечении составляет 8,662 м." +
+            //                     " на расстоянии 16,291 м. от центра излучения. Максимальный радиус биологически-опасного излучения от заднего лепестка антенны составил 0,015 м.");
+            // table.EndUpdate();
             var diagram = document.FindAll("Diagram",SearchOptions.WholeWord);
             ParagraphProperties titleParagraphPropertiesSecond = document.BeginUpdateParagraphs(diagram[0]);
             titleParagraphPropertiesSecond.Alignment = ParagraphAlignment.Center;
@@ -303,15 +337,15 @@ public class FileService : IFileService
             //     document.InsertText(insertPositionThird, $"Ширина БОЗ в горизонтальной плоскости на расстоянии Rx от " +
             //                                               $"антенны вдоль линии горизонта по направлению излучения");
             
-            await CreateGrafic(document,insertPositionSecond);
+            await CreateGrafic(document,insertPositionSecond,project);
             document.Delete(diagram[0]);
             table.EndUpdate();
-            if (radiations.Find(x=>x.DirectionType == DirectionType.Horizontal) is null)
-                document.InsertText(table.Range.End, $"Ширина БОЗ в вертикальной плоскости на расстоянии Rx от " +
-                                                     $"антенны вдоль линии горизонта по направлению излучения");
-            else
-                document.InsertText(table.Range.End, $"Ширина БОЗ в горизонтальной плоскости на расстоянии Rx от " +
-                                                     $"антенны вдоль линии горизонта по направлению излучения");
+            // if (radiations.Find(x=>x.DirectionType == DirectionType.Horizontal) is null)
+            //     document.InsertText(table.Range.End, $"Ширина БОЗ в вертикальной плоскости на расстоянии Rx от " +
+            //                                          $"антенны вдоль линии горизонта по направлению излучения");
+            // else
+            //     document.InsertText(table.Range.End, $"Ширина БОЗ в горизонтальной плоскости на расстоянии Rx от " +
+            //                                          $"антенны вдоль линии горизонта по направлению излучения");
             
             // document.AppendSection();
             // document.Unit = DevExpress.Office.DocumentUnit.Inch;
@@ -331,7 +365,7 @@ public class FileService : IFileService
     }
 
 
-    public async Task<BaseResponse<bool>> CreateGrafic(Document document,DocumentPosition position)
+    public async Task<BaseResponse<bool>> CreateGrafic(Document document,DocumentPosition position,Project project)
     {
         // using (var wordProcessor = new RichEditDocumentServer())
         // {

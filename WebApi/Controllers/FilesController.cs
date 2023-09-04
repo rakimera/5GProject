@@ -16,10 +16,10 @@ public class FilesController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get(string id)
     {
         // await _service.WordService.GetLoadXlsx();
-        var baseResponse = await _service.FileService.ProjectWord();
+        var baseResponse = await _service.FileService.ProjectWord(id);
         // var baseResponse = await _service.FileService.CreateGrafic();
         if (baseResponse.Success)
             return Ok(baseResponse);

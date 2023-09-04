@@ -45,6 +45,7 @@ public class AntennaTranslatorService : IAntennaTranslatorService
     public async Task<BaseResponse<string>> CreateAsync(AntennaTranslatorDto model, string creator)
     {
         AntennaTranslator antennaTranslator = _mapper.Map<AntennaTranslator>(model);
+        
         antennaTranslator.CreatedBy = creator;
         await _repositoryWrapper.AntennaTranslatorRepository.CreateAsync(antennaTranslator);
         await _repositoryWrapper.Save();
