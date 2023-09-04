@@ -134,12 +134,12 @@ public class FileService : IFileService
             Success: true);
     }
 
-    public async Task<BaseResponse<bool>> ReadExcel()
+    public async Task<BaseResponse<bool>> ReadExcel(string filePath,TranslatorSpecs translatorSpecs,DirectionType type)
     {
         //Запись в базу 360 из excel
         
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        string filePath = "Document.xlsx";
+        // string filePath = "Document.xlsx";
         
         using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
         {
@@ -148,11 +148,11 @@ public class FileService : IFileService
                 ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
         
                 int rowCount = worksheet.Dimension.Rows;
-                int colCount = worksheet.Dimension.Columns;
-        
-                Antenna? antenna = await _repositoryWrapper.AntennaRepository.GetByCondition(x => x.Model.Equals("TBXLHA-6565B-VTM"));
-                TranslatorSpecs? translatorSpecs = await _repositoryWrapper.TranslatorSpecsRepository
-                    .GetByCondition(x => x.AntennaId == antenna.Id && x.Frequency == 900 );
+                // int colCount = worksheet.Dimension.Columns;
+                // Antenna? antenna = await _repositoryWrapper.AntennaRepository.GetByCondition(x => x.Model.Equals("TBXLHA-6565B-VTM"));
+                // TranslatorSpecs? translatorSpecs = await _repositoryWrapper.TranslatorSpecsRepository
+                //     .GetByCondition(x => x.AntennaId == antenna.Id && x.Frequency == 900 );
+                List<RadiationZone> list = new List<RadiationZone>();
                 for (int row = 1; row <= rowCount-1; row++)
                 {
                     var degreeCellValue = worksheet.Cells[row, 1].Value;
@@ -163,13 +163,22 @@ public class FileService : IFileService
                         {
                             Degree = degree,
                             Value = value,
-                            DirectionType = DirectionType.Horizontal,
+                            DirectionType = type,
                             TranslatorSpecsId = translatorSpecs.Id
                         };
                         await _repositoryWrapper.RadiationZoneRepository.CreateAsync(radiationZone);
+                        list.Add(radiationZone);
                     }
                 }
+                if (list.Count != 360)
+                {
+                    return new BaseResponse<bool>(
+                        Result: false,
+                        Messages: new List<string> { "Файл не корректный" },
+                        Success: false);
+                }
                 await _repositoryWrapper.Save();
+                
             }
         }
         return new BaseResponse<bool>(
