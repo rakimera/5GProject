@@ -27,6 +27,7 @@ public class Project5GDbContext : DbContext
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<BiohazardRadius> BiohazardRadii { get; set; }
     public DbSet<SummaryBiohazardRadius> SummaryBiohazardRadii { get; set; }
+    public DbSet<TranslatorType> TranslatorTypes { get; set; }
 
     public Project5GDbContext(DbContextOptions<Project5GDbContext> options) : base(options) {}
 
@@ -34,6 +35,7 @@ public class Project5GDbContext : DbContext
     {
         modelBuilder.Entity<User>().HasIndex(x => x.Login).IsUnique();
         modelBuilder.Entity<ContrAgent>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<TranslatorType>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<User>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<District>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<Town>().HasQueryFilter(x => x.IsDelete == false);

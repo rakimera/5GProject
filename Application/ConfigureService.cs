@@ -27,6 +27,7 @@ public static class ConfigureService
         services.AddScoped<RoleValidator>();
         services.AddScoped<ExecutiveCompanyValidator>();
         services.AddScoped<ProjectAntennaValidator>();
+        services.AddScoped<TranslatorTypeValidator>();
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         
         services.AddAuthentication(opt => {

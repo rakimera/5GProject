@@ -77,7 +77,7 @@ let isFormDisabled = ref(true);
 let isTabDisabled = ref(true);
 let oid = route.params.id;
 const mode = ref(route.params.mode);
-const pageDescription = ref("Подробно о проекте");
+const pageDescription = ref();
 const formRef = ref(null);
 const contrAgents = ref([]);
 const towns = ref([]);
@@ -92,11 +92,12 @@ onBeforeMount(async () => {
   
   if (mode.value === "read") {
       const response = await projectService.getProject(oid);
+      pageDescription.value = ("Проект №" + response.data.result.projectNumber);
       Object.assign(dataSource, response.data.result);
       isTabDisabled.value = false;
   } else {
       isFormDisabled.value = false;
-      pageDescription.value = "Создание проекта"
+      pageDescription.value = "Создание нового проекта"
   }
 })
 
@@ -109,8 +110,7 @@ function onSaveProject() {
 <style scoped>
 
 .project-form {
-    max-width: 1000px;
-    margin: 50px auto auto;
+    margin: 50px 50px auto;
 }
 #form h2 {
     margin-left: 40px;

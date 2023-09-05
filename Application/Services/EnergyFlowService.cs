@@ -157,6 +157,6 @@ public class EnergyFlowService : IEnergyFlowService
 
     private decimal Multiplier(decimal value) //перевод в разы
     {
-        return (decimal)Math.Pow((double)value / 10, 10);
+        return (decimal)Math.Pow(10, (double)value / 10);
     }
 }

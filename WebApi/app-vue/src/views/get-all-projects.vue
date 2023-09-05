@@ -1,70 +1,78 @@
 <template>
-    <dx-data-grid
+    <div class="container">
+        <dx-data-grid
             :data-source="dataSource"
             :show-borders="true"
-            :remote-operations="true"
+            :remote-operations="false"
             key-expr="ID"
             @row-click="onRowClick"
-    >
-        <dx-column
+        >
+            <DxSearchPanel
+                :visible="true"
+            />
+            <dx-column
                 data-field="projectNumber"
                 caption="Номер проекта"
                 data-type="string"
-        />
-        <dx-column
+            />
+            <dx-column
                 data-field="contrAgent.companyName"
                 caption="Контрагент"
                 data-type="string"
-        />
-        <dx-column
+            />
+            <dx-column
                 data-field="executor.name"
                 caption="Управляющий специалист"
                 data-type="string"
-        />
-        <dx-column
+            />
+            <dx-column
                 data-field="executiveCompany.companyName"
                 caption="Управляющая компания"
                 data-type="string"
-        />
-        <dx-column
+            />
+            <dx-column
                 data-field="projectStatus.status"
                 caption="Стадия проекта"
                 data-type="string"
-        />
-        <dx-column
-            data-field="districtName"
-            caption="Область"
-            data-type="string"
-        />
-        <dx-column
-            data-field="townName"
-            caption="Город"
-            data-type="string"
-        />
-        <dx-column
+            >
+            </dx-column>
+            <dx-column
+                data-field="districtName"
+                caption="Область"
+                data-type="string"
+            />
+            <dx-column
+                data-field="townName"
+                caption="Город"
+                data-type="string"
+            />
+            <dx-column
                 data-field="address"
                 caption="Адрес"
                 data-type="string"
-        />
-        <dx-paging :page-size="5"/>
-        <dx-pager
+            />
+            <dx-paging :page-size="5"/>
+            <dx-pager
                 :show-page-size-selector="true"
                 :allowed-page-sizes="[8, 12, 20]"
-        />
-        <dx-editing
+            />
+            <dx-editing
                 :allow-deleting="true"
                 :texts="{confirmDeleteMessage: 'Вы уверены, что хотите удалить эту запись?'}"
-        />
+            />
 
-      />
-    </dx-data-grid>
-    <dx-button
+            />
+            <dx-header-filter :visible="true"/>
+        </dx-data-grid>
+    </div>
+        <dx-button
             class="button"
             text="Создать"
             type="success"
             :use-submit-behavior="true"
             :on-click="onCreateProjectClick"
-    />
+        />
+    
 </template>
 <script setup>
 import {
@@ -73,6 +81,7 @@ import {
     DxPager,
     DxPaging,
     DxEditing,
+    DxHeaderFilter, DxSearchPanel
 } from "devextreme-vue/data-grid";
 import CustomStore from "devextreme/data/custom_store";
 import "whatwg-fetch";
@@ -117,5 +126,12 @@ const onCreateProjectClick = async () => {
 .dx-datagrid .dx-row:hover {
     background-color: #f2f2f2;
     cursor: pointer;
+}
+.container {
+    margin: 50px 50px auto;
+}
+.button{
+    margin-left: 50px;
+    margin-top: 50px;
 }
 </style>
