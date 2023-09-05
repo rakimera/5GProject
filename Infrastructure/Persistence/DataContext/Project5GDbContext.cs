@@ -46,7 +46,7 @@ public class Project5GDbContext : DbContext
         modelBuilder.Entity<Project>().Navigation(e=> e.Executor).AutoInclude();
         modelBuilder.Entity<Project>().Navigation(e=> e.ExecutiveCompany).AutoInclude();
         modelBuilder.Entity<Project>().Navigation(e=> e.ProjectStatus).AutoInclude();
-        modelBuilder.Entity<Project>().Navigation(e=> e.ProjectAntennae).AutoInclude();
+        // modelBuilder.Entity<Project>().Navigation(e=> e.ProjectAntennae).AutoInclude();
         modelBuilder.Entity<Project>().Navigation(e=> e.SummaryBiohazardRadius).AutoInclude();
         modelBuilder.Entity<Project>().Navigation(e=> e.TotalFluxDensity).AutoInclude();
         // modelBuilder.Entity<TranslatorSpecs>().Navigation(e=> e.RadiationZones).AutoInclude();

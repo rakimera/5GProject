@@ -77,8 +77,7 @@ public class AntennaTranslatorService : IAntennaTranslatorService
         AntennaTranslator? antennaTranslator = await _repositoryWrapper.AntennaTranslatorRepository.GetByCondition(x => x.Id.ToString() == oid);
         if (antennaTranslator is not null)
         {
-            antennaTranslator.IsDelete = true;
-            _repositoryWrapper.AntennaTranslatorRepository.Update(antennaTranslator);
+            _repositoryWrapper.AntennaTranslatorRepository.Delete(antennaTranslator);
             await _repositoryWrapper.Save();
 
             return new BaseResponse<bool>(

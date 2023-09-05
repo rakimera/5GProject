@@ -145,7 +145,7 @@ public class FileService : IFileService
             {
                 ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
                 List<RadiationZone> list = new List<RadiationZone>();
-                for (int row = 1; row <= worksheet.Dimension.Rows-1; row++)
+                for (int row = 1; row <= worksheet.Dimension.Rows; row++)
                 {
                     var degreeCellValue = worksheet.Cells[row, 1].Value;
                     var valueCellValue = worksheet.Cells[row, 2].Value;
@@ -203,7 +203,7 @@ public class FileService : IFileService
             document.ReplaceAll("DateYear", 
                 $"{DateTime.Now.Year}", SearchOptions.WholeWord);
             
-            var projectAntennae = project.ProjectAntennae;
+            var projectAntennae = _repositoryWrapper.ProjectAntennaRepository.GetAllByCondition(x=> x.ProjectId == project.Id).ToList();
             var keywords = document.FindAll("Table",SearchOptions.WholeWord);
             DocumentPosition insertPosition = keywords[0].Start;
             for (int l = 0; l < projectAntennae.Count; l++)
@@ -215,20 +215,23 @@ public class FileService : IFileService
                     Paragraph appendedParagraph = document.Paragraphs.Append();
                     // document.InsertText(appendedParagraph.Range.Start, "Appended paragraph");
                 }
-                document.InsertText(insertPosition, $"Владелец радиоэлектронных средств: {contrAgent.CompanyName}");
+                document.InsertText(insertPosition, $"Владелец радиоэлектронных средств: {contrAgent.CompanyName}\n");
             ParagraphProperties titleParagraphProperties = document.BeginUpdateParagraphs(keywords[0]);
             titleParagraphProperties.Alignment = ParagraphAlignment.Center;
             document.EndUpdateParagraphs(titleParagraphProperties);
             document.Delete(keywords[0]);
-            Table oldTable = document.Tables.Create(insertPosition, 37, 5);
+            Paragraph newAppendedParagraph = document.Paragraphs.Insert(insertPosition);
+            Table oldTable = document.Tables.Create(newAppendedParagraph.Range.Start, 39, 12);
 
             oldTable.Rows.InsertBefore(0);
             oldTable.Rows.InsertAfter(0);
             
             oldTable.Rows[0].Cells.Append();
             Table table = document.Tables.Last;
+            table.TableAlignment = TableRowAlignment.Center;
+            table.MergeCells(table[0, 6], table[39, 6]);
             table.BeginUpdate();
-            for (int i = 0; i <= 5; i++)
+            for (int i = 0; i <= 12; i++)
             {
                 TableCell columnCell = table[i, i];
                 columnCell.PreferredWidthType = WidthType.Fixed;
@@ -251,41 +254,64 @@ public class FileService : IFileService
             document.InsertSingleLineText(table[0, 3].Range.Start, "Rб, м");
             document.InsertSingleLineText(table[0, 4].Range.Start, "Rz, м");
             document.InsertSingleLineText(table[0, 5].Range.Start, "Rx, м");
+            
+            document.InsertSingleLineText(table[0, 7].Range.Start, "v, град");
+            document.InsertSingleLineText(table[0, 8].Range.Start, "f(v), dBi");
+            document.InsertSingleLineText(table[0, 9].Range.Start, "f(v), раз");
+            document.InsertSingleLineText(table[0, 10].Range.Start, "Rб, м");
+            document.InsertSingleLineText(table[0, 11].Range.Start, "Rz, м");
+            document.InsertSingleLineText(table[0, 12].Range.Start, "Rx, м");
             var ant = _repositoryWrapper
                     .AntennaTranslatorRepository.GetAllByCondition(x => x.ProjectAntennaId == projectAntennae[l].Id).ToList();
                 foreach (var item in ant)
                 {
-                    var bio = _repositoryWrapper.BiohazardRadiusRepository.GetAllByCondition(x =>
-                        x.AntennaTranslatorId == item.Id && x.DirectionType == DirectionType.Vertical).OrderBy(x=>x.Degree).ToList();
-                    var y = 1;
-                    for (int i = 0; i < bio.Count; i++) 
-                    {
-                        var x = i % 10;
-                        if (i == 0 || i == 4 || x == 0) 
-                        {
-                            document.InsertText(table[y, 0].Range.Start, bio[i].Degree.ToString());
-                            document.InsertText(table[y, 1].Range.Start, bio[i].Db.ToString("F3"));
-                            document.InsertText(table[y, 2].Range.Start, bio[i].DbRaz.ToString("F3"));
-                            document.InsertText(table[y, 3].Range.Start, bio[i].MaximumBiohazardRadius.ToString("F3"));
-                            document.InsertText(table[y, 4].Range.Start, bio[i].BiohazardRadiusZ.ToString("F3"));
-                            document.InsertText(table[y, 5].Range.Start, bio[i].BiohazardRadiusX.ToString("F3"));
-                            y++; 
-                        }
-                        
-                    }
-                    document.InsertText(table.Range.End,"Максимальный радиус биологически-опасной зоны от секторных " +
-                                                        "антенн TBXLHA-6565B-VTM в направлении излучения равен 27,5432381892065 м" +
-                                                        " (стандарт GSM/UMTS; мощность передатчика 25 Вт; частота на передачу 900 МГц;" +
-                                                        " коэффициент усиления антенн 16,5 дБ, направление антенны в вертикальной плоскости 0°). " +
-                                                        "В вертикальном сечении БОЗ повторяет диаграмму направленности. Максимальное отклонение от оси в вертикальном сечении составляет 0,966 м." +
-                                                        " на расстоянии 18,426 м. от центра излучения. Максимальный радиус биологически-опасного излучения от заднего лепестка антенны составил 0,060 м. " +
-                                                        "В горизонтальном сечении БОЗ повторяет диаграмму направленности. Максимальное отклонение от оси в горизонтальном сечении составляет 8,662 м." +
-                                                        " на расстоянии 16,291 м. от центра излучения. Максимальный радиус биологически-опасного излучения от заднего лепестка антенны составил 0,015 м.");
-                    table.EndUpdate();
-                    var bioVertical = _repositoryWrapper.BiohazardRadiusRepository.GetAllByCondition(x =>
-                        x.AntennaTranslatorId == item.Id && x.DirectionType == DirectionType.Vertical).OrderBy(x=>x.Degree).ToList();
+                    
                     var bioHorizontal = _repositoryWrapper.BiohazardRadiusRepository.GetAllByCondition(x =>
                         x.AntennaTranslatorId == item.Id && x.DirectionType == DirectionType.Horizontal).OrderBy(x=>x.Degree).ToList();
+                    var maxMaximumBiohazardRadiusZHorizontal = bioHorizontal.Max(radiation => Math.Abs(radiation.BiohazardRadiusZ));
+                    var radiationWithMaxMaximumBiohazardRadiusZHorizontal = bioHorizontal
+                        .First(radiation => Math.Abs(radiation.BiohazardRadiusZ) == maxMaximumBiohazardRadiusZHorizontal);
+                    var maxMaximumBiohazardRadiusXHorizontal = radiationWithMaxMaximumBiohazardRadiusZHorizontal.BiohazardRadiusX;
+                    var maxBiohazardRadiusBackHorizontal = await _repositoryWrapper.BiohazardRadiusRepository
+                        .GetByCondition(x => x.Degree == 180 && x.DirectionType == DirectionType.Horizontal);
+                    var maxMaximumBiohazardRadiusHorizontal = bioHorizontal.Max(radiation => Math.Abs(radiation.MaximumBiohazardRadius));
+                    
+                    
+                    
+                    var bioVertical = _repositoryWrapper.BiohazardRadiusRepository.GetAllByCondition(x =>
+                        x.AntennaTranslatorId == item.Id && x.DirectionType == DirectionType.Vertical).OrderBy(x=>x.Degree).ToList();
+                    var maxMaximumBiohazardRadiusZVertical = bioVertical.Max(radiation => Math.Abs(radiation.BiohazardRadiusZ));
+                    var radiationWithMaxMaximumBiohazardRadiusZVertical = bioVertical
+                        .First(radiation => Math.Abs(radiation.BiohazardRadiusZ) == maxMaximumBiohazardRadiusZVertical);
+                    var maxMaximumBiohazardRadiusXVertical = radiationWithMaxMaximumBiohazardRadiusZVertical.BiohazardRadiusX;
+                    var maxBiohazardRadiusBackVertical = await _repositoryWrapper.BiohazardRadiusRepository
+                        .GetByCondition(x => x.Degree == 180 && x.DirectionType == DirectionType.Vertical);
+                    var maxMaximumBiohazardRadiusVertical = bioVertical.Max(radiation => Math.Abs(radiation.MaximumBiohazardRadius));
+                    var maxMaximumBiohazardRadius = Math.Max(maxMaximumBiohazardRadiusHorizontal,maxMaximumBiohazardRadiusVertical);
+                    
+                    await CreateTable360(document, table, bioVertical);
+                    await CreateTable360(document, table, bioHorizontal);
+                    document.InsertText(table.Range.End,"\nМаксимальный радиус биологически-опасной зоны от секторных " +
+                                                        $"антенн {item.ProjectAntenna.Antenna.Model} в направлении излучения равен " +
+                                                        $"{maxMaximumBiohazardRadius.ToString("F3")} м" +
+                                                        $" (стандарт {item.TranslatorType}; мощность передатчика {item.Power} Вт; " +
+                                                        $"частота на передачу {item.TranslatorSpecs.Frequency} МГц;" +
+                                                        $" коэффициент усиления антенн {item.Gain} дБ, направление антенны в вертикальной плоскости " +
+                                                        $"{item.ProjectAntenna.Tilt}°).\n " +
+                                                        "В вертикальном сечении БОЗ повторяет диаграмму направленности." +
+                                                        " Максимальное отклонение от оси в вертикальном сечении составляет " +
+                                                        $"{maxMaximumBiohazardRadiusZVertical.ToString("F3")} м." +
+                                                        $" на расстоянии {maxMaximumBiohazardRadiusXVertical} м. от центра излучения. " +
+                                                        "Максимальный радиус биологически-опасного излучения " +
+                                                        "от заднего лепестка антенны составил " +
+                                                        $"{maxBiohazardRadiusBackVertical.MaximumBiohazardRadius.ToString("F3")} м.\n " +
+                                                        "В горизонтальном сечении БОЗ повторяет диаграмму направленности. " +
+                                                        "Максимальное отклонение от оси в горизонтальном сечении составляет " +
+                                                        $"{maxMaximumBiohazardRadiusZHorizontal.ToString("F3")} м." +
+                                                        $" на расстоянии {maxMaximumBiohazardRadiusXHorizontal} м. от центра излучения. " +
+                                                        "Максимальный радиус биологически-опасного излучения от" +
+                                                        $" заднего лепестка антенны составил {maxBiohazardRadiusBackHorizontal.MaximumBiohazardRadius.ToString("F3")} м.");
+                    table.EndUpdate();
                     var diagram = document.FindAll("Diagram",SearchOptions.WholeWord);
                     ParagraphProperties titleParagraphPropertiesSecond = document.BeginUpdateParagraphs(diagram[0]);
                     titleParagraphPropertiesSecond.Alignment = ParagraphAlignment.Center;
@@ -293,8 +319,10 @@ public class FileService : IFileService
                     document.Delete(diagram[0]);
                     DocumentPosition insertPositionSecond = diagram[0].Start;
                     
-                    await CreateGrafic(document,insertPositionSecond,bioVertical);
-                    // await CreateGrafic(document,insertPositionSecond,bioHorizontal);
+                    var asd = document.InsertSection(newAppendedParagraph.Range.End);
+                    asd.StartType = SectionStartType.NextPage;
+                    await CreateGrafic(document,asd.Range.End,bioHorizontal,DirectionType.Horizontal);
+                    await CreateGrafic(document,asd.Range.End,bioVertical,DirectionType.Vertical);
                     document.Delete(diagram[0]);
                     table.EndUpdate();
                 }
@@ -370,13 +398,13 @@ public class FileService : IFileService
     }
 
 
-    private async Task<BaseResponse<bool>> CreateGrafic(Document document,DocumentPosition position,List<BiohazardRadius> biohazardRadii)
+    private async Task<BaseResponse<bool>> CreateGrafic(Document document,DocumentPosition position,List<BiohazardRadius> biohazardRadii,DirectionType type)
     {
         document.Unit = DevExpress.Office.DocumentUnit.Inch;
         var chartShape = document.Shapes.InsertChart(position,ChartType.ScatterSmooth);
         chartShape.Name = "Scatter Line chart";
         chartShape.Size = new SizeF(4f, 3.2f);
-        chartShape.RelativeHorizontalPosition = ShapeRelativeHorizontalPosition.LeftMargin;
+        chartShape.RelativeHorizontalPosition = ShapeRelativeHorizontalPosition.Column;
         chartShape.RelativeVerticalPosition = ShapeRelativeVerticalPosition.Line;
         chartShape.Offset = new PointF(0, 0);
         ChartObject chart = (ChartObject)chartShape.ChartFormat.Chart;
@@ -412,5 +440,50 @@ public class FileService : IFileService
         }
 
         return true;
+    }
+
+    private async Task<bool> CreateTable360(Document document,Table table,List<BiohazardRadius> biohazardRadii)
+    {
+        // var bioVertical = _repositoryWrapper.BiohazardRadiusRepository.GetAllByCondition(x =>
+        //                 x.AntennaTranslatorId == item.Id && x.DirectionType == DirectionType.Vertical).OrderBy(x=>x.Degree).ToList();
+        //             var bioHorizontal = _repositoryWrapper.BiohazardRadiusRepository.GetAllByCondition(x =>
+        //                 x.AntennaTranslatorId == item.Id && x.DirectionType == DirectionType.Horizontal).OrderBy(x=>x.Degree).ToList();
+                    var maxMaximumBiohazardRadius = biohazardRadii.Max(radiation => Math.Abs(radiation.MaximumBiohazardRadius));
+                    var radiationWithMaxMaximumBiohazardRadius = biohazardRadii
+                        .First(radiation => Math.Abs(radiation.MaximumBiohazardRadius) == maxMaximumBiohazardRadius);
+                    var maxMaximumBiohazardRadiusZ = biohazardRadii.Max(radiation => Math.Abs(radiation.BiohazardRadiusZ));
+                    var radiationWithMaxMaximumBiohazardRadiusZ = biohazardRadii
+                        .First(radiation => Math.Abs(radiation.BiohazardRadiusZ) == maxMaximumBiohazardRadiusZ);
+                    var y = 1;
+                    for (int i = 0; i < biohazardRadii.Count; i++) 
+                    {
+                        var x = i % 10;
+                        if (x == 0 || biohazardRadii[i] == radiationWithMaxMaximumBiohazardRadius || biohazardRadii[i] == radiationWithMaxMaximumBiohazardRadiusZ) 
+                        {
+                            if (biohazardRadii[i].DirectionType == DirectionType.Horizontal)
+                            {
+                                document.InsertText(table[y, 0].Range.Start, biohazardRadii[i].Degree.ToString());
+                                document.InsertText(table[y, 1].Range.Start, biohazardRadii[i].Db.ToString("F3"));
+                                document.InsertText(table[y, 2].Range.Start, biohazardRadii[i].DbRaz.ToString("F3"));
+                                document.InsertText(table[y, 3].Range.Start, biohazardRadii[i].MaximumBiohazardRadius.ToString("F3"));
+                                document.InsertText(table[y, 4].Range.Start, biohazardRadii[i].BiohazardRadiusZ.ToString("F3"));
+                                document.InsertText(table[y, 5].Range.Start, biohazardRadii[i].BiohazardRadiusX.ToString("F3"));
+                                y++;
+                            }
+                            if (biohazardRadii[i].DirectionType == DirectionType.Vertical)
+                            {
+                                document.InsertText(table[y, 7].Range.Start, biohazardRadii[i].Degree.ToString());
+                                document.InsertText(table[y, 8].Range.Start, biohazardRadii[i].Db.ToString("F3"));
+                                document.InsertText(table[y, 9].Range.Start, biohazardRadii[i].DbRaz.ToString("F3"));
+                                document.InsertText(table[y, 10].Range.Start, biohazardRadii[i].MaximumBiohazardRadius.ToString("F3"));
+                                document.InsertText(table[y, 11].Range.Start, biohazardRadii[i].BiohazardRadiusZ.ToString("F3"));
+                                document.InsertText(table[y, 12].Range.Start, biohazardRadii[i].BiohazardRadiusX.ToString("F3"));
+                                y++;
+                            }
+                             
+                        }
+                        
+                    }
+                    return true;
     }
 }

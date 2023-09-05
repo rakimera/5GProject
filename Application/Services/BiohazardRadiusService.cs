@@ -2,6 +2,7 @@ using Application.DataObjects;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
 using Domain.Entities;
+using Domain.Enums;
 
 namespace Application.Services;
 
@@ -24,30 +25,20 @@ public class BiohazardRadiusService : IBiohazardRadiusService
             foreach (var value in antennaTranslators)
             {
                 var translator = value.TranslatorSpecs;
-                var radiationZones = _repositoryWrapper
-                    .RadiationZoneRepository.GetAllByCondition(x=> x.TranslatorSpecsId == translator.Id);
-                foreach (var radiationZone in radiationZones)
-                {
-                    var dbRaz = Multiplier(radiationZone.Value);
-                    var maxRadius = GetRB(value.Power, value.Gain, value.TransmitLossFactor, dbRaz);
-                    BiohazardRadius biohazardRadius = new BiohazardRadius()
-                    {
-                        Degree = radiationZone.Degree,
-                        Db = radiationZone.Value,
-                        DbRaz = dbRaz,
-                        MaximumBiohazardRadius = maxRadius,
-                        BiohazardRadiusX = GetRX(radiationZone.Degree, maxRadius),
-                        BiohazardRadiusZ = GetRZ(radiationZone.Degree, maxRadius),
-                        DirectionType = radiationZone.DirectionType,
-                        AntennaTranslatorId = value.Id
-                    };
-                    await _repositoryWrapper.BiohazardRadiusRepository.CreateAsync(biohazardRadius);
-                }
-
+                var radiationZonesHorizontal = _repositoryWrapper.RadiationZoneRepository
+                    .GetAllByCondition(x=> x.TranslatorSpecsId == translator.Id 
+                                           && x.DirectionType == DirectionType.Horizontal && x.Degree != 360)
+                    .OrderBy(x=>x.Degree).ToList();
+                var radiationZonesVertical = _repositoryWrapper.RadiationZoneRepository
+                    .GetAllByCondition(x=> x.TranslatorSpecsId == translator.Id 
+                                           && x.DirectionType == DirectionType.Vertical && x.Degree != 360)
+                    .OrderBy(x=>x.Degree).ToList();
+                await BioHazardCreate(radiationZonesHorizontal, projectAntenna, value);
+                await BioHazardCreate(radiationZonesVertical, projectAntenna, value);
             }
             
         }
-        await _repositoryWrapper.Save();
+        
         return new BaseResponse<bool>(
             Result: true,
             Messages: new List<string> { "Рассчеты произведены успешно успешно считан" },
@@ -84,5 +75,45 @@ public class BiohazardRadiusService : IBiohazardRadiusService
 
         double result = Math.Pow(baseNumber, exponent);
         return (decimal)result;
+    }
+
+    private async Task<bool> BioHazardCreate(List<RadiationZone> radiationZones,ProjectAntenna projectAntenna, AntennaTranslator antennaTranslator )
+    {
+        var tilt = (int)projectAntenna.Tilt;
+        for (int i = 0; i < radiationZones.Count; i++)
+        {
+            int newIndex = (i + tilt) % (radiationZones.Count);
+            var dbRaz = Multiplier(radiationZones[newIndex].Value);
+            var maxRadius = GetRB(antennaTranslator.Power, antennaTranslator.Gain, antennaTranslator.TransmitLossFactor, dbRaz);
+            BiohazardRadius biohazardRadius = new BiohazardRadius()
+            {
+                Degree = i,
+                Db = radiationZones[newIndex].Value,
+                DbRaz = dbRaz,
+                MaximumBiohazardRadius = maxRadius,
+                BiohazardRadiusX = GetRX(radiationZones[newIndex].Degree, maxRadius),
+                BiohazardRadiusZ = GetRZ(radiationZones[newIndex].Degree, maxRadius),
+                DirectionType = radiationZones[newIndex].DirectionType,
+                AntennaTranslatorId = antennaTranslator.Id
+            };
+            if (i == 0)
+            {
+                BiohazardRadius biohazardRadiusMax = new BiohazardRadius()
+                {
+                    Degree = 360,
+                    Db = radiationZones[newIndex].Value,
+                    DbRaz = dbRaz,
+                    MaximumBiohazardRadius = maxRadius,
+                    BiohazardRadiusX = GetRX(radiationZones[newIndex].Degree, maxRadius),
+                    BiohazardRadiusZ = GetRZ(radiationZones[newIndex].Degree, maxRadius),
+                    DirectionType = radiationZones[newIndex].DirectionType,
+                    AntennaTranslatorId = antennaTranslator.Id
+                };
+                await _repositoryWrapper.BiohazardRadiusRepository.CreateAsync(biohazardRadiusMax);
+            }
+            await _repositoryWrapper.BiohazardRadiusRepository.CreateAsync(biohazardRadius);
+        }
+        await _repositoryWrapper.Save();
+        return true;
     }
 }

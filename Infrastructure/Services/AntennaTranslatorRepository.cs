@@ -10,4 +10,8 @@ public class AntennaTranslatorRepository : BaseRepository<AntennaTranslator>, IA
     public AntennaTranslatorRepository(Project5GDbContext dbContext) : base(dbContext)
     {
     }
+    public void Delete(AntennaTranslator antennaTranslator)
+    {
+        DbContext.AntennaTranslators.Remove(antennaTranslator);
+    }
 }
