@@ -1,26 +1,25 @@
 <template>
     <div class="widget-container">
-<!--        <dx-form
+        <form
             id="form"
-            :form-data="dataSource"
             method="post"
+            ref="formRef"
             enctype="multipart/form-data">
-            <dx-item
-                data-field='projectId'
-                editor-type='dxTextBox'
+            <input
+                name='projectId'
+                :value="id"
+                hidden="true"
             >
-                <dx-label
-                    :visible="false"
-                />
-            </dx-item>-->
-        <dx-file-uploader
+            <dx-file-uploader
                 select-button-text="Добавить фото"
                 accept="image/*"
                 multiple="false"
                 upload-mode="useForm"
                 @value-changed="onAddImage"
-        />
-<!--        </dx-form>-->
+                name="uploadedFile"
+            />
+        </form>
+       
     </div>
 </template>
 
@@ -32,15 +31,14 @@ import notify from "devextreme/ui/notify";
 import {useRoute} from "vue-router";
 
 const route = useRoute();
+const formRef = ref(null);
 let id = route.params.id;
-/*import {reactive} from "vue";*/
-/*import {DxItem, DxLabel} from "devextreme-vue/form";*/
+import {ref} from "vue";
 
-/*let dataSource = reactive({});*/
-function onAddImage(e) {
+async function onAddImage() {
     try {
-        const projectImageDto = {projectId: id}
-        const response = projectImageService.createProjectImage(projectImageDto, e.value)
+        console.log(formRef.value)
+        const response = await projectImageService.createProjectImage(formRef.value)
         if (response.data.success){
             notify({
                 message: 'Фото добавлено',

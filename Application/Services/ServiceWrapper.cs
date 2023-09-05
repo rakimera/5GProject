@@ -2,6 +2,7 @@ using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
 using Application.Validation;
 using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Application.Services;
 
@@ -39,6 +40,7 @@ public class ServiceWrapper : IServiceWrapper
         RoleValidator roleValidator,
         TranslatorTypeValidator translatorTypeValidator,
         ProjectAntennaValidator projectAntennaValidator,
+        IWebHostEnvironment webHostEnvironment,
         ExecutiveCompanyValidator executiveCompanyValidator)
     {
         _projectAntennaService = new Lazy<IProjectAntennaService>(() => new ProjectAntennaService(repository, mapper, projectAntennaValidator));
@@ -57,7 +59,7 @@ public class ServiceWrapper : IServiceWrapper
         _antennaService = new Lazy<IAntennaService>(() => new AntennaService(repository, mapper, antennaValidator));
         _translatorSpecsService = new Lazy<ITranslatorSpecsService>(() => new TranslatorSpecsService(repository, mapper, translatorSpecsValidator));
         _energyFlowService = new Lazy<IEnergyFlowService>(() => new EnergyFlowService(energyResultValidator, mapper, repository));
-        _projectImageService = new Lazy<IProjectImageService>(() => new ProjectImageService(repository, mapper));
+        _projectImageService = new Lazy<IProjectImageService>(() => new ProjectImageService(repository, mapper, webHostEnvironment));
     }
         
 

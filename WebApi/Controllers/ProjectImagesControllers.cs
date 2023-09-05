@@ -30,7 +30,7 @@ public class ProjectImagesControllers : Controller
     }
     
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody]ProjectImageDto model, IFormFile uploadedFile)
+    public async Task<IActionResult> Post([FromForm]ProjectImageDto model, [FromForm]IFormFile uploadedFile)
     {
         var saveFileResponse = await _service.ProjectImageService.SaveFile(model, uploadedFile);
         if (saveFileResponse.Success)

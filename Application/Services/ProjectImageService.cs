@@ -4,6 +4,7 @@ using Application.Interfaces.RepositoryContract.Common;
 using Application.Models.Projects.ProjectImages;
 using AutoMapper;
 using Domain.Entities;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Services;
@@ -12,11 +13,13 @@ public class ProjectImageService : IProjectImageService
 {
     private readonly IRepositoryWrapper _repositoryWrapper;
     private readonly IMapper _mapper;
+    private readonly IWebHostEnvironment _hostEnvironment;
 
-    public ProjectImageService(IRepositoryWrapper repositoryWrapper, IMapper mapper)
+    public ProjectImageService(IRepositoryWrapper repositoryWrapper, IMapper mapper, IWebHostEnvironment hostEnvironment)
     {
         _repositoryWrapper = repositoryWrapper;
         _mapper = mapper;
+        _hostEnvironment = hostEnvironment;
     }
 
     public BaseResponse<IEnumerable<ProjectImageDto>> GetAll()
@@ -91,12 +94,12 @@ public class ProjectImageService : IProjectImageService
     {
         if (uploadedFile.Length != 0)
         {
-            var folderPath = Path.Combine("Infrastructure/Persistence/DataFiles", "ProjectImages");
+            var folderPath = Path.Combine($"{_hostEnvironment.WebRootPath}Infrastructure/Persistence/DataFiles", "ProjectImages"); //надо поработать с путем
             var fileExtension = Path.GetExtension(uploadedFile.FileName);
             if (!Directory.Exists(folderPath))
                 Directory.CreateDirectory(folderPath);
             
-            var fileName = $"{model.ProjectId}_{DateTime.Now}{fileExtension}";
+            var fileName = $"{model.ProjectId}_{DateTime.Now.Microsecond}{fileExtension}";
             string filePath = Path.Combine(folderPath, fileName);
             
             using (var fileStream = new FileStream(filePath, FileMode.Create))
