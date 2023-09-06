@@ -35,7 +35,7 @@ public class ProjectImagesControllers : Controller
         var saveFileResponse = await _service.ProjectImageService.SaveFile(model, uploadedFile);
         if (saveFileResponse.Success)
         {
-            var baseResponse = await _service.ProjectImageService.CreateAsync(model, User.Identity.Name);
+            var baseResponse = await _service.ProjectImageService.CreateAsync(saveFileResponse.Result, User.Identity.Name);
         
             if (baseResponse.Success)
                 return Ok(baseResponse);

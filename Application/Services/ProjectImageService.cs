@@ -13,13 +13,11 @@ public class ProjectImageService : IProjectImageService
 {
     private readonly IRepositoryWrapper _repositoryWrapper;
     private readonly IMapper _mapper;
-    private readonly IWebHostEnvironment _hostEnvironment;
 
-    public ProjectImageService(IRepositoryWrapper repositoryWrapper, IMapper mapper, IWebHostEnvironment hostEnvironment)
+    public ProjectImageService(IRepositoryWrapper repositoryWrapper, IMapper mapper)
     {
         _repositoryWrapper = repositoryWrapper;
         _mapper = mapper;
-        _hostEnvironment = hostEnvironment;
     }
 
     public BaseResponse<IEnumerable<ProjectImageDto>> GetAll()
@@ -94,24 +92,21 @@ public class ProjectImageService : IProjectImageService
     {
         if (uploadedFile.Length != 0)
         {
-            var folderPath = Path.Combine($"{_hostEnvironment.WebRootPath}Infrastructure/Persistence/DataFiles", "ProjectImages"); //надо поработать с путем
-            var fileExtension = Path.GetExtension(uploadedFile.FileName);
-            if (!Directory.Exists(folderPath))
-                Directory.CreateDirectory(folderPath);
-            
-            var fileName = $"{model.ProjectId}_{DateTime.Now.Microsecond}{fileExtension}";
-            string filePath = Path.Combine(folderPath, fileName);
-            
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            string filePath =
+                await _repositoryWrapper.ProjectImageRepository.SaveImage(model.ProjectId.ToString(), uploadedFile);
+            if (String.IsNullOrEmpty(filePath))
             {
-                await uploadedFile.CopyToAsync(fileStream);
+                return new BaseResponse<ProjectImageDto>(
+                    Result: model,
+                    Messages: new List<string> { "Ошибка при сохранении файла" },
+                    Success: false);
             }
-
+            
             model.Route = filePath;
             return new BaseResponse<ProjectImageDto>(
                 Result: model,
                 Messages: new List<string> { "Файл успешно сохранен" },
-                Success: false);
+                Success: true);
         }
         return new BaseResponse<ProjectImageDto>(
             Result: model,
