@@ -25,8 +25,6 @@ public class UserMapProfile : Profile
                 opt.MapFrom(src => src.CreatedBy))
             .ForMember(dest => dest.Login, opt =>
                 opt.MapFrom(src => src.Login))
-            .ForMember(dest => dest.Password, opt =>
-                opt.MapFrom(src => src.Password))
             .ForMember(dest => dest.ExecutiveCompanyId, opt =>
                 opt.MapFrom(src => src.ExecutiveCompanyId))
             .ReverseMap();
