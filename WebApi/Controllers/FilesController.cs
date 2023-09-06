@@ -19,8 +19,9 @@ public class FilesController : Controller
     public async Task<IActionResult> Get(string id)
     {
         // await _service.WordService.GetLoadXlsx();
-        var baseResponse = await _service.FileService.ProjectWord(id);
+        // var baseResponse = await _service.FileService.ProjectWord(id);
         // var baseResponse = await _service.FileService.CreateGrafic();
+        var baseResponse = await _service.BiohazardRadiusService.Create(id);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
