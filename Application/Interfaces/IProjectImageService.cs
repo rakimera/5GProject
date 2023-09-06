@@ -7,5 +7,6 @@ namespace Application.Interfaces;
 
 public interface IProjectImageService : ICrudService<ProjectImageDto>
 {
-    Task<BaseResponse<ProjectImageDto>> SaveFile(ProjectImageDto model, IFormFile uploadedFile);
+    Task<BaseResponse<ProjectImageDto>> ConvertImage(ProjectImageDto model, IFormFile uploadedFile);
+    BaseResponse<List<ProjectImageDto>> GetAllById(string id);
 }

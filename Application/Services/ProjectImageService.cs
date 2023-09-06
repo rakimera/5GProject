@@ -4,7 +4,6 @@ using Application.Interfaces.RepositoryContract.Common;
 using Application.Models.Projects.ProjectImages;
 using AutoMapper;
 using Domain.Entities;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Services;
@@ -30,13 +29,13 @@ public class ProjectImageService : IProjectImageService
             return new BaseResponse<IEnumerable<ProjectImageDto>>(
                 Result: models,
                 Success: true,
-                Messages: new List<string> { "Фото проекта успешно получены" });
+                Messages: new List<string> { "Фото проекта успешно получено" });
         }
 
         return new BaseResponse<IEnumerable<ProjectImageDto>>(
             Result: models,
             Success: true,
-            Messages: new List<string> { "Фото проекта не были получены, возможно они еще не созданы или удалены" });
+            Messages: new List<string> { "Фото проекта не было получено, возможно оно еще не создано или удалено" });
     }
 
     public async Task<BaseResponse<string>> CreateAsync(ProjectImageDto model, string creator)
@@ -88,21 +87,27 @@ public class ProjectImageService : IProjectImageService
             Success: true);
     }
 
-    public async Task<BaseResponse<ProjectImageDto>> SaveFile(ProjectImageDto model, IFormFile uploadedFile)
+    public async Task<BaseResponse<ProjectImageDto>> ConvertImage(ProjectImageDto model, IFormFile uploadedFile)
     {
         if (uploadedFile.Length != 0)
         {
-            string filePath =
-                await _repositoryWrapper.ProjectImageRepository.SaveImage(model.ProjectId.ToString(), uploadedFile);
-            if (String.IsNullOrEmpty(filePath))
+
+            using (var memoryStream = new MemoryStream())
             {
-                return new BaseResponse<ProjectImageDto>(
-                    Result: model,
-                    Messages: new List<string> { "Ошибка при сохранении файла" },
-                    Success: false);
-            }
-            
-            model.Route = filePath;
+                await uploadedFile.CopyToAsync(memoryStream);
+
+                if (memoryStream.Length < 4097152)
+                {
+                    model.Image = memoryStream.ToArray();
+                }
+                else
+                {
+                    return new BaseResponse<ProjectImageDto>(
+                        Result: model,
+                        Messages: new List<string> { "Размер файла больше допустимого (4Mb)" },
+                        Success: false);
+                }
+            }    
             return new BaseResponse<ProjectImageDto>(
                 Result: model,
                 Messages: new List<string> { "Файл успешно сохранен" },
@@ -112,5 +117,21 @@ public class ProjectImageService : IProjectImageService
             Result: model,
             Messages: new List<string> { "Ошибка получения файла на сервере" },
             Success: false);
+    }
+
+    public BaseResponse<List<ProjectImageDto>> GetAllById(string id)
+    {
+        IQueryable<ProjectImage>? projects = _repositoryWrapper.ProjectImageRepository.GetAllByCondition(x => x.ProjectId.ToString() == id);
+        List<ProjectImageDto> model = _mapper.Map<List<ProjectImageDto>>(projects);
+
+        if (projects is null)
+            return new BaseResponse<List<ProjectImageDto>>(
+                Result: null,
+                Messages: new List<string> { "Фото проекта не найдены" },
+                Success: true);
+        return new BaseResponse<List<ProjectImageDto>>(
+            Result: model,
+            Success: true,
+            Messages: new List<string> { "Фото проекта успешно найдены" });
     }
 }

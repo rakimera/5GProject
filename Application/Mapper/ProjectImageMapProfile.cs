@@ -19,8 +19,8 @@ public class ProjectImageMapProfile : Profile
                 opt.MapFrom(src => src.LastModifiedBy))
             .ForMember(dest => dest.CreatedBy, opt =>
                 opt.MapFrom(src => src.CreatedBy))
-            .ForMember(dest => dest.Route, opt =>
-                opt.MapFrom(src => src.Route))
+            .ForMember(dest => dest.Image, opt =>
+                opt.MapFrom(src => src.Image))
             .ForMember(dest => dest.ProjectId, opt =>
                 opt.MapFrom(src => src.ProjectId))
             .ReverseMap();

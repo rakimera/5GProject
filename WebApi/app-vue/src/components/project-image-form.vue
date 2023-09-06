@@ -1,8 +1,9 @@
 <template>
     <div class="widget-container">
       <div class="container">
-        <div class="image-container" v-for="image in images" :key="image.id">
-          <img :src="image.route">
+        <div class="image-container" v-for="image in images.value" :key="image.id">
+          <h1>Член</h1>
+          <img :src="dataUrl(image.image)">
           <div>
             <dx-button
                 :width="120"
@@ -45,26 +46,28 @@ import projectImageService from "@/api/projectImageService";
 import notify from "devextreme/ui/notify";
 import {useRoute} from "vue-router";
 import DxButton from 'devextreme-vue/button';
+import {onMounted, ref} from "vue";
 
 const route = useRoute();
 const formRef = ref(null);
-const images = ref([])
+const images = ref([]);
 let id = route.params.id;
-import {ref} from "vue";
 
+onMounted(async ()=> {
+  await dataLoad();
+})
+
+function dataUrl(data) {
+  console.log("Алё")
+  let base64String = btoa(new Uint8Array(data).reduce((data, byte) => data + String.fromCharCode(byte), ''));
+  
+  return ("data:image/jpg;base64," + base64String);
+}
 async function dataLoad(){
   try {
-    const response = await projectImageService.getAllByProjectId(id)
-    if (response.data.success){
-      
-    }
-    else {
-      notify({
-        message: response.data.messages,
-        position: {
-          my: 'center top',
-          at: 'center top'}
-      }, 'error', 2000);
+    const response = await projectImageService.getAllByProjectId(id);
+    if (response.data.success && response.data.result !== null){
+      images.value = response.data.result;
     }
   }catch (error){
     notify({
@@ -86,7 +89,8 @@ async function onDelete(id){
           my: 'center top',
           at: 'center top',
         },
-      }, 'success', 1000);}
+      }, 'success', 1000);
+      await dataLoad();}
     else {
       notify({
         message: response.data.messages,
@@ -104,7 +108,8 @@ async function onDelete(id){
       }}, 'error', 2000);
   }
 }
-async function onAddImage() {
+async function onAddImage(e) {
+  console.log(e)
     try {
         console.log(formRef.value)
         const response = await projectImageService.createProjectImage(formRef.value)
@@ -116,7 +121,8 @@ async function onAddImage() {
                     at: 'center top',
                 },
             }, 'success', 1000);
-        } else{
+          await dataLoad();} 
+        else{
             notify({
                 message: response.data.messages,
                 position: {

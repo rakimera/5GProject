@@ -4,7 +4,7 @@ namespace Domain.Entities;
 
 public class ProjectImage : BaseEntity
 {
-    public required string Route { get; set; }
+    public required byte[] Image { get; set; }
     public Guid ProjectId { get; set; }
     public Project? Project { get; set; }
 }

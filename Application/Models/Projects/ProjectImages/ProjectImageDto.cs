@@ -6,9 +6,9 @@ namespace Application.Models.Projects.ProjectImages;
 
 public class ProjectImageDto : BaseEntity
 {
-    [property: JsonPropertyName("route")] 
-    public string? Route { get; set; }
-    
+    [property: JsonPropertyName("image")] 
+    public byte[]? Image { get; set; }
+
     [property: JsonPropertyName("projectId")]
     public Guid ProjectId { get; set; }
 }

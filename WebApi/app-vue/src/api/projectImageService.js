@@ -4,7 +4,7 @@ const projectImageService = {
 
     async getAllByProjectId(id) {
         try {
-            return await axios.get(`/api/project-images/getAll/${id}`);
+            return await axios.get(`/api/project-images/${id}`);
         }
         catch (error){
             console.log(error)

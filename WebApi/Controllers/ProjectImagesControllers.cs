@@ -21,9 +21,9 @@ public class ProjectImagesControllers : Controller
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> Get(string id)
+    public IActionResult Get(string id)
     {
-        var baseResponse = await _service.ProjectImageService.GetByOid(id);
+        var baseResponse = _service.ProjectImageService.GetAllById(id);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
@@ -32,7 +32,7 @@ public class ProjectImagesControllers : Controller
     [HttpPost]
     public async Task<IActionResult> Post([FromForm]ProjectImageDto model, [FromForm]IFormFile uploadedFile)
     {
-        var saveFileResponse = await _service.ProjectImageService.SaveFile(model, uploadedFile);
+        var saveFileResponse = await _service.ProjectImageService.ConvertImage(model, uploadedFile);
         if (saveFileResponse.Success)
         {
             var baseResponse = await _service.ProjectImageService.CreateAsync(saveFileResponse.Result, User.Identity.Name);
