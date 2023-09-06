@@ -157,9 +157,7 @@ onMounted(async () => {
   dataSource.value = store;
 
   const antennaResponse = await antennaService.getAntennae();
-  console.log(antennaResponse);
   antennas.value = antennaResponse.data.result;
-  console.log(antennas);
 })
 
 </script>

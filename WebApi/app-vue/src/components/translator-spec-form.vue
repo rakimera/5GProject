@@ -29,24 +29,6 @@
         <dx-required-rule message="Частота передатчика не задана"></dx-required-rule>
       </dx-column>
       <dx-column
-          data-field="power"
-          data-type="number"
-          caption="Мощность"
-          :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
-          alignment="left">
-        <dx-label :visible="false"/>
-        <dx-required-rule message="Мощность передатчика не задана"></dx-required-rule>
-      </dx-column>
-      <dx-column
-          data-field="gain"
-          data-type="number"
-          caption="Коэффициент усиления антенны"
-          :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
-          alignment="left">
-        <dx-label :visible="false"/>
-        <dx-required-rule message="Коэффициент усиления сигнала передатчика не задан"></dx-required-rule>
-      </dx-column>
-      <dx-column
           data-field="antennaId"
           data-type="string"
           :visible="false">
@@ -62,17 +44,6 @@
       <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
       <dx-sorting mode="multiple"/>
     </dx-data-grid>
-<!--    <dx-button-item>-->
-<!--      <dx-button-options-->
-<!--          width="20%"-->
-<!--          type="default"-->
-<!--          styling-mode="outlined"-->
-<!--          :template="'Загрузить360'"-->
-<!--          :on-click="load360"-->
-<!--          :use-submit-behavior="true"-->
-<!--      >-->
-<!--      </dx-button-options>-->
-<!--    </dx-button-item>-->
   </div>
 </template>
 
@@ -175,7 +146,6 @@ async function onRowUpdating(options) {
 
 onMounted(async () => {
   dataSource.value = store;
-  console.log(props.masterDetailData);
   antennaId.value = props.masterDetailData.key;
   const response = await translatorSpecService.getAllByAntennaId(antennaId.value);
   translators.value = response.data.result;
