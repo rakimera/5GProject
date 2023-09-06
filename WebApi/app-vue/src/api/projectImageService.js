@@ -11,9 +11,9 @@ const projectImageService = {
         }
     },
 
-    async createProjectImage(/*projectImageDto ,*/uploadedFile) {
+    async createProjectImage(uploadedFile) {
         try {
-            return await axios.post('/api/project-images', /*projectImageDto ,*/uploadedFile);
+            return await axios.post('/api/project-images', uploadedFile);
         }
         catch (error){
             console.log(error)
