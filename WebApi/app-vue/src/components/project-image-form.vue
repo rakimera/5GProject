@@ -1,20 +1,5 @@
 <template>
     <div class="widget-container">
-      <div class="container">
-        <div class="image-container" v-for="image in images.value" :key="image.id">
-          <h1>Член</h1>
-          <img :src="dataUrl(image.image)">
-          <div>
-            <dx-button
-                :width="120"
-                text="Contained"
-                type="normal"
-                styling-mode="contained"
-                @click="onDelete(image.id)"
-            />
-          </div>
-        </div>
-      </div>  
       <form
             id="form"
             method="post"
@@ -26,6 +11,7 @@
                 hidden="true"
             >
             <dx-file-uploader
+                class="mt-3"
                 select-button-text="Добавить фото"
                 labelText="Или перенесите файл сюда"
                 accept="image/*"
@@ -35,7 +21,20 @@
                 name="uploadedFile"
             />
         </form>
-       
+      <div class="row">
+        <div class="card col-md-8 m-auto mt-5" v-for="image in images" :key="image.id">
+          <img :src="'data:image;base64,' + image.image" :alt="image.id" class="card-img-bottom">
+          <div class="card-body text-center">
+            <dx-button
+                :width="120"
+                text="Удалить"
+                type="danger"
+                styling-mode="contained"
+                @click="onDelete(image.id)"
+            />          
+          </div>
+        </div>
+      </div>
     </div>
 </template>
 
@@ -50,19 +49,13 @@ import {onMounted, ref} from "vue";
 
 const route = useRoute();
 const formRef = ref(null);
-const images = ref([]);
+let images = ref([]);
 let id = route.params.id;
 
 onMounted(async ()=> {
   await dataLoad();
 })
 
-function dataUrl(data) {
-  console.log("Алё")
-  let base64String = btoa(new Uint8Array(data).reduce((data, byte) => data + String.fromCharCode(byte), ''));
-  
-  return ("data:image/jpg;base64," + base64String);
-}
 async function dataLoad(){
   try {
     const response = await projectImageService.getAllByProjectId(id);
