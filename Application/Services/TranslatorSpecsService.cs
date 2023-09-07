@@ -150,4 +150,20 @@ public class TranslatorSpecsService : ITranslatorSpecsService
             Success: true,
             Messages: new List<string> { "Свойства антенны успешно найдены" });
     }
+
+    public BaseResponse<List<TranslatorSpecsDto>> GetAllByProjectId(string id)
+    {
+        IQueryable<TranslatorSpecs>? projectAntennas = _repository.TranslatorSpecsRepository.GetAllByCondition(x => x.AntennaId.ToString() == id);
+        List<TranslatorSpecsDto> model = _mapper.Map<List<TranslatorSpecsDto>>(projectAntennas);
+
+        if (projectAntennas is null)
+            return new BaseResponse<List<TranslatorSpecsDto>>(
+                Result: null,
+                Messages: new List<string> { "Трансляторы антенны не найдены" },
+                Success: true);
+        return new BaseResponse<List<TranslatorSpecsDto>>(
+            Result: model,
+            Success: true,
+            Messages: new List<string> { "Трансляторы антенны успешно найдены" });
+    }
 }

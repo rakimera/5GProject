@@ -9,6 +9,7 @@ namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/translators")]
+[Authorize]
 public class TranslatorSpecsController : Controller
 {
     private readonly IServiceWrapper _service;
@@ -22,8 +23,7 @@ public class TranslatorSpecsController : Controller
         _mapper = mapper;
     }
     
-    // [HttpGet, Authorize(Roles = "Admin")]
-    [HttpGet,]
+    [HttpGet]
     public IActionResult Get()
     {
         var baseResponse = _service.TranslatorSpecsService.GetAll();
@@ -32,6 +32,14 @@ public class TranslatorSpecsController : Controller
         return NotFound(baseResponse);
     }
     
+    [HttpGet("getAll/{id}")]
+    public IActionResult GetAll(string id)
+    {
+        var baseResponse = _service.TranslatorSpecsService.GetAllByProjectId(id);
+        if (baseResponse.Success)
+            return Ok(baseResponse);
+        return NotFound(baseResponse);
+    }
     
     [HttpGet("{oid}")]
     public async Task<IActionResult> Get(string oid)
@@ -71,7 +79,6 @@ public class TranslatorSpecsController : Controller
         return NotFound(baseResponse);
     }
     
-    // [HttpGet("index"), Authorize(Roles = "Admin")]
     [HttpGet("index/{id}")]
     public async Task<IActionResult> Get(string id, [FromQuery]DataSourceLoadOptionsBase loadOptions)
     {

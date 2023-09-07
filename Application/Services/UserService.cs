@@ -78,6 +78,14 @@ public class UserService : IUserService
     public async Task<BaseResponse<UserDto>> GetByOid(string oid)
     {
         User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.ToString() == oid);
+        if (user is null)
+        {
+            return new BaseResponse<UserDto>(
+                Result: null,
+                Messages: new List<string> { "Пользователь не найден" },
+                Success: false);
+        }
+
         UserDto model = _mapper.Map<UserDto>(user);
 
         model.Roles = new List<string>();
@@ -87,13 +95,6 @@ public class UserService : IUserService
             .Select(userRole => userRole.Role.RoleName)
             .ToList();
 
-        if (user is null)
-        {
-            return new BaseResponse<UserDto>(
-                Result: null,
-                Messages: new List<string> { "Пользователь не найден" },
-                Success: false);
-        }
 
         return new BaseResponse<UserDto>(
             Result: model,
@@ -148,7 +149,7 @@ public class UserService : IUserService
 
     public BaseResponse<List<Role>> GetRoles()
     {
-        var roles = _repositoryWrapper.RoleRepository.GetAll().ToList();    
+        var roles = _repositoryWrapper.RoleRepository.GetAll().ToList();
         if (roles.Count > 0)
         {
             return new BaseResponse<List<Role>>(

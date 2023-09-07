@@ -9,7 +9,6 @@ public class Project5GDbContext : DbContext
 {
     public DbSet<Antenna> Antennas { get; set; }
     public DbSet<AntennaTranslator> AntennaTranslators { get; set; }
-    public DbSet<CompanyLicense> CompanyLicenses { get; set; }
     public DbSet<ContrAgent> CounterAgents { get; set; }
     public DbSet<District> Districts { get; set; }
     public DbSet<EnergyResult> EnergyResults { get; set; }
@@ -28,6 +27,7 @@ public class Project5GDbContext : DbContext
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<BiohazardRadius> BiohazardRadii { get; set; }
     public DbSet<SummaryBiohazardRadius> SummaryBiohazardRadii { get; set; }
+    public DbSet<TranslatorType> TranslatorTypes { get; set; }
 
     public Project5GDbContext(DbContextOptions<Project5GDbContext> options) : base(options) {}
 
@@ -35,17 +35,22 @@ public class Project5GDbContext : DbContext
     {
         modelBuilder.Entity<User>().HasIndex(x => x.Login).IsUnique();
         modelBuilder.Entity<ContrAgent>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<TranslatorType>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<User>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<District>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<Town>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<Antenna>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<EnergyResult>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<Project>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<Project>().Navigation(e=> e.ContrAgent).AutoInclude();
+        modelBuilder.Entity<Project>().Navigation(e=> e.Executor).AutoInclude();
+        modelBuilder.Entity<Project>().Navigation(e=> e.ExecutiveCompany).AutoInclude();
+        modelBuilder.Entity<Project>().Navigation(e=> e.ProjectStatus).AutoInclude();
         modelBuilder.Entity<ProjectAntenna>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<ProjectAntenna>().Navigation(e=> e.Antenna).AutoInclude();
         modelBuilder.Entity<ProjectStatus>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<TranslatorSpecs>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<AntennaTranslator>().HasQueryFilter(x => x.IsDelete == false);
-        modelBuilder.Entity<CompanyLicense>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<EnergyResult>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<ExecutiveCompany>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<RadiationZone>().HasQueryFilter(x => x.IsDelete == false);
@@ -54,6 +59,7 @@ public class Project5GDbContext : DbContext
         modelBuilder.Entity<UserRole>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<BiohazardRadius>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<SummaryBiohazardRadius>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<Role>().HasQueryFilter(x => x.IsDelete == false);
         base.OnModelCreating(modelBuilder);
     }
 

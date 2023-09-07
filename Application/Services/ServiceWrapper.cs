@@ -17,8 +17,12 @@ public class ServiceWrapper : IServiceWrapper
     private readonly Lazy<IAntennaService> _antennaService;
     private readonly Lazy<IEnergyFlowService> _energyFlowService;
     private readonly Lazy<IRoleService> _roleService;
+    private readonly Lazy<ITranslatorTypeService> _translatorTypeService;
+    private readonly Lazy<IExecutiveCompanyService> _executiveCompanyService;
     private readonly Lazy<ITranslatorSpecsService> _translatorSpecsService;
     private readonly Lazy<IRadiationZoneService> _radiationZoneService;
+    private readonly Lazy<IProjectAntennaService> _projectAntennaService;
+    private readonly Lazy<IAntennaTranslatorService> _antennaTranslatorService;
 
     public ServiceWrapper(
         IRepositoryWrapper repository,
@@ -26,23 +30,32 @@ public class ServiceWrapper : IServiceWrapper
         UserValidator userValidator,
         ContrAgentValidator contrAgentValidator,
         ProjectValidator projectValidator,
+        UpdateProjectValidator updateProjectValidator,
         ITokenService tokenService,
         TranslatorSpecsValidator translatorSpecsValidator,
         AntennaValidator antennaValidator,
+        AntennaTranslatorValidator antennaTranslatorValidator,
         EnergyResultValidator energyResultValidator,
         RoleValidator roleValidator,
         RadiationZoneValidator radiationZoneValidator)
+        RoleValidator roleValidator,
+        TranslatorTypeValidator translatorTypeValidator,
+        ProjectAntennaValidator projectAntennaValidator,
+        ExecutiveCompanyValidator executiveCompanyValidator)
     {
+        _projectAntennaService = new Lazy<IProjectAntennaService>(() => new ProjectAntennaService(repository, mapper, projectAntennaValidator));
         _roleService = new Lazy<IRoleService>(() => new RoleService(repository, mapper, roleValidator));
+        _executiveCompanyService = new Lazy<IExecutiveCompanyService>(() =>
+            new ExecutiveCompanyService(repository, mapper, executiveCompanyValidator));
         _districtService = new Lazy<IDistrictService>(() => new DistrictService(repository, mapper));
         _userService = new Lazy<IUserService>(() => new UserService(repository, mapper, userValidator));
         _tokenService = new Lazy<ITokenService>(() => new TokenService(repository));
-        _projectService = new Lazy<IProjectService>(() => new ProjectService(repository, mapper, projectValidator));
-        _authorizationService =
-            new Lazy<IAuthorizationService>(() => new AuthorizationService(repository, tokenService));
-        _contrAgentService =
-            new Lazy<IContrAgentService>(() => new ContrAgentService(repository, mapper, contrAgentValidator));
-        _townService = new Lazy<ITownService>(() => new TownService(repository, mapper));
+        _projectService = new Lazy<IProjectService>(()=> new ProjectService(repository, mapper, projectValidator, updateProjectValidator));
+        _authorizationService = new Lazy<IAuthorizationService>(()=> new AuthorizationService(repository,tokenService));
+        _contrAgentService = new Lazy<IContrAgentService>(() => new ContrAgentService(repository, mapper, contrAgentValidator));
+        _townService = new Lazy<ITownService>(() => new TownService(repository,mapper));
+        _translatorTypeService = new Lazy<ITranslatorTypeService>(() => new TranslatorTypeService(repository,mapper, translatorTypeValidator));
+        _antennaTranslatorService = new Lazy<IAntennaTranslatorService>(() => new AntennaTranslatorService(mapper, repository, antennaTranslatorValidator));
         _antennaService = new Lazy<IAntennaService>(() => new AntennaService(repository, mapper, antennaValidator));
         _translatorSpecsService = new Lazy<ITranslatorSpecsService>(() => new TranslatorSpecsService(repository, mapper, translatorSpecsValidator));
         _energyFlowService =
@@ -50,8 +63,10 @@ public class ServiceWrapper : IServiceWrapper
         _radiationZoneService =
             new Lazy<IRadiationZoneService>(() => new RadiationZoneService(repository, mapper, radiationZoneValidator));
     }
+        
 
     public IUserService UserService => _userService.Value;
+    public IProjectAntennaService ProjectAntennaService => _projectAntennaService.Value;
     public IProjectService ProjectService => _projectService.Value;
     public ITokenService TokenService => _tokenService.Value;
     public IAuthorizationService AuthorizationService => _authorizationService.Value;
@@ -63,4 +78,7 @@ public class ServiceWrapper : IServiceWrapper
     public IEnergyFlowService EnergyFlowService => _energyFlowService.Value;
     public IRoleService RoleService => _roleService.Value;
     public IRadiationZoneService RadiationZoneService => _radiationZoneService.Value;
+    public IExecutiveCompanyService ExecutiveCompanyService => _executiveCompanyService.Value;
+    public IAntennaTranslatorService AntennaTranslatorService => _antennaTranslatorService.Value;
+    public ITranslatorTypeService TranslatorTypeService => _translatorTypeService.Value;
 }

@@ -1,6 +1,5 @@
 using Application.Interfaces.RepositoryContract;
 using Application.Interfaces.RepositoryContract.Common;
-using Domain.Entities;
 using Infrastructure.Persistence.DataContext;
 using Infrastructure.Services;
 
@@ -21,13 +20,21 @@ public class RepositoryWrapper : IRepositoryWrapper
     private IEnergyFlowRepository _energyFlowRepository;
     private IRadiationZoneRepository _radiationZoneRepository;
     private IAntennaTranslatorRepository _antennaTranslatorRepository;
+    private IExecutiveCompanyRepository _executiveCompanyRepository;
+    private IBiohazardRadiusRepository _biohazardRadiusRepository;
+    private IProjectAntennaRepository _projectAntennaRepository;
+    private IProjectStatusRepository _projectStatusRepository;
+    private ISanPinDockRepository _sanPinDockRepository;
+    private ISummaryBiohazardRadiusRepository _summaryBiohazardRadiusRepository;
+    private ITotalFluxDensityRepository _totalFluxDensityRepository;
+    private ITranslatorTypeRepository _translatorTypeRepository;
     private ITranslatorSpecsRepository _translatorSpecsRepository;
 
     public RepositoryWrapper(Project5GDbContext db)
     {
         _db = db;
     }
-    
+
     public IAntennaTranslatorRepository AntennaTranslatorRepository
     {
         get
@@ -40,7 +47,111 @@ public class RepositoryWrapper : IRepositoryWrapper
             return _antennaTranslatorRepository;
         }
     }
-    
+
+    public IExecutiveCompanyRepository ExecutiveCompanyRepository
+    {
+        get
+        {
+            if (_executiveCompanyRepository == null)
+            {
+                _executiveCompanyRepository = new ExecutiveCompanyRepository(_db);
+            }
+
+            return _executiveCompanyRepository;
+        }
+    }
+
+    public IBiohazardRadiusRepository BiohazardRadiusRepository
+    {
+        get
+        {
+            if (_biohazardRadiusRepository == null)
+            {
+                _biohazardRadiusRepository = new BiohazardRadiusRepository(_db);
+            }
+
+            return _biohazardRadiusRepository;
+        }
+    }
+
+    public IProjectAntennaRepository ProjectAntennaRepository
+    {
+        get
+        {
+            if (_projectAntennaRepository == null)
+            {
+                _projectAntennaRepository = new ProjectAntennaRepository(_db);
+            }
+
+            return _projectAntennaRepository;
+        }
+    }
+
+    public IProjectStatusRepository ProjectStatusRepository
+    {
+        get
+        {
+            if (_projectStatusRepository == null)
+            {
+                _projectStatusRepository = new ProjectStatusRepository(_db);
+            }
+
+            return _projectStatusRepository;
+        }
+    }
+
+    public ISanPinDockRepository SanPinDockRepository
+    {
+        get
+        {
+            if (_sanPinDockRepository == null)
+            {
+                _sanPinDockRepository = new SanPinDockRepository(_db);
+            }
+
+            return _sanPinDockRepository;
+        }
+    }
+
+    public ISummaryBiohazardRadiusRepository SummaryBiohazardRadiusRepository
+    {
+        get
+        {
+            if (_summaryBiohazardRadiusRepository == null)
+            {
+                _summaryBiohazardRadiusRepository = new SummaryBiohazardRadiusRepository(_db);
+            }
+
+            return _summaryBiohazardRadiusRepository;
+        }
+    }
+
+    public ITotalFluxDensityRepository TotalFluxDensityRepository
+    {
+        get
+        {
+            if (_totalFluxDensityRepository == null)
+            {
+                _totalFluxDensityRepository = new TotalFluxDensityRepository(_db);
+            }
+
+            return _totalFluxDensityRepository;
+        }
+    }
+
+    public ITranslatorTypeRepository TranslatorTypeRepository
+    {
+        get
+        {
+            if (_translatorTypeRepository == null)
+            {
+                _translatorTypeRepository = new TranslatorTypeRepository(_db);
+            }
+
+            return _translatorTypeRepository;
+        }
+    }
+
     public IRadiationZoneRepository RadiationZoneRepository
     {
         get
@@ -184,6 +295,7 @@ public class RepositoryWrapper : IRepositoryWrapper
         }
     }
 
+
     public IEnergyFlowRepository EnergyFlowRepository
     {
         get
@@ -196,7 +308,7 @@ public class RepositoryWrapper : IRepositoryWrapper
             return _energyFlowRepository;
         }
     }
-    
+
     public async Task Save()
     {
         await _db.SaveChangesAsync();

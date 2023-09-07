@@ -21,6 +21,15 @@ const projectService = {
 
     },
 
+    async getProject(oid) {
+        try {
+            return await axios.get(`/api/projects/${oid}`);
+        }
+        catch (error){
+            console.log(error)
+        }
+    },
+
     async updateProject(project) {
         try {
             return await axios.put('/api/projects', project)

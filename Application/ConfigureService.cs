@@ -19,12 +19,17 @@ public static class ConfigureService
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<UserValidator>();
         services.AddScoped<ProjectValidator>();
+        services.AddScoped<UpdateProjectValidator>();
+        services.AddScoped<AntennaTranslatorValidator>();
         services.AddScoped<ContrAgentValidator>();
         services.AddScoped<AntennaValidator>();
         services.AddScoped<TranslatorSpecsValidator>();
         services.AddScoped<EnergyResultValidator>();
         services.AddScoped<RoleValidator>();
         services.AddScoped<RadiationZoneValidator>();
+        services.AddScoped<ExecutiveCompanyValidator>();
+        services.AddScoped<ProjectAntennaValidator>();
+        services.AddScoped<TranslatorTypeValidator>();
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         
         services.AddAuthentication(opt => {

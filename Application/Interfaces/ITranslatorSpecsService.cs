@@ -8,7 +8,8 @@ namespace Application.Interfaces;
 
 public interface ITranslatorSpecsService : ICrudService<TranslatorSpecsDto>
 {
-    public Task<BaseResponse<string>> Update(TranslatorSpecsDto model, string author);
+    public Task<BaseResponse<string>> Update(UpdateTranslatorSpecsDto model, string author);
     Task<LoadResult> GetLoadResult(string id, DataSourceLoadOptionsBase loadOptions);
     BaseResponse<List<TranslatorSpecsDto>> GetAllByAntennaId(string id);
+    BaseResponse<List<TranslatorSpecsDto>> GetAllByProjectId(string id);
 }
