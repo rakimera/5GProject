@@ -14,16 +14,21 @@
                 class="mt-3"
                 select-button-text="Добавить фото"
                 labelText="Или перенесите файл сюда"
+                :showFileList= "false"
+                :max-file-size="4000000"
                 accept="image/*"
-                multiple="false"
+                :multiple="false"
                 upload-mode="useForm"
                 @value-changed="onAddImage"
                 name="uploadedFile"
             />
+        <span class="mx-3">
+        Размер не более 4 MB:
+      </span>
         </form>
       <div class="row">
         <div class="card col-md-8 m-auto mt-5" v-for="image in images" :key="image.id">
-          <img :src="'data:image;base64,' + image.image" :alt="image.id" class="card-img-bottom">
+          <img :src="'data:image;base64,' + image.image" :alt="image.id" class="card-img mt-3">
           <div class="card-body text-center">
             <dx-button
                 :width="120"
@@ -101,10 +106,8 @@ async function onDelete(id){
       }}, 'error', 2000);
   }
 }
-async function onAddImage(e) {
-  console.log(e)
+async function onAddImage() {
     try {
-        console.log(formRef.value)
         const response = await projectImageService.createProjectImage(formRef.value)
         if (response.data.success){
             notify({

@@ -89,29 +89,36 @@ public class ProjectImageService : IProjectImageService
 
     public async Task<BaseResponse<ProjectImageDto>> ConvertImage(ProjectImageDto model, IFormFile uploadedFile)
     {
+        string[] allowedExtension = new[] { ".jpg", ".png", ".jpeg", ".jpe", ".jfif", ".tiff", ".tif", ".svg" };
         if (uploadedFile.Length != 0)
         {
-
-            using (var memoryStream = new MemoryStream())
+            var fileExtension = Path.GetExtension(uploadedFile.FileName).ToLower();
+            if (allowedExtension.Any(extension => extension == fileExtension))
             {
-                await uploadedFile.CopyToAsync(memoryStream);
+                using (var memoryStream = new MemoryStream())
+                {                    await uploadedFile.CopyToAsync(memoryStream);
 
-                if (memoryStream.Length < 4097152)
-                {
-                    model.Image = memoryStream.ToArray();
-                }
-                else
-                {
-                    return new BaseResponse<ProjectImageDto>(
-                        Result: model,
-                        Messages: new List<string> { "Размер файла больше допустимого (4Mb)" },
-                        Success: false);
-                }
-            }    
+                    if (memoryStream.Length < 4097152)
+                    {
+                        model.Image = memoryStream.ToArray();
+                    }
+                    else
+                    {
+                        return new BaseResponse<ProjectImageDto>(
+                            Result: model,
+                            Messages: new List<string> { "Размер файла больше допустимого (4Mb)" },
+                            Success: false);
+                    }
+                }    
+                return new BaseResponse<ProjectImageDto>(
+                    Result: model,
+                    Messages: new List<string> { "Файл успешно сохранен" },
+                    Success: true);
+            }
             return new BaseResponse<ProjectImageDto>(
                 Result: model,
-                Messages: new List<string> { "Файл успешно сохранен" },
-                Success: true);
+                Messages: new List<string> { "Расширение файла не допустимо" },
+                Success: false);
         }
         return new BaseResponse<ProjectImageDto>(
             Result: model,

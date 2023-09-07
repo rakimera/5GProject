@@ -36,13 +36,11 @@ public class ProjectImagesControllers : Controller
         if (saveFileResponse.Success)
         {
             var baseResponse = await _service.ProjectImageService.CreateAsync(saveFileResponse.Result, User.Identity.Name);
-        
-            if (baseResponse.Success)
-                return Ok(baseResponse);
-            return BadRequest(baseResponse);
+            
+            return Ok(baseResponse);
         }
         
-        return BadRequest(saveFileResponse);
+        return Ok(saveFileResponse);
     }
     
     [HttpDelete("{id}")]
