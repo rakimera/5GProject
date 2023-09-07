@@ -44,6 +44,7 @@
                   title="Экспорт проекта"
                   :disabled="isTabDisabled"
               >
+                <project-export/>
               </dx-tab>
             </dx-tabbed-item>
         </dx-form>
@@ -66,6 +67,7 @@ import townService from "@/api/townService";
 import ProjectForm from "@/components/project-form.vue";
 import ProjectAntennaForm from "@/components/project-antenna-form.vue";
 import ProjectImageForm from "@/components/project-image-form.vue";
+import ProjectExport from "@/components/project-export.vue";
 
 const route = useRoute();
 let dataSource = reactive({});
