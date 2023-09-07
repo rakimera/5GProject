@@ -60,7 +60,7 @@ const translatorSpecsService = {
 
     async getAllByAntennaId(id) {
         try {
-            return await axios.get(`/api/translators/getAll/${id}`);
+            return await axios.get(`/api/translators/getAllByAntennaId/${id}`);
         }
         catch (error){
             console.log(error)

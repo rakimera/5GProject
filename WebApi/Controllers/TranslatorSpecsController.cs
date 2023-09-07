@@ -86,8 +86,8 @@ public class TranslatorSpecsController : Controller
         return Ok(loadResult);
     }
     
-    [HttpGet("getAll/{id}")]
-    public IActionResult GetAll(string id)
+    [HttpGet("getAllByAntennaId/{id}")]
+    public IActionResult GetAllByAntennaId(string id)
     {
         var baseResponse = _service.TranslatorSpecsService.GetAllByAntennaId(id);
         if (baseResponse.Success)

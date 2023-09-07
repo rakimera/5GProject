@@ -37,8 +37,7 @@ public class ServiceWrapper : IServiceWrapper
         AntennaTranslatorValidator antennaTranslatorValidator,
         EnergyResultValidator energyResultValidator,
         RoleValidator roleValidator,
-        RadiationZoneValidator radiationZoneValidator)
-        RoleValidator roleValidator,
+        RadiationZoneValidator radiationZoneValidator,
         TranslatorTypeValidator translatorTypeValidator,
         ProjectAntennaValidator projectAntennaValidator,
         ExecutiveCompanyValidator executiveCompanyValidator)
