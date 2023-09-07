@@ -22,7 +22,7 @@ public class AccountController : Controller
     
     // [HttpGet, Authorize(Roles = "Admin")]
     [HttpGet]
-    public IActionResult Get()
+    public async Task<IActionResult> Get()
     {
         var baseResponse = _service.UserService.GetAll();
         if (baseResponse.Success)

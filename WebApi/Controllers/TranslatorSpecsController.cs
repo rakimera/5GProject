@@ -2,6 +2,8 @@ using Application.Interfaces;
 using Application.Models.TranslatorSpecs;
 using AutoMapper;
 using DevExtreme.AspNet.Data;
+using Domain.Entities;
+using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -45,6 +47,8 @@ public class TranslatorSpecsController : Controller
     public async Task<IActionResult> Get(string oid)
     {
         var baseResponse = await _service.TranslatorSpecsService.GetByOid(oid);
+        var asd = _mapper.Map<TranslatorSpecs>(baseResponse.Result);
+        await _service.FileService.ReadExcel("Document.xlsx", asd, DirectionType.Horizontal);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);

@@ -2,6 +2,7 @@ namespace Application.Interfaces;
 
 public interface IServiceWrapper
 {
+    IFileService FileService { get; }
     IUserService UserService { get; }
     ITokenService TokenService { get; }
     IProjectService ProjectService { get; }
@@ -18,4 +19,5 @@ public interface IServiceWrapper
     IExecutiveCompanyService ExecutiveCompanyService { get; }
     IAntennaTranslatorService AntennaTranslatorService { get; }
     ITranslatorTypeService TranslatorTypeService { get; }
+    IBiohazardRadiusService BiohazardRadiusService { get; }
 }
