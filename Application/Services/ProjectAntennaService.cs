@@ -135,7 +135,7 @@ public class ProjectAntennaService : IProjectAntennaService
     
     public BaseResponse<List<ProjectAntennaDto>> GetAllByProjectId(string id)
     {
-        IQueryable<ProjectAntenna>? projectAntennas = _repositoryWrapper.ProjectAntennaRepository.GetAllByCondition(x => x.Id.ToString() == id);
+        IQueryable<ProjectAntenna>? projectAntennas = _repositoryWrapper.ProjectAntennaRepository.GetAllByCondition(x => x.ProjectId.ToString() == id);
         List<ProjectAntennaDto> model = _mapper.Map<List<ProjectAntennaDto>>(projectAntennas);
 
         if (projectAntennas is null)

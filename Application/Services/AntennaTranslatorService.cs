@@ -138,7 +138,7 @@ public class AntennaTranslatorService : IAntennaTranslatorService
 
     public BaseResponse<List<AntennaTranslatorDto>> GetAllByProjectAntennaId(string id)
     {
-        IQueryable<AntennaTranslator>? projectAntennas = _repositoryWrapper.AntennaTranslatorRepository.GetAllByCondition(x => x.Id.ToString() == id);
+        IQueryable<AntennaTranslator>? projectAntennas = _repositoryWrapper.AntennaTranslatorRepository.GetAllByCondition(x => x.ProjectAntennaId.ToString() == id);
         List<AntennaTranslatorDto> model = _mapper.Map<List<AntennaTranslatorDto>>(projectAntennas);
 
         if (projectAntennas is null)

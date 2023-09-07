@@ -39,6 +39,12 @@
                 >
                     <project-image-form/>
                 </dx-tab>
+              <dx-tab
+                  tabIndex=3
+                  title="Экспорт проекта"
+                  :disabled="isTabDisabled"
+              >
+              </dx-tab>
             </dx-tabbed-item>
         </dx-form>
     </div>
@@ -62,9 +68,7 @@ import ProjectAntennaForm from "@/components/project-antenna-form.vue";
 import ProjectImageForm from "@/components/project-image-form.vue";
 
 const route = useRoute();
-/*const router = useRouter();*/
 let dataSource = reactive({});
-//const routeParams = {name: "projects"};
 let isFormDisabled = ref(true);
 let isTabDisabled = ref(true);
 let oid = route.params.id;
