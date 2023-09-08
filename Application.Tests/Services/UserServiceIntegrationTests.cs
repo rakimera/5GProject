@@ -44,11 +44,12 @@ public class UserServiceIntegrationTests
                 CreatedBy = "Admin",
                 LastModified = DateTime.Now,
                 LastModifiedBy = "Admin",
-                IsDelete = false
+                IsDelete = false,
+                PhoneNumber = "7072020202"
             },
         };
 
-        var userDtoList = users.Select(u => new UserDto { Id = u.Id, Name = u.Name, Surname = u.Surname }).ToList();
+        var userDtoList = users.Select(u => new UserDto { Id = u.Id, Name = u.Name, Surname = u.Surname, PhoneNumber = u.Name}).ToList();
 
         _repositoryWrapperMock.Setup(r => r.UserRepository.GetAll()).Returns(users.AsQueryable());
         _mapperMock.Setup(m => m.Map<List<UserDto>>(It.IsAny<IQueryable<User>>())).Returns(userDtoList);
@@ -97,7 +98,8 @@ public class UserServiceIntegrationTests
             {
                 "Analyst"
             },
-            ExecutiveCompanyId = new Guid()
+            ExecutiveCompanyId = new Guid(),
+            PhoneNumber = "7072020202"
         };
 
         var newUser = new User
@@ -114,7 +116,8 @@ public class UserServiceIntegrationTests
             Created = DateTime.Now,
             LastModified = DateTime.Now,
             LastModifiedBy = "Admin",
-            IsDelete = false
+            IsDelete = false,
+            PhoneNumber = newUserDto.PhoneNumber
         };
 
         var role1 = new Role() { Id = new Guid(), RoleName = "Analyst" };
@@ -167,7 +170,8 @@ public class UserServiceIntegrationTests
             Created = DateTime.Now,
             LastModified = DateTime.Now,
             LastModifiedBy = "Admin",
-            IsDelete = false
+            IsDelete = false,
+            PhoneNumber = "7072020202"
         };
         var role = new Role() { Id = new Guid(), RoleName = "Analyst" };
         var userRoles = new List<UserRole>
@@ -185,7 +189,8 @@ public class UserServiceIntegrationTests
             Roles = userRoles.Where(userRole => userRole.UserId == user.Id)
                 .Select(userRole => userRole.Role.RoleName)
                 .ToList(),
-            ExecutiveCompanyId = new Guid()
+            ExecutiveCompanyId = new Guid(),
+            PhoneNumber = "7072020202"
         };
 
         _mapperMock.Setup(r => r.Map<UserDto>(user)).Returns(userDto);
@@ -227,7 +232,8 @@ public class UserServiceIntegrationTests
             {
                 "Analyst"
             },
-            ExecutiveCompanyId = executiveCompanyId
+            ExecutiveCompanyId = executiveCompanyId,
+            PhoneNumber = "7072020202"
         };
 
         var updatedUser = new User
@@ -244,7 +250,8 @@ public class UserServiceIntegrationTests
             LastModifiedBy = "Admin",
             IsDelete = false,
             ExecutiveCompanyId = updateUserDto.ExecutiveCompanyId,
-            RefreshTokens = new List<RefreshToken>()
+            RefreshTokens = new List<RefreshToken>(),
+            PhoneNumber = "7072020202"
         };
         
         var role1 = new Role() { Id = new Guid(), RoleName = "Analyst" };
@@ -274,7 +281,8 @@ public class UserServiceIntegrationTests
             LastModifiedBy = "Admin",
             Password = "Qwerty@123",
             ExecutiveCompanyId = updatedUser.ExecutiveCompanyId,
-            IsDelete = false
+            IsDelete = false,
+            PhoneNumber = "7072020202"
         };
 
         _repositoryWrapperMock.Setup(r => r.UserRoleRepository.GetAll()).Returns(userRoles.AsQueryable);
