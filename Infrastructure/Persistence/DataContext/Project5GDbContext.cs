@@ -17,6 +17,7 @@ public class Project5GDbContext : DbContext
     public DbSet<ProjectAntenna> ProjectsAntennae { get; set; }
     public DbSet<ProjectStatus> ProjectsStatuses { get; set; }
     public DbSet<RadiationZone> RadiationZones { get; set; }
+    public DbSet<ProjectImage> ProjectImages { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<SanPinDock> SanPinDocks { get; set; }
