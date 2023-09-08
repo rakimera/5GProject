@@ -10,14 +10,24 @@ public class CreateExecutiveCompanyDto
     [property: JsonPropertyName("licenseDateOfIssue")]
     public DateTime? LicenseDateOfIssue { get; set; }
 
-    [property: JsonPropertyName("bin")] public string BIN { get; set; }
+    [property: JsonPropertyName("bin")] 
+    public required string BIN { get; set; }
 
     [property: JsonPropertyName("companyName")]
-    public string CompanyName { get; set; }
+    public required string CompanyName { get; set; }
 
     [property: JsonPropertyName("townName")]
     public required string TownName { get; set; }
 
     [property: JsonPropertyName("address")]
-    public string Address { get; set; }
+    public required string Address { get; set; }
+    
+    [property: JsonPropertyName("directorName")]
+    public required string DirectorName { get; set; }
+    
+    [property: JsonPropertyName("directorSurname")]
+    public required string DirectorSurname { get; set; }
+    
+    [property: JsonPropertyName("directorPatronymic")]
+    public string? DirectorPatronymic { get; set; }
 }

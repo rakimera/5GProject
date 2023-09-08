@@ -29,6 +29,9 @@ public class DataSeed
             Address = "Алматинская область, Алматы, 1 микр, 43",
             CompanyName = "AlcaponeLTD",
             LicenseNumber = "№123123132ФЫВ123123АВЫ",
+            DirectorName = "Руслан",
+            DirectorSurname = "Усачёв",
+            DirectorPatronymic = "Каирбекович",
             LicenseDateOfIssue = DateTime.Today.AddDays(-10),
             TownName = "Алматы"
         };

@@ -33,4 +33,7 @@ public class ProjectAntennaDto : BaseEntity
     
     [property: JsonPropertyName("antennaTranslators")]
     public List<AntennaTranslatorDto>? AntennaTranslators { get; set; }
+
+    [property: JsonPropertyName("rtoRadiationMode")]
+    public required string RtoRadiationMode { get; set; }
 }
