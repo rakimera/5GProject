@@ -76,6 +76,13 @@ const formItems = ref([
       displayFormat: "dd.MM.yyyy",
     },
   },
+  {
+      dataField: "phoneNumber",
+      label: {text: "Номер телефона"},
+      editorOptions: {
+          mask:'+7 (000) 000-0000',
+      },
+  },
 ]);
 
 onMounted(() => {

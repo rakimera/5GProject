@@ -81,7 +81,7 @@
                 :editor-options="{ 
             stylingMode: 'filled', 
             placeholder: 'Номер тел.',
-           maskRules: phoneRules, 
+            maskRules: phoneRules, 
             mask:'+7 (000) 000-0000'}"
         >
             <dx-label :text="'Номер телефона'"/>
