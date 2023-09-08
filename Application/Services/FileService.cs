@@ -186,6 +186,7 @@ public class FileService : IFileService
         var project = await  _repositoryWrapper.ProjectRepository.GetByCondition(x =>
             x.Id.ToString() == oid);
         var contrAgent = project.ContrAgent;
+        var year = (project.SanPinDock?.DateOfIssue.Year) ?? DateTime.Now.Year;
         var executor = project.Executor;
         var executiveCompany = project.ExecutiveCompany;
         var summaryBiohazardRadius = project.SummaryBiohazardRadius;
@@ -195,15 +196,15 @@ public class FileService : IFileService
             wordProcessor.LoadDocument("Шаблон.docx");
             Document document = wordProcessor.Document;
             document.ReplaceAll("ContrAgent", $"{contrAgent.CompanyName}", SearchOptions.WholeWord);
-            document.ReplaceAll("ExecutiveCompany", $"{executiveCompany.CompanyName}", SearchOptions.WholeWord);
+            document.ReplaceAll("ExecutiveCompanyName", $"{executiveCompany.CompanyName}", SearchOptions.WholeWord);
             document.ReplaceAll("ProjectNumber", $"{project.ProjectNumber}", SearchOptions.WholeWord);
             document.ReplaceAll("ContrAgentPhone", $"{contrAgent.PhoneNumber}", SearchOptions.WholeWord);
             document.ReplaceAll("ContrAgentBIN", $"{contrAgent.BIN}", SearchOptions.WholeWord);
             document.ReplaceAll("ContrAgentFIO", 
                     $"{contrAgent.DirectorSurname} {contrAgent.DirectorName} {contrAgent.DirectorPatronymic}", SearchOptions.WholeWord);
             document.ReplaceAll("ContrAgentAddress", $"{contrAgent.Address}", SearchOptions.WholeWord);
-            document.ReplaceAll("DateYear", 
-                $"{DateTime.Now.Year}", SearchOptions.WholeWord);
+            document.ReplaceAll("DateYear", $"{DateTime.Now.Year}", SearchOptions.WholeWord);
+            document.ReplaceAll("YearOfInitial", $"{year}", SearchOptions.WholeWord);
             
             var projectAntennae = _repositoryWrapper.ProjectAntennaRepository
                 .GetAllByCondition(x=> x.ProjectId == project.Id).ToList();
@@ -212,8 +213,11 @@ public class FileService : IFileService
             {
                 var antennaTranslators = _repositoryWrapper.AntennaTranslatorRepository
                     .GetAllByCondition(x => x.ProjectAntennaId == projectAntennae[l].Id).ToList();
+                var number = 1;
                 foreach (var antennaTranslator in antennaTranslators)
                 {
+                    antennaTranslator.TranslatorType = await _repositoryWrapper.TranslatorTypeRepository
+                        .GetByCondition(x => x.Id == antennaTranslator.TranslatorTypeId);
                     var bioHorizontal = _repositoryWrapper.BiohazardRadiusRepository.GetAllByCondition(x =>
                         x.AntennaTranslatorId == antennaTranslator.Id && x.DirectionType == DirectionType.Horizontal).OrderBy(x=>x.Degree).ToList();
 
@@ -249,10 +253,11 @@ public class FileService : IFileService
 
                     var keywords = document.FindAll("Table",SearchOptions.WholeWord);
                     DocumentPosition insertPosition = keywords[0].Start;
-                    document.InsertText(insertPosition, $"Владелец радиоэлектронных средств: {contrAgent.CompanyName}\n");
+                    
                     ParagraphProperties titleParagraphProperties = document.BeginUpdateParagraphs(keywords[0]);
                     titleParagraphProperties.Alignment = ParagraphAlignment.Center;
                     document.EndUpdateParagraphs(titleParagraphProperties);
+                    document.InsertText(insertPosition, $"Владелец радиоэлектронных средств: {contrAgent.CompanyName}\n");
                     document.Delete(keywords[0]);
                     Paragraph newAppendedParagraph = document.Paragraphs.Insert(insertPosition);
                     Table oldTable = document.Tables.Create(newAppendedParagraph.Range.Start, countTable, 12);
@@ -263,17 +268,17 @@ public class FileService : IFileService
                     oldTable.Rows[0].Cells.Append();
                     Table table = document.Tables.Last;
                     table.TableAlignment = TableRowAlignment.Center;
-                    table.MergeCells(table[0, 6], table[countTable, 6]);
+                    table.MergeCells(table[0, 6], table[countTable+1, 6]);
                     table.BeginUpdate();
                     for (int i = 0; i <= 12; i++)
                     {
                         TableCell columnCell = table[i, i];
                         columnCell.PreferredWidthType = WidthType.Auto;
                         columnCell.PreferredWidth = Units.InchesToDocumentsF(0.66f);
-                        for (int j = 0; j < countTable; j++)
+                        for (int j = 0; j <= countTable+1; j++)
                         {
                             columnCell = table[j, i];
-                            columnCell.HeightType = HeightType.AtLeast;
+                            columnCell.HeightType = HeightType.Auto;
                             columnCell.Height = 0.131f;
                             DocumentRange cellRange = columnCell.Range;
                             CharacterProperties cp = document.BeginUpdateCharacters(cellRange);
@@ -299,37 +304,107 @@ public class FileService : IFileService
                     
                     CreateTable360(document, table, bioVertical,maxRadiationHorizontal.Degree,radiationMinHorizontalZ.Degree,DirectionType.Vertical);
                     CreateTable360(document, table, bioHorizontal,maxRadiationVertical.Degree,radiationMinVerticalZ.Degree,DirectionType.Horizontal);
-                    document.InsertText(table.Range.End,"\nМаксимальный радиус биологически-опасной зоны от секторных " +
-                                                        $"антенн {antennaTranslator.ProjectAntenna.Antenna.Model} в направлении излучения равен " +
-                                                        $"{maxRadius.ToString("F3")} м" +
-                                                        $" (стандарт {antennaTranslator.TranslatorType}; мощность передатчика {antennaTranslator.Power} Вт; " +
-                                                        $"частота на передачу {antennaTranslator.TranslatorSpecs.Frequency} МГц;" +
-                                                        $" коэффициент усиления антенн {antennaTranslator.Gain} дБ, " +
-                                                        $"направление антенны в вертикальной плоскости " +
-                                                        $"{antennaTranslator.ProjectAntenna.Tilt}°).\n " +
-                                                        "В вертикальном сечении БОЗ повторяет диаграмму направленности." +
-                                                        " Максимальное отклонение от оси в вертикальном сечении составляет " +
-                                                        $"{minVerticalZ.ToString("F3")} м." +
-                                                        $" на расстоянии {verticalX} м. от центра излучения. " +
-                                                        "Максимальный радиус биологически-опасного излучения " +
-                                                        "от заднего лепестка антенны составил " +
-                                                        $"{verticalBack.MaximumBiohazardRadius.ToString("F3")} м.\n " +
-                                                        "В горизонтальном сечении БОЗ повторяет диаграмму направленности. " +
-                                                        "Максимальное отклонение от оси в горизонтальном сечении составляет " +
-                                                        $"{maxHorizontalZ.ToString("F3")} м." +
-                                                        $" на расстоянии {horizontalX} м. от центра излучения. " +
-                                                        "Максимальный радиус биологически-опасного излучения от" +
-                                                        $" заднего лепестка антенны составил {horizontalBack.MaximumBiohazardRadius.ToString("F3")} м.");
+                    
+                    Paragraph newAppendedParagraphText = document.Paragraphs.Insert(table.Range.End);
+                    ParagraphProperties paragraphTextProperties = document.BeginUpdateParagraphs(newAppendedParagraphText.Range);
+                    CharacterProperties cpFirst = document.BeginUpdateCharacters(newAppendedParagraphText.Range);
+                    cpFirst.FontSize = 10;
+                    cpFirst.FontName = "Cambria Math";
+                    document.EndUpdateCharacters(cpFirst);
+                    document.InsertText(newAppendedParagraphText.Range.Start,"Максимальный радиус биологически-опасной зоны от секторных " +
+                                                                             $"антенн {antennaTranslator.ProjectAntenna.Antenna.Model} в направлении излучения равен " +
+                                                                             $"{maxRadius.ToString("F3")} м" +
+                                                                             $" (стандарт {antennaTranslator.TranslatorType.Type}; мощность передатчика {antennaTranslator.Power} Вт; " +
+                                                                             $"частота на передачу {antennaTranslator.TranslatorSpecs.Frequency} МГц;" +
+                                                                             $" коэффициент усиления антенн {antennaTranslator.Gain} дБ, " +
+                                                                             $"направление антенны в вертикальной плоскости " +
+                                                                             $"{antennaTranslator.ProjectAntenna.Tilt}°).\n " +
+                                                                             "В вертикальном сечении БОЗ повторяет диаграмму направленности." +
+                                                                             " Максимальное отклонение от оси в вертикальном сечении составляет " +
+                                                                             $"{minVerticalZ.ToString("F3")} м." +
+                                                                             $" на расстоянии {verticalX} м. от центра излучения. " +
+                                                                             "Максимальный радиус биологически-опасного излучения " +
+                                                                             "от заднего лепестка антенны составил " +
+                                                                             $"{verticalBack.MaximumBiohazardRadius.ToString("F3")} м.\n " +
+                                                                             "В горизонтальном сечении БОЗ повторяет диаграмму направленности. " +
+                                                                             "Максимальное отклонение от оси в горизонтальном сечении составляет " +
+                                                                             $"{maxHorizontalZ.ToString("F3")} м." +
+                                                                             $" на расстоянии {horizontalX} м. от центра излучения. " +
+                                                                             "Максимальный радиус биологически-опасного излучения от" +
+                                                                             $" заднего лепестка антенны составил {horizontalBack.MaximumBiohazardRadius.ToString("F3")} м.");
                     table.EndUpdate();
                     var secondSection = document.AppendSection();
-                    await CreateGrafic(document,secondSection.Range.Start,bioHorizontal);
-                    await CreateGrafic(document,secondSection.Range.Start,bioVertical);
-                    if (antennaTranslator != antennaTranslators.Last())
+                    Table oldTableSecond = document.Tables.Create(secondSection.Range.Start, 5, 2);
+                    
+                    oldTableSecond.Rows[0].Cells.Append();
+                    Table tableSecond = document.Tables.Last;
+                    tableSecond.TableAlignment = TableRowAlignment.Center;
+                    tableSecond.BeginUpdate();
+                    for (int i = 0; i <= 2; i++)
                     {
-                        var thirdSection = document.InsertSection(secondSection.Range.End);
-                        document.InsertText(thirdSection.Range.End,"Table");
+                        TableCell columnCell = tableSecond[i, i];
+                        columnCell.PreferredWidthType = WidthType.Auto;
+                        for (int j = 0; j < 5; j++)
+                        {
+                            columnCell = tableSecond[j, i];
+                            columnCell.HeightType = HeightType.Auto;
+                            columnCell.Height = 0.250f;
+                            DocumentRange cellRange = columnCell.Range;
+                            CharacterProperties cp = document.BeginUpdateCharacters(cellRange);
+                            cp.FontSize = 12;
+                            cp.FontName = "Cambria Math";
+                            document.EndUpdateCharacters(cp);
+                        }
                     }
+
+                    document.InsertSingleLineText(tableSecond[0, 0].Range.Start, "Расчет биологически опасной зоны от секторной антенны:");
+                    document.InsertSingleLineText(tableSecond[1, 0].Range.Start, "Рабочая частота (диапазон частот) на передачу, МГц чу, Вт:");
+                    document.InsertSingleLineText(tableSecond[2, 0].Range.Start, "Мощность на передачу, Вт:");
+                    document.InsertSingleLineText(tableSecond[3, 0].Range.Start, "Коэффициент усиления антенн, дБ");
+                    document.InsertSingleLineText(tableSecond[4, 0].Range.Start, "Стандарт:");
+                    
+                    document.InsertSingleLineText(tableSecond[0, 1].Range.Start, $"{antennaTranslator.ProjectAntenna.Antenna.Model}");
+                    document.InsertSingleLineText(tableSecond[1, 1].Range.Start, $"{antennaTranslator.TranslatorSpecs.Frequency}");
+                    document.InsertSingleLineText(tableSecond[2, 1].Range.Start, $"{antennaTranslator.Power}");
+                    document.InsertSingleLineText(tableSecond[3, 1].Range.Start, $"{antennaTranslator.Gain}");
+                    document.InsertSingleLineText(tableSecond[4, 1].Range.Start, $"{antennaTranslator.TranslatorType.Type}");
+                        
+                    document.InsertSingleLineText(tableSecond[0, 2].Range.Start, $"Владелец радиоэлектронных средств: {contrAgent.CompanyName}");
+                    document.InsertSingleLineText(tableSecond[1, 2].Range.Start, $"Угол наклона антенны {antennaTranslator.ProjectAntenna.Tilt}°");
+                    document.InsertSingleLineText(tableSecond[2, 2].Range.Start, $"Передатчик №{number}");
+
+                    
+                    tableSecond.MergeCells(tableSecond[0, 0], tableSecond[4, 0]);
+                    tableSecond.MergeCells(tableSecond[0, 1], tableSecond[4, 1]);
+                    tableSecond.MergeCells(tableSecond[0, 2], tableSecond[4, 2]);
                     table.EndUpdate();
+                    ParagraphProperties paragraphProperties = document.BeginUpdateParagraphs(secondSection.Range);
+                    paragraphProperties.Alignment = ParagraphAlignment.Center;
+                    CharacterProperties cpSecond = document.BeginUpdateCharacters(secondSection.Range);
+                    cpSecond.FontSize = 11;
+                    cpSecond.FontName = "Cambria Math";
+                    document.EndUpdateCharacters(cpSecond);
+                    document.EndUpdateParagraphs(paragraphProperties);
+                    
+                    document.InsertText(secondSection.Range.End,"\nРасчеты размеров БОЗ в вертикальной и горизонтальной плоскостях:\n" +
+                                                                "Биологически-опасная зона антенны повторяет форму диаграммы направленности в горизонтальной и вертикальной плоскости.\n" +
+                                                                "Максимальный радиус биологически опасной зоны, Rб, м, в направлении излучения определяется по формуле:\n" +
+                                                                "Rб = [(8*P* G( 𝜽𝜽 )*K* η)/ Ппду]^0,5 * F( 𝜽𝜽 ) * F( 𝝋𝝋 )\n" +
+                                                                "Для определения максимального радиуса БОЗ примем F(𝜃𝜃)=1 и F(𝜑𝜑)=1:\n" +
+                                                                $"Максимальный радиус БОЗ составляет Rmax= {maxRadius} м.\n" +
+                                                                "Форму поперечного сечения биологически опасной зоны рассчитаем при помощи формул:\n" +
+                                                                "Rz=Rmax•sin 𝝋𝝋, Rx=Rmax•cos 𝝋𝝋.                                        Rz=Rmax•sin 𝜃𝜃, Rx=Rmax•cos 𝜃𝜃 \n" +
+                                                                "для горизонтальной плоскости                                               " +
+                                                                "для вертикальной плоскости \n" +
+                                                                "Значение Rz указывает на отклонение БОЗ от оси излучения антенны," +
+                                                                " перпендикулярно к ней на расстоянии Rx от центра излучения вдоль оси");
+                    await CreateDiagram(document,secondSection.Range.End,bioHorizontal);
+                    await CreateDiagram(document,secondSection.Range.End,bioVertical);
+                    
+                    var thirdSection = document.InsertSection(secondSection.Range.End);
+                    document.InsertText(thirdSection.Range.End,"Table");
+                    table.EndUpdate();
+                    number++;
                 }
 
             }
@@ -352,27 +427,37 @@ public class FileService : IFileService
     }
 
 
-    private async Task<BaseResponse<bool>> CreateGrafic(Document document,DocumentPosition position,List<BiohazardRadius> biohazardRadii)
+    private async Task<BaseResponse<bool>> CreateDiagram(Document document,DocumentPosition position,List<BiohazardRadius> biohazardRadii)
     {
         document.Unit = DevExpress.Office.DocumentUnit.Inch;
         var chartShape = document.Shapes.InsertChart(position,ChartType.ScatterSmooth);
         chartShape.Name = "Scatter Line chart";
-        chartShape.Size = new SizeF(4f, 3.2f);
+        chartShape.Description = "asfdvrfdgfhngjmhgfds";
+        chartShape.AltText = "asfdvrfdgfhngjmhgfds";
+        chartShape.Size = new SizeF(4.5f, 3.7f);
         chartShape.RelativeHorizontalPosition = ShapeRelativeHorizontalPosition.Column;
         chartShape.RelativeVerticalPosition = ShapeRelativeVerticalPosition.Line;
-        chartShape.Offset = new PointF(0, 0);
+        chartShape.Offset = new PointF(0.95f, 0.65f);
         ChartObject chart = (ChartObject)chartShape.ChartFormat.Chart;
         Worksheet worksheet = (Worksheet)chartShape.ChartFormat.Worksheet;
         
         await SpecifyChartData(worksheet,biohazardRadii);
         chart.SelectData(worksheet.Range.FromLTRB(0, 0, 1, 360));
         chart.Legend.Visible = false;
+        chart.Title.Visible = true;
+        chart.Title.Font.Size = 8;
+        var text = "Ширина БОЗ в вертикальной плоскости на расстоянии Rx от \nантенны вдоль линии горизонта по направлению излучения";
+        if (biohazardRadii.First().DirectionType == DirectionType.Horizontal)
+        {
+            text = "Ширина БОЗ в горизонтальной плоскости на расстоянии Rx от \nантенны вдоль линии горизонта по направлению излучения";
+        }
+        chart.Title.SetValue(text);
         Axis valueAxisX = chart.PrimaryAxes[1];
         Axis valueAxisY = chart.PrimaryAxes[0];
         valueAxisX.Scaling.AutoMax = false;
-        valueAxisX.Scaling.Max = 10;
+        valueAxisX.Scaling.Max = 15;
         valueAxisX.Scaling.AutoMin = false;
-        valueAxisX.Scaling.Min = -10;
+        valueAxisX.Scaling.Min = -15;
         valueAxisY.Scaling.AutoMin = false;
         valueAxisY.Scaling.Min = -1;
         

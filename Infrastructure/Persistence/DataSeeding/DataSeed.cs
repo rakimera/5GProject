@@ -23,17 +23,22 @@ public class DataSeed
     }
     public async Task SeedExecutiveCompany()
     {
-        ExecutiveCompanyDto company = new ExecutiveCompanyDto
+        var executiveCompany = _repositoryWrapper.ExecutiveCompanyRepository.GetAll();
+        if (executiveCompany is null)
         {
-            BIN = "123456789111",
-            Address = "Алматинская область, Алматы, 1 микр, 43",
-            CompanyName = "AlcaponeLTD",
-            LicenseNumber = "№123123132ФЫВ123123АВЫ",
-            LicenseDateOfIssue = DateTime.Today.AddDays(-10),
-            TownName = "Алматы"
-        };
-        await _serviceWrapper.ExecutiveCompanyService.CreateAsync(company, "Admin");
-        await _repositoryWrapper.Save();
+            ExecutiveCompanyDto company = new ExecutiveCompanyDto
+            {
+                BIN = "123456789111",
+                Address = "Алматинская область, Алматы, 1 микр, 43",
+                CompanyName = "AlcaponeLTD",
+                LicenseNumber = "№123123132ФЫВ123123АВЫ",
+                LicenseDateOfIssue = DateTime.Today.AddDays(-10),
+                TownName = "Алматы"
+            };
+            await _serviceWrapper.ExecutiveCompanyService.CreateAsync(company, "Admin");
+            await _repositoryWrapper.Save();
+        }
+        
     }
     
     public async Task SeedAdmin()
