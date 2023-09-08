@@ -12,7 +12,7 @@ public class Project : BaseEntity
     public Guid? ExecutiveCompanyId { get; set; }
     public string? PurposeRto { get; set; }
     public string? PlaceOfInstall { get; set; }
-    public string? MaxHeightAdjoinBuild { get; set; }
+    public decimal? MaxHeightAdjoinBuild { get; set; }
     public string? PurposeBuild { get; set; }
     public string? TypeORoof { get; set; }
     public string? TypeOfTopCover { get; set; }
