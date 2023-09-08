@@ -55,7 +55,8 @@ public class DataSeed
                 {
                     "Admin"
                 },
-                ExecutiveCompanyId = executiveCompany
+                ExecutiveCompanyId = executiveCompany,
+                PhoneNumber = "7472020222"
             };
             await _serviceWrapper.UserService.CreateAsync(admin, "Admin");
             await _repositoryWrapper.Save();

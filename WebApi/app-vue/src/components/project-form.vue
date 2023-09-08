@@ -219,7 +219,6 @@ import townService from "@/api/townService";
 import projectService from "@/api/projectService";
 import {useRoute, useRouter} from "vue-router";
 import notify from "devextreme/ui/notify";
-import {DxColumn} from "devextreme-vue/data-grid";
 
 const props = defineProps({
     onSaveProject: Function,
