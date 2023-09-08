@@ -42,7 +42,6 @@
         <dx-label :text="'Адрес'"/>
         <dx-required-rule message="Пожалуйста укажите адрес компании"/>
       </dx-simple-item>
-
       <dx-simple-item
           data-field="licenseNumber"
           :editor-options="{
@@ -61,7 +60,6 @@
             :read-only="isFormDisabled"
         />
       </dx-simple-item>
-
       <dx-simple-item
           data-field="bin"
           :editor-options="{
@@ -79,7 +77,41 @@
             message="Некорректный БИН"
         />
       </dx-simple-item>
-
+      <dx-simple-item
+              data-field="directorName"
+              :editor-options="{
+                    stylingMode: 'filled',
+                    placeholder: 'Имя директора'}">
+          <dx-label :text="'Имя директора'"/>
+          <dx-required-rule message="Имя директора должно быть заполенено"/>
+          <dx-pattern-rule
+                  :pattern="stringPattern"
+                  message="Нельзя использовать цифры в имени"
+          />
+      </dx-simple-item>
+      <dx-simple-item
+              data-field="directorSurname"
+              :editor-options="{
+                  stylingMode: 'filled',
+                  placeholder: 'Фамилия директора'}">
+          <dx-label :text="'Фамилия директора'"/>
+          <dx-required-rule message="Фамилия директора должна быть заполенена"/>
+          <dx-pattern-rule
+                  :pattern="stringPattern"
+                  message="Нельзя использовать цифры в фамилии"
+          />
+      </dx-simple-item>
+      <dx-simple-item
+              data-field="directorPatronymic"
+              :editor-options="{
+                stylingMode: 'filled',
+                placeholder: 'Отчество директора'}">
+          <dx-label :text="'Отчество директора'"/>
+          <dx-pattern-rule
+                  :pattern="stringPattern"
+                  message="Нельзя использовать цифры в отчестве"
+          />
+      </dx-simple-item>
       <dx-button-item>
         <dx-button-options
             width="100%"
@@ -136,6 +168,7 @@ let oid = route.params.id;
 const mode = route.params.mode;
 const pageDescription = ref("Подробно о компании");
 const binPattern = ref("^[0-9]")
+const stringPattern = ref("^[a-zA-Zа-яА-Я]+$")
 const formRef = ref(null);
 const towns = ref([]);
 
