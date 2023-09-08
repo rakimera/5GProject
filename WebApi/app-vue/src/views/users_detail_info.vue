@@ -67,10 +67,6 @@
                 :editor-options="{ stylingMode: 'filled', placeholder: 'Отчество' }"
         >
             <dx-label :text="'Отчество'"/>
-            <dx-string-length-rule
-                    :min="2"
-                    message="Отчество не может содержать менее 2 символов"
-            />
             <dx-pattern-rule
                     :pattern="namePattern"
                     message="Нельзя использовать цифры в отчестве"
@@ -103,19 +99,19 @@
               :apply-value-mode="'useButtons'"
               :read-only="isFormDisabled && !isEditMode"
           />
+          <dx-required-rule message="Пожалуйста, введите роль(ли)"/>
         </dx-simple-item>
-        <dx-simple-item data-field="ExecutiveCompanyId">
+        <dx-simple-item 
+            data-field="executiveCompanyId"
+            editor-type="dxSelectBox"
+            :editor-options="{ 
+                        placeholder: 'Выберите контрагента', 
+                        items: executiveCompanies, 
+                        displayExpr: 'companyName', 
+                        valueExpr: 'id'}"
+            :read-only="isFormDisabled && !isEditMode">
           <dx-label :text="'Компания'"/>
-          <dx-select-box
-              v-model="formData.executiveCompanyId"
-              :items="executiveCompanies"
-              display-expr="companyName"
-              value-expr="id"
-              :show-clear-button="false"
-              :show-drop-down-button="false"
-              :apply-value-mode="'useButtons'"
-              :read-only="isFormDisabled && !isEditMode"
-          />
+          <dx-required-rule message="Пожалуйста, выберите компанию"/>
         </dx-simple-item>
         <dx-button-item>
           <dx-button-options
@@ -162,7 +158,6 @@ import {useRoute, useRouter} from "vue-router";
 import notify from "devextreme/ui/notify";
 import {DxTagBox} from "devextreme-vue/tag-box";
 import roleService from "@/api/roleService";
-import DxSelectBox from "devextreme-vue/select-box";
 import executiveCompanyService from "@/api/executiveCompanyService";
 
 const route = useRoute();
