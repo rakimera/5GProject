@@ -24,7 +24,7 @@ public class DataSeed
     public async Task SeedExecutiveCompany()
     {
         var executiveCompany = _repositoryWrapper.ExecutiveCompanyRepository.GetAll();
-        if (executiveCompany is null)
+        if (executiveCompany.Count() == 0)
         {
             ExecutiveCompanyDto company = new ExecutiveCompanyDto
             {
