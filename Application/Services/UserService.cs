@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using Application.DataObjects;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
@@ -7,6 +8,7 @@ using AutoMapper;
 using DevExtreme.AspNet.Data;
 using DevExtreme.AspNet.Data.ResponseModel;
 using Domain.Entities;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace Application.Services;
 
@@ -51,12 +53,25 @@ public class UserService : IUserService
 
     public async Task<BaseResponse<string>> CreateAsync(UserDto model, string creator)
     {
-        var mapUser = _mapper.Map<User>(model);
-        var result = await _userValidator.ValidateAsync(mapUser);
+        var result = await _userValidator.ValidateAsync(model);
+
         if (result.IsValid)
         {
+            byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
+            Console.WriteLine($"Salt: {Convert.ToBase64String(salt)}");
+
+            string passwordHash = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: model.Password,
+                salt: salt,
+                prf: KeyDerivationPrf.HMACSHA256,
+                iterationCount: 100000,
+                numBytesRequested: 256 / 8));
+
             model.CreatedBy = creator;
             User user = _mapper.Map<User>(model);
+            user.Salt = salt;
+            user.PasswordHash = passwordHash;
+
             await _repositoryWrapper.UserRepository.CreateAsync(user);
 
             await AssignRolesToUser(model, user);
@@ -127,8 +142,9 @@ public class UserService : IUserService
 
         _mapper.Map(existingUserDto, user);
         user.LastModifiedBy = "Admin";
-
-        var result = await _userValidator.ValidateAsync(user);
+        
+        var userDto = _mapper.Map<UserDto>(user);
+        var result = await _userValidator.ValidateAsync(userDto);
         if (!result.IsValid)
         {
             return new BaseResponse<UserDto>(

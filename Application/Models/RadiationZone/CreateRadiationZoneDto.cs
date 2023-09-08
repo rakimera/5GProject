@@ -1,10 +1,9 @@
 using Application.Models.TranslatorSpecs;
-using Domain.Common;
 using Domain.Enums;
 
 namespace Application.Models.RadiationZone;
 
-public class RadiationZoneDto : BaseEntity
+public class CreateRadiationZoneDto
 {
     public int Degree { get; set; }
     public decimal Value { get; set; }

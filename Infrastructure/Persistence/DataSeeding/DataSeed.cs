@@ -83,7 +83,6 @@ public class DataSeed
             TranslatorSpecsDto baseTranslator = new TranslatorSpecsDto()
             {
                 Frequency = 900,
-                Gain = 16.5M,
                 AntennaId = antenna.Id
             };
             await _serviceWrapper.TranslatorSpecsService.CreateAsync(baseTranslator, "Admin");
