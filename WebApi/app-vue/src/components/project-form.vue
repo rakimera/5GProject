@@ -64,6 +64,116 @@
           :visible="false"
       />
     </dx-item>
+    <dx-item
+            data-field='purposeRto'
+            editor-type='dxTextBox'
+            :editor-options="{ 
+                    stylingMode: 'filled', 
+                    label: 'Назначение РТО', 
+                    labelMode: 'floating' }"
+    >
+        <dx-label
+                :visible="false"
+        />
+    </dx-item>
+    <dx-item
+            data-field='placeOfInstall'
+            editor-type='dxTextBox'
+            :editor-options="{ 
+                  stylingMode: 'filled', 
+                  label: 'Место дислокации РТО (РЭС)', 
+                  labelMode: 'floating' }"
+    >
+        <dx-label
+                :visible="false"
+        />
+    </dx-item>
+    <dx-item
+            data-field='maxHeightAdjoinBuild'
+            editor-type='dxNumberBox'
+            :editor-options="{ 
+                stylingMode: 'filled', 
+                label: 'Максимальная высота прилегающей застройки', 
+                labelMode: 'floating' }"
+    >
+        <dx-label
+                :visible="false"
+        />
+    </dx-item>
+    <dx-item
+            data-field='purposeBuild'
+            editor-type='dxTextBox'
+            :editor-options="{ 
+              stylingMode: 'filled', 
+              label: 'Назначение здания, где размещается РТО (РЭС)', 
+              labelMode: 'floating' }"
+    >
+        <dx-label
+                :visible="false"
+        />
+    </dx-item>
+    <dx-item
+            data-field='typeORoof'
+            editor-type='dxTextBox'
+            :editor-options="{ 
+            stylingMode: 'filled', 
+            label: 'Тип крыши здания (указать ровный или с уклоном /уклон в градусах/, материал покрытия кровли)', 
+            labelMode: 'floating' }"
+    >
+        <dx-label
+                :visible="false"
+        />
+    </dx-item>
+    <dx-item
+            data-field='typeOfTopCover'
+            editor-type='dxTextBox'
+            :editor-options="{ 
+          stylingMode: 'filled', 
+          label: 'Тип верхнего перекрытия', 
+          labelMode: 'floating' }"
+    >
+        <dx-label
+                :visible="false"
+        />
+    </dx-item>
+    <dx-item
+            data-field='placeOfCommunicationCloset'
+            editor-type='dxTextBox'
+            :editor-options="{ 
+        stylingMode: 'filled', 
+        label: 'Телекоммуникационные шкафы (стойки) с сетевым оборудованием планируется разместить:', 
+        labelMode: 'floating' }"
+    >
+        <dx-label
+                :visible="false"
+        />
+    </dx-item>
+    <dx-item
+            data-field='hasTechnicalLevel '
+            editor-type='dxCheckBox'
+            :editor-options="{
+      value: null,
+      stylingMode: 'filled', 
+      label: 'Наличие в здании, где размещается антенна РЭС технического этажа', 
+      labelMode: 'floating' }"
+    >
+        <dx-label
+                :visible="false"
+        />
+    </dx-item>
+    <dx-item
+            data-field='hasOtherRto '
+            editor-type='dxCheckBox'
+            :editor-options="{
+    value: null,
+    stylingMode: 'filled', 
+    label: 'Наличие других передающих средств на крыше здания или радиомачте', 
+    labelMode: 'floating' }"
+    >
+        <dx-label
+                :visible="false"
+        />
+    </dx-item>
     <dx-button-item>
       <dx-button-options
           width="100%"
@@ -109,6 +219,7 @@ import townService from "@/api/townService";
 import projectService from "@/api/projectService";
 import {useRoute, useRouter} from "vue-router";
 import notify from "devextreme/ui/notify";
+import {DxColumn} from "devextreme-vue/data-grid";
 
 const props = defineProps({
     onSaveProject: Function,
