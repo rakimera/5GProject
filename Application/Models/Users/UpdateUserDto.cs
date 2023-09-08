@@ -26,5 +26,5 @@ public class UpdateUserDto
     public string? Patronymic { get; set; }
     
     [property: JsonPropertyName("phoneNumber")]
-    public string? PhoneNumber { get; set; }
+    public required string PhoneNumber { get; set; }
 }

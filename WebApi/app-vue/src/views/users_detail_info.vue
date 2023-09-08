@@ -62,6 +62,35 @@
               message="Нельзя использовать цифры в фамилии"
           />
         </dx-simple-item>
+        <dx-simple-item
+                data-field="patronymic"
+                :editor-options="{ stylingMode: 'filled', placeholder: 'Отчество' }"
+        >
+            <dx-label :text="'Отчество'"/>
+            <dx-string-length-rule
+                    :min="2"
+                    message="Отчество не может содержать менее 2 символов"
+            />
+            <dx-pattern-rule
+                    :pattern="namePattern"
+                    message="Нельзя использовать цифры в отчестве"
+            />
+        </dx-simple-item>
+        <dx-simple-item
+                data-field="phoneNumber"
+                :editor-options="{ 
+            stylingMode: 'filled', 
+            placeholder: 'Номер тел.',
+           maskRules: phoneRules, 
+            mask:'+7 (000) 000-0000'}"
+        >
+            <dx-label :text="'Номер телефона'"/>
+            <dx-required-rule message="Пожалуйста, введите номер телефона"/>
+            <dx-pattern-rule
+                    :pattern="phonePattern"
+                    message="Введи корректный формат телефона"
+            />
+        </dx-simple-item>
         <dx-simple-item data-field="roles" :editor-options="{ stylingMode: 'filled' }">
           <dx-label :text="'Роли'"/>
           <dx-tag-box
@@ -75,7 +104,6 @@
               :read-only="isFormDisabled && !isEditMode"
           />
         </dx-simple-item>
-
         <dx-simple-item data-field="ExecutiveCompanyId">
           <dx-label :text="'Компания'"/>
           <dx-select-box
@@ -89,7 +117,6 @@
               :read-only="isFormDisabled && !isEditMode"
           />
         </dx-simple-item>
-
         <dx-button-item>
           <dx-button-options
               width="100%"
@@ -155,6 +182,10 @@ const passwordPattern = ref(
 const roleOptions = ref([]);
 const isEditMode = ref(false);
 const executiveCompanies = ref([]);
+const phoneRules = ref({
+    X: /[02-9]/,
+});
+const phonePattern = ref(/^[02-9]\d{9}$/);
 
 onBeforeMount(async () => {
   const roleResponse = await roleService.getRoles();
