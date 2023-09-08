@@ -23,6 +23,7 @@ public class ServiceWrapper : IServiceWrapper
     private readonly Lazy<IRadiationZoneService> _radiationZoneService;
     private readonly Lazy<IProjectAntennaService> _projectAntennaService;
     private readonly Lazy<IAntennaTranslatorService> _antennaTranslatorService;
+    private readonly Lazy<IProjectImageService> _projectImageService;
 
     public ServiceWrapper(
         IRepositoryWrapper repository,
@@ -61,10 +62,12 @@ public class ServiceWrapper : IServiceWrapper
             new Lazy<IEnergyFlowService>(() => new EnergyFlowService(energyResultValidator, mapper, repository));
         _radiationZoneService =
             new Lazy<IRadiationZoneService>(() => new RadiationZoneService(repository, mapper, radiationZoneValidator));
+        _projectImageService = new Lazy<IProjectImageService>(() => new ProjectImageService(repository, mapper));
     }
         
 
     public IUserService UserService => _userService.Value;
+    public IProjectImageService ProjectImageService => _projectImageService.Value;
     public IProjectAntennaService ProjectAntennaService => _projectAntennaService.Value;
     public IProjectService ProjectService => _projectService.Value;
     public ITokenService TokenService => _tokenService.Value;
