@@ -9,6 +9,7 @@ namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/users")]
+[Authorize]
 public class AccountController : Controller
 {
     private readonly IServiceWrapper _service;
@@ -20,7 +21,6 @@ public class AccountController : Controller
         _mapper = mapper;
     }
     
-    // [HttpGet, Authorize(Roles = "Admin")]
     [HttpGet]
     public IActionResult Get()
     {
@@ -29,7 +29,6 @@ public class AccountController : Controller
             return Ok(baseResponse);
         return NotFound(baseResponse);
     }
-
 
     [HttpGet("{oid}")]
     public async Task<IActionResult> Get(string oid)
@@ -69,7 +68,6 @@ public class AccountController : Controller
         return NotFound(baseResponse);
     }
     
-    // [HttpGet("index"), Authorize(Roles = "Admin")]
     [HttpGet("index")]
     public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
     {

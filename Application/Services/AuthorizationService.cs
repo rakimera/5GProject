@@ -5,6 +5,7 @@ using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
 using Application.Models;
 using Domain.Entities;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace Application.Services;
 
@@ -30,13 +31,29 @@ public class AuthorizationService : IAuthorizationService
         }
 
         var user = await _repositoryWrapper.UserRepository.GetByCondition
-            (x => x.Login == loginModel.Login && x.Password == loginModel.Password);
+            (x => x.Login == loginModel.Login);
+
         if (user is null)
             return new BaseResponse<TokenDto>(
                 Result: null,
                 Messages: new List<string> { "Такого пользователя не существует" },
                 Success: false);
-        
+
+        string enteredHashedPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+            password: loginModel.Password,
+            salt: user.Salt,
+            prf: KeyDerivationPrf.HMACSHA256,
+            iterationCount: 100000,
+            numBytesRequested: 256 / 8));
+
+        if (enteredHashedPassword != user.PasswordHash)
+        {
+            return new BaseResponse<TokenDto>(
+                Result: null,
+                Messages: new List<string> { "Неправильный пароль" },
+                Success: false);
+        }
+
         var roles = _repositoryWrapper.UserRoleRepository.GetAllByCondition(x => x.UserId == user.Id);
         if (roles != null)
         {
@@ -68,7 +85,7 @@ public class AuthorizationService : IAuthorizationService
                 Messages: new List<string> { "Пользователь успешно авторизован" },
                 Success: true);
         }
-        
+
         return new BaseResponse<TokenDto>(
             Result: null,
             Messages: new List<string> { "Ошибка доступа, права пользователя не найдены" },
