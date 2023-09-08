@@ -212,4 +212,49 @@ public class UserService : IUserService
             });
         }
     }
+
+    public async Task<BaseResponse<UserDto>> GetCurrentUser(string? login)
+    {
+        if (login == null)
+        {
+            return new BaseResponse<UserDto>(
+                Result: null,
+                Success: false,
+                Messages: new List<string> { "Пользователь не найден" });
+        }
+
+        var user = await _repositoryWrapper.UserRepository.GetByCondition(x => Equals(x.Login, login));
+        if (user == null)
+        {
+            return new BaseResponse<UserDto>(
+                Result: null,
+                Success: false,
+                Messages: new List<string> { "Пользователь не найден" });
+        }
+        
+        var userDto = _mapper.Map<UserDto>(user);
+        
+        userDto.Roles = new List<string>();
+        userDto.Roles = _repositoryWrapper.UserRoleRepository
+            .GetAll()
+            .Where(userRole => userRole.UserId == user.Id)
+            .Select(userRole => userRole.Role.RoleName)
+            .ToList();
+
+        var executiveCompany = _repositoryWrapper.ExecutiveCompanyRepository
+            .GetByCondition(x => x.Id == user.ExecutiveCompanyId).Result;
+        if (executiveCompany != null)
+            userDto.ExecutiveCompanyName = executiveCompany.CompanyName;
+
+        if (user == null)
+            return new BaseResponse<UserDto>(
+                Result: null,
+                Success: true,
+                Messages: new List<string> { "Пользователь не найден" });
+
+        return new BaseResponse<UserDto>(
+            Result: userDto,
+            Success: true,
+            Messages: new List<string> { "Пользователь успешно найден" });
+    }
 }

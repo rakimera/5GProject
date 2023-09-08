@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApi.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/users")]
 public class AccountController : Controller
 {
@@ -19,7 +20,7 @@ public class AccountController : Controller
         _service = service;
         _mapper = mapper;
     }
-    
+
     // [HttpGet, Authorize(Roles = "Admin")]
     [HttpGet]
     public IActionResult Get()
@@ -45,7 +46,7 @@ public class AccountController : Controller
     {
         UserDto userDto = _mapper.Map<UserDto>(model);
         var baseResponse = await _service.UserService.CreateAsync(userDto, User.Identity.Name);
-        
+
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);
@@ -68,12 +69,21 @@ public class AccountController : Controller
             return Ok(baseResponse);
         return NotFound(baseResponse);
     }
-    
+
     // [HttpGet("index"), Authorize(Roles = "Admin")]
     [HttpGet("index")]
-    public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
+    public async Task<IActionResult> Get([FromQuery] DataSourceLoadOptionsBase loadOptions)
     {
         var loadResult = await _service.UserService.GetLoadResult(loadOptions);
         return Ok(loadResult);
+    }
+
+    [HttpGet("current-user")]
+    public async Task<IActionResult> GetCurrentUserData()
+    {
+        var baseResponse = await _service.UserService.GetCurrentUser(User.Identity.Name);
+        if (baseResponse.Success)
+            return Ok(baseResponse);
+        return NotFound(baseResponse);
     }
 }
