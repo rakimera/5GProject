@@ -22,6 +22,7 @@ public class UserDto : BaseEntity
     
     [property: JsonPropertyName("executiveCompanyId")]
     public Guid? ExecutiveCompanyId { get; set; }
+    public string ExecutiveCompanyName { get; set; }
     
     [property: JsonPropertyName("patronymic")]
     public string? Patronymic { get; set; }
