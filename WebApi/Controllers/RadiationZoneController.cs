@@ -1,49 +1,51 @@
 using Application.Interfaces;
-using Application.Models.Users;
+using Application.Models.RadiationZone;
 using AutoMapper;
-using DevExtreme.AspNet.Data;
-using Microsoft.AspNetCore.Authorization;
+using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
 
 [ApiController]
-[Route("api/users")]
-[Authorize]
-public class AccountController : Controller
+[Route("api/radiationZones")]
+public class RadiationZoneController : Controller
 {
     private readonly IServiceWrapper _service;
     private readonly IMapper _mapper;
 
-    public AccountController(IServiceWrapper service, IMapper mapper)
+    public RadiationZoneController(
+        IServiceWrapper service, 
+        IMapper mapper)
     {
         _service = service;
         _mapper = mapper;
     }
     
-    [HttpGet]
+    // [HttpGet, Authorize(Roles = "Admin")]
+    [HttpGet,]
     public IActionResult Get()
     {
-        var baseResponse = _service.UserService.GetAll();
+        var baseResponse = _service.RadiationZoneService.GetAll();
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
     }
-
+    
+    
     [HttpGet("{oid}")]
     public async Task<IActionResult> Get(string oid)
     {
-        var baseResponse = await _service.UserService.GetByOid(oid);
+        var baseResponse = await _service.RadiationZoneService.GetByOid(oid);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(CreateUserDto model)
+    public async Task<IActionResult> Post(CreateRadiationZoneDto model)
     {
-        UserDto userDto = _mapper.Map<UserDto>(model);
-        var baseResponse = await _service.UserService.CreateAsync(userDto, User.Identity.Name);
+        RadiationZoneDto radiationZoneDto = _mapper.Map<RadiationZoneDto>(model);
+        var baseResponse = await _service.RadiationZoneService.CreateAsync(radiationZoneDto, User.Identity.Name);
         
         if (baseResponse.Success)
             return Ok(baseResponse);
@@ -51,27 +53,20 @@ public class AccountController : Controller
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put(UpdateUserDto model)
+    public async Task<IActionResult> Put(UpdateRadiationZoneDto model)
     {
-        var baseResponse = await _service.UserService.UpdateUser(model);
+        var baseResponse = await _service.RadiationZoneService.Update(model);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);
     }
-
+        
     [HttpDelete("{oid}")]
     public async Task<IActionResult> Delete(string oid)
     {
-        var baseResponse = await _service.UserService.Delete(oid);
+        var baseResponse = await _service.RadiationZoneService.Delete(oid);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
-    }
-    
-    [HttpGet("index")]
-    public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
-    {
-        var loadResult = await _service.UserService.GetLoadResult(loadOptions);
-        return Ok(loadResult);
     }
 }
