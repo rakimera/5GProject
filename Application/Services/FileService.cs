@@ -197,6 +197,12 @@ public class FileService : IFileService
             Document document = wordProcessor.Document;
             document.ReplaceAll("ContrAgent", $"{contrAgent.CompanyName}", SearchOptions.WholeWord);
             document.ReplaceAll("ExecutiveCompanyName", $"{executiveCompany.CompanyName}", SearchOptions.WholeWord);
+            document.ReplaceAll("ExecutiveCompanyBIN", $"{executiveCompany.BIN}", SearchOptions.WholeWord);
+            document.ReplaceAll("ProjectAddress", $"{project.Address}", SearchOptions.WholeWord);
+            document.ReplaceAll("ExecutiveCompanyAddress", $"{executiveCompany.Address}", SearchOptions.WholeWord);
+            document.ReplaceAll("ExecutorFIO", $"{executor.Surname} {executor.Name}", SearchOptions.WholeWord);
+            document.ReplaceAll("ExecutorEmail", $"{executor.Login}", SearchOptions.WholeWord);
+            document.ReplaceAll("License", $"{executiveCompany.LicenseNumber} от {executiveCompany.LicenseDateOfIssue} г.", SearchOptions.WholeWord);
             document.ReplaceAll("ProjectNumber", $"{project.ProjectNumber}", SearchOptions.WholeWord);
             document.ReplaceAll("ContrAgentPhone", $"{contrAgent.PhoneNumber}", SearchOptions.WholeWord);
             document.ReplaceAll("ContrAgentBIN", $"{contrAgent.BIN}", SearchOptions.WholeWord);
@@ -208,14 +214,29 @@ public class FileService : IFileService
             
             var projectAntennae = _repositoryWrapper.ProjectAntennaRepository
                 .GetAllByCondition(x=> x.ProjectId == project.Id).ToList();
-            
+
+            var textAntennae = "";
+            var gain = "";
+            var power = "";
+            var height = "";
+            var frequency = "";
+            var powerList = new List<string>();
+            var gainList = new List<string>();
+            var heightList = new List<string>();
+            var frequencyList = new List<string>();
             for (int l = 0; l < projectAntennae.Count; l++)
             {
+                
                 var antennaTranslators = _repositoryWrapper.AntennaTranslatorRepository
                     .GetAllByCondition(x => x.ProjectAntennaId == projectAntennae[l].Id).ToList();
                 var number = 1;
+                powerList.AddRange(antennaTranslators.Select(antennaTranslator => antennaTranslator.Power.ToString()));
+                gainList.AddRange(antennaTranslators.Select(antennaTranslator => antennaTranslator.Gain.ToString()));
+                heightList.AddRange(antennaTranslators.Select(antennaTranslator => antennaTranslator.ProjectAntenna.Height.ToString()));
+                frequencyList.AddRange(antennaTranslators.Select(antennaTranslator => antennaTranslator.TranslatorSpecs.Frequency.ToString()));
                 foreach (var antennaTranslator in antennaTranslators)
                 {
+                    document.ReplaceAll("ContrAgent", $"{contrAgent.CompanyName}", SearchOptions.WholeWord);
                     antennaTranslator.TranslatorType = await _repositoryWrapper.TranslatorTypeRepository
                         .GetByCondition(x => x.Id == antennaTranslator.TranslatorTypeId);
                     var bioHorizontal = _repositoryWrapper.BiohazardRadiusRepository.GetAllByCondition(x =>
@@ -389,11 +410,11 @@ public class FileService : IFileService
                     document.InsertText(secondSection.Range.End,"\nРасчеты размеров БОЗ в вертикальной и горизонтальной плоскостях:\n" +
                                                                 "Биологически-опасная зона антенны повторяет форму диаграммы направленности в горизонтальной и вертикальной плоскости.\n" +
                                                                 "Максимальный радиус биологически опасной зоны, Rб, м, в направлении излучения определяется по формуле:\n" +
-                                                                "Rб = [(8*P* G( 𝜽𝜽 )*K* η)/ Ппду]^0,5 * F( 𝜽𝜽 ) * F( 𝝋𝝋 )\n" +
-                                                                "Для определения максимального радиуса БОЗ примем F(𝜃𝜃)=1 и F(𝜑𝜑)=1:\n" +
+                                                                "Rб = [(8*P* G( 𝜽 )*K* η)/ Ппду]^0,5 * F( 𝜽 ) * F( 𝝋 )\n" +
+                                                                "Для определения максимального радиуса БОЗ примем F(𝜃)=1 и F(𝜑)=1:\n" +
                                                                 $"Максимальный радиус БОЗ составляет Rmax= {maxRadius} м.\n" +
                                                                 "Форму поперечного сечения биологически опасной зоны рассчитаем при помощи формул:\n" +
-                                                                "Rz=Rmax•sin 𝝋𝝋, Rx=Rmax•cos 𝝋𝝋.                                        Rz=Rmax•sin 𝜃𝜃, Rx=Rmax•cos 𝜃𝜃 \n" +
+                                                                "Rz=Rmax•sin 𝝋, Rx=Rmax•cos 𝝋.                                        Rz=Rmax•sin 𝜃, Rx=Rmax•cos 𝜃 \n" +
                                                                 "для горизонтальной плоскости                                               " +
                                                                 "для вертикальной плоскости \n" +
                                                                 "Значение Rz указывает на отклонение БОЗ от оси излучения антенны," +
@@ -407,8 +428,18 @@ public class FileService : IFileService
                     number++;
                 }
 
+                gain = string.Join(";", gainList);
+                power = string.Join(";", powerList);
+                frequency = string.Join(";", frequencyList);
+                height = string.Join(";", heightList);
+                var sector = string.Join(",", Enumerable.Range(1, number - 1));
+                textAntennae += $"{projectAntennae[l].Antenna.Model} (сектор {sector} – {antennaTranslators.Count} шт.)";
             }
-
+            document.ReplaceAll("AntennaePower", $"{power}", SearchOptions.WholeWord);
+            document.ReplaceAll("AntennaeHeight", $"{height}", SearchOptions.WholeWord);
+            document.ReplaceAll("AntennaeFrequency", $"{frequency}", SearchOptions.WholeWord);
+            document.ReplaceAll("AntennaeGain", $"{gain}", SearchOptions.WholeWord);
+            document.ReplaceAll("Anntennae", $"{textAntennae}", SearchOptions.WholeWord);
             // document.AppendSection();
             // document.Unit = DevExpress.Office.DocumentUnit.Inch;
             // Shape picture = document.Shapes.InsertPicture(document.Range.End, DocumentImageSource.FromFile("image.jpg"));
