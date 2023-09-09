@@ -53,7 +53,7 @@ public class AccountController : Controller
     [HttpPut]
     public async Task<IActionResult> Put(UpdateUserDto model)
     {
-        var baseResponse = await _service.UserService.UpdateUser(model);
+        var baseResponse = await _service.UserService.UpdateUser(model, User.Identity.Name);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);

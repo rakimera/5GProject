@@ -27,4 +27,7 @@ public class UpdateUserDto
     
     [property: JsonPropertyName("phoneNumber")]
     public required string PhoneNumber { get; set; }
+    
+    [property: JsonPropertyName("password")]
+    public string? Password { get; set; }
 }

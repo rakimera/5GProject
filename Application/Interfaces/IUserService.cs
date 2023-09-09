@@ -10,7 +10,8 @@ namespace Application.Interfaces;
 public interface IUserService : ICrudService<UserDto>
 {
     Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions);
-    Task<BaseResponse<UserDto>> UpdateUser(UpdateUserDto model);
+    Task<BaseResponse<UserDto>> UpdateUser(UpdateUserDto model, string lastModifiedBy);
+    string CreatePassword(string password, byte[] salt);
     BaseResponse<List<Role>> GetRoles();
     Task<BaseResponse<UserDto>> GetCurrentUser(string? login);
 }

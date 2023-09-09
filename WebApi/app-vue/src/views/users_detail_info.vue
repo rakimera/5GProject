@@ -20,17 +20,16 @@
           <dx-email-rule message="Пожалуйста, введите корректный email"/>
         </dx-simple-item>
         <dx-simple-item
-            v-if="mode === 'create'"
             data-field="password"
             editor-type="dxTextBox"
             :editor-options="{ stylingMode: 'filled', placeholder: 'Пароль', mode: 'password' }"
         >
           <dx-label :text="'Пароль'"/>
-          <dx-required-rule message="Пожалуйста, введите пароль"/>
-          <dx-pattern-rule
-              :pattern="passwordPattern"
-              message="Пароль должен содержать минимум 8 символов, включая строчную букву, заглавную букву, цифру и специальный символ"
-          />
+            <dx-pattern-rule
+                    :pattern="passwordPattern"
+                    :ignoreEmptyValue="mode !== 'create'"
+                    message="Требует наличие минимум одной: строчной буквы, прописной буквы, цифры, спецсимвол (@, $, !, %, *, ?, &), длинна пароля не менее 8 символов и не более 30"
+            />
         </dx-simple-item>
         <dx-simple-item
             data-field="name"
@@ -98,8 +97,9 @@
               :show-drop-down-button="false"
               :apply-value-mode="'useButtons'"
               :read-only="isFormDisabled && !isEditMode"
-          />
-          <dx-required-rule message="Пожалуйста, введите роль(ли)"/>
+              validationMessageMode="always"
+          >
+          </dx-tag-box>
         </dx-simple-item>
         <dx-simple-item 
             data-field="executiveCompanyId"
@@ -143,14 +143,14 @@
 </template>
 <script setup>
 import {
-  DxForm,
-  DxSimpleItem,
-  DxRequiredRule,
-  DxEmailRule,
-  DxButtonItem,
-  DxButtonOptions,
-  DxStringLengthRule,
-  DxPatternRule, DxLabel
+    DxForm,
+    DxSimpleItem,
+    DxRequiredRule,
+    DxEmailRule,
+    DxButtonItem,
+    DxButtonOptions,
+    DxStringLengthRule,
+    DxPatternRule, DxLabel
 } from "devextreme-vue/form";
 import {onBeforeMount, reactive, ref} from "vue";
 import userService from "@/api/userService";
@@ -172,7 +172,7 @@ const created = ref(false);
 const formRef = ref(null);
 const namePattern = ref("^[a-zA-Zа-яА-Я]+$")
 const passwordPattern = ref(
-    "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
+      "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,30}$"
 );
 const roleOptions = ref([]);
 const isEditMode = ref(false);

@@ -17,12 +17,14 @@ public class UserService : IUserService
     private readonly IRepositoryWrapper _repositoryWrapper;
     private readonly IMapper _mapper;
     private readonly UserValidator _userValidator;
+    private readonly UpdateUserValidator _updateUserValidator;
 
-    public UserService(IRepositoryWrapper repositoryWrapper, IMapper mapper, UserValidator userValidator)
+    public UserService(IRepositoryWrapper repositoryWrapper, IMapper mapper, UserValidator userValidator, UpdateUserValidator updateUserValidator)
     {
         _repositoryWrapper = repositoryWrapper;
         _mapper = mapper;
         _userValidator = userValidator;
+        _updateUserValidator = updateUserValidator;
     }
 
     public BaseResponse<IEnumerable<UserDto>> GetAll()
@@ -51,6 +53,17 @@ public class UserService : IUserService
         return await DataSourceLoader.LoadAsync(queryableUsers, loadOptions);
     }
 
+    public string CreatePassword(string password, byte[] salt)
+    {
+        string passwordHash = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+            password: password,
+            salt: salt,
+            prf: KeyDerivationPrf.HMACSHA256,
+            iterationCount: 100000,
+            numBytesRequested: 256 / 8));
+        return passwordHash;
+    }
+
     public async Task<BaseResponse<string>> CreateAsync(UserDto model, string creator)
     {
         var result = await _userValidator.ValidateAsync(model);
@@ -58,14 +71,7 @@ public class UserService : IUserService
         if (result.IsValid)
         {
             byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
-            Console.WriteLine($"Salt: {Convert.ToBase64String(salt)}");
-
-            string passwordHash = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: model.Password,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 100000,
-                numBytesRequested: 256 / 8));
+            string passwordHash = CreatePassword(model.Password, salt);
 
             model.CreatedBy = creator;
             User user = _mapper.Map<User>(model);
@@ -117,34 +123,9 @@ public class UserService : IUserService
             Messages: new List<string> { "Пользователь успешно найден" });
     }
 
-    public async Task<BaseResponse<UserDto>> UpdateUser(UpdateUserDto model)
+    public async Task<BaseResponse<UserDto>> UpdateUser(UpdateUserDto model, string lastModifiedBy)
     {
-        BaseResponse<UserDto> getUserResponse = await GetByOid(model.Id);
-        if (!getUserResponse.Success || getUserResponse.Result == null)
-        {
-            return new BaseResponse<UserDto>(
-                Result: null,
-                Messages: new List<string> { "Пользователь не найден" },
-                Success: false);
-        }
-
-        UserDto existingUserDto = getUserResponse.Result;
-        _mapper.Map(model, existingUserDto);
-
-        User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.Equals(existingUserDto.Id));
-        if (user == null)
-        {
-            return new BaseResponse<UserDto>(
-                Result: null,
-                Messages: new List<string> { "Пользователь не найден" },
-                Success: false);
-        }
-
-        _mapper.Map(existingUserDto, user);
-        user.LastModifiedBy = "Admin";
-        
-        var userDto = _mapper.Map<UserDto>(user);
-        var result = await _userValidator.ValidateAsync(userDto);
+        var result = await _updateUserValidator.ValidateAsync(model);
         if (!result.IsValid)
         {
             return new BaseResponse<UserDto>(
@@ -153,12 +134,33 @@ public class UserService : IUserService
                 Success: false);
         }
 
+        User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.ToString() == model.Id);
+        if (user == null)
+        {
+            return new BaseResponse<UserDto>(
+                Result: null,
+                Messages: new List<string> { "Пользователь не найден" },
+                Success: false);
+        }
+
+        _mapper.Map(model, user);
+        
+        if (!string.IsNullOrEmpty(model.Password))
+        {
+            byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
+            user.PasswordHash = CreatePassword(user.PasswordHash, salt);
+            user.Salt = salt;
+        }
+
+        user.LastModifiedBy = lastModifiedBy;
+
         _repositoryWrapper.UserRepository.Update(user);
-        await AssignRolesToUser(existingUserDto, user);
+        UserDto userDto = _mapper.Map<UserDto>(model);
+        await AssignRolesToUser(userDto, user);
         await _repositoryWrapper.Save();
 
         return new BaseResponse<UserDto>(
-            Result: existingUserDto,
+            Result: userDto,
             Success: true,
             Messages: new List<string> { "Пользователь успешно изменен" });
     }
