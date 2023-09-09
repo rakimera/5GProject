@@ -1,9 +1,12 @@
 <template>
-    <div class="container">
+    <div class="row justify-content-center mt-5">
+    <div class="col-11 ">
         <dx-data-grid
             :data-source="dataSource"
             :show-borders="true"
             :remote-operations="false"
+            :columnAutoWidth="true"    
+            :allowColumnResizing="true"
             key-expr="ID"
             @row-click="onRowClick"
         >
@@ -64,15 +67,15 @@
             />
             <dx-header-filter :visible="true"/>
         </dx-data-grid>
-    </div>
         <dx-button
-            class="button"
+            class="button mt-3"
             text="Создать"
             type="success"
             :use-submit-behavior="true"
             :on-click="onCreateProjectClick"
         />
-    
+    </div>
+    </div>
 </template>
 <script setup>
 import {
@@ -126,12 +129,5 @@ const onCreateProjectClick = async () => {
 .dx-datagrid .dx-row:hover {
     background-color: #f2f2f2;
     cursor: pointer;
-}
-.container {
-    margin: 50px 50px auto;
-}
-.button{
-    margin-left: 50px;
-    margin-top: 50px;
 }
 </style>
