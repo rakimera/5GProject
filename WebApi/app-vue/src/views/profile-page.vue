@@ -55,6 +55,10 @@ const formItems = ref([
     label: {text: "Фамилия"},
   },
   {
+    dataField: "patronymic",
+    label: {text: "Отчество"},
+  },
+  {
     dataField: "login",
     label: {text: "Логин"},
   },

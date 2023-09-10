@@ -168,7 +168,7 @@ let oid = route.params.id;
 const mode = route.params.mode;
 const pageDescription = ref("Подробно о компании");
 const binPattern = ref("^[0-9]")
-const stringPattern = ref("^[a-zA-Zа-яА-Я]+$")
+const stringPattern = ref("^[a-zA-Zа-яА-ЯЁё]+$")
 const formRef = ref(null);
 const towns = ref([]);
 

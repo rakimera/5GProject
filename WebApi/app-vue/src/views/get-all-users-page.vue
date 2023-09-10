@@ -18,6 +18,7 @@
         <dx-column data-field="login" data-type="string" caption="Логин"/>
         <dx-column data-field="name" data-type="string" caption="Имя"/>
         <dx-column data-field="surname" data-type="string" caption="Фамилия"/>
+        <dx-column data-field="patronymic" data-type="string" caption="Отчетсво"/>
         <dx-paging :page-size="5"/>
         <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
         <dx-editing
