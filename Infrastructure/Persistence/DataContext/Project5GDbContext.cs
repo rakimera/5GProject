@@ -49,7 +49,7 @@ public class Project5GDbContext : DbContext
         // modelBuilder.Entity<Project>().Navigation(e=> e.ProjectAntennae).AutoInclude();
         modelBuilder.Entity<Project>().Navigation(e=> e.SummaryBiohazardRadius).AutoInclude();
         modelBuilder.Entity<Project>().Navigation(e=> e.TotalFluxDensity).AutoInclude();
-        // modelBuilder.Entity<TranslatorSpecs>().Navigation(e=> e.RadiationZones).AutoInclude();
+        modelBuilder.Entity<AntennaTranslator>().Navigation(e=> e.TranslatorType).AutoInclude();
         modelBuilder.Entity<ProjectAntenna>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<ProjectAntenna>().Navigation(e=> e.Antenna).AutoInclude();
         modelBuilder.Entity<AntennaTranslator>().Navigation(e=> e.TranslatorSpecs).AutoInclude();
