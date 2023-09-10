@@ -59,6 +59,8 @@ const formItems = ref([
   {
     dataField: "roles",
     label: {text: "Роли"},
+    displayExpr: "roleName",
+    valueExpr: "roleName"  
   },
   {
     dataField: "executiveCompanyName",
@@ -85,8 +87,8 @@ const formItems = ref([
   },
 ]);
 
-onMounted(() => {
-  fetchCurrentUser();
+onMounted(async () => {
+  await fetchCurrentUser();
 });
 </script>
 
