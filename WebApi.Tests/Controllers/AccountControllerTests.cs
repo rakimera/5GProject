@@ -258,7 +258,7 @@ namespace WebApi.Tests.Controllers
                 Success: true,
                 Messages: new List<string> { "Пользователь успешно изменен" });
 
-            _userServiceMock.Setup(s => s.UpdateUser(updateUserDto)).ReturnsAsync(baseResponse);
+            _userServiceMock.Setup(s => s.UpdateUser(updateUserDto, It.IsAny<string>())).ReturnsAsync(baseResponse);
 
             _serviceWrapperMock.Setup(s => s.UserService).Returns(_userServiceMock.Object);
 
@@ -283,13 +283,12 @@ namespace WebApi.Tests.Controllers
             {
                 PhoneNumber = "7072022022"
             };
-
             var baseResponse = new BaseResponse<UserDto>(
                 Result: null,
                 Success: false,
                 Messages: new List<string> { "Ошибка при изменении пользователя" });
 
-            _userServiceMock.Setup(s => s.UpdateUser(updateUserDto)).ReturnsAsync(baseResponse);
+            _userServiceMock.Setup(s => s.UpdateUser(updateUserDto,"Admin")).ReturnsAsync(baseResponse);
 
             _serviceWrapperMock.Setup(s => s.UserService).Returns(_userServiceMock.Object);
 

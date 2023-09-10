@@ -19,9 +19,10 @@ public class UserServiceIntegrationTests
     public UserServiceIntegrationTests()
     {
         UserValidator userValidatorMock = new();
+        UpdateUserValidator updateUserValidator = new();
         _mapperMock = new Mock<IMapper>();
         _repositoryWrapperMock = new Mock<IRepositoryWrapper>();
-        _userService = new UserService(_repositoryWrapperMock.Object, _mapperMock.Object, userValidatorMock);
+        _userService = new UserService(_repositoryWrapperMock.Object, _mapperMock.Object, userValidatorMock, updateUserValidator);
     }
 
     [Fact]
@@ -299,7 +300,7 @@ public class UserServiceIntegrationTests
 
 
         // Act
-        var response = await _userService.UpdateUser(updateUserDto);
+        var response = await _userService.UpdateUser(updateUserDto, "Admin");
 
         // Assert
         _repositoryWrapperMock.Verify(r => r.UserRepository.Update(updatedUser), Times.Once);
