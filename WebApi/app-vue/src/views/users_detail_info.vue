@@ -96,8 +96,8 @@
               :show-clear-button="false"
               :show-drop-down-button="false"
               :apply-value-mode="'useButtons'"
-              :read-only="isFormDisabled && !isEditMode"
               validationMessageMode="always"
+              :read-only="isFormDisabled"
           >
           </dx-tag-box>
         </dx-simple-item>

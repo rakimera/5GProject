@@ -12,6 +12,8 @@
         >
             <DxSearchPanel
                 :visible="true"
+                placeholder="Поиск"
+                width= 250
             />
             <dx-column
                 data-field="projectNumber"
