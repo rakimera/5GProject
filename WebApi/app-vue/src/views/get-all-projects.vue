@@ -10,7 +10,7 @@
             key-expr="ID"
             @row-click="onRowClick"
         >
-            <DxSearchPanel
+            <dx-search-panel
                 :visible="true"
                 placeholder="Поиск"
                 width= 250
@@ -64,8 +64,6 @@
             <dx-editing
                 :allow-deleting="true"
                 :texts="{confirmDeleteMessage: 'Вы уверены, что хотите удалить эту запись?'}"
-            />
-
             />
             <dx-header-filter :visible="true"/>
         </dx-data-grid>
