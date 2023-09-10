@@ -81,6 +81,17 @@
                   caption="Режим работы РТО на излучение"
                   :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
                   alignment="left">
+              <dx-form-item
+                editor-type="dxSelectBox"
+                :editor-options="{
+                  placeholder: 'Выберите или режим работы РТО на излучение', 
+                  items: rtoRadiationMode, 
+                  acceptCustomValue: true,
+                  searchEnabled: true,
+                  stylingMode: 'filled', 
+                  label: 'Режим работы РТО на излучение', 
+                  labelMode: 'floating'}"
+              />
               <dx-required-rule message="Вы не запонили режим работы РТО на излучение"></dx-required-rule>
           </dx-column>
           <dx-column 
@@ -144,7 +155,10 @@ const addButton = {
     type: 'success',
     stylingMode:"contained"
 }
-
+let rtoRadiationMode = ref([
+    'постоянный',
+    'повторно-кратковременный',
+    'импульсный']);
 const store = new CustomStore({
   key: "id",
   async load(loadOptions) {
