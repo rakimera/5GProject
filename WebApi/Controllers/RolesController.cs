@@ -53,7 +53,7 @@ public class RolesController : Controller
     [HttpPut]
     public async Task<IActionResult> Put(UpdateRoleDto model)
     {
-        var baseResponse = await _service.RoleService.UpdateRole(model);
+        var baseResponse = await _service.RoleService.UpdateRole(model, User.Identity.Name);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);

@@ -6,5 +6,5 @@ namespace Application.Interfaces;
 
 public interface IRadiationZoneService : ICrudService<RadiationZoneDto>
 {
-    Task<BaseResponse<string>> Update(UpdateRadiationZoneDto model);
+    Task<BaseResponse<string>> Update(UpdateRadiationZoneDto model, string modifier);
 }

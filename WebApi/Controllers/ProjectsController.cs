@@ -60,7 +60,7 @@ public class ProjectsController : Controller
     [HttpPut]
     public async Task<IActionResult> Put(UpdateProjectDto model)
     {
-        var baseResponse = await _service.ProjectService.Update(model);
+        var baseResponse = await _service.ProjectService.Update(model, User.Identity.Name);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);
