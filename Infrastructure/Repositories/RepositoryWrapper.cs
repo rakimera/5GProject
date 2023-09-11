@@ -19,6 +19,7 @@ public class RepositoryWrapper : IRepositoryWrapper
     private IAntennaRepository _antennaRepository;
     private IEnergyFlowRepository _energyFlowRepository;
     private IRadiationZoneRepository _radiationZoneRepository;
+    private IRadiationZoneExelFileRepository _exelFileRepository;
     private IAntennaTranslatorRepository _antennaTranslatorRepository;
     private IExecutiveCompanyRepository _executiveCompanyRepository;
     private IBiohazardRadiusRepository _biohazardRadiusRepository;
@@ -306,6 +307,19 @@ public class RepositoryWrapper : IRepositoryWrapper
             }
 
             return _energyFlowRepository;
+        }
+    }
+    
+    public IRadiationZoneExelFileRepository RadiationZoneExelFileRepository
+    {
+        get
+        {
+            if (_exelFileRepository == null)
+            {
+                _exelFileRepository = new RadiationZoneExelFileRepository(_db);
+            }
+
+            return _exelFileRepository;
         }
     }
 

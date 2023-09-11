@@ -1,5 +1,4 @@
 using Application.DataObjects;
-using DevExpress.XtraRichEdit.API.Native;
 using Domain.Entities;
 using Domain.Enums;
 

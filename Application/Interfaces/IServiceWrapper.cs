@@ -16,6 +16,7 @@ public interface IServiceWrapper
     IEnergyFlowService EnergyFlowService { get; }
     IRoleService RoleService { get; }
     IRadiationZoneService RadiationZoneService { get; }
+    IRadiationZoneExelFileService RadiationZoneExelFileService{ get; }
     IExecutiveCompanyService ExecutiveCompanyService { get; }
     IAntennaTranslatorService AntennaTranslatorService { get; }
     ITranslatorTypeService TranslatorTypeService { get; }

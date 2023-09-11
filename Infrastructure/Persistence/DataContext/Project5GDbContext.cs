@@ -1,4 +1,3 @@
-using Application.Models.ContrAgents;
 using Domain.Common;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +27,7 @@ public class Project5GDbContext : DbContext
     public DbSet<BiohazardRadius> BiohazardRadii { get; set; }
     public DbSet<SummaryBiohazardRadius> SummaryBiohazardRadii { get; set; }
     public DbSet<TranslatorType> TranslatorTypes { get; set; }
+    public DbSet<RadiationZoneExelFile> RadiationZoneExelFiles { get; set; }
 
     public Project5GDbContext(DbContextOptions<Project5GDbContext> options) : base(options) {}
 
@@ -59,6 +59,7 @@ public class Project5GDbContext : DbContext
         modelBuilder.Entity<EnergyResult>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<ExecutiveCompany>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<RadiationZone>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.Entity<RadiationZoneExelFile>().Navigation(e=> e.translatorSpec).AutoInclude();
         modelBuilder.Entity<SanPinDock>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<TotalFluxDensity>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<UserRole>().HasQueryFilter(x => x.IsDelete == false);
