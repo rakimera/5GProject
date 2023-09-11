@@ -131,11 +131,11 @@ public class ProjectImageService : IProjectImageService
         IQueryable<ProjectImage>? projects = _repositoryWrapper.ProjectImageRepository.GetAllByCondition(x => x.ProjectId.ToString() == id);
         List<ProjectImageDto> model = _mapper.Map<List<ProjectImageDto>>(projects);
 
-        if (projects is null)
+        if (model.Count == 0)
             return new BaseResponse<List<ProjectImageDto>>(
-                Result: null,
+                Result: model,
                 Messages: new List<string> { "Фото проекта не найдены" },
-                Success: true);
+                Success: false);
         return new BaseResponse<List<ProjectImageDto>>(
             Result: model,
             Success: true,

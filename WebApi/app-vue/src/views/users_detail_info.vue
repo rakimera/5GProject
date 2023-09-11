@@ -13,18 +13,19 @@
       >
         <dx-simple-item
             data-field="login"
-            :editor-options="{ stylingMode: 'filled', placeholder: 'Логин' }"
+            data-type="string"
+            :editor-options="{ stylingMode: 'filled', labelMode: 'floating'}"
         >
-          <dx-label :text="'Логин'"/>
+          <dx-label :visible="false" text="Логин"/>
           <dx-required-rule message="Пожалуйста, введите email"/>
           <dx-email-rule message="Пожалуйста, введите корректный email"/>
         </dx-simple-item>
         <dx-simple-item
             data-field="password"
             editor-type="dxTextBox"
-            :editor-options="{ stylingMode: 'filled', placeholder: 'Пароль', mode: 'password' }"
+            :editor-options="{ stylingMode: 'filled',  labelMode: 'floating', mode: 'password' }"
         >
-          <dx-label :text="'Пароль'"/>
+          <dx-label :visible="false" text="Пароль"/>
             <dx-pattern-rule
                     :pattern="passwordPattern"
                     :ignoreEmptyValue="mode !== 'create'"
@@ -33,9 +34,9 @@
         </dx-simple-item>
         <dx-simple-item
             data-field="name"
-            :editor-options="{ stylingMode: 'filled', placeholder: 'Имя' }"
+            :editor-options="{ stylingMode: 'filled', labelMode: 'floating' }"
         >
-          <dx-label :text="'Имя'"/>
+          <dx-label :visible="false" text='Имя'/>
           <dx-required-rule message="Пожалуйста, введите имя"/>
           <dx-string-length-rule
               :min=2
@@ -48,9 +49,9 @@
         </dx-simple-item>
         <dx-simple-item
             data-field="surname"
-            :editor-options="{ stylingMode: 'filled', placeholder: 'Фамилия' }"
+            :editor-options="{ stylingMode: 'filled',  labelMode: 'floating' }"
         >
-          <dx-label :text="'Фамилия'"/>
+          <dx-label :visible="false" text='Фамилия'/>
           <dx-required-rule message="Пожалуйста, введите фамилию"/>
           <dx-string-length-rule
               :min="2"
@@ -63,9 +64,9 @@
         </dx-simple-item>
         <dx-simple-item
                 data-field="patronymic"
-                :editor-options="{ stylingMode: 'filled', placeholder: 'Отчество' }"
+                :editor-options="{ stylingMode: 'filled', labelMode: 'floating' }"
         >
-            <dx-label :text="'Отчество'"/>
+            <dx-label :visible="false" text='Отчество'/>
             <dx-pattern-rule
                     :pattern="namePattern"
                     message="Нельзя использовать цифры в отчестве"
@@ -75,20 +76,22 @@
                 data-field="phoneNumber"
                 :editor-options="{ 
             stylingMode: 'filled', 
-            placeholder: 'Номер тел.',
+            labelMode: 'floating',
             maskRules: phoneRules, 
             mask:'+7 (000) 000-0000'}"
         >
-            <dx-label :text="'Номер телефона'"/>
+            <dx-label :visible="false" text='Номер телефона'/>
             <dx-required-rule message="Пожалуйста, введите номер телефона"/>
             <dx-pattern-rule
                     :pattern="phonePattern"
                     message="Введи корректный формат телефона"
             />
         </dx-simple-item>
-        <dx-simple-item data-field="roles" :editor-options="{ stylingMode: 'filled' }">
-          <dx-label :text="'Роли'"/>
+        <dx-simple-item data-field="roles" :editor-options="{ stylingMode: 'filled', labelMode: 'floating'}">
+          <dx-label :visible="false" text='Роли'/>
           <dx-tag-box
+              :editor-options="{ stylingMode: 'filled', labelMode: 'floating'}"
+              label="Роли"
               v-model="formData.roles"
               :items="roleOptions"
               display-expr="roleName"
@@ -105,12 +108,12 @@
             data-field="executiveCompanyId"
             editor-type="dxSelectBox"
             :editor-options="{ 
-                        placeholder: 'Выберите контрагента', 
+                        labelMode: 'floating', 
                         items: executiveCompanies, 
                         displayExpr: 'companyName', 
                         valueExpr: 'id'}"
             :read-only="isFormDisabled && !isEditMode">
-          <dx-label :text="'Компания'"/>
+          <dx-label :visible="false" text='Компания'/>
           <dx-required-rule message="Пожалуйста, выберите компанию"/>
         </dx-simple-item>
         <dx-button-item>

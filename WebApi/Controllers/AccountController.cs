@@ -44,10 +44,8 @@ public class AccountController : Controller
     {
         UserDto userDto = _mapper.Map<UserDto>(model);
         var baseResponse = await _service.UserService.CreateAsync(userDto, User.Identity.Name);
-
-        if (baseResponse.Success)
-            return Ok(baseResponse);
-        return BadRequest(baseResponse);
+        
+        return Ok(baseResponse);
     }
 
     [HttpPut]
