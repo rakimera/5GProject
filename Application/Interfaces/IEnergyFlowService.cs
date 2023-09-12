@@ -6,8 +6,8 @@ namespace Application.Interfaces;
 
 public interface IEnergyFlowService
 {
-    Task<BaseResponse<string>> CreateAsync(CreateEnergyResultDto createEnergyResultDto, string creator);
-    BaseResponse<List<EnergyResultDto>> GetAllByOid(string oid);
+    Task<BaseResponse<string>> CreateAsync(string projectId, string creator);
+    BaseResponse<List<EnergyResultDto>> GetAllByOid(string id);
     Task<BaseResponse<bool>> Delete(string id);
     List<CreateTotalFluxDensityDto> PowerDensitySummation(List<EnergyResult> energyResult);
 }
