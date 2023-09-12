@@ -5,7 +5,8 @@ namespace Domain.Entities;
 public class ProjectAntenna : BaseEntity
 {
     public decimal Azimuth { get; set; }
-    public decimal Height { get; set; }
+    public decimal HeightFromGroundLevel { get; set; }
+    public decimal HeightFromRoofLevel { get; set; }
     public decimal Latitude { get; set; }
     public decimal Longitude { get; set; }
     public decimal Tilt { get; set; }

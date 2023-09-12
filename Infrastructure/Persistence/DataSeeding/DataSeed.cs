@@ -2,6 +2,7 @@ using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
 using Application.Models;
 using Application.Models.Antennae;
+using Application.Models.AntennaTranslator;
 using Application.Models.ContrAgents;
 using Application.Models.ExecutiveCompany;
 using Application.Models.TranslatorSpecs;
@@ -23,20 +24,54 @@ public class DataSeed
     }
     public async Task SeedExecutiveCompany()
     {
-        ExecutiveCompanyDto company = new ExecutiveCompanyDto
+        List<ExecutiveCompany>? executiveCompany = _repositoryWrapper.ExecutiveCompanyRepository.GetAll().ToList();
+        if (executiveCompany.Count == 0)
         {
-            BIN = "123456789111",
-            Address = "Алматинская область, Алматы, 1 микр, 43",
-            CompanyName = "AlcaponeLTD",
-            LicenseNumber = "№123123132ФЫВ123123АВЫ",
-            DirectorName = "Руслан",
-            DirectorSurname = "Усачёв",
-            DirectorPatronymic = "Каирбекович",
-            LicenseDateOfIssue = DateTime.Today.AddDays(-10),
-            TownName = "Алматы"
-        };
-        await _serviceWrapper.ExecutiveCompanyService.CreateAsync(company, "Admin");
-        await _repositoryWrapper.Save();
+            ExecutiveCompanyDto company = new ExecutiveCompanyDto
+            {
+                BIN = "123456789111",
+                Address = "Алматинская область, Алматы, 1 микр, 43",
+                CompanyName = "AlcaponeLTD",
+                LicenseNumber = "№123123132ФЫВ123123АВЫ",
+                DirectorName = "Руслан",
+                DirectorSurname = "Усачёв",
+                DirectorPatronymic = "Каирбекович",
+                LicenseDateOfIssue = DateTime.Today.AddDays(-10),
+                TownName = "Алматы"
+            };
+            await _serviceWrapper.ExecutiveCompanyService.CreateAsync(company, "Admin");
+            await _repositoryWrapper.Save();
+        }
+    }
+    
+    public async Task SeedTranslatorType()
+    {
+        List<TranslatorType> translatorTypes = _repositoryWrapper.TranslatorTypeRepository.GetAll().ToList();
+        if (translatorTypes.Count == 0)
+        {
+            List<TranslatorTypeDto> translatorTypesDTO = new List<TranslatorTypeDto>
+            {
+                new TranslatorTypeDto()
+                {
+                    Type = "GSM/UMTS"
+                },
+                new TranslatorTypeDto()
+                {
+                    Type = "GSM/LTE"
+                },
+                new TranslatorTypeDto()
+                {
+                    Type = "UMTS"
+                }
+            };
+
+            foreach (var translatorType in translatorTypesDTO)
+            {
+                await _serviceWrapper.TranslatorTypeService.CreateAsync(translatorType, "Admin");
+            }
+            
+            await _repositoryWrapper.Save();
+        }
     }
     
     public async Task SeedAdmin()

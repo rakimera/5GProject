@@ -44,12 +44,20 @@
               <dx-required-rule message="Вы не запонили азимут"></dx-required-rule>
           </dx-column>
           <dx-column 
-              data-field="height" 
+              data-field="heightFromGroundLevel" 
               data-type="number" 
-              caption="Высота"
+              caption="Высота подвеса антенны от уровня земли в метрах"
               :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
               alignment="left">
-            <dx-required-rule message="Вы не запонили высоту установки антенны"></dx-required-rule>
+            <dx-required-rule message="Вы не запонили высоту подвеса антенны от уровня земли"></dx-required-rule>
+          </dx-column>
+          <dx-column 
+              data-field="heightFromRoofLevel" 
+              data-type="number" 
+              caption="Высота подвеса антенны от уровня крыши в метрах"
+              :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
+              alignment="left">
+            <dx-required-rule message="Вы не запонили высоту подвеса антенны от уровня крыши"></dx-required-rule>
           </dx-column>
           <dx-column 
               data-field="latitude" 

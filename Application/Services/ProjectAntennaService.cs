@@ -90,7 +90,7 @@ public class ProjectAntennaService : IProjectAntennaService
                 Success: false);
         }
 
-        if (projectAntenna.Height != model.Height)
+        if (projectAntenna.HeightFromGroundLevel != model.HeightFromGroundLevel)
         {
             //логика обновления просчетов EnergyResult
         }
