@@ -41,7 +41,7 @@
               :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
               alignment="left">
             <dx-label :visible="false"/>
-              <dx-required-rule message="Вы не запонели азимут"></dx-required-rule>
+              <dx-required-rule message="Вы не запонили азимут"></dx-required-rule>
           </dx-column>
           <dx-column 
               data-field="height" 
@@ -49,7 +49,7 @@
               caption="Высота"
               :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
               alignment="left">
-            <dx-required-rule message="Вы не запонели высоту установки антенны"></dx-required-rule>
+            <dx-required-rule message="Вы не запонили высоту установки антенны"></dx-required-rule>
           </dx-column>
           <dx-column 
               data-field="latitude" 
@@ -57,7 +57,7 @@
               caption="Широта"
               :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
               alignment="left">
-            <dx-required-rule message="Вы не запонели широту установки антенны"></dx-required-rule>
+            <dx-required-rule message="Вы не запонили широту установки антенны"></dx-required-rule>
           </dx-column>
           <dx-column 
               data-field="longitude" 
@@ -65,7 +65,7 @@
               caption="Долгота"
               :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
               alignment="left">
-            <dx-required-rule message="Вы не запонели долготу установки антенны"></dx-required-rule>
+            <dx-required-rule message="Вы не запонили долготу установки антенны"></dx-required-rule>
           </dx-column>
           <dx-column 
               data-field="tilt" 
@@ -73,7 +73,26 @@
               caption="Тильт"
               :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
               alignment="left">
-            <dx-required-rule message="Вы не запонели тильт антенны"></dx-required-rule>
+            <dx-required-rule message="Вы не запонили тильт антенны"></dx-required-rule>
+          </dx-column>
+          <dx-column
+                  data-field="rtoRadiationMode"
+                  data-type="string"
+                  caption="Режим работы РТО на излучение"
+                  :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
+                  alignment="left">
+              <dx-form-item
+                editor-type="dxSelectBox"
+                :editor-options="{
+                  placeholder: 'Выберите или режим работы РТО на излучение', 
+                  items: rtoRadiationMode, 
+                  acceptCustomValue: true,
+                  searchEnabled: true,
+                  stylingMode: 'filled', 
+                  label: 'Режим работы РТО на излучение', 
+                  labelMode: 'floating'}"
+              />
+              <dx-required-rule message="Вы не запонили режим работы РТО на излучение"></dx-required-rule>
           </dx-column>
           <dx-column 
               data-field="projectId" 
@@ -136,7 +155,10 @@ const addButton = {
     type: 'success',
     stylingMode:"contained"
 }
-
+let rtoRadiationMode = ref([
+    'постоянный',
+    'повторно-кратковременный',
+    'импульсный']);
 const store = new CustomStore({
   key: "id",
   async load(loadOptions) {

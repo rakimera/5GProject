@@ -31,6 +31,8 @@ public class AntennaTranslatorMapProfile : Profile
                 opt.MapFrom(src => src.TranslatorType))
             .ForMember(dest => dest.Gain, opt =>
                 opt.MapFrom(src => src.Gain))
+            .ForMember(dest => dest.Tilt, opt =>
+                opt.MapFrom(src => src.Tilt))
             .ReverseMap();
     }
 }

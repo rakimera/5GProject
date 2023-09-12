@@ -44,16 +44,14 @@ public class AccountController : Controller
     {
         UserDto userDto = _mapper.Map<UserDto>(model);
         var baseResponse = await _service.UserService.CreateAsync(userDto, User.Identity.Name);
-
-        if (baseResponse.Success)
-            return Ok(baseResponse);
-        return BadRequest(baseResponse);
+        
+        return Ok(baseResponse);
     }
 
     [HttpPut]
     public async Task<IActionResult> Put(UpdateUserDto model)
     {
-        var baseResponse = await _service.UserService.UpdateUser(model);
+        var baseResponse = await _service.UserService.UpdateUser(model, User.Identity.Name);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);

@@ -14,8 +14,8 @@
           data-field="companyName"
           :editor-options="{
                       stylingMode: 'filled',
-                      placeholder: 'Название компании'}">
-        <dx-label :text="'Название компании'"/>
+                      labelMode: 'floating'}">
+        <dx-label :visible="false" text='Название компании'/>
         <dx-required-rule message="Название компании должно быть заполнено"/>
       </dx-simple-item>
 
@@ -24,12 +24,12 @@
           editor-type="dxSelectBox"
           :editor-options="{
                       stylingMode: 'filled',
-                      placeholder: 'Выберите город',
+                      labelMode: 'floating',
                       items: towns,
                       displayExpr: 'townName',
                       valueExpr: 'townName',}"
       >
-        <dx-label :text="'Город'"/>
+        <dx-label :visible="false" text='Город'/>
         <dx-required-rule message="Вы не выбрали город"></dx-required-rule>
       </dx-simple-item>
       <dx-simple-item
@@ -37,37 +37,42 @@
           editor-type='dxTextBox'
           :editor-options="{
                       stylingMode: 'filled',
-                      placeholder: 'Район, улица, дом'}"
+                      labelMode: 'floating'}"
       >
-        <dx-label :text="'Адрес'"/>
+        <dx-label :visible="false" text='Адрес'/>
         <dx-required-rule message="Пожалуйста укажите адрес компании"/>
       </dx-simple-item>
-
       <dx-simple-item
           data-field="licenseNumber"
           :editor-options="{
                       stylingMode: 'filled',
-                      placeholder: 'Номер лицензии компании'}">
-        <dx-label :text="'Номер лицензии компании'"/>
+                      labelMode: 'floating'}">
+        <dx-label :visible="false" text='Номер лицензии компании'/>
       </dx-simple-item>
 
       <dx-simple-item
-          data-field="licenseDateOfIssue">
-        <dx-label :text="'Дата выдачи номера лицензии компании'"/>
+          data-field="licenseDateOfIssue"
+          :editor-options="{
+                      stylingMode: 'filled',
+                      labelMode: 'floating'}">
+        <dx-label :visible="false" text='Дата выдачи номера лицензии компании'/>
         <dx-date-box
+            :editor-options="{
+                      stylingMode: 'filled',
+                      labelMode: 'floating'}"
+            label="Дата выдачи номера лицензии компании"
             v-model="dataSource.licenseDateOfIssue"
             :input-attr="{ 'aria-label': 'Date' }"
             type="date"
             :read-only="isFormDisabled"
         />
       </dx-simple-item>
-
       <dx-simple-item
           data-field="bin"
           :editor-options="{
                       stylingMode: 'filled',
-                      placeholder: 'БИН'}">
-        <dx-label :text="'БИН'"/>
+                      labelMode: 'floating'}">
+        <dx-label :visible="false" text='БИН'/>
         <dx-required-rule message="БИН должнен быть заполнен"/>
         <dx-string-length-rule
             :min=12
@@ -79,7 +84,41 @@
             message="Некорректный БИН"
         />
       </dx-simple-item>
-
+      <dx-simple-item
+              data-field="directorName"
+              :editor-options="{
+                      stylingMode: 'filled',
+                      labelMode: 'floating'}">
+          <dx-label :visible="false" text='Имя директора'/>
+          <dx-required-rule message="Имя директора должно быть заполенено"/>
+          <dx-pattern-rule
+                  :pattern="stringPattern"
+                  message="Нельзя использовать цифры в имени"
+          />
+      </dx-simple-item>
+      <dx-simple-item
+              data-field="directorSurname"
+              :editor-options="{
+                      stylingMode: 'filled',
+                      labelMode: 'floating'}">
+          <dx-label :visible="false" text='Фамилия директора'/>
+          <dx-required-rule message="Фамилия директора должна быть заполенена"/>
+          <dx-pattern-rule
+                  :pattern="stringPattern"
+                  message="Нельзя использовать цифры в фамилии"
+          />
+      </dx-simple-item>
+      <dx-simple-item
+              data-field="directorPatronymic"
+              :editor-options="{
+                      stylingMode: 'filled',
+                      labelMode: 'floating'}">
+          <dx-label :visible="false" text='Отчество директора'/>
+          <dx-pattern-rule
+                  :pattern="stringPattern"
+                  message="Нельзя использовать цифры в отчестве"
+          />
+      </dx-simple-item>
       <dx-button-item>
         <dx-button-options
             width="100%"
@@ -136,6 +175,7 @@ let oid = route.params.id;
 const mode = route.params.mode;
 const pageDescription = ref("Подробно о компании");
 const binPattern = ref("^[0-9]")
+const stringPattern = ref("^[a-zA-Zа-яА-ЯЁё]+$")
 const formRef = ref(null);
 const towns = ref([]);
 

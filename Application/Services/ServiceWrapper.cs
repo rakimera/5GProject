@@ -33,10 +33,12 @@ public class ServiceWrapper : IServiceWrapper
         ProjectValidator projectValidator,
         UpdateProjectValidator updateProjectValidator,
         ITokenService tokenService,
+        IUserService userService,
         TranslatorSpecsValidator translatorSpecsValidator,
         AntennaValidator antennaValidator,
         AntennaTranslatorValidator antennaTranslatorValidator,
         EnergyResultValidator energyResultValidator,
+        UpdateUserValidator updateUserValidator,
         RoleValidator roleValidator,
         RadiationZoneValidator radiationZoneValidator,
         TranslatorTypeValidator translatorTypeValidator,
@@ -48,10 +50,10 @@ public class ServiceWrapper : IServiceWrapper
         _executiveCompanyService = new Lazy<IExecutiveCompanyService>(() =>
             new ExecutiveCompanyService(repository, mapper, executiveCompanyValidator));
         _districtService = new Lazy<IDistrictService>(() => new DistrictService(repository, mapper));
-        _userService = new Lazy<IUserService>(() => new UserService(repository, mapper, userValidator));
+        _userService = new Lazy<IUserService>(() => new UserService(repository, mapper, userValidator, updateUserValidator));
         _tokenService = new Lazy<ITokenService>(() => new TokenService(repository));
         _projectService = new Lazy<IProjectService>(()=> new ProjectService(repository, mapper, projectValidator, updateProjectValidator));
-        _authorizationService = new Lazy<IAuthorizationService>(()=> new AuthorizationService(repository,tokenService));
+        _authorizationService = new Lazy<IAuthorizationService>(()=> new AuthorizationService(repository,tokenService, userService));
         _contrAgentService = new Lazy<IContrAgentService>(() => new ContrAgentService(repository, mapper, contrAgentValidator));
         _townService = new Lazy<ITownService>(() => new TownService(repository,mapper));
         _translatorTypeService = new Lazy<ITranslatorTypeService>(() => new TranslatorTypeService(repository,mapper, translatorTypeValidator));

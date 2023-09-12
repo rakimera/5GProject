@@ -10,4 +10,7 @@ public class TranslatorTypeDto : BaseEntity
     
     [property: JsonPropertyName("type")]
     public required string Type { get; set; }
+    
+    [property: JsonPropertyName("tilt")]
+    public decimal Tilt { get; set; }
 }

@@ -1,6 +1,7 @@
 using Application.Models.Users;
 using AutoMapper;
 using Domain.Entities;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Application.Mapper;
 
@@ -27,6 +28,37 @@ public class UserMapProfile : Profile
                 opt.MapFrom(src => src.Login))
             .ForMember(dest => dest.ExecutiveCompanyId, opt =>
                 opt.MapFrom(src => src.ExecutiveCompanyId))
+            .ForMember(dest => dest.PhoneNumber, opt =>
+                opt.MapFrom(src => src.PhoneNumber))
+            .ForMember(dest => dest.Patronymic, opt =>
+                opt.MapFrom(src => src.Patronymic))
+            .ReverseMap();
+        
+        CreateMap<UpdateUserDto, User>()
+            .ForMember(dest => dest.Id, opt =>
+                opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Name, opt =>
+                opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Surname, opt =>
+                opt.MapFrom(src => src.Surname))
+            .ForMember(dest => dest.PasswordHash, opt =>
+            {
+                opt.PreCondition((src, e) => src.Password.IsNullOrEmpty());
+                opt.Ignore();
+            })
+            .ForMember(dest => dest.PasswordHash, opt =>
+            {
+                opt.PreCondition((src, e) => !src.Password.IsNullOrEmpty());
+                opt.MapFrom(src=> src.Password);
+            })
+            .ForMember(dest => dest.Login, opt =>
+                opt.MapFrom(src => src.Login))
+            .ForMember(dest => dest.ExecutiveCompanyId, opt =>
+                opt.MapFrom(src => src.ExecutiveCompanyId))
+            .ForMember(dest => dest.PhoneNumber, opt =>
+                opt.MapFrom(src => src.PhoneNumber))
+            .ForMember(dest => dest.Patronymic, opt =>
+                opt.MapFrom(src => src.Patronymic))
             .ReverseMap();
         
         CreateMap<UserDto, UpdateUserDto>()
@@ -42,6 +74,10 @@ public class UserMapProfile : Profile
                 opt.MapFrom(src => src.Roles))
             .ForMember(dest => dest.ExecutiveCompanyId, opt =>
                 opt.MapFrom(src => src.ExecutiveCompanyId))
+            .ForMember(dest => dest.PhoneNumber, opt =>
+                opt.MapFrom(src => src.PhoneNumber))
+            .ForMember(dest => dest.Patronymic, opt =>
+                opt.MapFrom(src => src.Patronymic))
             .ReverseMap();
         
         CreateMap<UserDto, CreateUserDto>()
@@ -57,6 +93,10 @@ public class UserMapProfile : Profile
                 opt.MapFrom(src => src.Roles))
             .ForMember(dest => dest.ExecutiveCompanyId, opt =>
                 opt.MapFrom(src => src.ExecutiveCompanyId))
+            .ForMember(dest => dest.PhoneNumber, opt =>
+                opt.MapFrom(src => src.PhoneNumber))
+            .ForMember(dest => dest.Patronymic, opt =>
+                opt.MapFrom(src => src.Patronymic))
             .ReverseMap();
     }
 }

@@ -5,7 +5,6 @@ using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
 using Application.Models;
 using Domain.Entities;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace Application.Services;
 
@@ -13,11 +12,13 @@ public class AuthorizationService : IAuthorizationService
 {
     private readonly IRepositoryWrapper _repositoryWrapper;
     private readonly ITokenService _tokenService;
+    private readonly IUserService _userService;
 
-    public AuthorizationService(IRepositoryWrapper repositoryWrapper, ITokenService tokenService)
+    public AuthorizationService(IRepositoryWrapper repositoryWrapper, ITokenService tokenService, IUserService userService)
     {
         _repositoryWrapper = repositoryWrapper;
         _tokenService = tokenService;
+        _userService = userService;
     }
 
     public async Task<BaseResponse<TokenDto>> Login(LoginDto? loginModel)
@@ -39,12 +40,7 @@ public class AuthorizationService : IAuthorizationService
                 Messages: new List<string> { "Такого пользователя не существует" },
                 Success: false);
 
-        string enteredHashedPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-            password: loginModel.Password,
-            salt: user.Salt,
-            prf: KeyDerivationPrf.HMACSHA256,
-            iterationCount: 100000,
-            numBytesRequested: 256 / 8));
+        string enteredHashedPassword = _userService.CreatePassword(loginModel.Password, user.Salt);
 
         if (enteredHashedPassword != user.PasswordHash)
         {

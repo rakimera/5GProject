@@ -1,21 +1,27 @@
 <template>
-  <dx-data-grid
-      :data-source="dataSource"
-      :show-borders="true"
-      :remote-operations="true"
-      key-expr="id"
-  >
-    <dx-column data-field="roleName" data-type="string" caption="Роль"/>
-    <dx-paging :page-size="5"/>
-    <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
-    <dx-editing
-        :allow-updating="true"
-        :allow-deleting="true"
-        :allow-adding="true"
-        mode="row"
-        :texts="{confirmDeleteMessage: 'Вы уверены, что хотите удалить эту запись?'}"
-    />
-  </dx-data-grid>
+  <div class="row justify-content-center mt-5">
+    <div class="col-11 ">
+      <dx-data-grid
+          :data-source="dataSource"
+          :show-borders="true"
+          :remote-operations="false"
+          :columnAutoWidth="true"
+          :allowColumnResizing="true"
+          key-expr="id"
+      >
+        <dx-column data-field="roleName" data-type="string" caption="Роль"/>
+        <dx-paging :page-size="5"/>
+        <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
+        <dx-editing
+            :allow-updating="true"
+            :allow-deleting="true"
+            :allow-adding="true"
+            mode="row"
+            :texts="{confirmDeleteMessage: 'Вы уверены, что хотите удалить эту запись?'}"
+        />
+      </dx-data-grid>
+    </div>
+  </div>
 </template>
 
 <script setup>

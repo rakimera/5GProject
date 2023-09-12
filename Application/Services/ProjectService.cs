@@ -100,7 +100,7 @@ public class ProjectService : IProjectService
             Messages: new List<string> { "Проект успешно найден" });
     }
 
-    public async Task<BaseResponse<string>> Update(UpdateProjectDto model)
+    public async Task<BaseResponse<string>> Update(UpdateProjectDto model, string modifier)
     {
         var result = await _updateProjectValidator.ValidateAsync(model);
         if (!result.IsValid)
@@ -127,7 +127,7 @@ public class ProjectService : IProjectService
         model.DistrictName = district.DistrictName;
         
         _mapper.Map(model, project);
-        project.LastModifiedBy = "Admin";
+        project.LastModifiedBy = modifier;
 
         _repositoryWrapper.ProjectRepository.Update(project);
         await _repositoryWrapper.Save();

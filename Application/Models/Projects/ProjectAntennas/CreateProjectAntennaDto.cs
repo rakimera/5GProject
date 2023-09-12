@@ -26,4 +26,7 @@ public class CreateProjectAntennaDto
 
     [property: JsonPropertyName("projectId")]
     public Guid ProjectId { get; set; }
+    
+    [property: JsonPropertyName("rtoRadiationMode")]
+    public required string RtoRadiationMode { get; set; }
 }

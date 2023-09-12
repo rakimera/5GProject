@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="content-block">Profile</h2>
+    <h2 class="content-block">{{"Добро пожаловать в профиль " + userName }}</h2>
     <div class="content-block dx-card responsive-paddings">
       <dx-form
           id="form"
@@ -16,18 +16,20 @@
 </template>
 
 <script setup>
-import {ref, onMounted} from "vue";
+import {ref, onBeforeMount} from "vue";
 import DxForm from "devextreme-vue/form";
 import userService from "@/api/userService";
 
 const currentUser = ref(null);
+const userName = ref()
+
 const fetchCurrentUser = async () => {
   try {
     const response = await userService.getCurrentUser();
-    console.log(response);
 
     if (response.data && response.data.result) {
       currentUser.value = response.data.result;
+      userName.value = response.data.result.name;
     } else {
       console.error("Ответ не содержит информацию о текущем пользователе:", response);
     }
@@ -53,12 +55,18 @@ const formItems = ref([
     label: {text: "Фамилия"},
   },
   {
+    dataField: "patronymic",
+    label: {text: "Отчество"},
+  },
+  {
     dataField: "login",
     label: {text: "Логин"},
   },
   {
     dataField: "roles",
     label: {text: "Роли"},
+    displayExpr: "roleName",
+    valueExpr: "roleName"  
   },
   {
     dataField: "executiveCompanyName",
@@ -76,10 +84,17 @@ const formItems = ref([
       displayFormat: "dd.MM.yyyy",
     },
   },
+  {
+      dataField: "phoneNumber",
+      label: {text: "Номер телефона"},
+      editorOptions: {
+          mask:'+7 (000) 000-0000',
+      },
+  },
 ]);
 
-onMounted(() => {
-  fetchCurrentUser();
+onBeforeMount(async () => {
+  await fetchCurrentUser();
 });
 </script>
 

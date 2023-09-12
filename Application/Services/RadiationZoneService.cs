@@ -93,7 +93,7 @@ public class RadiationZoneService : IRadiationZoneService
             Success: false);
     }
 
-    public async Task<BaseResponse<string>> Update(UpdateRadiationZoneDto model)
+    public async Task<BaseResponse<string>> Update(UpdateRadiationZoneDto model, string modifier)
     {
         var radiationZoneDto = _mapper.Map<RadiationZoneDto>(model);
         var result = await _validator.ValidateAsync(radiationZoneDto);
@@ -117,7 +117,7 @@ public class RadiationZoneService : IRadiationZoneService
         }
 
         _mapper.Map(model, radiationZone);
-        radiationZone.LastModifiedBy = "Admin";
+        radiationZone.LastModifiedBy = modifier;
 
         _repository.RadiationZoneRepository.Update(radiationZone);
         await _repository.Save();

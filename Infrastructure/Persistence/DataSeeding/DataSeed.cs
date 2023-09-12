@@ -29,6 +29,9 @@ public class DataSeed
             Address = "Алматинская область, Алматы, 1 микр, 43",
             CompanyName = "AlcaponeLTD",
             LicenseNumber = "№123123132ФЫВ123123АВЫ",
+            DirectorName = "Руслан",
+            DirectorSurname = "Усачёв",
+            DirectorPatronymic = "Каирбекович",
             LicenseDateOfIssue = DateTime.Today.AddDays(-10),
             TownName = "Алматы"
         };
@@ -52,7 +55,8 @@ public class DataSeed
                 {
                     "Admin"
                 },
-                ExecutiveCompanyId = executiveCompany
+                ExecutiveCompanyId = executiveCompany,
+                PhoneNumber = "7472020222"
             };
             await _serviceWrapper.UserService.CreateAsync(admin, "Admin");
             await _repositoryWrapper.Save();
@@ -171,7 +175,7 @@ public class DataSeed
                     DirectorPatronymic = "Викторович",
                     Address = "Address_Tele2",
                     Email = "tele2@info.com",
-                    PhoneNumber = "+77477477477"
+                    PhoneNumber = "7472020222"
                 },
                 new ContrAgentDto
                 {
@@ -182,7 +186,7 @@ public class DataSeed
                     DirectorPatronymic = "Павлович",
                     Address = "Address_Activ",
                     Email = "activ@info.com",
-                    PhoneNumber = "+77027027022"
+                    PhoneNumber = "7472020222"
                 },
             };
             foreach (var contrAgent in contrAgents)
