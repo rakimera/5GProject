@@ -9,5 +9,5 @@ namespace Application.Interfaces;
 public interface IProjectService : ICrudService<ProjectDto>
 {
     Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions);
-    Task<BaseResponse<string>> Update(UpdateProjectDto model);
+    Task<BaseResponse<string>> Update(UpdateProjectDto model, string modifier);
 }

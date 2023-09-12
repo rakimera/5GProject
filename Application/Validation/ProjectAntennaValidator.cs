@@ -20,5 +20,7 @@ public class ProjectAntennaValidator : AbstractValidator<ProjectAntennaDto>
             .NotNull().WithMessage("Угол наклона антенны не записана"); 
         RuleFor(dto => dto.AntennaId)    
             .NotNull().WithMessage("Антенна не выбрана");
+        RuleFor(dto => dto.RtoRadiationMode)    
+            .NotEmpty().WithMessage("Режим работы РТО на излучение не записан");
     }
 }

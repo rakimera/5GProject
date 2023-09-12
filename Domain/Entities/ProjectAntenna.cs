@@ -9,6 +9,7 @@ public class ProjectAntenna : BaseEntity
     public decimal Latitude { get; set; }
     public decimal Longitude { get; set; }
     public decimal Tilt { get; set; }
+    public string? RtoRadiationMode { get; set; }
     public Guid AntennaId { get; set; }
     public Antenna Antenna { get; set; }
     public Guid ProjectId { get; set; }

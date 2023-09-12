@@ -24,9 +24,7 @@ public class ProjectImagesControllers : Controller
     public IActionResult Get(string id)
     {
         var baseResponse = _service.ProjectImageService.GetAllById(id);
-        if (baseResponse.Success)
-            return Ok(baseResponse);
-        return NotFound(baseResponse);
+        return Ok(baseResponse);
     }
     
     [HttpPost]

@@ -69,6 +69,14 @@
         <dx-required-rule message="Вы не запонели коэффициент усиления сигнала"></dx-required-rule>
       </dx-column>
       <dx-column
+              data-field="tilt"
+              data-type="number"
+              caption="Тильт"
+              :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
+              alignment="left">
+          <dx-required-rule message="Вы не запонили угол наклона передатчика"></dx-required-rule>
+      </dx-column>
+      <dx-column
           data-field="projectAntennaId"
           data-type="string"
           :visible="false">

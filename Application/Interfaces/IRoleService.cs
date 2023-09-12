@@ -9,5 +9,5 @@ namespace Application.Interfaces;
 public interface IRoleService: ICrudService<RoleDto>
 {
     Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions);
-    Task<BaseResponse<RoleDto>> UpdateRole(UpdateRoleDto model);
+    Task<BaseResponse<RoleDto>> UpdateRole(UpdateRoleDto model, string modifier);
 }

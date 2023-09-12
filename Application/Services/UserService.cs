@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using Application.DataObjects;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
@@ -7,6 +8,7 @@ using AutoMapper;
 using DevExtreme.AspNet.Data;
 using DevExtreme.AspNet.Data.ResponseModel;
 using Domain.Entities;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace Application.Services;
 
@@ -15,12 +17,14 @@ public class UserService : IUserService
     private readonly IRepositoryWrapper _repositoryWrapper;
     private readonly IMapper _mapper;
     private readonly UserValidator _userValidator;
+    private readonly UpdateUserValidator _updateUserValidator;
 
-    public UserService(IRepositoryWrapper repositoryWrapper, IMapper mapper, UserValidator userValidator)
+    public UserService(IRepositoryWrapper repositoryWrapper, IMapper mapper, UserValidator userValidator, UpdateUserValidator updateUserValidator)
     {
         _repositoryWrapper = repositoryWrapper;
         _mapper = mapper;
         _userValidator = userValidator;
+        _updateUserValidator = updateUserValidator;
     }
 
     public BaseResponse<IEnumerable<UserDto>> GetAll()
@@ -49,14 +53,31 @@ public class UserService : IUserService
         return await DataSourceLoader.LoadAsync(queryableUsers, loadOptions);
     }
 
+    public string CreatePassword(string password, byte[] salt)
+    {
+        string passwordHash = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+            password: password,
+            salt: salt,
+            prf: KeyDerivationPrf.HMACSHA256,
+            iterationCount: 100000,
+            numBytesRequested: 256 / 8));
+        return passwordHash;
+    }
+
     public async Task<BaseResponse<string>> CreateAsync(UserDto model, string creator)
     {
-        var mapUser = _mapper.Map<User>(model);
-        var result = await _userValidator.ValidateAsync(mapUser);
+        var result = await _userValidator.ValidateAsync(model);
+
         if (result.IsValid)
         {
+            byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
+            string passwordHash = CreatePassword(model.Password, salt);
+
             model.CreatedBy = creator;
             User user = _mapper.Map<User>(model);
+            user.Salt = salt;
+            user.PasswordHash = passwordHash;
+
             await _repositoryWrapper.UserRepository.CreateAsync(user);
 
             await AssignRolesToUser(model, user);
@@ -102,33 +123,9 @@ public class UserService : IUserService
             Messages: new List<string> { "Пользователь успешно найден" });
     }
 
-    public async Task<BaseResponse<UserDto>> UpdateUser(UpdateUserDto model)
+    public async Task<BaseResponse<UserDto>> UpdateUser(UpdateUserDto model, string lastModifiedBy)
     {
-        BaseResponse<UserDto> getUserResponse = await GetByOid(model.Id);
-        if (!getUserResponse.Success || getUserResponse.Result == null)
-        {
-            return new BaseResponse<UserDto>(
-                Result: null,
-                Messages: new List<string> { "Пользователь не найден" },
-                Success: false);
-        }
-
-        UserDto existingUserDto = getUserResponse.Result;
-        _mapper.Map(model, existingUserDto);
-
-        User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.Equals(existingUserDto.Id));
-        if (user == null)
-        {
-            return new BaseResponse<UserDto>(
-                Result: null,
-                Messages: new List<string> { "Пользователь не найден" },
-                Success: false);
-        }
-
-        _mapper.Map(existingUserDto, user);
-        user.LastModifiedBy = "Admin";
-
-        var result = await _userValidator.ValidateAsync(user);
+        var result = await _updateUserValidator.ValidateAsync(model);
         if (!result.IsValid)
         {
             return new BaseResponse<UserDto>(
@@ -137,12 +134,33 @@ public class UserService : IUserService
                 Success: false);
         }
 
+        User? user = await _repositoryWrapper.UserRepository.GetByCondition(x => x.Id.ToString() == model.Id);
+        if (user == null)
+        {
+            return new BaseResponse<UserDto>(
+                Result: null,
+                Messages: new List<string> { "Пользователь не найден" },
+                Success: false);
+        }
+
+        _mapper.Map(model, user);
+        
+        if (!string.IsNullOrEmpty(model.Password))
+        {
+            byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
+            user.PasswordHash = CreatePassword(user.PasswordHash, salt);
+            user.Salt = salt;
+        }
+
+        user.LastModifiedBy = lastModifiedBy;
+
         _repositoryWrapper.UserRepository.Update(user);
-        await AssignRolesToUser(existingUserDto, user);
+        UserDto userDto = _mapper.Map<UserDto>(model);
+        await AssignRolesToUser(userDto, user);
         await _repositoryWrapper.Save();
 
         return new BaseResponse<UserDto>(
-            Result: existingUserDto,
+            Result: userDto,
             Success: true,
             Messages: new List<string> { "Пользователь успешно изменен" });
     }
@@ -211,5 +229,50 @@ public class UserService : IUserService
                 UserId = user.Id
             });
         }
+    }
+
+    public async Task<BaseResponse<UserDto>> GetCurrentUser(string? login)
+    {
+        if (login == null)
+        {
+            return new BaseResponse<UserDto>(
+                Result: null,
+                Success: false,
+                Messages: new List<string> { "Пользователь не найден" });
+        }
+
+        var user = await _repositoryWrapper.UserRepository.GetByCondition(x => Equals(x.Login, login));
+        if (user == null)
+        {
+            return new BaseResponse<UserDto>(
+                Result: null,
+                Success: false,
+                Messages: new List<string> { "Пользователь не найден" });
+        }
+        
+        var userDto = _mapper.Map<UserDto>(user);
+        
+        userDto.Roles = new List<string>();
+        userDto.Roles = _repositoryWrapper.UserRoleRepository
+            .GetAll()
+            .Where(userRole => userRole.UserId == user.Id)
+            .Select(userRole => userRole.Role.RoleName)
+            .ToList();
+
+        var executiveCompany = _repositoryWrapper.ExecutiveCompanyRepository
+            .GetByCondition(x => x.Id == user.ExecutiveCompanyId).Result;
+        if (executiveCompany != null)
+            userDto.ExecutiveCompanyName = executiveCompany.CompanyName;
+
+        if (user == null)
+            return new BaseResponse<UserDto>(
+                Result: null,
+                Success: true,
+                Messages: new List<string> { "Пользователь не найден" });
+
+        return new BaseResponse<UserDto>(
+            Result: userDto,
+            Success: true,
+            Messages: new List<string> { "Пользователь успешно найден" });
     }
 }

@@ -1,69 +1,101 @@
 <template>
   <div>
-    <h2 class="content-block">Profile</h2>
-
-    <div class="content-block dx-card responsive-paddings">
-      <div class="form-avatar">
-        <img :src="imageSrc" />
-      </div>
-      <span>{{ formData.Notes }}</span>
-    </div>
-
+    <h2 class="content-block">{{"Добро пожаловать в профиль " + userName }}</h2>
     <div class="content-block dx-card responsive-paddings">
       <dx-form
-        id="form"
-        label-location="top"
-        :form-data="formData"
-        :colCountByScreen="colCountByScreen"
-      />
+          id="form"
+          label-location="top"
+          :form-data="currentUser"
+          :colCountByScreen="colCountByScreen"
+          :read-only="true"
+          :items="formItems"
+      >
+      </dx-form>
     </div>
   </div>
 </template>
 
-<script>
+<script setup>
+import {ref, onBeforeMount} from "vue";
 import DxForm from "devextreme-vue/form";
+import userService from "@/api/userService";
 
-export default {
-  props: {
-    picture: String
-  },
-  setup() {
-    const picture = "images/employees/06.png";
-    
-    const imageSrc = `https://js.devexpress.com/Demos/WidgetsGallery/JSDemos/${picture}`;
-    const formData = {
-      ID: 7,
-      FirstName: "Sandra",
-      LastName: "Johnson",
-      Prefix: "Mrs.",
-      Position: "Controller",
-      Picture: picture,
-      BirthDate: new Date("1974/11/5"),
-      HireDate: new Date("2005/05/11"),
-      Notes:
-        "Sandra is a CPA and has been our controller since 2008. " +
-        "She loves to interact with staff so if you`ve not met her, be certain to say hi." +
-        "\r\n\r\n" +
-        "Sandra has 2 daughters both of whom are accomplished gymnasts.",
-      Address: "4600 N Virginia Rd."
-    };
-    const colCountByScreen = {
-      xs: 1,
-      sm: 2,
-      md: 3,
-      lg: 4
+const currentUser = ref(null);
+const userName = ref()
+
+const fetchCurrentUser = async () => {
+  try {
+    const response = await userService.getCurrentUser();
+
+    if (response.data && response.data.result) {
+      currentUser.value = response.data.result;
+      userName.value = response.data.result.name;
+    } else {
+      console.error("Ответ не содержит информацию о текущем пользователе:", response);
     }
-
-    return {
-      imageSrc,
-      formData,
-      colCountByScreen
-    };
-  },
-  components: {
-    DxForm
+  } catch (error) {
+    console.error("Ошибка при получении информации о текущем пользователе:", error);
   }
 };
+
+const colCountByScreen = {
+  xs: 1,
+  sm: 2,
+  md: 3,
+  lg: 3
+}
+
+const formItems = ref([
+  {
+    dataField: "name",
+    label: {text: "Имя"},
+  },
+  {
+    dataField: "surname",
+    label: {text: "Фамилия"},
+  },
+  {
+    dataField: "patronymic",
+    label: {text: "Отчество"},
+  },
+  {
+    dataField: "login",
+    label: {text: "Логин"},
+  },
+  {
+    dataField: "roles",
+    label: {text: "Роли"},
+    displayExpr: "roleName",
+    valueExpr: "roleName"  
+  },
+  {
+    dataField: "executiveCompanyName",
+    label: {text: "Компания"},
+  },
+  {
+    dataField: "createdBy",
+    label: {text: "Создатель аккаунта"},
+  },
+  {
+    dataField: "created",
+    label: {text: "Дата создания аккаунта"},
+    editorType: "dxDateBox",
+    editorOptions: {
+      displayFormat: "dd.MM.yyyy",
+    },
+  },
+  {
+      dataField: "phoneNumber",
+      label: {text: "Номер телефона"},
+      editorOptions: {
+          mask:'+7 (000) 000-0000',
+      },
+  },
+]);
+
+onBeforeMount(async () => {
+  await fetchCurrentUser();
+});
 </script>
 
 <style lang="scss">

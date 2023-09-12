@@ -9,6 +9,7 @@ namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/users")]
+[Authorize]
 public class AccountController : Controller
 {
     private readonly IServiceWrapper _service;
@@ -20,7 +21,6 @@ public class AccountController : Controller
         _mapper = mapper;
     }
     
-    // [HttpGet, Authorize(Roles = "Admin")]
     [HttpGet]
     public IActionResult Get()
     {
@@ -29,7 +29,6 @@ public class AccountController : Controller
             return Ok(baseResponse);
         return NotFound(baseResponse);
     }
-
 
     [HttpGet("{oid}")]
     public async Task<IActionResult> Get(string oid)
@@ -46,15 +45,13 @@ public class AccountController : Controller
         UserDto userDto = _mapper.Map<UserDto>(model);
         var baseResponse = await _service.UserService.CreateAsync(userDto, User.Identity.Name);
         
-        if (baseResponse.Success)
-            return Ok(baseResponse);
-        return BadRequest(baseResponse);
+        return Ok(baseResponse);
     }
 
     [HttpPut]
     public async Task<IActionResult> Put(UpdateUserDto model)
     {
-        var baseResponse = await _service.UserService.UpdateUser(model);
+        var baseResponse = await _service.UserService.UpdateUser(model, User.Identity.Name);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);
@@ -69,11 +66,19 @@ public class AccountController : Controller
         return NotFound(baseResponse);
     }
     
-    // [HttpGet("index"), Authorize(Roles = "Admin")]
     [HttpGet("index")]
-    public async Task<IActionResult> Get([FromQuery]DataSourceLoadOptionsBase loadOptions)
+    public async Task<IActionResult> Get([FromQuery] DataSourceLoadOptionsBase loadOptions)
     {
         var loadResult = await _service.UserService.GetLoadResult(loadOptions);
         return Ok(loadResult);
+    }
+
+    [HttpGet("current-user")]
+    public async Task<IActionResult> GetCurrentUserData()
+    {
+        var baseResponse = await _service.UserService.GetCurrentUser(User.Identity.Name);
+        if (baseResponse.Success)
+            return Ok(baseResponse);
+        return NotFound(baseResponse);
     }
 }

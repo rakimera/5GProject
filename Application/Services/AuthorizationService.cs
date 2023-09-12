@@ -12,11 +12,13 @@ public class AuthorizationService : IAuthorizationService
 {
     private readonly IRepositoryWrapper _repositoryWrapper;
     private readonly ITokenService _tokenService;
+    private readonly IUserService _userService;
 
-    public AuthorizationService(IRepositoryWrapper repositoryWrapper, ITokenService tokenService)
+    public AuthorizationService(IRepositoryWrapper repositoryWrapper, ITokenService tokenService, IUserService userService)
     {
         _repositoryWrapper = repositoryWrapper;
         _tokenService = tokenService;
+        _userService = userService;
     }
 
     public async Task<BaseResponse<TokenDto>> Login(LoginDto? loginModel)
@@ -30,13 +32,24 @@ public class AuthorizationService : IAuthorizationService
         }
 
         var user = await _repositoryWrapper.UserRepository.GetByCondition
-            (x => x.Login == loginModel.Login && x.Password == loginModel.Password);
+            (x => x.Login == loginModel.Login);
+
         if (user is null)
             return new BaseResponse<TokenDto>(
                 Result: null,
                 Messages: new List<string> { "Такого пользователя не существует" },
                 Success: false);
-        
+
+        string enteredHashedPassword = _userService.CreatePassword(loginModel.Password, user.Salt);
+
+        if (enteredHashedPassword != user.PasswordHash)
+        {
+            return new BaseResponse<TokenDto>(
+                Result: null,
+                Messages: new List<string> { "Неправильный пароль" },
+                Success: false);
+        }
+
         var roles = _repositoryWrapper.UserRoleRepository.GetAllByCondition(x => x.UserId == user.Id);
         if (roles != null)
         {
@@ -68,7 +81,7 @@ public class AuthorizationService : IAuthorizationService
                 Messages: new List<string> { "Пользователь успешно авторизован" },
                 Success: true);
         }
-        
+
         return new BaseResponse<TokenDto>(
             Result: null,
             Messages: new List<string> { "Ошибка доступа, права пользователя не найдены" },

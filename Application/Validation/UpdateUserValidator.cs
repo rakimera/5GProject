@@ -1,11 +1,12 @@
+using System.Text.RegularExpressions;
 using Application.Models.Users;
 using FluentValidation;
 
 namespace Application.Validation;
 
-public class UserValidator : AbstractValidator<UserDto>
+public class UpdateUserValidator : AbstractValidator<UpdateUserDto>
 {
-    public UserValidator()
+    public UpdateUserValidator()
     {
         RuleFor(user => user.Name)
             .MinimumLength(2).WithMessage("Слишком короткое имя")
@@ -20,12 +21,17 @@ public class UserValidator : AbstractValidator<UserDto>
             .MaximumLength(100).WithMessage("Слишком длинный логин")
             .NotEmpty().WithMessage("Логин должнен быть заполнен")
             .EmailAddress().WithMessage("Введен некорректный логин");
-        RuleFor(user => user.Password).NotEmpty().WithMessage("Пароль не может быть пустым.")
-            .MinimumLength(8).WithMessage("Пароль не должен быть меньше 8 символов.")
-            .MaximumLength(30).WithMessage("Пароль не должен быть больше 30 символов.")
-            .Matches(@"[A-Z]+").WithMessage("В пароле должнен присутствовать минимум один символ в верхнем регистре.")
-            .Matches(@"[a-z]+").WithMessage("В пароле должнен присутствовать минимум один символ в нижнем регистре.")
-            .Matches(@"[0-9]+").WithMessage("В пароле должна присутствовать минимум одна цифра.")
-            .Matches(@"[\!\?\*\.]*$").WithMessage("В пароле должнен присутствовать минимум один спецсимвол (!? *.)");
+        RuleFor(user => user.Password).Must((pass) =>
+        {
+            if (!string.IsNullOrEmpty(pass))
+            {
+                string passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,30}$";
+                if (Regex.IsMatch(pass, passwordPattern)) 
+                    return true;
+                
+                return false;
+            }
+            return true;
+        }).WithMessage("Пароль не соответсвует требования.");
     }
 }

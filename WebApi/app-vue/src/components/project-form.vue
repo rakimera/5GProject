@@ -64,6 +64,129 @@
           :visible="false"
       />
     </dx-item>
+    <dx-item
+            data-field='purposeRto'
+            editor-type='dxTextBox'
+            :editor-options="{ 
+                    stylingMode: 'filled', 
+                    label: 'Назначение РТО', 
+                    labelMode: 'floating' }"
+    >
+        <dx-label
+                :visible="false"
+        />
+    </dx-item>
+    <dx-item
+            data-field='placeOfInstall'
+            editor-type='dxSelectBox'
+            :editor-options="{ 
+              placeholder: 'Выберите или запишите место дислокации', 
+              items: placeOfInstall, 
+              labelMode: 'floating',
+              acceptCustomValue: true,
+              searchEnabled: true,
+              label: 'Место дислокации РТО (РЭС)'}"
+    >
+        <dx-label
+                :visible="false"
+        />
+    </dx-item>
+    <dx-group-item
+      caption="Заполнить если передающие антенны установлены на здании"
+      :col-count="3">
+        <dx-item
+                data-field='purposeBuild'
+                editor-type='dxSelectBox'
+                :editor-options="{ 
+              placeholder: 'Выберите или запишите назначение здания', 
+              items: purposeBuild,
+              acceptCustomValue: true,
+              searchEnabled: true,
+              stylingMode: 'filled', 
+              label: 'Назначение здания, где размещается РТО (РЭС)', 
+              labelMode: 'floating' }"
+        >
+            <dx-label
+                    :visible="false"
+            />
+        </dx-item>
+        <dx-item
+                data-field='typeORoof'
+                editor-type='dxTextBox'
+                :editor-options="{ 
+            stylingMode: 'filled', 
+            label: 'Тип крыши здания (указать ровный или с уклоном /уклон в градусах/, материал покрытия кровли)', 
+            labelMode: 'floating' }"
+        >
+            <dx-label
+                    :visible="false"
+            />
+        </dx-item>
+        <dx-item
+                data-field='typeOfTopCover'
+                editor-type='dxSelectBox'
+                :editor-options="{
+              placeholder: 'Выберите или запишите тип верхнего перекрытия', 
+              items: typeOfTopCover, 
+              acceptCustomValue: true,
+              searchEnabled: true,
+              stylingMode: 'filled', 
+              label: 'Тип верхнего перекрытия', 
+              labelMode: 'floating' }"
+        >
+            <dx-label
+                    :visible="false"
+            />
+        </dx-item>
+    </dx-group-item>
+    <dx-item
+            data-field='maxHeightAdjoinBuild'
+            editor-type='dxNumberBox'
+            :editor-options="{ 
+                stylingMode: 'filled', 
+                label: 'Максимальная высота прилегающей застройки в метрах', 
+                labelMode: 'floating' }"
+    >
+        <dx-label
+                :visible="false"
+        />
+    </dx-item>
+    <dx-item
+            data-field='placeOfCommunicationCloset'
+            editor-type='dxTextBox'
+            :editor-options="{ 
+        stylingMode: 'filled', 
+        label: 'Телекоммуникационные шкафы (стойки) с сетевым оборудованием планируется разместить:', 
+        labelMode: 'floating' }"
+    >
+        <dx-label
+                :visible="false"
+        />
+    </dx-item>
+    <dx-item
+      data-field='hasTechnicalLevel'
+      editor-type='dxCheckBox'
+      :disabled="!isFormDisabled"
+      :editor-options="{
+        text:'Да'}"
+    >
+      <dx-label
+        :visible="true"
+        text="Наличие в здании, где размещается антенна РЭС технического этажа"
+      />
+    </dx-item>
+    <dx-item
+      data-field='hasOtherRto'
+      editor-type='dxCheckBox'
+      :disabled="!isFormDisabled"
+      :editor-options="{ 
+        text:'Да'}"
+    >
+      <dx-label
+        :visible="true"
+        text="Наличие других передающих средств на крыше здания или радиомачте"
+      />
+    </dx-item>
     <dx-button-item>
       <dx-button-options
           width="100%"
@@ -98,7 +221,7 @@ import {
   DxButtonOptions,
   DxForm,
   DxItem,
-  DxLabel
+  DxLabel, DxGroupItem
 } from "devextreme-vue/form";
 import {
   DxRequiredRule
@@ -122,6 +245,18 @@ const mode = ref(route.params.mode);
 const formRef = ref(null);
 const contrAgents = ref([]);
 const towns = ref([]);
+let placeOfInstall = ref([
+    'На трубостойке на мачте', 
+    'На трубостойке на вышке',
+    'На трубостойке на АМС',
+    'На трубостойке на башне']);
+let typeOfTopCover = ref([
+    'Железобетонное',
+    'Металлическое ',
+    'Деревянное ']);
+let purposeBuild = ref([
+    'Административное ',
+    'Жилое ']);
 
 onBeforeMount(async () => {
   const response = await contrAgentService.getContrAgents();

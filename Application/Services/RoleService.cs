@@ -118,7 +118,7 @@ public class RoleService : IRoleService
         return await DataSourceLoader.LoadAsync(queryableRoles, loadOptions);
     }
 
-    public async Task<BaseResponse<RoleDto>> UpdateRole(UpdateRoleDto model)
+    public async Task<BaseResponse<RoleDto>> UpdateRole(UpdateRoleDto model, string modifier)
     {
         BaseResponse<RoleDto> getRoleResponse = await GetByOid(model.Id);
         if (!getRoleResponse.Success || getRoleResponse.Result == null)
@@ -143,7 +143,7 @@ public class RoleService : IRoleService
         }
 
         _mapper.Map(existingRoleDto, role);
-        role.LastModifiedBy = "Admin";
+        role.LastModifiedBy = modifier;
 
         var result = await _roleValidator.ValidateAsync(role);
         if (!result.IsValid)

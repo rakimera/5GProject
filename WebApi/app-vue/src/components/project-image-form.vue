@@ -64,7 +64,7 @@ onMounted(async ()=> {
 async function dataLoad(){
   try {
     const response = await projectImageService.getAllByProjectId(id);
-    if (response.data.success && response.data.result !== null){
+    if (response.data.result !== null){
       images.value = response.data.result;
     }
   }catch (error){
@@ -108,24 +108,26 @@ async function onDelete(id){
 }
 async function onAddImage() {
     try {
+      if(formRef.value[1].files.length > 0){
         const response = await projectImageService.createProjectImage(formRef.value)
         if (response.data.success){
-            notify({
-                message: 'Фото добавлено',
-                position: {
-                    my: 'center top',
-                    at: 'center top',
-                },
-            }, 'success', 1000);
-          await dataLoad();} 
+          notify({
+            message: 'Фото добавлено',
+            position: {
+              my: 'center top',
+              at: 'center top',
+            },
+          }, 'success', 1000);
+          await dataLoad();}
         else{
-            notify({
-                message: response.data.messages,
-                position: {
-                    my: 'center top',
-                    at: 'center top'}
-            }, 'error', 2000);
-        } 
+          notify({
+            message: response.data.messages,
+            position: {
+              my: 'center top',
+              at: 'center top'}
+          }, 'error', 2000);
+        }
+      }
     } catch (error){
         notify({
             message: 'Ошибка при отправке файла на сервер',

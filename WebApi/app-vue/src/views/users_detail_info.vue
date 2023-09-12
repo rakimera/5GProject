@@ -13,30 +13,30 @@
       >
         <dx-simple-item
             data-field="login"
-            :editor-options="{ stylingMode: 'filled', placeholder: 'Логин' }"
+            data-type="string"
+            :editor-options="{ stylingMode: 'filled', labelMode: 'floating'}"
         >
-          <dx-label :text="'Логин'"/>
+          <dx-label :visible="false" text="Логин"/>
           <dx-required-rule message="Пожалуйста, введите email"/>
           <dx-email-rule message="Пожалуйста, введите корректный email"/>
         </dx-simple-item>
         <dx-simple-item
-            v-if="mode === 'create'"
             data-field="password"
             editor-type="dxTextBox"
-            :editor-options="{ stylingMode: 'filled', placeholder: 'Пароль', mode: 'password' }"
+            :editor-options="{ stylingMode: 'filled',  labelMode: 'floating', mode: 'password' }"
         >
-          <dx-label :text="'Пароль'"/>
-          <dx-required-rule message="Пожалуйста, введите пароль"/>
-          <dx-pattern-rule
-              :pattern="passwordPattern"
-              message="Пароль должен содержать минимум 8 символов, включая строчную букву, заглавную букву, цифру и специальный символ"
-          />
+          <dx-label :visible="false" text="Пароль"/>
+            <dx-pattern-rule
+                    :pattern="passwordPattern"
+                    :ignoreEmptyValue="mode !== 'create'"
+                    message="Требует наличие минимум одной: строчной буквы, прописной буквы, цифры, спецсимвол (@, $, !, %, *, ?, &), длинна пароля не менее 8 символов и не более 30"
+            />
         </dx-simple-item>
         <dx-simple-item
             data-field="name"
-            :editor-options="{ stylingMode: 'filled', placeholder: 'Имя' }"
+            :editor-options="{ stylingMode: 'filled', labelMode: 'floating' }"
         >
-          <dx-label :text="'Имя'"/>
+          <dx-label :visible="false" text='Имя'/>
           <dx-required-rule message="Пожалуйста, введите имя"/>
           <dx-string-length-rule
               :min=2
@@ -49,9 +49,9 @@
         </dx-simple-item>
         <dx-simple-item
             data-field="surname"
-            :editor-options="{ stylingMode: 'filled', placeholder: 'Фамилия' }"
+            :editor-options="{ stylingMode: 'filled',  labelMode: 'floating' }"
         >
-          <dx-label :text="'Фамилия'"/>
+          <dx-label :visible="false" text='Фамилия'/>
           <dx-required-rule message="Пожалуйста, введите фамилию"/>
           <dx-string-length-rule
               :min="2"
@@ -62,9 +62,36 @@
               message="Нельзя использовать цифры в фамилии"
           />
         </dx-simple-item>
-        <dx-simple-item data-field="roles" :editor-options="{ stylingMode: 'filled' }">
-          <dx-label :text="'Роли'"/>
+        <dx-simple-item
+                data-field="patronymic"
+                :editor-options="{ stylingMode: 'filled', labelMode: 'floating' }"
+        >
+            <dx-label :visible="false" text='Отчество'/>
+            <dx-pattern-rule
+                    :pattern="namePattern"
+                    message="Нельзя использовать цифры в отчестве"
+            />
+        </dx-simple-item>
+        <dx-simple-item
+                data-field="phoneNumber"
+                :editor-options="{ 
+            stylingMode: 'filled', 
+            labelMode: 'floating',
+            maskRules: phoneRules, 
+            mask:'+7 (000) 000-0000'}"
+        >
+            <dx-label :visible="false" text='Номер телефона'/>
+            <dx-required-rule message="Пожалуйста, введите номер телефона"/>
+            <dx-pattern-rule
+                    :pattern="phonePattern"
+                    message="Введи корректный формат телефона"
+            />
+        </dx-simple-item>
+        <dx-simple-item data-field="roles" :editor-options="{ stylingMode: 'filled', labelMode: 'floating'}">
+          <dx-label :visible="false" text='Роли'/>
           <dx-tag-box
+              :editor-options="{ stylingMode: 'filled', labelMode: 'floating'}"
+              label="Роли"
               v-model="formData.roles"
               :items="roleOptions"
               display-expr="roleName"
@@ -72,24 +99,23 @@
               :show-clear-button="false"
               :show-drop-down-button="false"
               :apply-value-mode="'useButtons'"
-              :read-only="isFormDisabled && !isEditMode"
-          />
+              validationMessageMode="always"
+              :read-only="isFormDisabled"
+          >
+          </dx-tag-box>
         </dx-simple-item>
-
-        <dx-simple-item data-field="ExecutiveCompanyId">
-          <dx-label :text="'Компания'"/>
-          <dx-select-box
-              v-model="formData.executiveCompanyId"
-              :items="executiveCompanies"
-              display-expr="companyName"
-              value-expr="id"
-              :show-clear-button="false"
-              :show-drop-down-button="false"
-              :apply-value-mode="'useButtons'"
-              :read-only="isFormDisabled && !isEditMode"
-          />
+        <dx-simple-item 
+            data-field="executiveCompanyId"
+            editor-type="dxSelectBox"
+            :editor-options="{ 
+                        labelMode: 'floating', 
+                        items: executiveCompanies, 
+                        displayExpr: 'companyName', 
+                        valueExpr: 'id'}"
+            :read-only="isFormDisabled && !isEditMode">
+          <dx-label :visible="false" text='Компания'/>
+          <dx-required-rule message="Пожалуйста, выберите компанию"/>
         </dx-simple-item>
-
         <dx-button-item>
           <dx-button-options
               width="100%"
@@ -120,14 +146,14 @@
 </template>
 <script setup>
 import {
-  DxForm,
-  DxSimpleItem,
-  DxRequiredRule,
-  DxEmailRule,
-  DxButtonItem,
-  DxButtonOptions,
-  DxStringLengthRule,
-  DxPatternRule, DxLabel
+    DxForm,
+    DxSimpleItem,
+    DxRequiredRule,
+    DxEmailRule,
+    DxButtonItem,
+    DxButtonOptions,
+    DxStringLengthRule,
+    DxPatternRule, DxLabel
 } from "devextreme-vue/form";
 import {onBeforeMount, reactive, ref} from "vue";
 import userService from "@/api/userService";
@@ -135,7 +161,6 @@ import {useRoute, useRouter} from "vue-router";
 import notify from "devextreme/ui/notify";
 import {DxTagBox} from "devextreme-vue/tag-box";
 import roleService from "@/api/roleService";
-import DxSelectBox from "devextreme-vue/select-box";
 import executiveCompanyService from "@/api/executiveCompanyService";
 
 const route = useRoute();
@@ -150,11 +175,15 @@ const created = ref(false);
 const formRef = ref(null);
 const namePattern = ref("^[a-zA-Zа-яА-Я]+$")
 const passwordPattern = ref(
-    "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
+      "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,30}$"
 );
 const roleOptions = ref([]);
 const isEditMode = ref(false);
 const executiveCompanies = ref([]);
+const phoneRules = ref({
+    X: /[02-9]/,
+});
+const phonePattern = ref(/^[02-9]\d{9}$/);
 
 onBeforeMount(async () => {
   const roleResponse = await roleService.getRoles();

@@ -4,7 +4,8 @@ using Application.Interfaces.RepositoryContract.Common;
 using Application.Models.TranslatorSpecs;
 using Application.Validation;
 using AutoMapper;
-
+using DevExtreme.AspNet.Data;
+using DevExtreme.AspNet.Data.ResponseModel;
 using Domain.Entities;
 
 namespace Application.Services;
@@ -46,16 +47,25 @@ public class TranslatorSpecsService : ITranslatorSpecsService
 
     public async Task<BaseResponse<string>> CreateAsync(TranslatorSpecsDto model, string creator)
     {
-        await _validator.ValidateAsync(model);
-        model.CreatedBy = creator;
-        TranslatorSpecs translatorSpecs = _mapper.Map<TranslatorSpecs>(model);
-        await _repository.TranslatorSpecsRepository.CreateAsync(translatorSpecs);
-        await _repository.Save();
+        var result = await _validator.ValidateAsync(model);
+        if (result.IsValid)
+        {
+            model.CreatedBy = creator;
+            TranslatorSpecs translatorSpecs = _mapper.Map<TranslatorSpecs>(model);
+            await _repository.TranslatorSpecsRepository.CreateAsync(translatorSpecs);
+            await _repository.Save();
 
+            return new BaseResponse<string>(
+                Result: translatorSpecs.Id.ToString(),
+                Success: true,
+                Messages: new List<string> { "Передатчик успешно создан" });
+        }
+
+        List<string>? errors = _mapper.Map<List<string>>(result.Errors);
         return new BaseResponse<string>(
-            Result: translatorSpecs.Id.ToString(),
-            Success: true,
-            Messages: new List<string> { "Передатчик успешно создан" });
+            Result: null,
+            Success: false,
+            Messages: errors);
     }
 
     public async Task<BaseResponse<TranslatorSpecsDto>> GetByOid(string id)
@@ -94,10 +104,9 @@ public class TranslatorSpecsService : ITranslatorSpecsService
             Success: false);
     }
 
-    public async Task<BaseResponse<string>> Update(UpdateTranslatorSpecsDto model)
+    public async Task<BaseResponse<string>> Update(TranslatorSpecsDto model, string author)
     {
-        var translatorSpecsDto = _mapper.Map<TranslatorSpecsDto>(model);
-        var result = await _validator.ValidateAsync(translatorSpecsDto);
+        var result = await _validator.ValidateAsync(model);
         if (!result.IsValid)
         {
             List<string> messages = _mapper.Map<List<string>>(result.Errors);
@@ -108,7 +117,7 @@ public class TranslatorSpecsService : ITranslatorSpecsService
                 Success: false);
         }
 
-        TranslatorSpecs? translatorSpecs = await _repository.TranslatorSpecsRepository.GetByCondition(x => x.Id.ToString() == model.Id);
+        TranslatorSpecs? translatorSpecs = await _repository.TranslatorSpecsRepository.GetByCondition(x => x.Id.Equals(model.Id));
         if (translatorSpecs == null)
         {
             return new BaseResponse<string>(
@@ -118,7 +127,7 @@ public class TranslatorSpecsService : ITranslatorSpecsService
         }
 
         _mapper.Map(model, translatorSpecs);
-        translatorSpecs.LastModifiedBy = "Admin";
+        translatorSpecs.LastModifiedBy = author;
 
         _repository.TranslatorSpecsRepository.Update(translatorSpecs);
         await _repository.Save();
@@ -127,6 +136,28 @@ public class TranslatorSpecsService : ITranslatorSpecsService
             Result: translatorSpecs.Id.ToString(),
             Success: true,
             Messages: new List<string> { "Передатчик успешно изменен" });
+    }
+
+    public async Task<LoadResult> GetLoadResult(string id, DataSourceLoadOptionsBase loadOptions)
+    {
+        var queryableTranslatorSpecs = _repository.TranslatorSpecsRepository.GetAllByCondition(x => x.AntennaId.ToString() == id);
+        return await DataSourceLoader.LoadAsync(queryableTranslatorSpecs, loadOptions);
+    }
+
+    public BaseResponse<List<TranslatorSpecsDto>> GetAllByAntennaId(string id)
+    {
+        IQueryable<TranslatorSpecs>? translatorSpecs = _repository.TranslatorSpecsRepository.GetAllByCondition(x => x.AntennaId.ToString() == id);
+        List<TranslatorSpecsDto> model = _mapper.Map<List<TranslatorSpecsDto>>(translatorSpecs);
+
+        if (translatorSpecs is null)
+            return new BaseResponse<List<TranslatorSpecsDto>>(
+                Result: null,
+                Messages: new List<string> { "Свойства антенны не найдены" },
+                Success: true);
+        return new BaseResponse<List<TranslatorSpecsDto>>(
+            Result: model,
+            Success: true,
+            Messages: new List<string> { "Свойства антенны успешно найдены" });
     }
 
     public BaseResponse<List<TranslatorSpecsDto>> GetAllByProjectId(string id)
