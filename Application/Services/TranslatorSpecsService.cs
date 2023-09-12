@@ -50,6 +50,11 @@ public class TranslatorSpecsService : ITranslatorSpecsService
         model.CreatedBy = creator;
         TranslatorSpecs translatorSpecs = _mapper.Map<TranslatorSpecs>(model);
         await _repository.TranslatorSpecsRepository.CreateAsync(translatorSpecs);
+        //Запись файлов 
+        //Считывания горизонтальной 360 передаем путь к файлу и передаем айди созданого транслятора и тип
+        //Считывания вертикальной 360 передаем путь к файлу и передаем айди созданого транслятора и тип
+        //Если все окей то SAVE
+        //Удалить файлы
         await _repository.Save();
 
         return new BaseResponse<string>(
