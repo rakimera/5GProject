@@ -8,11 +8,9 @@ import GetAllUsersPage from "@/views/get-all-users-page.vue";
 import ContrAgentJournal from "@/views/get-all-contrAgents-page.vue";
 import authorizationService from "@/api/AuthorizationService";
 import UserDetail from '@/views/users_detail_info.vue';
-import Antennae from './views/antenna-detail-info.vue';
-import GetAllAntennaePage from "@/views/get-all-antennae-page";
+import GetAllAntennasPage from "@/views/get-all-antennas-page";
 import ContrAgentDetail from '@/views/contrAgent-detail-info.vue';
 import Roles from '@/views/get-all-roles-page.vue'
-import AntennaDetail from "@/views/antenna-detail-info";
 import ProjectDetail from "@/views/project-detail-info.vue";
 import ProjectJournal from "@/views/get-all-projects.vue";
 import ExecutiveCompaniesJournal from "@/views/get-all-executiveCompanies-page.vue";
@@ -139,16 +137,7 @@ const router = new createRouter({
                 requiresAuth: false,
                 layout: defaultLayout
             },
-            component: GetAllAntennaePage
-        },
-        {
-            path: "/antennae",
-            name: "antennae",
-            meta: {
-                requiresAuth: false,
-                layout: defaultLayout
-            },
-            component: Antennae
+            component: GetAllAntennasPage
         },
         {
             path: '/user/:mode/:id?',
@@ -158,6 +147,15 @@ const router = new createRouter({
                 layout: defaultLayout
             },
             component: UserDetail
+        },
+        {
+          path: '/antennae/:mode/:id?',
+          name: 'antennaDetail',
+          meta: {
+            requiresAuth: true,
+            layout: defaultLayout
+          },
+          component: GetAllAntennasPage
         },
         {
             path: '/contrAgent/:mode/:id?',
@@ -176,15 +174,6 @@ const router = new createRouter({
                 layout: defaultLayout
             },
             component: Roles
-        },
-        {
-            path: '/antennae/:mode/:id?',
-            name: 'antennaDetail',
-            meta: {
-                requiresAuth: true,
-                layout: defaultLayout
-            },
-            component: AntennaDetail
         },
         {
             path: "/ExecutiveCompaniesJournal",

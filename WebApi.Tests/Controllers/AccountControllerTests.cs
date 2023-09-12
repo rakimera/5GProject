@@ -89,7 +89,10 @@ namespace WebApi.Tests.Controllers
             var oid = "some_oid";
 
             var baseResponse = new BaseResponse<UserDto>(
-                Result: new UserDto(),
+                Result: new UserDto
+                {
+                    PhoneNumber = "7072022022"
+                },
                 Success: true,
                 Messages: new List<string> { "Пользователь успешно найден" });
 
@@ -150,8 +153,14 @@ namespace WebApi.Tests.Controllers
             {
                 HttpContext = mockHttpContext.Object
             };
-            var createUserDto = new CreateUserDto();
-            var mappedUserDto = new UserDto();
+            var createUserDto = new CreateUserDto
+            {
+                PhoneNumber = "7072022022"
+            };
+            var mappedUserDto = new UserDto
+            {
+                PhoneNumber = "7072022022"
+            };
 
             var baseResponse = new BaseResponse<string>(
                 Result: "user_id",
@@ -194,8 +203,14 @@ namespace WebApi.Tests.Controllers
             {
                 HttpContext = mockHttpContext.Object
             };
-            var createUserDto = new CreateUserDto();
-            var mappedUserDto = new UserDto();
+            var createUserDto = new CreateUserDto
+            {
+                PhoneNumber = "7072022022"
+            };
+            var mappedUserDto = new UserDto
+            {
+                PhoneNumber = "7072022022"
+            };
 
             var baseResponse = new BaseResponse<string>(
                 Result: "",
@@ -228,14 +243,20 @@ namespace WebApi.Tests.Controllers
         public async Task Put_ReturnsOkResult_WhenServiceReturnsSuccess()
         {
             // Arrange
-            var updateUserDto = new UpdateUserDto();
+            var updateUserDto = new UpdateUserDto
+            {
+                PhoneNumber = "7072022022"
+            };
 
             var baseResponse = new BaseResponse<UserDto>(
-                Result: new UserDto(),
+                Result: new UserDto
+                {
+                    PhoneNumber = "7072022022"
+                },
                 Success: true,
                 Messages: new List<string> { "Пользователь успешно изменен" });
 
-            _userServiceMock.Setup(s => s.UpdateUser(updateUserDto)).ReturnsAsync(baseResponse);
+            _userServiceMock.Setup(s => s.UpdateUser(updateUserDto, It.IsAny<string>())).ReturnsAsync(baseResponse);
 
             _serviceWrapperMock.Setup(s => s.UserService).Returns(_userServiceMock.Object);
 
@@ -256,14 +277,16 @@ namespace WebApi.Tests.Controllers
         public async Task Put_ReturnsBadRequest_WhenServiceReturnsFailure()
         {
             // Arrange
-            var updateUserDto = new UpdateUserDto();
-
+            var updateUserDto = new UpdateUserDto
+            {
+                PhoneNumber = "7072022022"
+            };
             var baseResponse = new BaseResponse<UserDto>(
                 Result: null,
                 Success: false,
                 Messages: new List<string> { "Ошибка при изменении пользователя" });
 
-            _userServiceMock.Setup(s => s.UpdateUser(updateUserDto)).ReturnsAsync(baseResponse);
+            _userServiceMock.Setup(s => s.UpdateUser(updateUserDto,"Admin")).ReturnsAsync(baseResponse);
 
             _serviceWrapperMock.Setup(s => s.UserService).Returns(_userServiceMock.Object);
 

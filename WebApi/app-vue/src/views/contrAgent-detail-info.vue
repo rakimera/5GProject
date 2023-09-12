@@ -11,13 +11,16 @@
         :show-validation-summary="true"
     >
       <dx-simple-item
-          data-field="companyName">
-        <dx-label :text="'Название компании'"/>
+          data-field="companyName"
+          :editor-options="{ stylingMode: 'filled', labelMode: 'floating'}">
+        <dx-label :visible="false" text="Название компании"/>
+
         <dx-required-rule message="Название компании должно быть заполнено"/>
       </dx-simple-item>
       <dx-simple-item
-          data-field="bin">
-        <dx-label :text="'БИН'"/>
+          data-field="bin"
+          :editor-options="{ stylingMode: 'filled', labelMode: 'floating'}">
+        <dx-label :visible="false" text="БИН"/>
         <dx-required-rule message="БИН должнен быть заполнен"/>
         <dx-string-length-rule
             :min=12
@@ -30,8 +33,9 @@
         />
       </dx-simple-item>
       <dx-simple-item
-          data-field="directorName">
-        <dx-label :text="'Имя директора'"/>
+          data-field="directorName"
+          :editor-options="{ stylingMode: 'filled', labelMode: 'floating'}">
+        <dx-label :visible="false" text="Имя директора"/>
         <dx-required-rule message="Имя должно быть заполнено"/>
         <dx-string-length-rule
             :min=2
@@ -43,8 +47,9 @@
         />
       </dx-simple-item>
       <dx-simple-item
-          data-field="directorSurname">
-        <dx-label :text="'Фамилия директора'"/>
+          data-field="directorSurname"
+          :editor-options="{ stylingMode: 'filled', labelMode: 'floating'}">
+        <dx-label :visible="false" text="Фамилия директора"/>
         <dx-required-rule message="Фамилия должна быть заполнено"/>
         <dx-string-length-rule
             :min="2"
@@ -56,29 +61,40 @@
         />
       </dx-simple-item>
       <dx-simple-item
-          data-field="directorPatronymic">
-        <dx-label :text="'Отчество директора'"/>
+          data-field="directorPatronymic"
+          :editor-options="{ stylingMode: 'filled', labelMode: 'floating'}">
+        <dx-label :visible="false" text="Отчество директора"/>
+
         <dx-pattern-rule
             :pattern="namePattern"
             message="Отчество должно состоять только из букв"
         />
       </dx-simple-item>
       <dx-simple-item
-          data-field="email">
-        <dx-label :text="'Электронная почта компании'"/>
+          data-field="email"
+          :editor-options="{ stylingMode: 'filled', labelMode: 'floating'}">
+        <dx-label :visible="false" text="Электронная почта"/>
         <dx-email-rule message="Пожалуйста, введите корректный email"/>
       </dx-simple-item>
       <dx-simple-item
-          data-field="phoneNumber">
-        <dx-label :text="'Контактный номер компании'"/>
+          data-field="phoneNumber"
+          :editor-options="{ 
+            stylingMode: 'filled', 
+            labelMode: 'floating',
+            maskRules: phoneRules, 
+            mask:'+7 (000) 000-0000'}"
+      >
+        <dx-label :visible="false" text='Номер телефона'/>
+        <dx-required-rule message="Пожалуйста, введите номер телефона"/>
         <dx-pattern-rule
-            :pattern="phoneNumberPattern"
-            message="Пожалуйста, введите корректный номер телефона"
+            :pattern="phonePattern"
+            message="Введи корректный формат телефона"
         />
       </dx-simple-item>
       <dx-simple-item
-          data-field="address">
-        <dx-label :text="'Адрес компании'"/>
+          data-field="address"
+          :editor-options="{ stylingMode: 'filled', labelMode: 'floating'}">
+        <dx-label :visible="false" text="Адрес компании"/>
         <dx-required-rule message="Адрес должнен быть заполнен"/>
       </dx-simple-item>
       <dx-button-item>
@@ -135,7 +151,10 @@ const mode = route.params.mode;
 const pageDescription = ref("Подробно о контрагенте");
 const namePattern = ref("^[a-zA-Zа-яА-Я]+$")
 const binPattern = ref("^[0-9]")
-const phoneNumberPattern = /^[+]?\d{1,3}[-.\s]?\d{3,}[-.\s]?\d{4,}$/;
+const phoneRules = ref({
+  X: /[02-9]/,
+});
+const phonePattern = ref(/^[02-9]\d{9}$/);
 const formRef = ref(null);
 
 onBeforeMount(async () => {

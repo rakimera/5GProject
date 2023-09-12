@@ -31,6 +31,12 @@ public class ExecutiveCompanyMapProfile : Profile
                 opt.MapFrom(src => src.CompanyName))
             .ForMember(dest => dest.TownName, opt =>
                 opt.MapFrom(src => src.TownName))
+            .ForMember(dest => dest.DirectorSurname, opt =>
+                opt.MapFrom(src => src.DirectorSurname))
+            .ForMember(dest => dest.DirectorPatronymic, opt =>
+                opt.MapFrom(src => src.DirectorPatronymic))
+            .ForMember(dest => dest.DirectorName, opt =>
+                opt.MapFrom(src => src.DirectorName))
             .ReverseMap();
 
         CreateMap<ExecutiveCompanyDto, UpdateExecutiveCompanyDto>()
@@ -48,6 +54,12 @@ public class ExecutiveCompanyMapProfile : Profile
                 opt.MapFrom(src => src.CompanyName))
             .ForMember(dest => dest.TownName, opt =>
                 opt.MapFrom(src => src.TownName))
+            .ForMember(dest => dest.DirectorSurname, opt =>
+                opt.MapFrom(src => src.DirectorSurname))
+            .ForMember(dest => dest.DirectorPatronymic, opt =>
+                opt.MapFrom(src => src.DirectorPatronymic))
+            .ForMember(dest => dest.DirectorName, opt =>
+                opt.MapFrom(src => src.DirectorName))
             .ReverseMap();
 
 
@@ -64,6 +76,12 @@ public class ExecutiveCompanyMapProfile : Profile
                 opt.MapFrom(src => src.CompanyName))
             .ForMember(dest => dest.TownName, opt =>
                 opt.MapFrom(src => src.TownName))
+            .ForMember(dest => dest.DirectorSurname, opt =>
+                opt.MapFrom(src => src.DirectorSurname))
+            .ForMember(dest => dest.DirectorPatronymic, opt =>
+                opt.MapFrom(src => src.DirectorPatronymic))
+            .ForMember(dest => dest.DirectorName, opt =>
+                opt.MapFrom(src => src.DirectorName))
             .ReverseMap();
     }
 }

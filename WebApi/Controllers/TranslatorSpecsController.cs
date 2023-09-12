@@ -3,6 +3,7 @@ using Application.Models.TranslatorSpecs;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Enums;
+using DevExtreme.AspNet.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,7 +11,7 @@ namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/translators")]
-// [Authorize]
+[Authorize]
 public class TranslatorSpecsController : Controller
 {
     private readonly IServiceWrapper _service;
@@ -66,9 +67,9 @@ public class TranslatorSpecsController : Controller
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put(UpdateTranslatorSpecsDto model)
+    public async Task<IActionResult> Put(TranslatorSpecsDto model)
     {
-        var baseResponse = await _service.TranslatorSpecsService.Update(model);
+        var baseResponse = await _service.TranslatorSpecsService.Update(model, User.Identity.Name);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);
@@ -78,6 +79,22 @@ public class TranslatorSpecsController : Controller
     public async Task<IActionResult> Delete(string oid)
     {
         var baseResponse = await _service.TranslatorSpecsService.Delete(oid);
+        if (baseResponse.Success)
+            return Ok(baseResponse);
+        return NotFound(baseResponse);
+    }
+    
+    [HttpGet("index/{id}")]
+    public async Task<IActionResult> Get(string id, [FromQuery]DataSourceLoadOptionsBase loadOptions)
+    {
+        var loadResult = await _service.TranslatorSpecsService.GetLoadResult(id, loadOptions);
+        return Ok(loadResult);
+    }
+    
+    [HttpGet("getAllByAntennaId/{id}")]
+    public IActionResult GetAllByAntennaId(string id)
+    {
+        var baseResponse = _service.TranslatorSpecsService.GetAllByAntennaId(id);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);

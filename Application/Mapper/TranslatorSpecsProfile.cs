@@ -21,8 +21,6 @@ public class TranslatorSpecsProfile : Profile
                 opt.MapFrom(src => src.CreatedBy))
             .ForMember(dest => dest.Frequency, opt =>
                 opt.MapFrom(src => src.Frequency))
-            .ForMember(dest => dest.Gain, opt =>
-                opt.MapFrom(src => src.Gain))
             .ForMember(dest => dest.AntennaId, opt =>
                 opt.MapFrom(src => src.AntennaId))
             .ForMember(dest => dest.Antenna, opt =>
@@ -34,8 +32,6 @@ public class TranslatorSpecsProfile : Profile
         CreateMap<CreateTranslatorSpecsDto, TranslatorSpecsDto>()
             .ForMember(dest => dest.Frequency, opt =>
                 opt.MapFrom(src => src.Frequency))
-            .ForMember(dest => dest.Gain, opt =>
-                opt.MapFrom(src => src.Gain))
             .ForMember(dest => dest.AntennaId, opt =>
                 opt.MapFrom(src => src.AntennaId))
             .ForMember(dest => dest.Antenna, opt =>
@@ -47,8 +43,6 @@ public class TranslatorSpecsProfile : Profile
         CreateMap<TranslatorSpecsDto, UpdateTranslatorSpecsDto>()
             .ForMember(dest => dest.Frequency, opt =>
                 opt.MapFrom(src => src.Frequency))
-            .ForMember(dest => dest.Gain, opt =>
-                opt.MapFrom(src => src.Gain))
             .ForMember(dest => dest.AntennaId, opt =>
                 opt.MapFrom(src => src.AntennaId))
             .ForMember(dest => dest.Antenna, opt =>

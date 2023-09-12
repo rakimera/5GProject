@@ -2,6 +2,7 @@ using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
 using Application.Models;
 using Application.Models.Antennae;
+using Application.Models.AntennaTranslator;
 using Application.Models.ContrAgents;
 using Application.Models.ExecutiveCompany;
 using Application.Models.TranslatorSpecs;
@@ -23,8 +24,8 @@ public class DataSeed
     }
     public async Task SeedExecutiveCompany()
     {
-        var executiveCompany = _repositoryWrapper.ExecutiveCompanyRepository.GetAll();
-        if (executiveCompany.Count() == 0)
+        List<ExecutiveCompany>? executiveCompany = _repositoryWrapper.ExecutiveCompanyRepository.GetAll().ToList();
+        if (executiveCompany.Count == 0)
         {
             ExecutiveCompanyDto company = new ExecutiveCompanyDto
             {
@@ -32,13 +33,45 @@ public class DataSeed
                 Address = "Алматинская область, Алматы, 1 микр, 43",
                 CompanyName = "AlcaponeLTD",
                 LicenseNumber = "№123123132ФЫВ123123АВЫ",
+                DirectorName = "Руслан",
+                DirectorSurname = "Усачёв",
+                DirectorPatronymic = "Каирбекович",
                 LicenseDateOfIssue = DateTime.Today.AddDays(-10),
                 TownName = "Алматы"
             };
             await _serviceWrapper.ExecutiveCompanyService.CreateAsync(company, "Admin");
             await _repositoryWrapper.Save();
         }
-        
+    }
+    
+    public async Task SeedTranslatorType()
+    {
+        List<TranslatorType> translatorTypes = _repositoryWrapper.TranslatorTypeRepository.GetAll().ToList();
+        if (translatorTypes.Count == 0)
+        {
+            List<TranslatorTypeDto> translatorTypesDTO = new List<TranslatorTypeDto>
+            {
+                new TranslatorTypeDto()
+                {
+                    Type = "GSM/UMTS"
+                },
+                new TranslatorTypeDto()
+                {
+                    Type = "GSM/LTE"
+                },
+                new TranslatorTypeDto()
+                {
+                    Type = "UMTS"
+                }
+            };
+
+            foreach (var translatorType in translatorTypesDTO)
+            {
+                await _serviceWrapper.TranslatorTypeService.CreateAsync(translatorType, "Admin");
+            }
+            
+            await _repositoryWrapper.Save();
+        }
     }
     
     public async Task SeedAdmin()
@@ -57,7 +90,8 @@ public class DataSeed
                 {
                     "Admin"
                 },
-                ExecutiveCompanyId = executiveCompany
+                ExecutiveCompanyId = executiveCompany,
+                PhoneNumber = "7472020222"
             };
             await _serviceWrapper.UserService.CreateAsync(admin, "Admin");
             await _repositoryWrapper.Save();
@@ -88,7 +122,6 @@ public class DataSeed
             TranslatorSpecsDto baseTranslator = new TranslatorSpecsDto()
             {
                 Frequency = 900,
-                Gain = 16.5M,
                 AntennaId = antenna.Id
             };
             await _serviceWrapper.TranslatorSpecsService.CreateAsync(baseTranslator, "Admin");
@@ -177,7 +210,7 @@ public class DataSeed
                     DirectorPatronymic = "Викторович",
                     Address = "Address_Tele2",
                     Email = "tele2@info.com",
-                    PhoneNumber = "+77477477477"
+                    PhoneNumber = "7472020222"
                 },
                 new ContrAgentDto
                 {
@@ -188,7 +221,7 @@ public class DataSeed
                     DirectorPatronymic = "Павлович",
                     Address = "Address_Activ",
                     Email = "activ@info.com",
-                    PhoneNumber = "+77027027022"
+                    PhoneNumber = "7472020222"
                 },
             };
             foreach (var contrAgent in contrAgents)

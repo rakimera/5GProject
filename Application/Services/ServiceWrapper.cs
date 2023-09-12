@@ -21,9 +21,11 @@ public class ServiceWrapper : IServiceWrapper
     private readonly Lazy<IExecutiveCompanyService> _executiveCompanyService;
     private readonly Lazy<ITranslatorSpecsService> _translatorSpecsService;
     private readonly Lazy<IFileService> _fileService;
+    private readonly Lazy<IRadiationZoneService> _radiationZoneService;
     private readonly Lazy<IProjectAntennaService> _projectAntennaService;
     private readonly Lazy<IAntennaTranslatorService> _antennaTranslatorService;
     private readonly Lazy<IBiohazardRadiusService> _biohazardRadiusService;
+    private readonly Lazy<IProjectImageService> _projectImageService;
 
     public ServiceWrapper(
         IRepositoryWrapper repository,
@@ -33,11 +35,14 @@ public class ServiceWrapper : IServiceWrapper
         ProjectValidator projectValidator,
         UpdateProjectValidator updateProjectValidator,
         ITokenService tokenService,
+        IUserService userService,
         TranslatorSpecsValidator translatorSpecsValidator,
         AntennaValidator antennaValidator,
         AntennaTranslatorValidator antennaTranslatorValidator,
         EnergyResultValidator energyResultValidator,
+        UpdateUserValidator updateUserValidator,
         RoleValidator roleValidator,
+        RadiationZoneValidator radiationZoneValidator,
         TranslatorTypeValidator translatorTypeValidator,
         ExecutiveCompanyValidator executiveCompanyValidator,
         IEnergyFlowService energyFlowService,
@@ -50,23 +55,27 @@ public class ServiceWrapper : IServiceWrapper
         _executiveCompanyService = new Lazy<IExecutiveCompanyService>(() =>
             new ExecutiveCompanyService(repository, mapper, executiveCompanyValidator));
         _districtService = new Lazy<IDistrictService>(() => new DistrictService(repository, mapper));
-        _userService = new Lazy<IUserService>(() => new UserService(repository, mapper, userValidator));
+        _userService = new Lazy<IUserService>(() => new UserService(repository, mapper, userValidator, updateUserValidator));
         _tokenService = new Lazy<ITokenService>(() => new TokenService(repository));
         _projectService = new Lazy<IProjectService>(()=> new ProjectService(repository, mapper, projectValidator, updateProjectValidator));
-        _authorizationService = new Lazy<IAuthorizationService>(()=> new AuthorizationService(repository,tokenService));
+        _authorizationService = new Lazy<IAuthorizationService>(()=> new AuthorizationService(repository,tokenService, userService));
         _contrAgentService = new Lazy<IContrAgentService>(() => new ContrAgentService(repository, mapper, contrAgentValidator));
         _townService = new Lazy<ITownService>(() => new TownService(repository,mapper));
         _translatorTypeService = new Lazy<ITranslatorTypeService>(() => new TranslatorTypeService(repository,mapper, translatorTypeValidator));
         _antennaTranslatorService = new Lazy<IAntennaTranslatorService>(() => new AntennaTranslatorService(mapper, repository, antennaTranslatorValidator));
         _antennaService = new Lazy<IAntennaService>(() => new AntennaService(repository, mapper, antennaValidator));
         _translatorSpecsService = new Lazy<ITranslatorSpecsService>(() => new TranslatorSpecsService(repository, mapper, translatorSpecsValidator));
-        _energyFlowService = new Lazy<IEnergyFlowService>(() => new EnergyFlowService(energyResultValidator, mapper, repository));
-        _energyFlowService = new Lazy<IEnergyFlowService>(() => new EnergyFlowService(energyResultValidator, mapper, repository));
         _biohazardRadiusService = new Lazy<IBiohazardRadiusService>(() => new BiohazardRadiusService(repository));
+        _energyFlowService =
+            new Lazy<IEnergyFlowService>(() => new EnergyFlowService(energyResultValidator, mapper, repository));
+        _radiationZoneService =
+            new Lazy<IRadiationZoneService>(() => new RadiationZoneService(repository, mapper, radiationZoneValidator));
+        _projectImageService = new Lazy<IProjectImageService>(() => new ProjectImageService(repository, mapper));
     }
         
 
     public IUserService UserService => _userService.Value;
+    public IProjectImageService ProjectImageService => _projectImageService.Value;
     public IProjectAntennaService ProjectAntennaService => _projectAntennaService.Value;
     public IProjectService ProjectService => _projectService.Value;
     public ITokenService TokenService => _tokenService.Value;
@@ -78,6 +87,7 @@ public class ServiceWrapper : IServiceWrapper
     public ITranslatorSpecsService TranslatorSpecsService => _translatorSpecsService.Value;
     public IEnergyFlowService EnergyFlowService => _energyFlowService.Value;
     public IRoleService RoleService => _roleService.Value;
+    public IRadiationZoneService RadiationZoneService => _radiationZoneService.Value;
     public IExecutiveCompanyService ExecutiveCompanyService => _executiveCompanyService.Value;
     public IAntennaTranslatorService AntennaTranslatorService => _antennaTranslatorService.Value;
     public ITranslatorTypeService TranslatorTypeService => _translatorTypeService.Value;

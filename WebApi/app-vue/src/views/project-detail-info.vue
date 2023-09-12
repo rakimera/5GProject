@@ -37,16 +37,15 @@
                     title="Фото мест установки"
                     :disabled="isTabDisabled"
                 >
-                    <dx-item
-                        data-field='house'
-                        editor-type='dxTextBox'
-                        :editor-options="{ stylingMode: 'filled', placeholder: 'Номер здания' }"
-                    >
-                        <dx-label
-                            :text="'Номер здания'"
-                        />
-                    </dx-item>
+                    <project-image-form/>
                 </dx-tab>
+              <dx-tab
+                  tabIndex=3
+                  title="Экспорт проекта"
+                  :disabled="isTabDisabled"
+              >
+                <project-export/>
+              </dx-tab>
             </dx-tabbed-item>
         </dx-form>
     </div>
@@ -55,10 +54,9 @@
 
 import {
     DxForm,
-    DxLabel,
     DxTabbedItem,
     DxTabPanelOptions,
-    DxTab, DxItem,
+    DxTab,
 } from "devextreme-vue/form";
 
 import {onBeforeMount, reactive, ref} from "vue";
@@ -68,11 +66,11 @@ import contrAgentService from "@/api/contrAgentService";
 import townService from "@/api/townService";
 import ProjectForm from "@/components/project-form.vue";
 import ProjectAntennaForm from "@/components/project-antenna-form.vue";
+import ProjectImageForm from "@/components/project-image-form.vue";
+import ProjectExport from "@/components/project-export.vue";
 
 const route = useRoute();
-/*const router = useRouter();*/
 let dataSource = reactive({});
-//const routeParams = {name: "projects"};
 let isFormDisabled = ref(true);
 let isTabDisabled = ref(true);
 let oid = route.params.id;

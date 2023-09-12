@@ -9,5 +9,5 @@ namespace Application.Interfaces;
 public interface IContrAgentService : ICrudService<ContrAgentDto>
 {
     Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions);
-    Task<BaseResponse<ContrAgentDto>> UpdateContrAgent(UpdateContrAgentDto model);
+    Task<BaseResponse<ContrAgentDto>> UpdateContrAgent(UpdateContrAgentDto model, string modifier);
 }

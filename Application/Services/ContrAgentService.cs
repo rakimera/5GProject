@@ -77,7 +77,7 @@ public class ContrAgentService : IContrAgentService
             Messages: new List<string>{"Контрагент успешно найден"});
     }
 
-    public async Task<BaseResponse<ContrAgentDto>> UpdateContrAgent(UpdateContrAgentDto model)
+    public async Task<BaseResponse<ContrAgentDto>> UpdateContrAgent(UpdateContrAgentDto model, string modifier)
     {
         BaseResponse<ContrAgentDto> getContrAgentResponse = await GetByOid(model.Id);
         if (!getContrAgentResponse.Success || getContrAgentResponse.Result == null)
@@ -99,7 +99,7 @@ public class ContrAgentService : IContrAgentService
                 Success: false);
         }
         
-        existingContrAgentDto.LastModifiedBy = "Admin";
+        existingContrAgentDto.LastModifiedBy = modifier;
         _mapper.Map(existingContrAgentDto, contrAgent);
         var result = await _contrAgentValidator.ValidateAsync(contrAgent);
         if (!result.IsValid)

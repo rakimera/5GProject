@@ -10,6 +10,15 @@ public class Project : BaseEntity
     public Guid ExecutorId { get; set; }
     public User Executor { get; set; }
     public Guid? ExecutiveCompanyId { get; set; }
+    public string? PurposeRto { get; set; }
+    public string? PlaceOfInstall { get; set; }
+    public decimal? MaxHeightAdjoinBuild { get; set; }
+    public string? PurposeBuild { get; set; }
+    public string? TypeORoof { get; set; }
+    public string? TypeOfTopCover { get; set; }
+    public string? PlaceOfCommunicationCloset { get; set; }
+    public bool? HasTechnicalLevel { get; set; }
+    public bool? HasOtherRto { get; set; }
     public ExecutiveCompany ExecutiveCompany { get; set; }
     public Guid? SanPinDockId { get; set; }
     public SanPinDock? SanPinDock { get; set; }

@@ -30,6 +30,9 @@ public class AntennaTranslatorDto : BaseEntity
     [property: JsonPropertyName("projectAntennaId")]
     public Guid ProjectAntennaId { get; set; }
     
+    [property: JsonPropertyName("tilt")]
+    public decimal Tilt { get; set; }
+    
     [property: JsonPropertyName("projectAntenna")]
     public ProjectAntennaDto? ProjectAntenna { get; set; }
 }
