@@ -11,7 +11,7 @@ namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/translators")]
-[Authorize]
+// [Authorize]
 public class TranslatorSpecsController : Controller
 {
     private readonly IServiceWrapper _service;

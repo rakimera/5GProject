@@ -162,7 +162,7 @@ public class FileService : IFileService
                         list.Add(radiationZone);
                     }
                 }
-                if (list.Count != 360)
+                if (list.Count != 361)
                 {
                     return new BaseResponse<bool>(
                         Result: false,
@@ -588,7 +588,7 @@ public class FileService : IFileService
                 var antennae = document.FindAll("[Antennae]",SearchOptions.WholeWord);
                 document.InsertText(antennae[0].Start, $"Антенна {projectAntennae[l].Antenna.Model} (сектор {sector} – " +
                                                 $"{antennaTranslators.Count} шт.) " +
-                                                $"Антенны размещаются на трубостойке на крыше, на высоте {projectAntennae[l].Height} м. " +
+                                                $"Антенны размещаются на трубостойке на крыше, на высоте {projectAntennae[l].HeightFromGroundLevel} м. " +
                                                 $"Частота передачи {frequency} МГц. Коэффициент усиления {gain} дБ. " +
                                                 $"Мощность передатчиков {power} Вт. Максимальный радиус биологически-опасной зоны от секторных антенн" +
                                                 $" {projectAntennae[l].Antenna.Model} в направлении излучения равен {maxSummaryRadius.ToString("F3")} м " +
@@ -604,7 +604,8 @@ public class FileService : IFileService
                                                 $"Максимальный радиус биологически-опасного излучения от заднего лепестка антенны составил " +
                                                 $"{horizontalSummaryBack.MaximumBiohazardRadius.ToString("F3")} м.");
                 document.Delete(antennae[0]);
-                var height = projectAntennae[l].Height - Math.Abs(minVerticalSummaryZ);
+                minVerticalSummaryZ = Math.Abs(minVerticalSummaryZ);
+                var height = projectAntennae[l].HeightFromGroundLevel - minVerticalSummaryZ;
                 var azimut = document.FindAll("[Azimut]",SearchOptions.WholeWord);
                 var azimutText = $"Зона ограничения застройки повторяет форму биологически-опасной зоны " +
                                  $"и устанавливается на высоте {height.ToString("F3")} м от земли, не задевая существующие здания: " +
