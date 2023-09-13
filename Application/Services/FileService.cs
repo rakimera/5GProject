@@ -187,7 +187,7 @@ public class FileService : IFileService
         var project = await  _repositoryWrapper.ProjectRepository.GetByCondition(x =>
             x.Id.ToString() == oid);
         // await _biohazardRadiusService.Create(project.Id.ToString());
-        await _energyFlowService.CreateAsync(project.Id.ToString(), project.CreatedBy);
+        // await _energyFlowService.CreateAsync(project.Id.ToString(), project.CreatedBy);
         var contrAgent = project.ContrAgent;
         var year = (project.SanPinDock?.DateOfIssue.Year) ?? DateTime.Now.Year;
         var executor = project.Executor;
@@ -234,10 +234,12 @@ public class FileService : IFileService
                 var power = "";
                 var frequency = "";
                 var type = "";
+                var tilt = "";
                 var powerList = new List<string>();
                 var gainList = new List<string>();
                 var frequencyList = new List<string>();
                 var typeList = new List<string>();
+                var tiltList = new List<string>();
                 var antennaTranslatorId = Guid.Empty;
                 var antennaTranslators = _repositoryWrapper.AntennaTranslatorRepository
                     .GetAllByCondition(x => x.ProjectAntennaId == projectAntennae[l].Id).ToList();
@@ -246,12 +248,13 @@ public class FileService : IFileService
                 gainList.AddRange(antennaTranslators.Select(antennaTranslator => antennaTranslator.Gain.ToString()));
                 frequencyList.AddRange(antennaTranslators.Select(antennaTranslator => antennaTranslator.TranslatorSpecs.Frequency.ToString()));
                 typeList.AddRange(antennaTranslators.Select(antennaTranslator => antennaTranslator.TranslatorType.Type));
+                tiltList.AddRange(antennaTranslators.Select(antennaTranslator => antennaTranslator.Tilt.ToString()));
                 
                 
                 foreach (var antennaTranslator in antennaTranslators)
                 {
                     antennaTranslatorId = antennaTranslator.Id;
-                    var energyFlows = _energyFlowService.GetAllByOid(antennaTranslatorId.ToString());
+                    // var energyFlows = _energyFlowService.GetAllByOid(antennaTranslatorId.ToString());
                     // //Количество столбцов таблицы
                 //     
                 //     //Поиск и создание таблицы для транслятора
@@ -460,7 +463,8 @@ public class FileService : IFileService
                     document.InsertSingleLineText(tableSecond[3, 1].Range.Start, $"{antennaTranslator.Gain}");
                     document.InsertSingleLineText(tableSecond[4, 1].Range.Start, $"{antennaTranslator.TranslatorType.Type}");
                     document.InsertSingleLineText(tableSecond[0, 2].Range.Start, $"Владелец радиоэлектронных средств: {contrAgent.CompanyName}");
-                    document.InsertSingleLineText(tableSecond[1, 2].Range.Start, $"Угол наклона антенны {antennaTranslator.ProjectAntenna.Tilt}°");
+                    document.InsertSingleLineText(tableSecond[1, 2].Range.Start, $"Угол наклона антенны и передатчика " +
+                        $"{antennaTranslator.ProjectAntenna.Tilt}°({antennaTranslator.Tilt}°)");
                     document.InsertSingleLineText(tableSecond[2, 2].Range.Start, $"Передатчик №{number}");
                     tableSecond.MergeCells(tableSecond[0, 0], tableSecond[4, 0]);
                     tableSecond.MergeCells(tableSecond[0, 1], tableSecond[4, 1]);
@@ -483,7 +487,8 @@ public class FileService : IFileService
                                                                 "Для определения максимального радиуса БОЗ примем F(𝜃)=1 и F(𝜑)=1:\n" +
                                                                 $"Максимальный радиус БОЗ составляет Rmax= {maxRadius} м.\n" +
                                                                 "Форму поперечного сечения биологически опасной зоны рассчитаем при помощи формул:\n" +
-                                                                "Rz=Rmax•sin 𝝋, Rx=Rmax•cos 𝝋.                                        Rz=Rmax•sin 𝜃, Rx=Rmax•cos 𝜃 \n" +
+                                                                "Rz=Rmax•sin 𝝋, Rx=Rmax•cos 𝝋.                                        " +
+                                                                "Rz=Rmax•sin 𝜃, Rx=Rmax•cos 𝜃 \n" +
                                                                 "для горизонтальной плоскости                                               " +
                                                                 "для вертикальной плоскости \n" +
                                                                 "Значение Rz указывает на отклонение БОЗ от оси излучения антенны," +
@@ -630,7 +635,7 @@ public class FileService : IFileService
                 type = string.Join(";", typeList);
                 power = string.Join(";", powerList);
                 frequency = string.Join(";", frequencyList);
-                var sector = string.Join(",", Enumerable.Range(1, number - 1));
+                tilt = string.Join(";", tiltList);
                 //Заполнение таблицы данными
                 document.InsertSingleLineText(tableSecondMax[0, 0].Range.Start, "Расчет биологически опасной зоны от секторной антенны:");
                 document.InsertSingleLineText(tableSecondMax[1, 0].Range.Start, "Рабочая частота (диапазон частот) на передачу, МГц чу, Вт:");
@@ -643,7 +648,7 @@ public class FileService : IFileService
                 document.InsertSingleLineText(tableSecondMax[3, 1].Range.Start, $"{gain}");
                 document.InsertSingleLineText(tableSecondMax[4, 1].Range.Start, $"{type}");
                 document.InsertSingleLineText(tableSecondMax[0, 2].Range.Start, $"Владелец радиоэлектронных средств: {contrAgent.CompanyName}");
-                document.InsertSingleLineText(tableSecondMax[1, 2].Range.Start, $"Угол наклона антенны {projectAntennae[l].Tilt}°");
+                document.InsertSingleLineText(tableSecondMax[1, 2].Range.Start, $"Угол наклона антенны и передатчиков {projectAntennae[l].Tilt}°({tilt}°)");
                 tableSecondMax.MergeCells(tableSecondMax[0, 0], tableSecondMax[4, 0]);
                 tableSecondMax.MergeCells(tableSecondMax[0, 1], tableSecondMax[4, 1]);
                 tableSecondMax.MergeCells(tableSecondMax[0, 2], tableSecondMax[4, 2]);
@@ -669,13 +674,13 @@ public class FileService : IFileService
                 tableSecondMax.EndUpdate();
                 //Заполнение вывода данными по антеннам
                 var antennae = document.FindAll("[Antennae]",SearchOptions.WholeWord);
-                document.InsertText(antennae[0].Start, $"Антенна {projectAntennae[l].Antenna.Model} (сектор {l} – " +
-                                                $"{antennaTranslators.Count} шт.) " +
-                                                $"Антенны размещаются на трубостойке на крыше, на высоте {projectAntennae[l].HeightFromGroundLevel} м. " +
+                document.InsertText(antennae[0].Start, $"Антенна {projectAntennae[l].Antenna.Model} (сектор {l+1} – " +
+                                                $"количество передатчиков {antennaTranslators.Count} шт.) " +
+                                                $"Антенны размещаются на {project.PlaceOfInstall.ToLower()}, на высоте {projectAntennae[l].HeightFromGroundLevel} м. " +
                                                 $"Частота передачи {frequency} МГц. Коэффициент усиления {gain} дБ. " +
                                                 $"Мощность передатчиков {power} Вт. Максимальный радиус биологически-опасной зоны от секторных антенн" +
                                                 $" {projectAntennae[l].Antenna.Model} в направлении излучения равен {maxSummaryRadius.ToString("F3")} м " +
-                                                $"(угол наклона антенны {projectAntennae[l].Tilt}°). " +
+                                                $"(угол наклона антенны {projectAntennae[l].Tilt}°,угол наклона передатчиков {tilt}°). " +
                                                 $"В вертикальном сечении БОЗ повторяет диаграмму направленности." +
                                                 $" Максимальное отклонение от оси в вертикальном сечении составляет {(Math.Abs(minVerticalSummaryZ)).ToString("F3")} м. " +
                                                 $"на расстоянии {verticalSummaryX.ToString("F3")} м. от центра излучения." +

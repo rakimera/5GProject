@@ -81,7 +81,7 @@ public class BiohazardRadiusService : IBiohazardRadiusService
 
     private async Task<bool> BioHazardCreate(List<RadiationZone> radiationZones,ProjectAntenna projectAntenna, AntennaTranslator antennaTranslator )
     {
-        var tilt = (int)projectAntenna.Tilt;
+        var tilt = (int)projectAntenna.Tilt + (int)antennaTranslator.Tilt;
         for (int i = 0; i < radiationZones.Count; i++)
         {
             int newIndex = (i + (radiationZones.Count - tilt)) % radiationZones.Count;
