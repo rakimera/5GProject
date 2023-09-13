@@ -11,9 +11,5 @@ public interface IRadiationZoneExelFileService : ICrudService<RadiationZoneExelF
     Task<BaseResponse<RadiationZoneExelFileDto>> ConvertExel(RadiationZoneExelFileDto model, IFormFile uploadedFile);
     BaseResponse<List<RadiationZoneExelFileDto>> GetAllById(string id);
 
-    Task<BaseResponse<string>> CreateAsync(
-        RadiationZoneExelFileDto model,
-        [FromForm] IFormFile vertical,
-        [FromForm] IFormFile horizontal,
-        string creator);
+    Task<BaseResponse<string>> CreateAsync( string id, IFormFile vertical, IFormFile horizontal, string creator);
 }

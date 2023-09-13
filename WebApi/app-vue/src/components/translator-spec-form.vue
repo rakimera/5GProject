@@ -10,13 +10,14 @@
     >
       <dx-editing
           :allow-updating="true"
-          :allow-adding="true"
           :allow-deleting="true"
           :texts="{confirmDeleteMessage: 'Вы уверены, что хотите удалить эту запись?'}"
           mode="form"
-      />
+      >
+      </dx-editing>
       <dx-toolbar>
-        <dx-item name="addRowButton" show-text="always" location="before" widget="dxButton" :options="addButton">
+        <dx-item show-text="always" location="before" @click="addClick" widget="dxButton" :options="addButton">
+        <dx-item name="saveButton"/>
         </dx-item>
       </dx-toolbar>
       <dx-column
@@ -44,49 +45,99 @@
       <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
       <dx-sorting mode="multiple"/>
     </dx-data-grid>
-    <div>
-      <dx-button
-          class="button"
-          text="H360"
-          type="success"
-          :use-submit-behavior="true"
-          :on-click="uploadHorizontal"
-      />
-    </div>
-    <div>
-      <dx-button
-          class="button"
-          text="V360"
-          type="success"
-          :use-submit-behavior="true"
-          :on-click="uploadVertical"
-      />
-    </div>
+
+    <dx-popup :show-title="true" :width="700" title="Добавление передатчика" v-model:visible="popupVisible">
+      <form
+          id="form"
+          :ref="formRef"
+          method="post"
+          action=""
+          enctype="multipart/form-data"
+      >
+        <div class="dx-fieldset">
+          <div class="dx-field">
+            <dx-text-box
+                :input-attr="{ 'aria-label': 'Full Name' }"
+                name="frequency"
+                class="dx-field-value"
+                caption="Частота"
+                label="Частота"
+                :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
+            >
+            </dx-text-box>
+          </div>
+        </div>
+        <div class="fileuploader-container">
+          <dx-file-uploader
+              select-button-text="Добавить вертикаль"
+              labelText="Или перенесите файл сюда"
+              :showFileList= "false"
+              :max-file-size="4000000"
+              accept="image/*"
+              :multiple="false"
+              upload-mode="useForm"
+              name="vertical"
+          />
+        </div>
+        <div class="fileuploader-container">
+          <dx-file-uploader
+              select-button-text="Добавить горизонталь"
+              labelText="Или перенесите файл сюда"
+              :showFileList= "false"
+              :max-file-size="4000000"
+              accept="image/*"
+              :multiple="false"
+              upload-mode="useForm"
+              name="horizontal"
+          />
+        </div>
+        <input
+            name='antennaId'
+            :value="antennaId"
+            hidden="true"
+        >
+        <dx-button
+            class="button"
+            text="Сохранить"
+            type="success"
+            @click="onButtonClick"
+        />
+        <dx-button
+            class="button"
+            text="Отмена"
+            type="danger"
+            @click="onButtonCancelClick"
+        />
+      </form>
+    </dx-popup>
+    
   </div>
 </template>
 
 <script setup>
 
+import { DxTextBox } from 'devextreme-vue/text-box';
+import { DxButton } from 'devextreme-vue/button';
 import {
   DxLabel
 } from 'devextreme-vue/form';
 import {onMounted, ref, defineProps} from "vue";
+import { DxItem } from "devextreme-vue/form";
 import {
   DxColumn,
   DxDataGrid,
   DxEditing,
   DxFormItem,
-  DxItem,
   DxSorting,
   DxPager,
   DxPaging, DxToolbar
 } from "devextreme-vue/data-grid";
+import { DxPopup } from 'devextreme-vue/popup';
 import {DxRequiredRule} from "devextreme-vue/validator";
 import translatorSpecService from "@/api/translatorSpecsService";
 import notify from "devextreme/ui/notify";
 import CustomStore from "devextreme/data/custom_store";
-import DxButton from "devextreme-vue/button";
-import {useRouter} from "vue-router";
+import {DxFileUploader} from "devextreme-vue/file-uploader";
 
 const props = defineProps({
   masterDetailData: {
@@ -102,7 +153,21 @@ const addButton = {
   type: 'success',
   stylingMode:"contained"
 };
-const router = useRouter();
+const verticalFile = ref();
+const horizontalFile = ref();
+const popupVisible = ref(false);
+const formRef = ref(null);
+
+async function onButtonClick(){
+  console.log(formRef.value)
+}
+
+function onButtonCancelClick(){
+  popupVisible.value = false;
+}
+function addClick (){
+  popupVisible.value= true;
+}
 
 const store = new CustomStore({
   key: "id",
@@ -113,7 +178,17 @@ const store = new CustomStore({
   },
   async insert(values) {
     values.antennaId = antennaId.value;
-    const baseResponse = await translatorSpecService.createTranslatorSpec(values);
+    values.vertical = verticalFile.value;
+    values.horizontal = horizontalFile.value;
+
+    const formData = new FormData();
+    formData.append("antennaId", antennaId.value);
+    formData.append("frequency", values.frequency);
+    formData.append("vertical", verticalFile.value);
+    formData.append("horizontal", horizontalFile.value);
+
+    console.log(values)
+    const baseResponse = await translatorSpecService.createTranslatorSpec(formData);
     await dataSource.value.load();
     if (baseResponse.data.success) {
       notify({
@@ -172,21 +247,31 @@ onMounted(async () => {
   translators.value = response.data.result;
 });
 
-const uploadHorizontal = async () => {
-  try {
-    await router.push({name: 'radiationZoneExelFile', params: {mode: "create", id: null}});
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 </script>
 
 <style scoped>
-#form h2 {
-  margin-left: 40px;
+#form {
+  max-width: 600px;
+  margin: auto;
+}
+
+.button {
+  margin-top: 50px;
+  margin-right: 20px;
+  float: right;
+}
+
+.fileuploader-container {
+  border: 1px solid #d3d3d3;
+  margin: 20px 20px 0 20px;
+}
+#form h3 {
+  margin-left: 20px;
   font-weight: normal;
-  font-size: 35px;
+  font-size: 22px;
+}
+.dx-field-value-static, .dx-field-value:not(.dx-switch):not(.dx-checkbox):not(.dx-button) {
+  width: 100%;
 }
 </style>
 

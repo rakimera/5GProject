@@ -44,13 +44,9 @@ public class RadiationZoneExelFileService : IRadiationZoneExelFileService
         throw new NotImplementedException();
     }
 
-    public async Task<BaseResponse<string>> CreateAsync(
-        RadiationZoneExelFileDto model, 
-        [FromForm]IFormFile vertical, 
-        [FromForm]IFormFile horizontal, 
-        string creator)
+    public async Task<BaseResponse<string>> CreateAsync( string id, IFormFile vertical, IFormFile horizontal, string creator)
     {
-        model.CreatedBy = creator;
+        /*model.CreatedBy = creator;
         
         RadiationZoneExelFile exelFile = _mapper.Map<RadiationZoneExelFile>(model);
         await _repositoryWrapper.RadiationZoneExelFileRepository.CreateAsync(exelFile);
@@ -59,7 +55,8 @@ public class RadiationZoneExelFileService : IRadiationZoneExelFileService
         return new BaseResponse<string>(
             Result: exelFile.Id.ToString(),
             Success: true,
-            Messages: new List<string> { "Exel файл успешно создан" });
+            Messages: new List<string> { "Exel файл успешно создан" });*/
+        throw new NotImplementedException();
     }
 
     public async Task<BaseResponse<RadiationZoneExelFileDto>> GetByOid(string oid)
