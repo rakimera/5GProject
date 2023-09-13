@@ -1,4 +1,5 @@
 using Application.Interfaces;
+using Application.Models.RadiationZone.RadiationZoneExelFile;
 using Application.Models.TranslatorSpecs;
 using AutoMapper;
 using DevExtreme.AspNet.Data;
@@ -6,12 +7,13 @@ using Domain.Entities;
 using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml.FormulaParsing.ExpressionGraph.FunctionCompilers;
 
 namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/translators")]
-[Authorize]
+//[Authorize]
 public class TranslatorSpecsController : Controller
 {
     private readonly IServiceWrapper _service;
@@ -55,14 +57,22 @@ public class TranslatorSpecsController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(CreateTranslatorSpecsDto model)
+    public async Task<IActionResult> Post(
+        [FromForm]CreateTranslatorSpecsDto translatorModel, 
+        [FromForm]RadiationZoneExelFileDto radiationZoneExelFileModel,
+        [FromForm]IFormFile vertical, 
+        [FromForm]IFormFile horizontal)
     {
-        TranslatorSpecsDto translatorSpecsDto = _mapper.Map<TranslatorSpecsDto>(model);
-        var baseResponse = await _service.TranslatorSpecsService.CreateAsync(translatorSpecsDto, User.Identity.Name);
-        
+        TranslatorSpecsDto translatorSpecsDto = _mapper.Map<TranslatorSpecsDto>(translatorModel);
+        var baseResponse = await _service.TranslatorSpecsService
+            .CreateAsync(translatorSpecsDto, User.Identity.Name);
         if (baseResponse.Success)
-            return Ok(baseResponse);
-        return BadRequest(baseResponse);
+        {
+            var response = await _service.RadiationZoneExelFileService
+                .CreateAsync(radiationZoneExelFileModel, horizontal, vertical, User.Identity.Name);
+            return Ok(response);
+        }
+        return Ok(baseResponse);
     }
 
     [HttpPut]

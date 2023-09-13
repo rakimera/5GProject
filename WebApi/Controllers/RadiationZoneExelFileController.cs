@@ -8,7 +8,7 @@ namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/radiationZone-files")]
-[Authorize]
+// [Authorize]
 public class RadiationZoneExelFileController : Controller
 {
     private readonly IServiceWrapper _service;

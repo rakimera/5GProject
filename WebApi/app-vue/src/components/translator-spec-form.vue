@@ -44,6 +44,24 @@
       <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
       <dx-sorting mode="multiple"/>
     </dx-data-grid>
+    <div>
+      <dx-button
+          class="button"
+          text="H360"
+          type="success"
+          :use-submit-behavior="true"
+          :on-click="uploadHorizontal"
+      />
+    </div>
+    <div>
+      <dx-button
+          class="button"
+          text="V360"
+          type="success"
+          :use-submit-behavior="true"
+          :on-click="uploadVertical"
+      />
+    </div>
   </div>
 </template>
 
@@ -67,6 +85,8 @@ import {DxRequiredRule} from "devextreme-vue/validator";
 import translatorSpecService from "@/api/translatorSpecsService";
 import notify from "devextreme/ui/notify";
 import CustomStore from "devextreme/data/custom_store";
+import DxButton from "devextreme-vue/button";
+import {useRouter} from "vue-router";
 
 const props = defineProps({
   masterDetailData: {
@@ -81,7 +101,8 @@ const addButton = {
   icon: 'login',
   type: 'success',
   stylingMode:"contained"
-}
+};
+const router = useRouter();
 
 const store = new CustomStore({
   key: "id",
@@ -149,7 +170,15 @@ onMounted(async () => {
   antennaId.value = props.masterDetailData.key;
   const response = await translatorSpecService.getAllByAntennaId(antennaId.value);
   translators.value = response.data.result;
-})
+});
+
+const uploadHorizontal = async () => {
+  try {
+    await router.push({name: 'radiationZoneExelFile', params: {mode: "create", id: null}});
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 </script>
 

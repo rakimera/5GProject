@@ -5,6 +5,7 @@ using Application.Models.RadiationZone.RadiationZoneExelFile;
 using AutoMapper;
 using Domain.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Application.Services;
 
@@ -38,7 +39,16 @@ public class RadiationZoneExelFileService : IRadiationZoneExelFileService
             Messages: new List<string> { "Exel файлы не были получены, возможно оно еще не создано или удалено" });
     }
 
-    public async Task<BaseResponse<string>> CreateAsync(RadiationZoneExelFileDto model, string creator)
+    public Task<BaseResponse<string>> CreateAsync(RadiationZoneExelFileDto model, string creator)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<BaseResponse<string>> CreateAsync(
+        RadiationZoneExelFileDto model, 
+        [FromForm]IFormFile vertical, 
+        [FromForm]IFormFile horizontal, 
+        string creator)
     {
         model.CreatedBy = creator;
         
