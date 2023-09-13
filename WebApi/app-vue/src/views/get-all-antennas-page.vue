@@ -1,14 +1,21 @@
 <template>
-  <div>
+  <div class="row justify-content-center mt-5">
+    <div class="col-11 ">
     <dx-data-grid
         :data-source="dataSource"
         :show-borders="true"
         :remote-operations="false"
-        :column-auto-width="true"
+        :columnAutoWidth="true"
+        :allowColumnResizing="true"
         key-expr="id"
         @row-updating="onRowUpdating"
         @editor-preparing="editorPreparing"
     >
+      <dx-search-panel
+          :visible="true"
+          placeholder="Поиск"
+          width= 250
+      />
       <dx-editing
           :allow-updating="true"
           :allow-adding="true"
@@ -18,6 +25,8 @@
       />
       <dx-toolbar>
         <dx-item name="addRowButton" show-text="always" location="after" widget="dxButton" :options="addButton">
+        </dx-item>
+        <dx-item name="searchPanel">
         </dx-item>
       </dx-toolbar>
       <dx-column
@@ -48,7 +57,9 @@
       <dx-paging :page-size="5"/>
       <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
       <dx-sorting mode="multiple"/>
+      <dx-header-filter :visible="true"/>
     </dx-data-grid>
+    </div>
   </div>
 </template>
 
@@ -68,7 +79,7 @@ import {
   DxToolbar,
   DxItem,
   DxSorting,
-  DxMasterDetail
+  DxMasterDetail, DxSearchPanel, DxHeaderFilter
 } from 'devextreme-vue/data-grid';
 import 'devextreme-vue/text-area';
 import {DxRequiredRule} from "devextreme-vue/validator";

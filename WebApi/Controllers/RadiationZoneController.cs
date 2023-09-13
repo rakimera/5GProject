@@ -55,7 +55,7 @@ public class RadiationZoneController : Controller
     [HttpPut]
     public async Task<IActionResult> Put(UpdateRadiationZoneDto model)
     {
-        var baseResponse = await _service.RadiationZoneService.Update(model);
+        var baseResponse = await _service.RadiationZoneService.Update(model, User.Identity.Name);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);

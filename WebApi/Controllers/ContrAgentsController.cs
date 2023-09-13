@@ -53,7 +53,7 @@ public class ContrAgentsController : Controller
     [HttpPut]
     public async Task<IActionResult> Put(UpdateContrAgentDto model)
     {
-        var baseResponse = await _service.ContrAgentService.UpdateContrAgent(model);
+        var baseResponse = await _service.ContrAgentService.UpdateContrAgent(model, User.Identity.Name);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);

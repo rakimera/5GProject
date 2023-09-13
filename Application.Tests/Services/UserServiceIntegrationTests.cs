@@ -19,9 +19,10 @@ public class UserServiceIntegrationTests
     public UserServiceIntegrationTests()
     {
         UserValidator userValidatorMock = new();
+        UpdateUserValidator updateUserValidator = new();
         _mapperMock = new Mock<IMapper>();
         _repositoryWrapperMock = new Mock<IRepositoryWrapper>();
-        _userService = new UserService(_repositoryWrapperMock.Object, _mapperMock.Object, userValidatorMock);
+        _userService = new UserService(_repositoryWrapperMock.Object, _mapperMock.Object, userValidatorMock, updateUserValidator);
     }
 
     [Fact]
@@ -36,18 +37,20 @@ public class UserServiceIntegrationTests
                 Name = "User1",
                 Surname = "Surname1",
                 Login = "user1@example.com",
-                Password = "password1",
+                PasswordHash = "QnWCCW4LnwMO2ZTuUFJx+ZDN6vuNLTrbEq7+4eswbco=",
+                Salt = Convert.FromBase64String("tvNjITz/GQLm7OyVWZNYQg=="),
                 RefreshTokens = new List<RefreshToken>(),
                 ExecutiveCompanyId = Guid.NewGuid(),
                 Created = DateTime.Now,
                 CreatedBy = "Admin",
                 LastModified = DateTime.Now,
                 LastModifiedBy = "Admin",
-                IsDelete = false
+                IsDelete = false,
+                PhoneNumber = "7072020202"
             },
         };
 
-        var userDtoList = users.Select(u => new UserDto { Id = u.Id, Name = u.Name, Surname = u.Surname }).ToList();
+        var userDtoList = users.Select(u => new UserDto { Id = u.Id, Name = u.Name, Surname = u.Surname, PhoneNumber = u.Name}).ToList();
 
         _repositoryWrapperMock.Setup(r => r.UserRepository.GetAll()).Returns(users.AsQueryable());
         _mapperMock.Setup(m => m.Map<List<UserDto>>(It.IsAny<IQueryable<User>>())).Returns(userDtoList);
@@ -96,7 +99,8 @@ public class UserServiceIntegrationTests
             {
                 "Analyst"
             },
-            ExecutiveCompanyId = new Guid()
+            ExecutiveCompanyId = new Guid(),
+            PhoneNumber = "7072020202"
         };
 
         var newUser = new User
@@ -105,14 +109,16 @@ public class UserServiceIntegrationTests
             Login = newUserDto.Login,
             Name = newUserDto.Name,
             Surname = newUserDto.Surname,
-            Password = newUserDto.Password,
+            PasswordHash = "QnWCCW4LnwMO2ZTuUFJx+ZDN6vuNLTrbEq7+4eswbco=",
+            Salt = Convert.FromBase64String("tvNjITz/GQLm7OyVWZNYQg=="),
             ExecutiveCompanyId = newUserDto.ExecutiveCompanyId,
             RefreshTokens = new List<RefreshToken>(),
             CreatedBy = "Admin",
             Created = DateTime.Now,
             LastModified = DateTime.Now,
             LastModifiedBy = "Admin",
-            IsDelete = false
+            IsDelete = false,
+            PhoneNumber = newUserDto.PhoneNumber
         };
 
         var role1 = new Role() { Id = new Guid(), RoleName = "Analyst" };
@@ -157,14 +163,16 @@ public class UserServiceIntegrationTests
             Login = "test@mail.kz",
             Name = "Testname",
             Surname = "Testsurname",
-            Password = "Qwerty@123",
+            PasswordHash = "QnWCCW4LnwMO2ZTuUFJx+ZDN6vuNLTrbEq7+4eswbco=",
+            Salt = Convert.FromBase64String("tvNjITz/GQLm7OyVWZNYQg=="),
             ExecutiveCompanyId = new Guid(),
             RefreshTokens = new List<RefreshToken>(),
             CreatedBy = "Admin",
             Created = DateTime.Now,
             LastModified = DateTime.Now,
             LastModifiedBy = "Admin",
-            IsDelete = false
+            IsDelete = false,
+            PhoneNumber = "7072020202"
         };
         var role = new Role() { Id = new Guid(), RoleName = "Analyst" };
         var userRoles = new List<UserRole>
@@ -182,7 +190,8 @@ public class UserServiceIntegrationTests
             Roles = userRoles.Where(userRole => userRole.UserId == user.Id)
                 .Select(userRole => userRole.Role.RoleName)
                 .ToList(),
-            ExecutiveCompanyId = new Guid()
+            ExecutiveCompanyId = new Guid(),
+            PhoneNumber = "7072020202"
         };
 
         _mapperMock.Setup(r => r.Map<UserDto>(user)).Returns(userDto);
@@ -224,7 +233,8 @@ public class UserServiceIntegrationTests
             {
                 "Analyst"
             },
-            ExecutiveCompanyId = executiveCompanyId
+            ExecutiveCompanyId = executiveCompanyId,
+            PhoneNumber = "7072020202"
         };
 
         var updatedUser = new User
@@ -233,14 +243,16 @@ public class UserServiceIntegrationTests
             Login = "test@mail.kz",
             Name = "Testname",
             Surname = "Testsurname",
-            Password = "Qwerty@123",
+            PasswordHash = "QnWCCW4LnwMO2ZTuUFJx+ZDN6vuNLTrbEq7+4eswbco=",
+            Salt = Convert.FromBase64String("tvNjITz/GQLm7OyVWZNYQg=="),
             CreatedBy = "Admin",
             Created = DateTime.Now,
             LastModified = DateTime.Now,
             LastModifiedBy = "Admin",
             IsDelete = false,
             ExecutiveCompanyId = updateUserDto.ExecutiveCompanyId,
-            RefreshTokens = new List<RefreshToken>()
+            RefreshTokens = new List<RefreshToken>(),
+            PhoneNumber = "7072020202"
         };
         
         var role1 = new Role() { Id = new Guid(), RoleName = "Analyst" };
@@ -270,7 +282,8 @@ public class UserServiceIntegrationTests
             LastModifiedBy = "Admin",
             Password = "Qwerty@123",
             ExecutiveCompanyId = updatedUser.ExecutiveCompanyId,
-            IsDelete = false
+            IsDelete = false,
+            PhoneNumber = "7072020202"
         };
 
         _repositoryWrapperMock.Setup(r => r.UserRoleRepository.GetAll()).Returns(userRoles.AsQueryable);
@@ -287,7 +300,7 @@ public class UserServiceIntegrationTests
 
 
         // Act
-        var response = await _userService.UpdateUser(updateUserDto);
+        var response = await _userService.UpdateUser(updateUserDto, "Admin");
 
         // Assert
         _repositoryWrapperMock.Verify(r => r.UserRepository.Update(updatedUser), Times.Once);

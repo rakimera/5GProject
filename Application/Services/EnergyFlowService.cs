@@ -50,7 +50,7 @@ public class EnergyFlowService : IEnergyFlowService
     {
         List<EnergyResult> energyResults = new List<EnergyResult>();
         decimal gainInMultiplier = Multiplier(inputData.Gain);
-        decimal transmitLossFactorInMultiplier = Multiplier(inputData.TransmitLossFactor);
+        decimal transmitLossFactorInMultiplier = Multiplier(-inputData.TransmitLossFactor);
         decimal heightInstall = inputData.HeightInstall;
         decimal powerSignal = inputData.PowerSignal;
         AntennaTranslator? antennaTranslator =
@@ -106,38 +106,81 @@ public class EnergyFlowService : IEnergyFlowService
     private decimal NormalizedVerticalPower(decimal distance, decimal heightInstall, Guid translatorId) //F(θ)
     {
         int degree = (int)Math.Ceiling(Math.Atan((double)((heightInstall - HumanHeight) / distance)) * 180 / Math.PI);
-        var radiationZones = _repositoryWrapper.RadiationZoneRepository.GetAllByCondition(x => x.Id == translatorId).Where(x=> x.DirectionType == DirectionType.Vertical);
+        var radiationZones = _repositoryWrapper.RadiationZoneRepository.GetAllByCondition(x => x.TranslatorSpecsId == translatorId).Where(x=> x.DirectionType == DirectionType.Vertical);
         RadiationZone? verticalRadiation = radiationZones.FirstOrDefault(x => x.Degree == degree);
         var verticalRadiationInMultiplier = Multiplier(verticalRadiation.Value);
         
         return verticalRadiationInMultiplier;
     }
 
-    public async Task<BaseResponse<string>> CreateAsync(CreateEnergyResultDto createEnergyResultDto, string creator)
+    public async Task<BaseResponse<string>> CreateAsync(string projectId, string creator)
     {
-        var validationResult = await _energyResultValidator.ValidateAsync(createEnergyResultDto);
-        if (validationResult.IsValid)
+        List<CreateEnergyResultDto> createEnergyResultsDto = new List<CreateEnergyResultDto>();
+        
+        var projectAntennas =
+             _repositoryWrapper.ProjectAntennaRepository.GetAllByCondition(
+                x => x.ProjectId.ToString() == projectId).ToList();
+
+        if (projectAntennas.Count != 0)
         {
-            List<EnergyResult> calculationResults = await PowerDensity(createEnergyResultDto);
+            foreach (var projectAntenna in projectAntennas)
+            {
+                var antennaTranslators =
+                    _repositoryWrapper.AntennaTranslatorRepository.GetAllByCondition(x =>
+                        x.ProjectAntennaId == projectAntenna.Id).ToList();
+                
+                if (antennaTranslators.Count == 0) break;
+                foreach (var antennaTranslator in antennaTranslators)
+                {
+                    //вызвать метод очистки предыдущих значений или предусмотреть удаление значений после просчетов
+                    CreateEnergyResultDto createEnergyResultDto = new CreateEnergyResultDto
+                    {
+                        PowerSignal = antennaTranslator.Power,
+                        Gain = antennaTranslator.Gain,
+                        TransmitLossFactor = antennaTranslator.TransmitLossFactor,
+                        HeightInstall = projectAntenna.HeightFromGroundLevel,
+                        AntennaTranslatorId = antennaTranslator.Id
+                    };
+                    createEnergyResultsDto.Add(createEnergyResultDto);
+                }
+            }
+        }
+
+        if (createEnergyResultsDto.Count == 0)
+        {
+            return new BaseResponse<string>(
+                Result: "",
+                Messages: new List<string> {"Не удалось выполнить просчеты проверьте проектные антенны и их передатчики"},
+                Success: false);
+        }
+
+        foreach (var energyResult in createEnergyResultsDto)
+        {
+            var validationResult = await _energyResultValidator.ValidateAsync(energyResult);
+            if (!validationResult.IsValid)
+            {
+                List<string> messages = _mapper.Map<List<string>>(validationResult.Errors);
+                return new BaseResponse<string>(
+                    Result: "", 
+                    Messages: messages,
+                    Success: false);
+            }
             
+            List<EnergyResult> calculationResults = await PowerDensity(energyResult);
+        
             foreach (var calculationResult in calculationResults)
             {
                 calculationResult.CreatedBy = creator;
                 await _repositoryWrapper.EnergyFlowRepository.CreateAsync(calculationResult);
             }
-
-            await _repositoryWrapper.Save();
-            return new BaseResponse<string>(
-                Result: "",
-                Success: true,
-                Messages: new List<string>{"Просчеты плотности потока энергии успешно созданы"});
         }
+            
         
-        List<string> messages = _mapper.Map<List<string>>(validationResult.Errors);
+        await _repositoryWrapper.Save();
         return new BaseResponse<string>(
-            Result: "", 
-            Messages: messages,
-            Success: false);
+            Result: "",
+            Success: true,
+            Messages: new List<string>{"Просчеты плотности потока энергии успешно созданы"});
     }
 
     public BaseResponse<List<EnergyResultDto>> GetAllByOid(string oid)

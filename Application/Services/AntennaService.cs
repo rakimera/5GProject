@@ -92,7 +92,7 @@ public class AntennaService : IAntennaService
             Success: false);
     }
 
-    public async Task<BaseResponse<string>> Update(UpdateAntennaDto model)
+    public async Task<BaseResponse<string>> Update(UpdateAntennaDto model, string modifier)
     {
         var antennaDto = _mapper.Map<AntennaDto>(model);
         var result = await _antennaValidator.ValidateAsync(antennaDto);
@@ -116,7 +116,7 @@ public class AntennaService : IAntennaService
         }
 
         _mapper.Map(model, antenna);
-        antenna.LastModifiedBy = "Admin";
+        antenna.LastModifiedBy = modifier;
 
         _repositoryWrapper.AntennaRepository.Update(antenna);
         await _repositoryWrapper.Save();

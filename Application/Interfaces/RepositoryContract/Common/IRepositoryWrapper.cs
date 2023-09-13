@@ -24,5 +24,6 @@ public interface IRepositoryWrapper
     ITotalFluxDensityRepository TotalFluxDensityRepository { get; }
     ITranslatorTypeRepository TranslatorTypeRepository { get; }
     IRadiationZoneExelFileRepository RadiationZoneExelFileRepository { get; }
+    IProjectImageRepository ProjectImageRepository { get; }
     Task Save();
 }

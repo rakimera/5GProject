@@ -29,11 +29,25 @@ public class RepositoryWrapper : IRepositoryWrapper
     private ISummaryBiohazardRadiusRepository _summaryBiohazardRadiusRepository;
     private ITotalFluxDensityRepository _totalFluxDensityRepository;
     private ITranslatorTypeRepository _translatorTypeRepository;
+    private IProjectImageRepository _projectImageRepository;
     private ITranslatorSpecsRepository _translatorSpecsRepository;
 
     public RepositoryWrapper(Project5GDbContext db)
     {
         _db = db;
+    }
+    
+    public IProjectImageRepository ProjectImageRepository
+    {
+        get
+        {
+            if (_projectImageRepository == null)
+            {
+                _projectImageRepository = new ProjectImageRepository(_db);
+            }
+
+            return _projectImageRepository;
+        }
     }
 
     public IAntennaTranslatorRepository AntennaTranslatorRepository

@@ -3,7 +3,7 @@
     <dx-data-grid
         :data-source="dataSource"
         :show-borders="true"
-        :remote-operations="true"
+        :remote-operations="false"
         :column-auto-width="true"
         key-expr="id"
         @row-updating="onRowUpdating"
@@ -67,6 +67,14 @@
           :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
           alignment="left">
         <dx-required-rule message="Вы не запонели коэффициент усиления сигнала"></dx-required-rule>
+      </dx-column>
+      <dx-column
+              data-field="tilt"
+              data-type="number"
+              caption="Тильт"
+              :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
+              alignment="left">
+          <dx-required-rule message="Вы не запонили угол наклона передатчика"></dx-required-rule>
       </dx-column>
       <dx-column
           data-field="projectAntennaId"

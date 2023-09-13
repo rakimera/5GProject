@@ -12,6 +12,15 @@ const userService = {
         }
     },
 
+    async getCurrentUser() {
+        try {
+            return await axios.get(`/api/users/current-user`);
+        }
+        catch (error){
+            console.log(error)
+        }
+    },
+
     async getUser(oid) {
         try {
             return await axios.get(`/api/users/${oid}`);

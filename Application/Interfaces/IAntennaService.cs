@@ -9,6 +9,6 @@ namespace Application.Interfaces;
 
 public interface IAntennaService : ICrudService<AntennaDto>
 {
-    Task<BaseResponse<string>> Update(UpdateAntennaDto model);
+    Task<BaseResponse<string>> Update(UpdateAntennaDto model, string modifier);
     Task<LoadResult> GetLoadResult(DataSourceLoadOptionsBase loadOptions);
 }

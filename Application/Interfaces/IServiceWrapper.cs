@@ -21,4 +21,5 @@ public interface IServiceWrapper
     IAntennaTranslatorService AntennaTranslatorService { get; }
     ITranslatorTypeService TranslatorTypeService { get; }
     IBiohazardRadiusService BiohazardRadiusService { get; }
+    IProjectImageService ProjectImageService { get; }
 }

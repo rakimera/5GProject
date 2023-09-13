@@ -47,16 +47,25 @@ public class TranslatorSpecsService : ITranslatorSpecsService
 
     public async Task<BaseResponse<string>> CreateAsync(TranslatorSpecsDto model, string creator)
     {
-        await _validator.ValidateAsync(model);
-        model.CreatedBy = creator;
-        TranslatorSpecs translatorSpecs = _mapper.Map<TranslatorSpecs>(model);
-        await _repository.TranslatorSpecsRepository.CreateAsync(translatorSpecs);
-        await _repository.Save();
+        var result = await _validator.ValidateAsync(model);
+        if (result.IsValid)
+        {
+            model.CreatedBy = creator;
+            TranslatorSpecs translatorSpecs = _mapper.Map<TranslatorSpecs>(model);
+            await _repository.TranslatorSpecsRepository.CreateAsync(translatorSpecs);
+            await _repository.Save();
 
+            return new BaseResponse<string>(
+                Result: translatorSpecs.Id.ToString(),
+                Success: true,
+                Messages: new List<string> { "Передатчик успешно создан" });
+        }
+
+        List<string>? errors = _mapper.Map<List<string>>(result.Errors);
         return new BaseResponse<string>(
-            Result: translatorSpecs.Id.ToString(),
-            Success: true,
-            Messages: new List<string> { "Передатчик успешно создан" });
+            Result: null,
+            Success: false,
+            Messages: errors);
     }
 
     public async Task<BaseResponse<TranslatorSpecsDto>> GetByOid(string id)

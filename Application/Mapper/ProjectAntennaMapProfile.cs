@@ -21,8 +21,10 @@ public class ProjectAntennaMapProfile : Profile
                 opt.MapFrom(src => src.CreatedBy))
             .ForMember(dest => dest.Azimuth, opt =>
                 opt.MapFrom(src => src.Azimuth))
-            .ForMember(dest => dest.Height, opt =>
-                opt.MapFrom(src => src.Height))
+            .ForMember(dest => dest.HeightFromGroundLevel, opt =>
+                opt.MapFrom(src => src.HeightFromGroundLevel))
+            .ForMember(dest => dest.HeightFromRoofLevel, opt =>
+                opt.MapFrom(src => src.HeightFromRoofLevel))
             .ForMember(dest => dest.Latitude, opt =>
                 opt.MapFrom(src => src.Latitude))
             .ForMember(dest => dest.Longitude, opt =>
@@ -34,7 +36,9 @@ public class ProjectAntennaMapProfile : Profile
             .ForMember(dest => dest.Antenna, opt =>
                 opt.MapFrom(src => src.Antenna))
             .ForMember(dest => dest.ProjectId, opt =>
-                opt.MapFrom(src => src.ProjectId));
+                opt.MapFrom(src => src.ProjectId))
+            .ForMember(dest => dest.RtoRadiationMode, opt =>
+                opt.MapFrom(src => src.RtoRadiationMode));
         
         CreateMap<ProjectAntennaDto ,ProjectAntenna>()
             .ForMember(dest => dest.Id, opt =>
@@ -49,8 +53,10 @@ public class ProjectAntennaMapProfile : Profile
                 opt.MapFrom(src => src.CreatedBy))
             .ForMember(dest => dest.Azimuth, opt =>
                 opt.MapFrom(src => src.Azimuth))
-            .ForMember(dest => dest.Height, opt =>
-                opt.MapFrom(src => src.Height))
+            .ForMember(dest => dest.HeightFromGroundLevel, opt =>
+                opt.MapFrom(src => src.HeightFromGroundLevel))
+            .ForMember(dest => dest.HeightFromRoofLevel, opt =>
+                opt.MapFrom(src => src.HeightFromRoofLevel))
             .ForMember(dest => dest.Latitude, opt =>
                 opt.MapFrom(src => src.Latitude))
             .ForMember(dest => dest.Longitude, opt =>
@@ -62,13 +68,17 @@ public class ProjectAntennaMapProfile : Profile
             .ForMember(dest => dest.Antenna, opt =>
                 opt.Ignore())
             .ForMember(dest => dest.ProjectId, opt =>
-                opt.MapFrom(src => src.ProjectId));
+                opt.MapFrom(src => src.ProjectId))
+            .ForMember(dest => dest.RtoRadiationMode, opt =>
+                opt.MapFrom(src => src.RtoRadiationMode));
         
         CreateMap<CreateProjectAntennaDto, ProjectAntennaDto>()
             .ForMember(dest => dest.Azimuth, opt =>
                 opt.MapFrom(src => src.Azimuth))
-            .ForMember(dest => dest.Height, opt =>
-                opt.MapFrom(src => src.Height))
+            .ForMember(dest => dest.HeightFromGroundLevel, opt =>
+                opt.MapFrom(src => src.HeightFromGroundLevel))
+            .ForMember(dest => dest.HeightFromRoofLevel, opt =>
+                opt.MapFrom(src => src.HeightFromRoofLevel))
             .ForMember(dest => dest.Latitude, opt =>
                 opt.MapFrom(src => src.Latitude))
             .ForMember(dest => dest.Longitude, opt =>
@@ -78,6 +88,8 @@ public class ProjectAntennaMapProfile : Profile
             .ForMember(dest => dest.AntennaId, opt =>
                 opt.MapFrom(src => src.AntennaId))
             .ForMember(dest => dest.ProjectId, opt =>
-                opt.MapFrom(src => src.ProjectId));
+                opt.MapFrom(src => src.ProjectId))
+            .ForMember(dest => dest.RtoRadiationMode, opt =>
+                opt.MapFrom(src => src.RtoRadiationMode));
     }
 }

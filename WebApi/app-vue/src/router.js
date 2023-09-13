@@ -9,7 +9,6 @@ import ContrAgentJournal from "@/views/get-all-contrAgents-page.vue";
 import authorizationService from "@/api/AuthorizationService";
 import UserDetail from '@/views/users_detail_info.vue';
 import GetAllAntennasPage from "@/views/get-all-antennas-page";
-import GetAllAntennaePage from "@/views/get-all-antennae-page";
 import ContrAgentDetail from '@/views/contrAgent-detail-info.vue';
 import Roles from '@/views/get-all-roles-page.vue'
 import ProjectDetail from "@/views/project-detail-info.vue";
@@ -138,7 +137,7 @@ const router = new createRouter({
                 requiresAuth: false,
                 layout: defaultLayout
             },
-            component: GetAllAntennaePage
+            component: GetAllAntennasPage
         },
         {
             path: '/user/:mode/:id?',

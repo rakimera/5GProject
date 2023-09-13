@@ -3,7 +3,6 @@ using Application.Common;
 using Application.Interfaces;
 using Application.Services;
 using Application.Validation;
-using Domain.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +18,7 @@ public static class ConfigureService
         services.AddScoped<IEnergyFlowService, EnergyFlowService>();
         services.AddScoped<IBiohazardRadiusService, BiohazardRadiusService>();
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IUserService, UserService>();
         services.AddScoped<UserValidator>();
         services.AddScoped<ProjectValidator>();
         services.AddScoped<UpdateProjectValidator>();
@@ -32,6 +32,7 @@ public static class ConfigureService
         services.AddScoped<ExecutiveCompanyValidator>();
         services.AddScoped<ProjectAntennaValidator>();
         services.AddScoped<TranslatorTypeValidator>();
+        services.AddScoped<UpdateUserValidator>();
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         
         services.AddAuthentication(opt => {

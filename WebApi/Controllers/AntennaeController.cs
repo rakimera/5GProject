@@ -53,7 +53,7 @@ public class AntennasController : Controller
     [HttpPut]
     public async Task<IActionResult> Put(UpdateAntennaDto model)
     {
-        var baseResponse = await _service.AntennaService.Update(model);
+        var baseResponse = await _service.AntennaService.Update(model, User.Identity.Name);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);
