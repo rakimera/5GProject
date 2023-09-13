@@ -49,7 +49,7 @@ public class TranslatorSpecsController : Controller
         
         var baseResponse = await _service.TranslatorSpecsService.GetByOid(oid);
         var asd = _mapper.Map<TranslatorSpecs>(baseResponse.Result);
-        await _service.FileService.ReadExcel("Document.xlsx", asd, DirectionType.Horizontal);
+        // await _service.FileService.ReadExcel("Document.xlsx", asd, DirectionType.Horizontal);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);

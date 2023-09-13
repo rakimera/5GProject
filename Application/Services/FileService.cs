@@ -17,6 +17,7 @@ using DevExpress.XtraSpreadsheet.Services;
 using ChartType = DevExpress.XtraRichEdit.API.Native.ChartType;
 using DocumentFormat = DevExpress.XtraRichEdit.DocumentFormat;
 using SearchOptions = DevExpress.XtraRichEdit.API.Native.SearchOptions;
+using Shape = DevExpress.XtraRichEdit.API.Native.Shape;
 using Table = DevExpress.XtraRichEdit.API.Native.Table;
 
 namespace Application.Services;
@@ -185,6 +186,8 @@ public class FileService : IFileService
         OfficeCharts.Instance.ActivateCrossPlatformCharts();
         var project = await  _repositoryWrapper.ProjectRepository.GetByCondition(x =>
             x.Id.ToString() == oid);
+        // await _biohazardRadiusService.Create(project.Id.ToString());
+        await _energyFlowService.CreateAsync(project.Id.ToString(), project.CreatedBy);
         var contrAgent = project.ContrAgent;
         var year = (project.SanPinDock?.DateOfIssue.Year) ?? DateTime.Now.Year;
         var executor = project.Executor;
@@ -199,8 +202,9 @@ public class FileService : IFileService
             document.ReplaceAll("[ExecutiveCompanyBIN]", $"{executiveCompany.BIN}", SearchOptions.WholeWord);
             document.ReplaceAll("[ProjectAddress]", $"{project.Address}", SearchOptions.WholeWord);
             document.ReplaceAll("[ExecutiveCompanyAddress]", $"{executiveCompany.Address}", SearchOptions.WholeWord);
-            document.ReplaceAll("[ExecutorFIO]", $"{executor.Surname} {executor.Name}", SearchOptions.WholeWord);
+            document.ReplaceAll("[ExecutorFIO]", $"{executor.Surname} {executor.Name} {executor.Patronymic}", SearchOptions.WholeWord);
             document.ReplaceAll("[ExecutorEmail]", $"{executor.Login}", SearchOptions.WholeWord);
+            document.ReplaceAll("[ExecutorNumber]", $"{executor.PhoneNumber}", SearchOptions.WholeWord);
             document.ReplaceAll("[License]", $"{executiveCompany.LicenseNumber} от {executiveCompany.LicenseDateOfIssue} г.", SearchOptions.WholeWord);
             document.ReplaceAll("[ProjectNumber]", $"{project.ProjectNumber}", SearchOptions.WholeWord);
             document.ReplaceAll("[ContrAgentPhone]", $"{contrAgent.PhoneNumber}", SearchOptions.WholeWord);
@@ -210,10 +214,19 @@ public class FileService : IFileService
             document.ReplaceAll("[ContrAgentAddress]", $"{contrAgent.Address}", SearchOptions.WholeWord);
             document.ReplaceAll("[DateYear]", $"{DateTime.Now.Year}", SearchOptions.WholeWord);
             document.ReplaceAll("[YearOfInitial]", $"{year}", SearchOptions.WholeWord);
-            
+            document.ReplaceAll("[PurposeRTO]", $"{project.PurposeRto}", SearchOptions.WholeWord);
+            document.ReplaceAll("[PlaceOfInstall]", $"{project.PlaceOfInstall}", SearchOptions.WholeWord);
+            document.ReplaceAll("[MaxHeightAdjoinBuild]", $"{project.MaxHeightAdjoinBuild}", SearchOptions.WholeWord);
+            document.ReplaceAll("[PurposeBuild]", $"{project.PurposeBuild}", SearchOptions.WholeWord);
+            document.ReplaceAll("[TypeORoof]", $"{project.TypeORoof}", SearchOptions.WholeWord);
+            document.ReplaceAll("[HasTechnicalLevel]", project.HasTechnicalLevel != null ? "да" : "нет", SearchOptions.WholeWord);
+            document.ReplaceAll("[TypeOfTopCover]", $"{project.TypeOfTopCover}", SearchOptions.WholeWord);
+            document.ReplaceAll("[HasOtherRTO]", project.HasOtherRto != null ? "да" : "нет", SearchOptions.WholeWord);
+            document.ReplaceAll("[PlaceOfCommunicationCloset]", $"{project.PlaceOfCommunicationCloset}", SearchOptions.WholeWord);
+            document.ReplaceAll("[ExecutiveCompanyDirectory]", $"{executiveCompany.DirectorSurname}  " +
+                                                               $"{executiveCompany.DirectorName} {executiveCompany.DirectorPatronymic}", SearchOptions.WholeWord);
             var projectAntennae = _repositoryWrapper.ProjectAntennaRepository
                 .GetAllByCondition(x=> x.ProjectId == project.Id).ToList();
-
             
             for (int l = 0; l < projectAntennae.Count; l++)
             {
@@ -233,9 +246,79 @@ public class FileService : IFileService
                 gainList.AddRange(antennaTranslators.Select(antennaTranslator => antennaTranslator.Gain.ToString()));
                 frequencyList.AddRange(antennaTranslators.Select(antennaTranslator => antennaTranslator.TranslatorSpecs.Frequency.ToString()));
                 typeList.AddRange(antennaTranslators.Select(antennaTranslator => antennaTranslator.TranslatorType.Type));
+                
+                
                 foreach (var antennaTranslator in antennaTranslators)
                 {
                     antennaTranslatorId = antennaTranslator.Id;
+                    var energyFlows = _energyFlowService.GetAllByOid(antennaTranslatorId.ToString());
+                    // //Количество столбцов таблицы
+                //     
+                //     //Поиск и создание таблицы для транслятора
+                //     var flow = document.FindAll("[Flow]",SearchOptions.WholeWord);
+                //     DocumentPosition insertPosition = flow[0].Start;
+                //     ParagraphProperties titleParagraphProperties = document.BeginUpdateParagraphs(flow[0]);
+                //     titleParagraphProperties.Alignment = ParagraphAlignment.Center;
+                //     document.EndUpdateParagraphs(titleParagraphProperties);
+                //     document.InsertText(insertPosition, $"Владелец радиоэлектронных средств: {contrAgent.CompanyName}\n");
+                //     document.Delete(flow[0]);
+                //     Paragraph newAppendedParagraph = document.Paragraphs.Insert(insertPosition);
+                //     Table oldTable = document.Tables.Create(newAppendedParagraph.Range.Start, countTable, 12);
+                //     oldTable.Rows.InsertBefore(0);
+                //     oldTable.Rows.InsertAfter(0);
+                //     oldTable.Rows[0].Cells.Append();
+                //     //Формирование ячеек таблицы для транслятора
+                //     Table table = document.Tables.Last;
+                //     table.TableAlignment = TableRowAlignment.Center;
+                //     table.MergeCells(table[0, 6], table[countTable+1, 6]);
+                //     table.BeginUpdate();
+                //     for (int i = 0; i <= 12; i++)
+                //     {
+                //         TableCell columnCell = table[i, i];
+                //         columnCell.PreferredWidthType = WidthType.Auto;
+                //         columnCell.PreferredWidth = Units.InchesToDocumentsF(0.66f);
+                //         for (int j = 0; j <= countTable+1; j++)
+                //         {
+                //             columnCell = table[j, i];
+                //             columnCell.HeightType = HeightType.Auto;
+                //             columnCell.Height = 0.131f;
+                //             DocumentRange cellRange = columnCell.Range;
+                //             CharacterProperties cp = document.BeginUpdateCharacters(cellRange);
+                //             cp.FontSize = 8;
+                //             document.EndUpdateCharacters(cp);
+                //         }
+                //     }
+                //     //Заполнение шапки таблицы
+                //     document.InsertSingleLineText(table[0, 0].Range.Start, "v, град");
+                //     document.InsertSingleLineText(table[0, 1].Range.Start, "f(v), dBi");
+                //     document.InsertSingleLineText(table[0, 2].Range.Start, "f(v), раз");
+                //     document.InsertSingleLineText(table[0, 3].Range.Start, "Rб, м");
+                //     document.InsertSingleLineText(table[0, 4].Range.Start, "Rz, м");
+                //     document.InsertSingleLineText(table[0, 5].Range.Start, "Rx, м");
+                //     document.InsertSingleLineText(table[0, 7].Range.Start, "v, град");
+                //     document.InsertSingleLineText(table[0, 8].Range.Start, "f(v), dBi");
+                //     document.InsertSingleLineText(table[0, 9].Range.Start, "f(v), раз");
+                //     document.InsertSingleLineText(table[0, 10].Range.Start, "Rб, м");
+                //     document.InsertSingleLineText(table[0, 11].Range.Start, "Rz, м");
+                //     document.InsertSingleLineText(table[0, 12].Range.Start, "Rx, м");
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
                     antennaTranslator.TranslatorType = await _repositoryWrapper.TranslatorTypeRepository
                         .GetByCondition(x => x.Id == antennaTranslator.TranslatorTypeId);
                     //Горизонтальное
@@ -586,7 +669,7 @@ public class FileService : IFileService
                 tableSecondMax.EndUpdate();
                 //Заполнение вывода данными по антеннам
                 var antennae = document.FindAll("[Antennae]",SearchOptions.WholeWord);
-                document.InsertText(antennae[0].Start, $"Антенна {projectAntennae[l].Antenna.Model} (сектор {sector} – " +
+                document.InsertText(antennae[0].Start, $"Антенна {projectAntennae[l].Antenna.Model} (сектор {l} – " +
                                                 $"{antennaTranslators.Count} шт.) " +
                                                 $"Антенны размещаются на трубостойке на крыше, на высоте {projectAntennae[l].HeightFromGroundLevel} м. " +
                                                 $"Частота передачи {frequency} МГц. Коэффициент усиления {gain} дБ. " +
@@ -621,16 +704,32 @@ public class FileService : IFileService
                 document.Delete(azimut[0]);
                 
             }
-            // Добавление картинок
-            // document.AppendSection();
-            // document.Unit = DevExpress.Office.DocumentUnit.Inch;
-            // Shape picture = document.Shapes.InsertPicture(document.Range.End, DocumentImageSource.FromFile("image.jpg"));
-            // picture.Size = new SizeF(7f, 10f);
-            // picture.HorizontalAlignment = ShapeHorizontalAlignment.Center;
-            // picture.VerticalAlignment = ShapeVerticalAlignment.Center;
-            // picture.Line.Color = Color.Black;
-            // wordProcessor.SaveDocument("Arthur2.docx", DocumentFormat.OpenXml);
-            
+            document.Unit = DevExpress.Office.DocumentUnit.Inch;
+            var images = _repositoryWrapper.ProjectImageRepository
+                .GetAllByCondition(x => x.ProjectId == project.Id).ToList();
+            if (images.Count != 0)
+            {
+                foreach (var image in images)
+                {
+                    var keywordsImage = document.FindAll("[Table]", SearchOptions.WholeWord);
+                    var position = keywordsImage[0].Start;
+                    if (image != images.First())
+                    {
+                        var sect = document.AppendSection();
+                        position = sect.Range.Start;
+                    }
+                    byte[] imageBytes = image.Image;
+                    string filePath = $"{project.Id}{image.Id}.jpg";
+                    File.WriteAllBytes(filePath, imageBytes);
+                    Shape picture = document.Shapes.InsertPicture(position, DocumentImageSource.FromFile(filePath));
+                    picture.Size = new SizeF(9f, 8f);
+                    picture.HorizontalAlignment = ShapeHorizontalAlignment.Center;
+                    picture.VerticalAlignment = ShapeVerticalAlignment.Center;
+                    picture.Line.Color = Color.Black;
+                }
+            }
+            var keywordsLast = document.FindAll("[Table]",SearchOptions.WholeWord);
+            document.Delete(keywordsLast[0]);
             wordProcessor.SaveDocument("Project.docx", DocumentFormat.OpenXml);
         }
         return new BaseResponse<bool>(
