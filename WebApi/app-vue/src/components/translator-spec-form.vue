@@ -49,7 +49,7 @@
     <dx-popup :show-title="true" :width="700" title="Добавление передатчика" v-model:visible="popupVisible">
       <form
           id="form"
-          :ref="formRef"
+          ref="formRef"
           method="post"
           action=""
           enctype="multipart/form-data"
@@ -71,7 +71,7 @@
           <dx-file-uploader
               select-button-text="Добавить вертикаль"
               labelText="Или перенесите файл сюда"
-              :showFileList= "false"
+              :showFileList= "true"
               :max-file-size="4000000"
               accept="image/*"
               :multiple="false"
@@ -83,7 +83,7 @@
           <dx-file-uploader
               select-button-text="Добавить горизонталь"
               labelText="Или перенесите файл сюда"
-              :showFileList= "false"
+              :showFileList= "true"
               :max-file-size="4000000"
               accept="image/*"
               :multiple="false"
@@ -153,19 +153,18 @@ const addButton = {
   type: 'success',
   stylingMode:"contained"
 };
-const verticalFile = ref();
-const horizontalFile = ref();
 const popupVisible = ref(false);
 const formRef = ref(null);
 
 async function onButtonClick(){
   console.log(formRef.value)
+  await store.insert(formRef.value)
 }
 
-function onButtonCancelClick(){
+async function onButtonCancelClick(){
   popupVisible.value = false;
 }
-function addClick (){
+async function addClick (){
   popupVisible.value= true;
 }
 
@@ -177,18 +176,9 @@ const store = new CustomStore({
     return response;
   },
   async insert(values) {
-    values.antennaId = antennaId.value;
-    values.vertical = verticalFile.value;
-    values.horizontal = horizontalFile.value;
-
-    const formData = new FormData();
-    formData.append("antennaId", antennaId.value);
-    formData.append("frequency", values.frequency);
-    formData.append("vertical", verticalFile.value);
-    formData.append("horizontal", horizontalFile.value);
-
+      
     console.log(values)
-    const baseResponse = await translatorSpecService.createTranslatorSpec(formData);
+    const baseResponse = await translatorSpecService.createTranslatorSpec(values);
     await dataSource.value.load();
     if (baseResponse.data.success) {
       notify({

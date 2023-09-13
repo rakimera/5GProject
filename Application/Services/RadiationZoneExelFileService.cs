@@ -5,7 +5,7 @@ using Application.Models.RadiationZone.RadiationZoneExelFile;
 using AutoMapper;
 using Domain.Entities;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
 
 namespace Application.Services;
 
@@ -39,24 +39,46 @@ public class RadiationZoneExelFileService : IRadiationZoneExelFileService
             Messages: new List<string> { "Exel файлы не были получены, возможно оно еще не создано или удалено" });
     }
 
-    public Task<BaseResponse<string>> CreateAsync(RadiationZoneExelFileDto model, string creator)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<BaseResponse<string>> CreateAsync( string id, IFormFile vertical, IFormFile horizontal, string creator)
     {
-        /*model.CreatedBy = creator;
-        
-        RadiationZoneExelFile exelFile = _mapper.Map<RadiationZoneExelFile>(model);
-        await _repositoryWrapper.RadiationZoneExelFileRepository.CreateAsync(exelFile);
-        await _repositoryWrapper.Save();
-
-        return new BaseResponse<string>(
-            Result: exelFile.Id.ToString(),
-            Success: true,
-            Messages: new List<string> { "Exel файл успешно создан" });*/
-        throw new NotImplementedException();
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+        {
+            using (ExcelPackage package = new ExcelPackage(stream))
+            {
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                List<RadiationZone> list = new List<RadiationZone>();
+                for (int row = 1; row <= worksheet.Dimension.Rows; row++)
+                {
+                    var degreeCellValue = worksheet.Cells[row, 1].Value;
+                    var valueCellValue = worksheet.Cells[row, 2].Value;
+                    if (int.TryParse(degreeCellValue?.ToString(), out int degree) && decimal.TryParse(valueCellValue?.ToString(), out decimal value))
+                    {
+                        RadiationZone radiationZone = new RadiationZone()
+                        {
+                            Degree = degree,
+                            Value = value,
+                            DirectionType = type,
+                            TranslatorSpecsId = translatorSpecs.Id
+                        };
+                        await _repositoryWrapper.RadiationZoneRepository.CreateAsync(radiationZone);
+                        list.Add(radiationZone);
+                    }
+                }
+                if (list.Count != 361)
+                {
+                    return new BaseResponse<bool>(
+                        Result: false,
+                        Messages: new List<string> { "Файл не корректный" },
+                        Success: false);
+                }
+                await _repositoryWrapper.Save();
+            }
+        }
+        return new BaseResponse<bool>(
+            Result: true,
+            Messages: new List<string> { "Файл успешно считан" },
+            Success: true);
     }
 
     public async Task<BaseResponse<RadiationZoneExelFileDto>> GetByOid(string oid)

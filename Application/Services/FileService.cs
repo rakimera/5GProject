@@ -52,7 +52,7 @@ public class FileService : IFileService
                         list.Add(radiationZone);
                     }
                 }
-                if (list.Count != 360)
+                if (list.Count != 361)
                 {
                     return new BaseResponse<bool>(
                         Result: false,
