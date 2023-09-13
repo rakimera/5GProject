@@ -50,7 +50,7 @@ public class EnergyFlowService : IEnergyFlowService
     {
         List<EnergyResult> energyResults = new List<EnergyResult>();
         decimal gainInMultiplier = Multiplier(inputData.Gain);
-        decimal transmitLossFactorInMultiplier = Multiplier(inputData.TransmitLossFactor);
+        decimal transmitLossFactorInMultiplier = Multiplier(-inputData.TransmitLossFactor);
         decimal heightInstall = inputData.HeightInstall;
         decimal powerSignal = inputData.PowerSignal;
         AntennaTranslator? antennaTranslator =
