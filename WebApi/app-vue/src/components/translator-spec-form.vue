@@ -154,7 +154,6 @@ const props = defineProps({
   }})
 const antennaId = ref();
 let dataSource = ref(null);
-const translators = ref([]);
 const addButton = {
   text: "Добавить передатчики",
   icon: 'login',
@@ -165,9 +164,9 @@ const popupVisible = ref(false);
 const formRef = ref(null);
 const verticalFileUploaderRef = ref(null);
 const horizontalFileUploaderRef = ref(null);
+
 async function onButtonClick(){
-  console.log(formRef.value)
-  await store.insert(formRef.value)
+   await store.insert(formRef.value)
 }
 
 function onButtonCancelClick(){
@@ -192,10 +191,7 @@ const store = new CustomStore({
     return response;
   },
   async insert(values) {
-      
-    console.log(values)
     const baseResponse = await translatorSpecService.createTranslatorSpec(values);
-    await dataSource.value.load();
     if (baseResponse.data.success) {
       notify({
         message: 'Данные сохранены',
@@ -207,6 +203,8 @@ const store = new CustomStore({
     } else {
       notify(baseResponse.data.messages, 'error', 2000);
     }
+    onButtonCancelClick()
+    dataSource.value = await updateData();
     return {data: baseResponse};
   },
   async remove(id) {
@@ -249,9 +247,12 @@ async function onRowUpdating(options) {
 onMounted(async () => {
   dataSource.value = store;
   antennaId.value = props.masterDetailData.key;
-  const response = await translatorSpecService.getAllByAntennaId(antennaId.value);
-  translators.value = response.data.result;
 });
+
+async function updateData(){
+    const response = await translatorSpecService.getAllByAntennaId(antennaId.value);
+    return response.data.result;
+}
 
 </script>
 

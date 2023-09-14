@@ -65,7 +65,7 @@ public class TranslatorSpecsController : Controller
                 .CreateAsync(baseResponse.Result, translatorModel.Vertical, translatorModel.Horizontal, User.Identity.Name);
             if (response.Success)
             {
-                return Ok(response);
+                return Ok(baseResponse);
             }
 
             await _service.TranslatorSpecsService.Delete(baseResponse.Result);
