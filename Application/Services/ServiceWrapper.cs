@@ -37,6 +37,7 @@ public class ServiceWrapper : IServiceWrapper
         UpdateProjectValidator updateProjectValidator,
         ITokenService tokenService,
         IUserService userService,
+        IRadiationZoneService radiationZoneService,
         TranslatorSpecsValidator translatorSpecsValidator,
         AntennaValidator antennaValidator,
         AntennaTranslatorValidator antennaTranslatorValidator,
@@ -73,7 +74,7 @@ public class ServiceWrapper : IServiceWrapper
         _radiationZoneService =
             new Lazy<IRadiationZoneService>(() => new RadiationZoneService(repository, mapper, radiationZoneValidator));
         _projectImageService = new Lazy<IProjectImageService>(() => new ProjectImageService(repository, mapper));
-        _radiationZoneExelFileService = new Lazy<IRadiationZoneExelFileService>(() => new RadiationZoneExelFileService(repository, mapper));
+        _radiationZoneExelFileService = new Lazy<IRadiationZoneExelFileService>(() => new RadiationZoneExelFileService(radiationZoneService));
     }
         
 

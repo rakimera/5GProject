@@ -23,7 +23,6 @@ public interface IRepositoryWrapper
     ISummaryBiohazardRadiusRepository SummaryBiohazardRadiusRepository { get; }
     ITotalFluxDensityRepository TotalFluxDensityRepository { get; }
     ITranslatorTypeRepository TranslatorTypeRepository { get; }
-    IRadiationZoneExelFileRepository RadiationZoneExelFileRepository { get; }
     IProjectImageRepository ProjectImageRepository { get; }
     Task Save();
 }

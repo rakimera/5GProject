@@ -28,8 +28,6 @@ public class Project5GDbContext : DbContext
     public DbSet<BiohazardRadius> BiohazardRadii { get; set; }
     public DbSet<SummaryBiohazardRadius> SummaryBiohazardRadii { get; set; }
     public DbSet<TranslatorType> TranslatorTypes { get; set; }
-    public DbSet<RadiationZoneExelFile> RadiationZoneExelFiles { get; set; }
-
     public Project5GDbContext(DbContextOptions<Project5GDbContext> options) : base(options) {}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -47,10 +45,8 @@ public class Project5GDbContext : DbContext
         modelBuilder.Entity<Project>().Navigation(e=> e.Executor).AutoInclude();
         modelBuilder.Entity<Project>().Navigation(e=> e.ExecutiveCompany).AutoInclude();
         modelBuilder.Entity<Project>().Navigation(e=> e.ProjectStatus).AutoInclude();
-        // modelBuilder.Entity<Project>().Navigation(e=> e.ProjectAntennae).AutoInclude();
         modelBuilder.Entity<Project>().Navigation(e=> e.SummaryBiohazardRadius).AutoInclude();
         modelBuilder.Entity<Project>().Navigation(e=> e.TotalFluxDensity).AutoInclude();
-        // modelBuilder.Entity<TranslatorSpecs>().Navigation(e=> e.RadiationZones).AutoInclude();
         modelBuilder.Entity<ProjectAntenna>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<ProjectAntenna>().Navigation(e=> e.Antenna).AutoInclude();
         modelBuilder.Entity<AntennaTranslator>().Navigation(e=> e.TranslatorSpecs).AutoInclude();
@@ -60,7 +56,6 @@ public class Project5GDbContext : DbContext
         modelBuilder.Entity<EnergyResult>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<ExecutiveCompany>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<RadiationZone>().HasQueryFilter(x => x.IsDelete == false);
-        modelBuilder.Entity<RadiationZoneExelFile>().Navigation(e=> e.translatorSpec).AutoInclude();
         modelBuilder.Entity<SanPinDock>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<TotalFluxDensity>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<UserRole>().HasQueryFilter(x => x.IsDelete == false);
