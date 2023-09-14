@@ -68,10 +68,12 @@
         <div class="fileuploader-container">
           <dx-file-uploader
               select-button-text="Добавить вертикаль"
+              :allowed-file-extensions="['.csv', '.xlsx', '.xlsm']"
               labelText="Или перенесите файл сюда"
+              ref="verticalFileUploaderRef"
               :showFileList= "true"
               :max-file-size="4000000"
-              accept="image/*"
+              accept=".csv, .xlsx, .xlsm"
               :multiple="false"
               upload-mode="useForm"
               name="vertical"
@@ -81,14 +83,17 @@
           <dx-file-uploader
               select-button-text="Добавить горизонталь"
               labelText="Или перенесите файл сюда"
+              ref="horizontalFileUploaderRef"
+              :allowed-file-extensions="['.csv', '.xlsx', '.xlsm']"
               :showFileList= "true"
               :max-file-size="4000000"
-              accept="image/*"
+              accept=".csv, .xlsx, .xlsm"
               :multiple="false"
               upload-mode="useForm"
               name="horizontal"
           />
         </div>
+        <p class="mt-5 text-center">Доступны файлы размером не более 4мб с расширением: .csv, .xlsx, .xlsm</p>
         <input
             name='antennaId'
             :value="antennaId"
@@ -105,6 +110,12 @@
             text="Отмена"
             type="danger"
             @click="onButtonCancelClick"
+        />
+        <dx-button
+            class="button"
+            text="Скачать шаблон"
+            type="normal"
+            @click="downloadFile"
         />
       </form>
     </dx-popup>
@@ -152,13 +163,21 @@ const addButton = {
 };
 const popupVisible = ref(false);
 const formRef = ref(null);
-
+const verticalFileUploaderRef = ref(null);
+const horizontalFileUploaderRef = ref(null);
 async function onButtonClick(){
   console.log(formRef.value)
   await store.insert(formRef.value)
 }
 
 function onButtonCancelClick(){
+  const formElement = formRef.value;
+  if (formElement) {
+    formElement.reset();
+  }
+  verticalFileUploaderRef.value.instance.reset();
+  horizontalFileUploaderRef.value.instance.reset();
+  
   popupVisible.value = false;
 }
 function addClick (){
