@@ -1,4 +1,5 @@
 using Application.DataObjects;
+using Application.Extensions;
 using Application.Interfaces;
 using Application.Models.RadiationZone;
 using Domain.Enums;
@@ -190,7 +191,7 @@ public class RadiationZoneExelFileService : IRadiationZoneExelFileService
                             {
                                 Degree = degree,
                                 Value = value,
-                                DirectionType = type,
+                                DirectionType = type.GetDescription(),
                                 TranslatorSpecsId = translatorSpecsId
                             };
                             list.Add(radiationZone);

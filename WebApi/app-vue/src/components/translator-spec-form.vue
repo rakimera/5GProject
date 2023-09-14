@@ -6,10 +6,9 @@
         :remote-operations="false"
         :column-auto-width="true"
         key-expr="id"
-        @row-updating="onRowUpdating"
     >
       <dx-editing
-          :allow-updating="true"
+          :allow-updating="false"
           :allow-deleting="true"
           :texts="{confirmDeleteMessage: 'Вы уверены, что хотите удалить эту запись?'}"
           mode="form"
@@ -41,9 +40,20 @@
             :data="antennaId"
         />
       </dx-column>
+      <dx-column
+          data-field="id"
+          :visible="false">
+      </dx-column>
       <dx-paging :page-size="5"/>
       <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
       <dx-sorting mode="multiple"/>
+        <DxMasterDetail
+                :enabled="true"
+                template="master-detail"
+        />
+        <template #master-detail="{ data }">
+            <radiation-zone-grid :master-detail-data="data"/>
+        </template>
     </dx-data-grid>
     <dx-popup :show-title="true" :width="700" title="Добавление передатчика" v-model:visible="popupVisible">
       <form
@@ -132,13 +142,13 @@ import {
 import {onMounted, ref, defineProps} from "vue";
 import { DxItem } from "devextreme-vue/form";
 import {
-  DxColumn,
-  DxDataGrid,
-  DxEditing,
-  DxFormItem,
-  DxSorting,
-  DxPager,
-  DxPaging, DxToolbar
+    DxColumn,
+    DxDataGrid,
+    DxEditing,
+    DxFormItem,
+    DxSorting,
+    DxPager,
+    DxPaging, DxToolbar, DxMasterDetail
 } from "devextreme-vue/data-grid";
 import { DxPopup } from 'devextreme-vue/popup';
 import {DxRequiredRule} from "devextreme-vue/validator";
@@ -146,6 +156,7 @@ import translatorSpecService from "@/api/translatorSpecsService";
 import notify from "devextreme/ui/notify";
 import CustomStore from "devextreme/data/custom_store";
 import {DxFileUploader} from "devextreme-vue/file-uploader";
+import RadiationZoneGrid from "@/components/radiation-zone-grid.vue";
 
 const props = defineProps({
   masterDetailData: {
@@ -221,28 +232,8 @@ const store = new CustomStore({
       notify(baseResponse.data.messages, 'error', 2000);
     }
     return {data: baseResponse};
-  },
-  async update(id, values) {
-    console.log(id + values);
   }
 });
-async function onRowUpdating(options) {
-  options.newData = Object.assign(options.oldData, options.newData);
-  const baseResponse = await translatorSpecService.updateTranslatorSpec(options.newData);
-  await dataSource.value.load();
-  if (baseResponse.data.success) {
-    notify({
-      message: 'Данные сохранены',
-      position: {
-        my: 'center top',
-        at: 'center top',
-      },
-    }, 'success', 1000);
-  } else {
-    notify(baseResponse.data.messages, 'error', 2000);
-  }
-  return {data: baseResponse};
-}
 
 onMounted(async () => {
   dataSource.value = store;
