@@ -1,9 +1,7 @@
 using Application.DataObjects;
 using Application.Interfaces;
-using Application.Interfaces.RepositoryContract.Common;
-using Application.Models.RadiationZone.RadiationZoneExelFile;
-using AutoMapper;
-using Domain.Entities;
+using Application.Models.RadiationZone;
+using Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using OfficeOpenXml;
 
@@ -11,163 +9,219 @@ namespace Application.Services;
 
 public class RadiationZoneExelFileService : IRadiationZoneExelFileService
 {
-    private readonly IRepositoryWrapper _repositoryWrapper;
-    private readonly IMapper _mapper;
+    private readonly IRadiationZoneService _radiationZoneService;
 
-    public RadiationZoneExelFileService(IRepositoryWrapper repositoryWrapper, IMapper mapper)
+    public RadiationZoneExelFileService(IRadiationZoneService radiationZoneService)
     {
-        _repositoryWrapper = repositoryWrapper;
-        _mapper = mapper;
+        _radiationZoneService = radiationZoneService;
     }
 
-    public BaseResponse<IEnumerable<RadiationZoneExelFileDto>> GetAll()
+    public async Task<BaseResponse<string>> CreateAsync(string translatorId, IFormFile verticalFile,
+        IFormFile horizontalFile, string creator)
     {
-        IQueryable<RadiationZoneExelFile> exelFiles = _repositoryWrapper.RadiationZoneExelFileRepository.GetAll();
-        List<RadiationZoneExelFileDto> models = _mapper.Map<List<RadiationZoneExelFileDto>>(exelFiles);
-
-        if (models.Count > 0)
+        if (!Guid.TryParse(translatorId, out var id))
         {
-            return new BaseResponse<IEnumerable<RadiationZoneExelFileDto>>(
-                Result: models,
-                Success: true,
-                Messages: new List<string> { "Exel файлы успешно получены" });
+            return new BaseResponse<string>(
+                Result: null,
+                Messages: new List<string>(){"Ошибка при получении ID транслятора"},
+                Success: false);
+        }
+        
+        var convertHorizontalFile = await ConvertToRadiationZoneDto(id, horizontalFile, DirectionType.Horizontal);
+        var convertVerticalFile = await ConvertToRadiationZoneDto(id, verticalFile, DirectionType.Vertical);
+
+        if (!convertVerticalFile.Success)
+        {
+            return new BaseResponse<string>(
+                Result: null,
+                Messages: convertVerticalFile.Messages,
+                Success: false);
+        }
+        if (!convertHorizontalFile.Success)
+        {
+            return new BaseResponse<string>(
+                Result: null,
+                Messages: convertHorizontalFile.Messages,
+                Success: false);
         }
 
-        return new BaseResponse<IEnumerable<RadiationZoneExelFileDto>>(
-            Result: models,
-            Success: true,
-            Messages: new List<string> { "Exel файлы не были получены, возможно оно еще не создано или удалено" });
+        var createVerticalResponse = await CreateInDb(convertVerticalFile.Result, creator);
+        var createHorizontalResponse = await CreateInDb(convertHorizontalFile.Result, creator);
+        
+        if (!createVerticalResponse.Success)
+        {
+            return new BaseResponse<string>(
+                Result: null,
+                Messages: createVerticalResponse.Messages,
+                Success: false);
+        }
+        if (!createHorizontalResponse.Success)
+        {
+            return new BaseResponse<string>(
+                Result: null,
+                Messages: createHorizontalResponse.Messages,
+                Success: false);
+        }
+
+        return new BaseResponse<string>(
+            Result: null,
+            Messages: new List<string>() {"Передатчики успешно сохранены"},
+            Success: true);
     }
 
-    public async Task<BaseResponse<string>> CreateAsync( string id, IFormFile vertical, IFormFile horizontal, string creator)
+    private async Task<BaseResponse<string>> CreateInDb (List<RadiationZoneDto> models, string creator)
     {
-        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+        foreach (var model in models)
         {
-            using (ExcelPackage package = new ExcelPackage(stream))
+            var response = await _radiationZoneService.CreateAsync(model, creator);
+            if (!response.Success)
             {
-                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                List<RadiationZone> list = new List<RadiationZone>();
-                for (int row = 1; row <= worksheet.Dimension.Rows; row++)
-                {
-                    var degreeCellValue = worksheet.Cells[row, 1].Value;
-                    var valueCellValue = worksheet.Cells[row, 2].Value;
-                    if (int.TryParse(degreeCellValue?.ToString(), out int degree) && decimal.TryParse(valueCellValue?.ToString(), out decimal value))
-                    {
-                        RadiationZone radiationZone = new RadiationZone()
-                        {
-                            Degree = degree,
-                            Value = value,
-                            DirectionType = type,
-                            TranslatorSpecsId = translatorSpecs.Id
-                        };
-                        await _repositoryWrapper.RadiationZoneRepository.CreateAsync(radiationZone);
-                        list.Add(radiationZone);
-                    }
-                }
-                if (list.Count != 361)
-                {
-                    return new BaseResponse<bool>(
-                        Result: false,
-                        Messages: new List<string> { "Файл не корректный" },
-                        Success: false);
-                }
-                await _repositoryWrapper.Save();
+                return new BaseResponse<string>(
+                    Result: null,
+                    Messages: response.Messages,
+                    Success: false);
             }
         }
-        return new BaseResponse<bool>(
-            Result: true,
-            Messages: new List<string> { "Файл успешно считан" },
+        
+        return new BaseResponse<string>(
+            Result: null,
+            Messages: new List<string>(){"Передатчики успешно сохранены"},
             Success: true);
     }
 
-    public async Task<BaseResponse<RadiationZoneExelFileDto>> GetByOid(string oid)
+    private async Task<BaseResponse<List<RadiationZoneDto>>> ConvertToRadiationZoneDto(Guid translatorId, IFormFile file,
+        DirectionType directionType)
     {
-        RadiationZoneExelFile? exelFile = await _repositoryWrapper.RadiationZoneExelFileRepository.GetByCondition(x => x.Id.ToString() == oid);
-        RadiationZoneExelFileDto model = _mapper.Map<RadiationZoneExelFileDto>(exelFile);
+        BaseResponse<string> fileResponse = await SaveFile(file);
 
-        if (exelFile is null)
-            return new BaseResponse<RadiationZoneExelFileDto>(
+        if (!fileResponse.Success)
+        {
+            return new BaseResponse<List<RadiationZoneDto>>(
                 Result: null,
-                Messages: new List<string> { "Exel файл не найден" },
-                Success: true);
-        return new BaseResponse<RadiationZoneExelFileDto>(
-            Result: model,
-            Success: true,
-            Messages: new List<string> { "Exel файл успешно найден" });
-    }
-
-    public async Task<BaseResponse<bool>> Delete(string oid)
-    {
-        RadiationZoneExelFile? exelFile = await _repositoryWrapper.RadiationZoneExelFileRepository.GetByCondition(x => x.Id.ToString() == oid);
-        if (exelFile != null) 
-            _repositoryWrapper.RadiationZoneExelFileRepository.Delete(exelFile);
-        else
-            return new BaseResponse<bool>(
-                Result: false,
-                Messages: new List<string> { "Exel файл не найден" },
+                Messages: fileResponse.Messages,
                 Success: false);
-        
-        await _repositoryWrapper.Save();
-        
-        return new BaseResponse<bool>(
-            Result: true,
-            Messages: new List<string> { "Exel файл успешно удален" },
-            Success: true);
+        }
+
+        BaseResponse<List<RadiationZoneDto>> models =
+            CreateRadiationZoneModels(fileResponse.Result, directionType, translatorId);
+
+        if (!models.Success)
+        {
+            return new BaseResponse<List<RadiationZoneDto>>(
+                Result: null,
+                Messages: models.Messages,
+                Success: false);
+        }
+
+        return models;
     }
 
-    public async Task<BaseResponse<RadiationZoneExelFileDto>> ConvertExel(RadiationZoneExelFileDto model, IFormFile uploadedFile)
+    private void Delete(string path)
     {
-        string[] allowedExtension = new[] { ".csv", ".xlsx", ".xlsm" };
+        if (File.Exists(path))
+            File.Delete(path);
+    }
+
+    private async Task<BaseResponse<string>> SaveFile(IFormFile uploadedFile)
+    {
+        string[] allowedExtension = { ".csv", ".xlsx", ".xlsm" };
         if (uploadedFile.Length != 0)
         {
             var fileExtension = Path.GetExtension(uploadedFile.FileName).ToLower();
+            var folderPath =Path.Combine(Directory.GetCurrentDirectory(), "/Temp");
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
+        
+            var fileName = $"{Path.GetFileNameWithoutExtension(Path.GetRandomFileName())}{fileExtension}";
+            string filePath = Path.Combine(folderPath, fileName);
+        
             if (allowedExtension.Any(extension => extension == fileExtension))
             {
-                using (var memoryStream = new MemoryStream())
-                {                    await uploadedFile.CopyToAsync(memoryStream);
-
-                    if (memoryStream.Length < 4097152)
+                using (var fileStream = new FileStream(filePath, FileMode.Create ))
+                {
+                    if (fileStream.Length < 4097152)
                     {
-                        model.ExelFile = memoryStream.ToArray();
+                        await uploadedFile.CopyToAsync(fileStream);
                     }
                     else
                     {
-                        return new BaseResponse<RadiationZoneExelFileDto>(
-                            Result: model,
+                        return new BaseResponse<string>(
+                            Result: null,
                             Messages: new List<string> { "Размер файла больше допустимого (4Mb)" },
                             Success: false);
                     }
                 }    
-                return new BaseResponse<RadiationZoneExelFileDto>(
-                    Result: model,
+                return new BaseResponse<string>(
+                    Result: filePath,
                     Messages: new List<string> { "Файл успешно сохранен" },
                     Success: true);
             }
-            return new BaseResponse<RadiationZoneExelFileDto>(
-                Result: model,
+            return new BaseResponse<string>(
+                Result: null,
                 Messages: new List<string> { "Расширение файла не допустимо" },
                 Success: false);
         }
-        return new BaseResponse<RadiationZoneExelFileDto>(
-            Result: model,
+        return new BaseResponse<string>(
+            Result: null,
             Messages: new List<string> { "Ошибка получения файла на сервере" },
             Success: false);
     }
 
-    public BaseResponse<List<RadiationZoneExelFileDto>> GetAllById(string id)
+    private BaseResponse<List<RadiationZoneDto>> CreateRadiationZoneModels(string filePath, DirectionType type,
+        Guid translatorSpecsId)
     {
-        IQueryable<RadiationZoneExelFile>? projects = _repositoryWrapper.RadiationZoneExelFileRepository.GetAllByCondition(x => x.TranslatorSpecId.ToString() == id);
-        List<RadiationZoneExelFileDto> model = _mapper.Map<List<RadiationZoneExelFileDto>>(projects);
+        try
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            List<RadiationZoneDto> list = new List<RadiationZoneDto>();
+            using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            {
+                using (ExcelPackage package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    for (int row = 1; row <= worksheet.Dimension.Rows; row++)
+                    {
+                        var degreeCellValue = worksheet.Cells[row, 1].Value;
+                        var valueCellValue = worksheet.Cells[row, 2].Value;
+                        if (int.TryParse(degreeCellValue?.ToString(), out int degree) &&
+                            decimal.TryParse(valueCellValue?.ToString(), out decimal value))
+                        {
+                            RadiationZoneDto radiationZone = new RadiationZoneDto()
+                            {
+                                Degree = degree,
+                                Value = value,
+                                DirectionType = type,
+                                TranslatorSpecsId = translatorSpecsId
+                            };
+                            list.Add(radiationZone);
+                        }
+                    }
 
-        if (projects is null)
-            return new BaseResponse<List<RadiationZoneExelFileDto>>(
-                Result: null,
-                Messages: new List<string> { "Exel файл не найден" },
+                    if (list.Count != 361)
+                    {
+                        return new BaseResponse<List<RadiationZoneDto>>(
+                            Result: list,
+                            Messages: new List<string> { "Файл не корректный" },
+                            Success: false);
+                    }
+                }
+            }
+
+            return new BaseResponse<List<RadiationZoneDto>>(
+                Result: list,
+                Messages: new List<string> { "Файл успешно считан" },
                 Success: true);
-        return new BaseResponse<List<RadiationZoneExelFileDto>>(
-            Result: model,
-            Success: true,
-            Messages: new List<string> { "Exel файл успешно найден" });
+        }
+        catch (Exception e)
+        {
+            return new BaseResponse<List<RadiationZoneDto>>(
+                Result: null,
+                Messages: new List<string> { "Ошибка при создании моделей" + e.Message },
+                Success: false);
+        }
+        finally
+        {
+            Delete(filePath);
+        }
     }
 }

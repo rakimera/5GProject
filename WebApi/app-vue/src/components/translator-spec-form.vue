@@ -45,13 +45,11 @@
       <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20]"/>
       <dx-sorting mode="multiple"/>
     </dx-data-grid>
-
     <dx-popup :show-title="true" :width="700" title="Добавление передатчика" v-model:visible="popupVisible">
       <form
           id="form"
           ref="formRef"
           method="post"
-          action=""
           enctype="multipart/form-data"
       >
         <div class="dx-fieldset">
@@ -110,7 +108,6 @@
         />
       </form>
     </dx-popup>
-    
   </div>
 </template>
 
@@ -161,10 +158,10 @@ async function onButtonClick(){
   await store.insert(formRef.value)
 }
 
-async function onButtonCancelClick(){
+function onButtonCancelClick(){
   popupVisible.value = false;
 }
-async function addClick (){
+function addClick (){
   popupVisible.value= true;
 }
 

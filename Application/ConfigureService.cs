@@ -19,6 +19,7 @@ public static class ConfigureService
         services.AddScoped<IBiohazardRadiusService, BiohazardRadiusService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IRadiationZoneService, RadiationZoneService>();
         services.AddScoped<UserValidator>();
         services.AddScoped<ProjectValidator>();
         services.AddScoped<UpdateProjectValidator>();
