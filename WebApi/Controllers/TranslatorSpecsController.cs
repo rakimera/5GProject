@@ -62,8 +62,13 @@ public class TranslatorSpecsController : Controller
         if (baseResponse.Success)
         {
             var response = await _service.RadiationZoneExelFileService
-                .CreateAsync(baseResponse.Result, translatorModel.Horizontal, translatorModel.Vertical, User.Identity.Name);
-            return Ok(response);
+                .CreateAsync(baseResponse.Result, translatorModel.Vertical, translatorModel.Horizontal, User.Identity.Name);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+
+            await _service.TranslatorSpecsService.Delete(baseResponse.Result);
         }
         return Ok(baseResponse);
     }
