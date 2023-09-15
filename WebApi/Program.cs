@@ -22,7 +22,7 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
-    string connection = builder.Configuration.GetConnectionString("DefaultConnection");
+    string connection = "server=localhost;port=5432;database=Project5G;username=postgres;password=123;";
 
     builder.Services.AddDbConfigure(connection!);
     builder.Services.AddInfrastructureServices();
@@ -33,7 +33,7 @@ try
     {
         options.AddDefaultPolicy(policyBuilder =>
         {
-            policyBuilder.WithOrigins("http://localhost:8080")
+            policyBuilder.AllowAnyOrigin()
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
