@@ -26,7 +26,6 @@
           :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
           alignment="left">
         <dx-label :visible="false"/>
-        <dx-required-rule message="Частота передатчика не задана"></dx-required-rule>
       </dx-column>
       <dx-column
           data-field="antennaId"
@@ -55,7 +54,15 @@
             <radiation-zone-grid :master-detail-data="data"/>
         </template>
     </dx-data-grid>
-    <dx-popup :show-title="true" :width="700" title="Добавление передатчика" v-model:visible="popupVisible">
+    <dx-popup :show-title="true" :width="700" title="Добавление передатчика" v-model:visible="popupVisible" :disabled="loading">
+      <div class="position-absolute top-50 start-50 button-indicator">
+        <dx-load-indicator
+            id="large-indicator"
+            :height="60"
+            :width="60"
+            :visible="loading"
+        />
+      </div>
       <form
           id="form"
           ref="formRef"
@@ -64,15 +71,16 @@
       >
         <div class="dx-fieldset">
           <div class="dx-field">
-            <dx-text-box
+            <dx-number-box
                 :input-attr="{ 'aria-label': 'Full Name' }"
                 name="frequency"
+                data-type="number"
                 class="dx-field-value"
                 caption="Частота"
                 label="Частота"
                 :editor-options="{stylingMode: 'filled', labelMode: 'floating'}"
             >
-            </dx-text-box>
+            </dx-number-box>
           </div>
         </div>
         <div class="fileuploader-container">
@@ -114,7 +122,8 @@
             text="Сохранить"
             type="success"
             @click="onButtonClick"
-        />
+        >
+        </dx-button>
         <dx-button
             class="button"
             text="Отмена"
@@ -134,10 +143,10 @@
 
 <script setup>
 
-import { DxTextBox } from 'devextreme-vue/text-box';
+import { DxNumberBox } from 'devextreme-vue/number-box';
 import { DxButton } from 'devextreme-vue/button';
 import {
-  DxLabel
+  DxLabel,
 } from 'devextreme-vue/form';
 import {onMounted, ref, defineProps} from "vue";
 import { DxItem } from "devextreme-vue/form";
@@ -151,12 +160,12 @@ import {
     DxPaging, DxToolbar, DxMasterDetail
 } from "devextreme-vue/data-grid";
 import { DxPopup } from 'devextreme-vue/popup';
-import {DxRequiredRule} from "devextreme-vue/validator";
 import translatorSpecService from "@/api/translatorSpecsService";
 import notify from "devextreme/ui/notify";
 import CustomStore from "devextreme/data/custom_store";
 import {DxFileUploader} from "devextreme-vue/file-uploader";
 import RadiationZoneGrid from "@/components/radiation-zone-grid.vue";
+import DxLoadIndicator from "devextreme-vue/load-indicator";
 
 const props = defineProps({
   masterDetailData: {
@@ -175,8 +184,10 @@ const popupVisible = ref(false);
 const formRef = ref(null);
 const verticalFileUploaderRef = ref(null);
 const horizontalFileUploaderRef = ref(null);
+const loading = ref(false);
 
 async function onButtonClick(){
+  loading.value = true;
    await store.insert(formRef.value)
 }
 
@@ -202,21 +213,28 @@ const store = new CustomStore({
     return response;
   },
   async insert(values) {
-    const baseResponse = await translatorSpecService.createTranslatorSpec(values);
-    if (baseResponse.data.success) {
-      notify({
-        message: 'Данные сохранены',
-        position: {
-          my: 'center top',
-          at: 'center top',
-        },
-      }, 'success', 1000);
-    } else {
-      notify(baseResponse.data.messages, 'error', 2000);
+    try {
+        const baseResponse = await translatorSpecService.createTranslatorSpec(values);
+        if (baseResponse.data.success) {
+          notify({
+            message: 'Данные сохранены',
+            position: {
+              my: 'center top',
+              at: 'center top',
+            },
+          }, 'success', 1000);
+        } else {
+          notify(baseResponse.data.messages, 'error', 2000);
+        }
+        onButtonCancelClick()
+        dataSource.value = await updateData();
+        return {data: baseResponse};
+    } catch (e){
+      notify("Ошибка при отправке на сервер проверьте заполненные данные" + e, 'error', 2000);
     }
-    onButtonCancelClick()
-    dataSource.value = await updateData();
-    return {data: baseResponse};
+    finally {
+      loading.value = false;
+    }
   },
   async remove(id) {
     const baseResponse = await translatorSpecService.deleteTranslatorSpec(id);
@@ -270,6 +288,13 @@ async function updateData(){
 }
 .dx-field-value-static, .dx-field-value:not(.dx-switch):not(.dx-checkbox):not(.dx-button) {
   width: 100%;
+}
+#button .button-indicator {
+  height: 32px;
+  width: 32px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 5px;
 }
 </style>
 

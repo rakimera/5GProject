@@ -69,6 +69,7 @@ public class TranslatorSpecsController : Controller
             }
 
             await _service.TranslatorSpecsService.Delete(baseResponse.Result);
+            return Ok(response);
         }
         return Ok(baseResponse);
     }

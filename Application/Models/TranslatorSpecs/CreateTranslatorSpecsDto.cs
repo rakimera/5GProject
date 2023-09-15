@@ -12,8 +12,8 @@ public class CreateTranslatorSpecsDto
     public Guid? AntennaId { get; set; }
     
     [property: JsonPropertyName("vertical")]
-    public IFormFile Vertical { get; set; }
+    public IFormFile? Vertical { get; set; }
     
     [property: JsonPropertyName("horizontal")]
-    public IFormFile Horizontal { get; set; }
+    public IFormFile? Horizontal { get; set; }
 }

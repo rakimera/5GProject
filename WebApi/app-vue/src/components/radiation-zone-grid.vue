@@ -28,6 +28,8 @@
                     alignment="left">
             </dx-column>
             <dx-sorting mode="multiple"/>
+          <dx-paging :page-size="50"/>
+          <dx-pager :show-page-size-selector="true" :allowed-page-sizes="[8, 12, 20, 100]"/>
         </dx-data-grid>
     </div>
 </template>
@@ -35,10 +37,10 @@
 
 import {onMounted, ref, defineProps} from "vue";
 import {
-    DxColumn,
-    DxDataGrid,
-    DxEditing,
-    DxSorting,
+  DxColumn,
+  DxDataGrid,
+  DxEditing, DxPager, DxPaging,
+  DxSorting,
 } from "devextreme-vue/data-grid";
 import CustomStore from "devextreme/data/custom_store";
 import radiationZoneService from "@/api/radiationZoneService";

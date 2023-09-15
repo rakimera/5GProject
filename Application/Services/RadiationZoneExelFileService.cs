@@ -17,7 +17,7 @@ public class RadiationZoneExelFileService : IRadiationZoneExelFileService
         _radiationZoneService = radiationZoneService;
     }
 
-    public async Task<BaseResponse<string>> CreateAsync(string translatorId, IFormFile verticalFile,
+    public async Task<BaseResponse<string>> CreateAsync(string translatorId, IFormFile? verticalFile,
         IFormFile horizontalFile, string creator)
     {
         if (!Guid.TryParse(translatorId, out var id))
@@ -90,7 +90,7 @@ public class RadiationZoneExelFileService : IRadiationZoneExelFileService
             Success: true);
     }
 
-    private async Task<BaseResponse<List<RadiationZoneDto>>> ConvertToRadiationZoneDto(Guid translatorId, IFormFile file,
+    private async Task<BaseResponse<List<RadiationZoneDto>>> ConvertToRadiationZoneDto(Guid translatorId, IFormFile? file,
         DirectionType directionType)
     {
         BaseResponse<string> fileResponse = await SaveFile(file);
@@ -123,10 +123,10 @@ public class RadiationZoneExelFileService : IRadiationZoneExelFileService
             File.Delete(path);
     }
 
-    private async Task<BaseResponse<string>> SaveFile(IFormFile uploadedFile)
+    private async Task<BaseResponse<string>> SaveFile(IFormFile? uploadedFile)
     {
         string[] allowedExtension = { ".csv", ".xlsx", ".xlsm" };
-        if (uploadedFile.Length != 0)
+        if (uploadedFile is not null)
         {
             var fileExtension = Path.GetExtension(uploadedFile.FileName).ToLower();
             var folderPath =Path.Combine(Directory.GetCurrentDirectory(), "/Temp");
