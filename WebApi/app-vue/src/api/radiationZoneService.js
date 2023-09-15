@@ -15,7 +15,7 @@ const radiationZoneService = {
 
     async getRadiationZonesTemp() {
         try {
-            const response = await axios.get(`/api/radiationZones/template`);
+            const response = await axios.get(`/api/radiationZones/template`, {responseType: "blob"});
             return response;
         } catch (error) {
             console.log(error)

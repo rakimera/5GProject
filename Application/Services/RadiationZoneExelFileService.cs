@@ -1,12 +1,9 @@
-using System.Net;
 using Application.DataObjects;
 using Application.Extensions;
 using Application.Interfaces;
 using Application.Models.RadiationZone;
 using Domain.Enums;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Headers;
 using OfficeOpenXml;
 
 namespace Application.Services;
@@ -73,28 +70,19 @@ public class RadiationZoneExelFileService : IRadiationZoneExelFileService
             Success: true);
     }
 
-    public async Task<BaseResponse<FileContentResult>> GetTemplate()
+    public async Task<BaseResponse<byte[]>> GetTemplate()
     {
         string mainDir = Environment.CurrentDirectory;
         string path = (mainDir + @"\Template\template.xlsx");
         if (!File.Exists(path))
-            return new BaseResponse<FileContentResult>(
+            return new BaseResponse<byte[]>(
                 Result: null,
                 Messages: new List<string>() {"Шаблон не найден"},
-                Success: true);
-
+                Success: false);
         var fileBytes = await File.ReadAllBytesAsync(path);
-        var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-        var fileName = "template.xlsx";
-        
-        FileContentResult fileResult = new FileContentResult(fileBytes, contentType)
-        {
-            FileDownloadName = fileName
-        };
-
-        
-        return new BaseResponse<FileContentResult>(
-            Result: fileResult,
+       
+        return new BaseResponse<byte[]>(
+            Result: fileBytes,
             Messages: new List<string>() {"Шаблон получен"},
             Success: true);
     }
@@ -157,8 +145,10 @@ public class RadiationZoneExelFileService : IRadiationZoneExelFileService
         string[] allowedExtension = { ".csv", ".xlsx", ".xlsm" };
         if (uploadedFile is not null)
         {
+            string mainDir = Environment.CurrentDirectory;
             var fileExtension = Path.GetExtension(uploadedFile.FileName).ToLower();
-            var folderPath =Path.Combine(Directory.GetCurrentDirectory(), "/Temp");
+            var folderPath = (mainDir + @"\TemporaryFiles");
+
             if (!Directory.Exists(folderPath))
                 Directory.CreateDirectory(folderPath);
         
@@ -204,7 +194,7 @@ public class RadiationZoneExelFileService : IRadiationZoneExelFileService
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             List<RadiationZoneDto> list = new List<RadiationZoneDto>();
-            using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))    
             {
                 using (ExcelPackage package = new ExcelPackage(stream))
                 {

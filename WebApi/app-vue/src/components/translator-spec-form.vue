@@ -190,22 +190,18 @@ const loading = ref(false);
 async function downloadFile(){
   try {
     const response = await radiationZoneService.getRadiationZonesTemp();
-    if (response.data.success) {
-      const filenameMatch = response.data.result.fileDownloadName;
-      const fileName = filenameMatch ? filenameMatch : 'template.xlsx';
-      const blob = new Blob([response.data.result]);
+   
+    
+      const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       const blobUrl = window.URL.createObjectURL(blob);
 
       const link = document.createElement('a');
       link.href = blobUrl;
-      link.download = fileName;
+      link.download = 'template.xlsx';
       link.click();
 
       window.URL.revokeObjectURL(blobUrl);
-    }
-    else {
-      notify(response.data.message, 'error', 2000);
-    }
+   
   } catch (e){
     notify("Ошибка при получении шаблона" + e, 'error', 2000);
     }

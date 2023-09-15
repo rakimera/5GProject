@@ -24,10 +24,9 @@ public class RadiationZoneController : Controller
     }
 
     [HttpGet("template")]
-    public async Task<IActionResult> Get()
+    public async Task<FileResult> Get()
     {
         var file = await _service.RadiationZoneExelFileService.GetTemplate();
-
-        return Ok(file);
+        return File(file.Result, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "template.xlsx");
     }
 }
