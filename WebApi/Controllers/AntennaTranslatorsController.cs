@@ -61,7 +61,7 @@ public class AntennaTranslatorsController : Controller
     {
         AntennaTranslatorDto antennaTranslatorDto = _mapper.Map<AntennaTranslatorDto>(antennaTranslator);
         var baseResponse = await _service.AntennaTranslatorService.CreateAsync(antennaTranslatorDto, User.Identity.Name);
-        
+
         if (baseResponse.Success)
             return Ok(baseResponse);
         return BadRequest(baseResponse);

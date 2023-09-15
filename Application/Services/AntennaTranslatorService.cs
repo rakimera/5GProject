@@ -45,6 +45,7 @@ public class AntennaTranslatorService : IAntennaTranslatorService
     public async Task<BaseResponse<string>> CreateAsync(AntennaTranslatorDto model, string creator)
     {
         AntennaTranslator antennaTranslator = _mapper.Map<AntennaTranslator>(model);
+        
         antennaTranslator.CreatedBy = creator;
         await _repositoryWrapper.AntennaTranslatorRepository.CreateAsync(antennaTranslator);
         await _repositoryWrapper.Save();
@@ -76,8 +77,7 @@ public class AntennaTranslatorService : IAntennaTranslatorService
         AntennaTranslator? antennaTranslator = await _repositoryWrapper.AntennaTranslatorRepository.GetByCondition(x => x.Id.ToString() == oid);
         if (antennaTranslator is not null)
         {
-            antennaTranslator.IsDelete = true;
-            _repositoryWrapper.AntennaTranslatorRepository.Update(antennaTranslator);
+            _repositoryWrapper.AntennaTranslatorRepository.Delete(antennaTranslator);
             await _repositoryWrapper.Save();
 
             return new BaseResponse<bool>(
@@ -138,7 +138,7 @@ public class AntennaTranslatorService : IAntennaTranslatorService
 
     public BaseResponse<List<AntennaTranslatorDto>> GetAllByProjectAntennaId(string id)
     {
-        IQueryable<AntennaTranslator>? projectAntennas = _repositoryWrapper.AntennaTranslatorRepository.GetAllByCondition(x => x.Id.ToString() == id);
+        IQueryable<AntennaTranslator>? projectAntennas = _repositoryWrapper.AntennaTranslatorRepository.GetAllByCondition(x => x.ProjectAntennaId.ToString() == id);
         List<AntennaTranslatorDto> model = _mapper.Map<List<AntennaTranslatorDto>>(projectAntennas);
 
         if (projectAntennas is null)

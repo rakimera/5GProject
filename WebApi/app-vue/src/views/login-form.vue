@@ -74,7 +74,7 @@ export default {
     const loading = ref(false);
 
     function onCreateAccountClick() {
-      router.push("/create-account"); //пока не раб, может потом раб, а может нет
+      router.push("/create-account");
     }
 
     async function onSubmit() {

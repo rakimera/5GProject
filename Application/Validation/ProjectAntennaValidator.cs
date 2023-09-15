@@ -10,8 +10,10 @@ public class ProjectAntennaValidator : AbstractValidator<ProjectAntennaDto>
     {
         RuleFor(dto => dto.Azimuth)
             .NotNull().WithMessage("Азимут антенны не записан");
-        RuleFor(dto => dto.Height)
-            .NotNull().WithMessage("Высота антенны не записана");
+        RuleFor(dto => dto.HeightFromGroundLevel)
+            .NotNull().WithMessage("Высота подвеса антенны от земли не записана");
+        RuleFor(dto => dto.HeightFromRoofLevel)
+            .NotNull().WithMessage("Высота подвеса антенны от уровня крыши не записана");
         RuleFor(dto => dto.Latitude)
             .NotNull().WithMessage("Широта установки антенны не записана");        
         RuleFor(dto => dto.Longitude)

@@ -4,6 +4,8 @@ using Application.Interfaces.RepositoryContract.Common;
 using Application.Models.RadiationZone;
 using Application.Validation;
 using AutoMapper;
+using DevExtreme.AspNet.Data;
+using DevExtreme.AspNet.Data.ResponseModel;
 using Domain.Entities;
 
 namespace Application.Services;
@@ -126,5 +128,12 @@ public class RadiationZoneService : IRadiationZoneService
             Result: radiationZone.Id.ToString(),
             Success: true,
             Messages: new List<string> { "Радиоволна успешна изменена" });
+    }
+
+    public async Task<LoadResult> GetLoadResultById(string id, DataSourceLoadOptionsBase loadOptions)
+    {
+        var radiationZones =
+            _repository.RadiationZoneRepository.GetAllByCondition(x => x.TranslatorSpecsId.ToString() == id);
+        return await DataSourceLoader.LoadAsync(radiationZones, loadOptions);
     }
 }

@@ -21,8 +21,11 @@ public class ServiceWrapper : IServiceWrapper
     private readonly Lazy<IExecutiveCompanyService> _executiveCompanyService;
     private readonly Lazy<ITranslatorSpecsService> _translatorSpecsService;
     private readonly Lazy<IRadiationZoneService> _radiationZoneService;
+    private readonly Lazy<IRadiationZoneExelFileService> _radiationZoneExelFileService;
+    private readonly Lazy<IFileService> _fileService;
     private readonly Lazy<IProjectAntennaService> _projectAntennaService;
     private readonly Lazy<IAntennaTranslatorService> _antennaTranslatorService;
+    private readonly Lazy<IBiohazardRadiusService> _biohazardRadiusService;
     private readonly Lazy<IProjectImageService> _projectImageService;
 
     public ServiceWrapper(
@@ -34,6 +37,7 @@ public class ServiceWrapper : IServiceWrapper
         UpdateProjectValidator updateProjectValidator,
         ITokenService tokenService,
         IUserService userService,
+        IRadiationZoneService radiationZoneService,
         TranslatorSpecsValidator translatorSpecsValidator,
         AntennaValidator antennaValidator,
         AntennaTranslatorValidator antennaTranslatorValidator,
@@ -42,9 +46,12 @@ public class ServiceWrapper : IServiceWrapper
         RoleValidator roleValidator,
         RadiationZoneValidator radiationZoneValidator,
         TranslatorTypeValidator translatorTypeValidator,
-        ProjectAntennaValidator projectAntennaValidator,
-        ExecutiveCompanyValidator executiveCompanyValidator)
+        ExecutiveCompanyValidator executiveCompanyValidator,
+        IEnergyFlowService energyFlowService,
+        IBiohazardRadiusService biohazardRadiusService,
+        ProjectAntennaValidator projectAntennaValidator)
     {
+        _fileService = new Lazy<IFileService>(() => new FileService(repository, energyFlowService,biohazardRadiusService));
         _projectAntennaService = new Lazy<IProjectAntennaService>(() => new ProjectAntennaService(repository, mapper, projectAntennaValidator));
         _roleService = new Lazy<IRoleService>(() => new RoleService(repository, mapper, roleValidator));
         _executiveCompanyService = new Lazy<IExecutiveCompanyService>(() =>
@@ -60,11 +67,14 @@ public class ServiceWrapper : IServiceWrapper
         _antennaTranslatorService = new Lazy<IAntennaTranslatorService>(() => new AntennaTranslatorService(mapper, repository, antennaTranslatorValidator));
         _antennaService = new Lazy<IAntennaService>(() => new AntennaService(repository, mapper, antennaValidator));
         _translatorSpecsService = new Lazy<ITranslatorSpecsService>(() => new TranslatorSpecsService(repository, mapper, translatorSpecsValidator));
+        _energyFlowService = new Lazy<IEnergyFlowService>(() => new EnergyFlowService(energyResultValidator, mapper, repository));
+        _biohazardRadiusService = new Lazy<IBiohazardRadiusService>(() => new BiohazardRadiusService(repository));
         _energyFlowService =
             new Lazy<IEnergyFlowService>(() => new EnergyFlowService(energyResultValidator, mapper, repository));
         _radiationZoneService =
             new Lazy<IRadiationZoneService>(() => new RadiationZoneService(repository, mapper, radiationZoneValidator));
         _projectImageService = new Lazy<IProjectImageService>(() => new ProjectImageService(repository, mapper));
+        _radiationZoneExelFileService = new Lazy<IRadiationZoneExelFileService>(() => new RadiationZoneExelFileService(radiationZoneService));
     }
         
 
@@ -85,4 +95,7 @@ public class ServiceWrapper : IServiceWrapper
     public IExecutiveCompanyService ExecutiveCompanyService => _executiveCompanyService.Value;
     public IAntennaTranslatorService AntennaTranslatorService => _antennaTranslatorService.Value;
     public ITranslatorTypeService TranslatorTypeService => _translatorTypeService.Value;
+    public IFileService FileService => _fileService.Value;
+    public IBiohazardRadiusService BiohazardRadiusService => _biohazardRadiusService.Value;
+    public IRadiationZoneExelFileService RadiationZoneExelFileService => _radiationZoneExelFileService.Value;
 }

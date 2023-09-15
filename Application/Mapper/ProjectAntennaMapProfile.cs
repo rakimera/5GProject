@@ -21,8 +21,10 @@ public class ProjectAntennaMapProfile : Profile
                 opt.MapFrom(src => src.CreatedBy))
             .ForMember(dest => dest.Azimuth, opt =>
                 opt.MapFrom(src => src.Azimuth))
-            .ForMember(dest => dest.Height, opt =>
-                opt.MapFrom(src => src.Height))
+            .ForMember(dest => dest.HeightFromGroundLevel, opt =>
+                opt.MapFrom(src => src.HeightFromGroundLevel))
+            .ForMember(dest => dest.HeightFromRoofLevel, opt =>
+                opt.MapFrom(src => src.HeightFromRoofLevel))
             .ForMember(dest => dest.Latitude, opt =>
                 opt.MapFrom(src => src.Latitude))
             .ForMember(dest => dest.Longitude, opt =>
@@ -51,8 +53,10 @@ public class ProjectAntennaMapProfile : Profile
                 opt.MapFrom(src => src.CreatedBy))
             .ForMember(dest => dest.Azimuth, opt =>
                 opt.MapFrom(src => src.Azimuth))
-            .ForMember(dest => dest.Height, opt =>
-                opt.MapFrom(src => src.Height))
+            .ForMember(dest => dest.HeightFromGroundLevel, opt =>
+                opt.MapFrom(src => src.HeightFromGroundLevel))
+            .ForMember(dest => dest.HeightFromRoofLevel, opt =>
+                opt.MapFrom(src => src.HeightFromRoofLevel))
             .ForMember(dest => dest.Latitude, opt =>
                 opt.MapFrom(src => src.Latitude))
             .ForMember(dest => dest.Longitude, opt =>
@@ -71,8 +75,10 @@ public class ProjectAntennaMapProfile : Profile
         CreateMap<CreateProjectAntennaDto, ProjectAntennaDto>()
             .ForMember(dest => dest.Azimuth, opt =>
                 opt.MapFrom(src => src.Azimuth))
-            .ForMember(dest => dest.Height, opt =>
-                opt.MapFrom(src => src.Height))
+            .ForMember(dest => dest.HeightFromGroundLevel, opt =>
+                opt.MapFrom(src => src.HeightFromGroundLevel))
+            .ForMember(dest => dest.HeightFromRoofLevel, opt =>
+                opt.MapFrom(src => src.HeightFromRoofLevel))
             .ForMember(dest => dest.Latitude, opt =>
                 opt.MapFrom(src => src.Latitude))
             .ForMember(dest => dest.Longitude, opt =>

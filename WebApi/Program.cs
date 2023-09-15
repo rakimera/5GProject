@@ -59,6 +59,7 @@ try
             await dataseed.SeedTowns();
             await dataseed.ProjectStatus();
             await dataseed.SeedRadiationZone();
+            await dataseed.SeedTranslatorType();
         }
     }
 

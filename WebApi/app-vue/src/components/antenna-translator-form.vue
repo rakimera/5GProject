@@ -3,7 +3,7 @@
     <dx-data-grid
         :data-source="dataSource"
         :show-borders="true"
-        :remote-operations="true"
+        :remote-operations="false"
         :column-auto-width="true"
         key-expr="id"
         @row-updating="onRowUpdating"

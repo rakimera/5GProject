@@ -2,14 +2,15 @@ using Application.Interfaces;
 using Application.Models.TranslatorSpecs;
 using AutoMapper;
 using DevExtreme.AspNet.Data;
-using Microsoft.AspNetCore.Authorization;
+using Domain.Entities;
+using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/translators")]
-[Authorize]
+//[Authorize]
 public class TranslatorSpecsController : Controller
 {
     private readonly IServiceWrapper _service;
@@ -45,20 +46,32 @@ public class TranslatorSpecsController : Controller
     public async Task<IActionResult> Get(string oid)
     {
         var baseResponse = await _service.TranslatorSpecsService.GetByOid(oid);
+        var asd = _mapper.Map<TranslatorSpecs>(baseResponse.Result);
+        await _service.FileService.ReadExcel("Document.xlsx", asd, DirectionType.Horizontal);
         if (baseResponse.Success)
             return Ok(baseResponse);
         return NotFound(baseResponse);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(CreateTranslatorSpecsDto model)
+    public async Task<IActionResult> Post([FromForm]CreateTranslatorSpecsDto translatorModel)
     {
-        TranslatorSpecsDto translatorSpecsDto = _mapper.Map<TranslatorSpecsDto>(model);
-        var baseResponse = await _service.TranslatorSpecsService.CreateAsync(translatorSpecsDto, User.Identity.Name);
-        
+        TranslatorSpecsDto translatorSpecsDto = _mapper.Map<TranslatorSpecsDto>(translatorModel);
+        var baseResponse = await _service.TranslatorSpecsService
+            .CreateAsync(translatorSpecsDto, User.Identity.Name);
         if (baseResponse.Success)
-            return Ok(baseResponse);
-        return BadRequest(baseResponse);
+        {
+            var response = await _service.RadiationZoneExelFileService
+                .CreateAsync(baseResponse.Result, translatorModel.Vertical, translatorModel.Horizontal, User.Identity.Name);
+            if (response.Success)
+            {
+                return Ok(baseResponse);
+            }
+
+            await _service.TranslatorSpecsService.Delete(baseResponse.Result);
+            return Ok(response);
+        }
+        return Ok(baseResponse);
     }
 
     [HttpPut]

@@ -30,7 +30,7 @@ namespace WebApi.Tests.Controllers
         }
 
         [Fact]
-        public Task Get_ReturnsOkResult_WhenServiceReturnsSuccess()
+        public async Task Get_ReturnsOkResult_WhenServiceReturnsSuccess()
         {
             // Arrange
             var baseResponse = new BaseResponse<IEnumerable<UserDto>>(
@@ -43,7 +43,7 @@ namespace WebApi.Tests.Controllers
             _serviceWrapperMock.Setup(s => s.UserService).Returns(_userServiceMock.Object);
 
             // Act
-            var result = _accountController.Get() as OkObjectResult;
+            var result = await _accountController.Get() as OkObjectResult;
 
             // Assert
             Assert.NotNull(result);
@@ -53,11 +53,10 @@ namespace WebApi.Tests.Controllers
             Assert.True(responseObject.Success);
             Assert.NotEmpty(responseObject.Messages);
             Assert.Empty(responseObject.Result);
-            return Task.CompletedTask;
         }
 
         [Fact]
-        public Task Get_ReturnsNotFound_WhenServiceReturnsFailure()
+        public async Task Get_ReturnsNotFound_WhenServiceReturnsFailure()
         {
             // Arrange
 
@@ -71,7 +70,7 @@ namespace WebApi.Tests.Controllers
             _serviceWrapperMock.Setup(s => s.UserService).Returns(_userServiceMock.Object);
 
             // Act
-            var result = _accountController.Get() as NotFoundObjectResult;
+            var result = await _accountController.Get() as NotFoundObjectResult;
 
             // Assert
             Assert.NotNull(result);
@@ -81,7 +80,6 @@ namespace WebApi.Tests.Controllers
             Assert.False(responseObject.Success);
             Assert.NotEmpty(responseObject.Messages);
             Assert.Null(responseObject.Result);
-            return Task.CompletedTask;
         }
 
         [Fact]

@@ -10,8 +10,11 @@ public class ProjectAntennaDto : BaseEntity
     [property: JsonPropertyName("azimuth")]
     public decimal Azimuth { get; set; }
     
-    [property: JsonPropertyName("height")]
-    public decimal Height { get; set; }
+    [property: JsonPropertyName("heightFromGroundLevel")]
+    public decimal HeightFromGroundLevel { get; set; }
+    
+    [property: JsonPropertyName("heightFromRoofLevel")]
+    public decimal HeightFromRoofLevel { get; set; }
     
     [property: JsonPropertyName("latitude")]
     public decimal Latitude { get; set; }
