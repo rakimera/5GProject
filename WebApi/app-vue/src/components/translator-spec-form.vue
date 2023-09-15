@@ -166,6 +166,7 @@ import CustomStore from "devextreme/data/custom_store";
 import {DxFileUploader} from "devextreme-vue/file-uploader";
 import RadiationZoneGrid from "@/components/radiation-zone-grid.vue";
 import DxLoadIndicator from "devextreme-vue/load-indicator";
+import radiationZoneService from "@/api/radiationZoneService";
 
 const props = defineProps({
   masterDetailData: {
@@ -185,6 +186,30 @@ const formRef = ref(null);
 const verticalFileUploaderRef = ref(null);
 const horizontalFileUploaderRef = ref(null);
 const loading = ref(false);
+
+async function downloadFile(){
+  try {
+    const response = await radiationZoneService.getRadiationZonesTemp();
+    if (response.data.success) {
+      const filenameMatch = response.data.result.fileDownloadName;
+      const fileName = filenameMatch ? filenameMatch : 'template.xlsx';
+      const blob = new Blob([response.data.result]);
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = fileName;
+      link.click();
+
+      window.URL.revokeObjectURL(blobUrl);
+    }
+    else {
+      notify(response.data.message, 'error', 2000);
+    }
+  } catch (e){
+    notify("Ошибка при получении шаблона" + e, 'error', 2000);
+    }
+}
 
 async function onButtonClick(){
   loading.value = true;

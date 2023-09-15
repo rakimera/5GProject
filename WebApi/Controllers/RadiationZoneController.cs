@@ -22,4 +22,12 @@ public class RadiationZoneController : Controller
         var baseResponse = await _service.RadiationZoneService.GetLoadResultById(id, loadOptions);
         return Ok(baseResponse);
     }
+
+    [HttpGet("template")]
+    public async Task<IActionResult> Get()
+    {
+        var file = await _service.RadiationZoneExelFileService.GetTemplate();
+
+        return Ok(file);
+    }
 }

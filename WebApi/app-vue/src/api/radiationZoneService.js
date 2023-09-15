@@ -7,8 +7,16 @@ const radiationZoneService = {
         try {
             let options = storeExtension.getParams(loadOptions);
             const response = await axios.get(`/api/radiationZones/index/translator/${id}/${options}`);
-            console.log(response)
             return response.data;
+        } catch (error) {
+            console.log(error)
+        }
+    },
+
+    async getRadiationZonesTemp() {
+        try {
+            const response = await axios.get(`/api/radiationZones/template`);
+            return response;
         } catch (error) {
             console.log(error)
         }

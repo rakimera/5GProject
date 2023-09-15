@@ -1,9 +1,12 @@
+using System.Net;
 using Application.DataObjects;
 using Application.Extensions;
 using Application.Interfaces;
 using Application.Models.RadiationZone;
 using Domain.Enums;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using OfficeOpenXml;
 
 namespace Application.Services;
@@ -67,6 +70,32 @@ public class RadiationZoneExelFileService : IRadiationZoneExelFileService
         return new BaseResponse<string>(
             Result: null,
             Messages: new List<string>() {"Передатчики успешно сохранены"},
+            Success: true);
+    }
+
+    public async Task<BaseResponse<FileContentResult>> GetTemplate()
+    {
+        string mainDir = Environment.CurrentDirectory;
+        string path = (mainDir + @"\Template\template.xlsx");
+        if (!File.Exists(path))
+            return new BaseResponse<FileContentResult>(
+                Result: null,
+                Messages: new List<string>() {"Шаблон не найден"},
+                Success: true);
+
+        var fileBytes = await File.ReadAllBytesAsync(path);
+        var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        var fileName = "template.xlsx";
+        
+        FileContentResult fileResult = new FileContentResult(fileBytes, contentType)
+        {
+            FileDownloadName = fileName
+        };
+
+        
+        return new BaseResponse<FileContentResult>(
+            Result: fileResult,
+            Messages: new List<string>() {"Шаблон получен"},
             Success: true);
     }
 
