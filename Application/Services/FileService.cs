@@ -1,6 +1,6 @@
-using System.Diagnostics;
 using System.Drawing;
 using Application.DataObjects;
+using Application.Extensions;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
 using Application.Models.EnergyResult;
@@ -160,7 +160,7 @@ public class FileService : IFileService
                         {
                             Degree = degree,
                             Value = value,
-                            DirectionType = type,
+                            DirectionType = type.GetDescription(),
                             TranslatorSpecsId = translatorSpecs.Id
                         };
                         await _repositoryWrapper.RadiationZoneRepository.CreateAsync(radiationZone);

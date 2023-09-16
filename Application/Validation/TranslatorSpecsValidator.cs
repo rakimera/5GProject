@@ -7,7 +7,6 @@ public class TranslatorSpecsValidator : AbstractValidator<TranslatorSpecsDto>
 {
     public TranslatorSpecsValidator()
     {
-        RuleFor(dto => dto.Frequency)
-            .NotNull().WithMessage("Частота передатчика не задана");
+        RuleFor(dto => dto.Frequency).GreaterThan(0).WithMessage("Частота передатчика должна быть больше нуля");
     }
 }

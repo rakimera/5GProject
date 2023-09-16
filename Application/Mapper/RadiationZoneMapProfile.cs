@@ -27,8 +27,6 @@ public class RadiationZoneMapProfile : Profile
                 opt.MapFrom(src => src.DirectionType))
             .ForMember(dest => dest.TranslatorSpecsId, opt =>
                 opt.MapFrom(src => src.TranslatorSpecsId))
-            .ForMember(dest => dest.TranslatorSpecs, opt =>
-                opt.MapFrom(src => src.TranslatorSpecs))
             .ReverseMap();
         
         CreateMap<CreateRadiationZoneDto, RadiationZoneDto>()
@@ -40,8 +38,6 @@ public class RadiationZoneMapProfile : Profile
                 opt.MapFrom(src => src.DirectionType))
             .ForMember(dest => dest.TranslatorSpecsId, opt =>
                 opt.MapFrom(src => src.TranslatorSpecsId))
-            .ForMember(dest => dest.TranslatorSpecs, opt =>
-                opt.MapFrom(src => src.TranslatorSpecs))
             .ReverseMap();
         
         CreateMap<RadiationZoneDto, UpdateRadiationZoneDto>()
@@ -53,8 +49,6 @@ public class RadiationZoneMapProfile : Profile
                 opt.MapFrom(src => src.DirectionType))
             .ForMember(dest => dest.TranslatorSpecsId, opt =>
                 opt.MapFrom(src => src.TranslatorSpecsId))
-            .ForMember(dest => dest.TranslatorSpecs, opt =>
-                opt.MapFrom(src => src.TranslatorSpecs))
             .ReverseMap();
     }
 }

@@ -1,4 +1,5 @@
 using Application.DataObjects;
+using Application.Extensions;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
 using Domain.Entities;
@@ -27,11 +28,11 @@ public class BiohazardRadiusService : IBiohazardRadiusService
                 var translator = value.TranslatorSpecs;
                 var radiationZonesHorizontal = _repositoryWrapper.RadiationZoneRepository
                     .GetAllByCondition(x=> x.TranslatorSpecsId == translator.Id 
-                                           && x.DirectionType == DirectionType.Horizontal && x.Degree != 360)
+                                           && x.DirectionType == DirectionType.Horizontal.GetDescription() && x.Degree != 360)
                     .OrderBy(x=>x.Degree).ToList();
                 var radiationZonesVertical = _repositoryWrapper.RadiationZoneRepository
                     .GetAllByCondition(x=> x.TranslatorSpecsId == translator.Id 
-                                           && x.DirectionType == DirectionType.Vertical && x.Degree != 360)
+                                           && x.DirectionType == DirectionType.Vertical.GetDescription() && x.Degree != 360)
                     .OrderBy(x=>x.Degree).ToList();
                 await BioHazardCreate(radiationZonesHorizontal, projectAntenna, value);
                 await BioHazardCreate(radiationZonesVertical, projectAntenna, value);

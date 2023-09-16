@@ -11,7 +11,7 @@ public class BiohazardRadius : BaseEntity
     public decimal MaximumBiohazardRadius { get; set; }
     public decimal BiohazardRadiusZ { get; set; }
     public decimal BiohazardRadiusX { get; set; }
-    public DirectionType DirectionType { get; set; }
+    public string DirectionType { get; set; }
     public Guid AntennaTranslatorId  { get; set; }
     public AntennaTranslator AntennaTranslator { get; set; }
 }

@@ -1,4 +1,5 @@
 using Application.DataObjects;
+using Application.Extensions;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
 using Application.Models.EnergyResult;
@@ -50,7 +51,7 @@ public class EnergyFlowService : IEnergyFlowService
     {
         List<EnergyResult> energyResults = new List<EnergyResult>();
         decimal gainInMultiplier = Multiplier(inputData.Gain);
-        decimal transmitLossFactorInMultiplier = Multiplier(inputData.TransmitLossFactor);
+        decimal transmitLossFactorInMultiplier = Multiplier(-inputData.TransmitLossFactor);
         decimal heightInstall = inputData.HeightInstall;
         decimal powerSignal = inputData.PowerSignal;
         AntennaTranslator? antennaTranslator =
@@ -86,7 +87,7 @@ public class EnergyFlowService : IEnergyFlowService
     private decimal NormalizedVerticalPower(decimal distance, decimal heightInstall, Guid translatorId) //F(θ)
     {
         int degree = (int)Math.Ceiling(Math.Atan((double)((heightInstall - HumanHeight) / distance)) * 180 / Math.PI);
-        var radiationZones = _repositoryWrapper.RadiationZoneRepository.GetAllByCondition(x => x.TranslatorSpecsId == translatorId).Where(x=> x.DirectionType == DirectionType.Vertical);
+        var radiationZones = _repositoryWrapper.RadiationZoneRepository.GetAllByCondition(x => x.TranslatorSpecsId == translatorId).Where(x=> x.DirectionType == DirectionType.Vertical.GetDescription());
         RadiationZone? verticalRadiation = radiationZones.FirstOrDefault(x => x.Degree == degree);
         var verticalRadiationInMultiplier = Multiplier(verticalRadiation.Value);
         

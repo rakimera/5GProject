@@ -1,4 +1,3 @@
-using Application.Models.ContrAgents;
 using Domain.Common;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +28,6 @@ public class Project5GDbContext : DbContext
     public DbSet<BiohazardRadius> BiohazardRadii { get; set; }
     public DbSet<SummaryBiohazardRadius> SummaryBiohazardRadii { get; set; }
     public DbSet<TranslatorType> TranslatorTypes { get; set; }
-
     public Project5GDbContext(DbContextOptions<Project5GDbContext> options) : base(options) {}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -47,10 +45,8 @@ public class Project5GDbContext : DbContext
         modelBuilder.Entity<Project>().Navigation(e=> e.Executor).AutoInclude();
         modelBuilder.Entity<Project>().Navigation(e=> e.ExecutiveCompany).AutoInclude();
         modelBuilder.Entity<Project>().Navigation(e=> e.ProjectStatus).AutoInclude();
-        // modelBuilder.Entity<Project>().Navigation(e=> e.ProjectAntennae).AutoInclude();
         modelBuilder.Entity<Project>().Navigation(e=> e.SummaryBiohazardRadius).AutoInclude();
         modelBuilder.Entity<Project>().Navigation(e=> e.TotalFluxDensity).AutoInclude();
-        modelBuilder.Entity<AntennaTranslator>().Navigation(e=> e.TranslatorType).AutoInclude();
         modelBuilder.Entity<ProjectAntenna>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<ProjectAntenna>().Navigation(e=> e.Antenna).AutoInclude();
         modelBuilder.Entity<AntennaTranslator>().Navigation(e=> e.TranslatorSpecs).AutoInclude();

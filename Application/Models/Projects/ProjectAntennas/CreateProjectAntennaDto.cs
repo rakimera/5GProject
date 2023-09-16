@@ -1,6 +1,4 @@
 using System.Text.Json.Serialization;
-using Application.Models.AntennaTranslator;
-using Application.Models.Location;
 
 namespace Application.Models.Projects.ProjectAntennas;
 

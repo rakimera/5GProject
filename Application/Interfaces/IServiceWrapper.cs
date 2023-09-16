@@ -17,9 +17,11 @@ public interface IServiceWrapper
     ITotalFluxDensityService TotalFluxDensityService { get; }
     IRoleService RoleService { get; }
     IRadiationZoneService RadiationZoneService { get; }
+    IRadiationZoneExelFileService RadiationZoneExelFileService{ get; }
     IExecutiveCompanyService ExecutiveCompanyService { get; }
     IAntennaTranslatorService AntennaTranslatorService { get; }
     ITranslatorTypeService TranslatorTypeService { get; }
-    IProjectImageService ProjectImageService { get; }
     IBiohazardRadiusService BiohazardRadiusService { get; }
+    IExportProjectService ExportProjectService { get; }
+    IProjectImageService ProjectImageService { get; }
 }

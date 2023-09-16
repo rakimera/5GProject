@@ -34,10 +34,6 @@ public class TranslatorSpecsProfile : Profile
                 opt.MapFrom(src => src.Frequency))
             .ForMember(dest => dest.AntennaId, opt =>
                 opt.MapFrom(src => src.AntennaId))
-            .ForMember(dest => dest.Antenna, opt =>
-                opt.MapFrom(src => src.Antenna))
-            .ForMember(dest => dest.RadiationZones, opt =>
-                opt.MapFrom(src => src.RadiationZones))
             .ReverseMap();
         
         CreateMap<TranslatorSpecsDto, UpdateTranslatorSpecsDto>()
