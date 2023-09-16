@@ -14,7 +14,7 @@
         :texts="{confirmDeleteMessage: 'Вы уверены, что хотите удалить эту запись?'}"
         mode="popup"
     >
-      <dx-popup :show-title="true" title="Добавление передатчика" col-count="2" width="50%" height="50%"></dx-popup>
+      <dx-popup :show-title="true" title="Добавление передатчика" col-count="2" width="50%"></dx-popup>
     </dx-editing>
       <dx-toolbar>
           <dx-item name="addRowButton" show-text="always" location="before" widget="dxButton" :options="addButton">
