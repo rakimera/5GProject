@@ -102,7 +102,7 @@ public class BiohazardRadiusService : IBiohazardRadiusService
         for (int i = 0; i < radiationZones.Count; i++)
         {
             int newIndex = (i + (radiationZones.Count - tilt)) % radiationZones.Count;
-            if (radiationZones[i].DirectionType == DirectionType.Horizontal)
+            if (radiationZones[i].DirectionType == DirectionType.Horizontal.GetDescription())
             {
                 newIndex = i;
             }
@@ -161,9 +161,9 @@ public class BiohazardRadiusService : IBiohazardRadiusService
             {
                 antennaTranslatorId = value.Id;
                 var bioVertical = _repositoryWrapper.BiohazardRadiusRepository.GetAllByCondition(x =>
-                    x.AntennaTranslator == value && x.DirectionType == DirectionType.Vertical).OrderBy(x=>x.Degree).ToList();
+                    x.AntennaTranslator == value && x.DirectionType == DirectionType.Vertical.GetDescription()).OrderBy(x=>x.Degree).ToList();
                 var bioHorizontal = _repositoryWrapper.BiohazardRadiusRepository.GetAllByCondition(x =>
-                    x.AntennaTranslator == value && x.DirectionType == DirectionType.Horizontal).OrderBy(x=>x.Degree).ToList();
+                    x.AntennaTranslator == value && x.DirectionType == DirectionType.Horizontal.GetDescription()).OrderBy(x=>x.Degree).ToList();
                 for (int i = 0; i < bioVertical.Count; i++)
                 {
                     sumVertical[i] += Math.Pow((double)bioVertical[i].MaximumBiohazardRadius, 2);
@@ -208,9 +208,6 @@ public class BiohazardRadiusService : IBiohazardRadiusService
                 await _repositoryWrapper.SummaryBiohazardRadiusRepository.CreateAsync(biohazardRadiusVertical);
             }
         }
-
-        
-
         await _repositoryWrapper.Save();
         return new BaseResponse<bool>(
             Result: true,

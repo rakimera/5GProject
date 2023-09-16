@@ -16,7 +16,7 @@ public class ExportProjectService : IExportProjectService
     public async Task<BaseResponse<byte[]>> GetProjectFile(string id)
     {
         var project = await _repositoryWrapper.ProjectRepository.GetByCondition(x => x.Id.ToString() == id);
-        string filePath = "тут должен быть путь к файлу";
+        string filePath = @$"TemporaryFiles\{project.Id}";
         if (!File.Exists(filePath))
             return new BaseResponse<byte[]>(
                 Result: null,

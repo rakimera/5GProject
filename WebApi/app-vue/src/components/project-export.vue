@@ -34,7 +34,7 @@ async function calculateProject(){
 
     const link = document.createElement('a');
     link.href = blobUrl;
-    link.download = 'template.xlsx';
+    link.download = 'project.docx';
     link.click();
 
     window.URL.revokeObjectURL(blobUrl);

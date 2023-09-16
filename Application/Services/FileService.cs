@@ -1,10 +1,10 @@
+using System.Diagnostics;
 using System.Drawing;
 using Application.DataObjects;
 using Application.Extensions;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
 using Application.Models.EnergyResult;
-using DevExpress.Export.Xl;
 using DevExpress.Office.Services;
 using DevExpress.Office.Utils;
 using DevExpress.XtraRichEdit;
@@ -20,6 +20,8 @@ using DocumentFormat = DevExpress.XtraRichEdit.DocumentFormat;
 using SearchOptions = DevExpress.XtraRichEdit.API.Native.SearchOptions;
 using Shape = DevExpress.XtraRichEdit.API.Native.Shape;
 using Table = DevExpress.XtraRichEdit.API.Native.Table;
+
+
 
 namespace Application.Services;
 
@@ -38,107 +40,6 @@ public class FileService : IFileService
         _energyFlowService = energyFlowService;
         _biohazardRadiusService = biohazardRadiusService;
         _totalFluxDensityService = totalFluxDensityService;
-    }
-
-    public async Task<BaseResponse<bool>> GetLoadXlsx()
-    {
-        IXlExporter exporter = XlExport.CreateExporter(XlDocumentFormat.Xlsx);
-
-        using (FileStream stream = new FileStream("Document.xlsx", FileMode.Create, FileAccess.ReadWrite)) {
-                using (IXlDocument document = exporter.CreateDocument(stream))
-                {
-                    using (IXlSheet sheet = document.CreateSheet())
-                    {
-                        sheet.Name = "360";
-                        
-                        using (IXlColumn column = sheet.CreateColumn()) {
-                            column.WidthInPixels = 75;
-                        }
-                        
-                        using (IXlColumn column = sheet.CreateColumn()) {
-                            column.WidthInPixels = 120;
-                        }
-                        
-                        using (IXlColumn column = sheet.CreateColumn()) {
-                            column.WidthInPixels = 120;
-                        }
-                        
-                        XlCellFormatting cellFormatting = new XlCellFormatting();
-                        cellFormatting.Font = new XlFont();
-                        cellFormatting.Font.Name = "Century Gothic";
-                        cellFormatting.Font.SchemeStyle = XlFontSchemeStyles.None;
-                        
-                        XlCellFormatting headerRowFormatting = new XlCellFormatting();
-                        headerRowFormatting.CopyFrom(cellFormatting);
-                        headerRowFormatting.Font.Bold = true;
-                        headerRowFormatting.Font.Color = XlColor.FromTheme(XlThemeColor.Light1, 0.0);
-                        headerRowFormatting.Fill = XlFill.SolidFill(XlColor.FromTheme(XlThemeColor.Accent2, 0.0));
-                        
-                        using (IXlRow row = sheet.CreateRow()) {
-                            using (IXlCell cell = row.CreateCell()) {
-                                cell.Value = "Градус";
-                                cell.ApplyFormatting(headerRowFormatting);
-                            }
-                            using (IXlCell cell = row.CreateCell()) {
-                                cell.Value = "Значение";
-                                cell.ApplyFormatting(headerRowFormatting);
-                            }
-                            using (IXlCell cell = row.CreateCell()) {
-                                cell.Value = "Тип";
-                                cell.ApplyFormatting(headerRowFormatting);
-                            }
-                        }
-                        var radiations = _repositoryWrapper.RadiationZoneRepository.GetAll().OrderBy(x=> x.Degree);
-                        foreach (var radiation in radiations)
-                        {
-                            using (IXlRow row = sheet.CreateRow()) {
-                                using (IXlCell cell = row.CreateCell()) {
-                                    cell.Value = radiation.Degree;
-                                    cell.ApplyFormatting(cellFormatting);
-                                }
-                                using (IXlCell cell = row.CreateCell()) {
-                                    cell.Value = radiation.Value.ToString();
-                                    cell.ApplyFormatting(cellFormatting);
-                                }
-                                using (IXlCell cell = row.CreateCell()) {
-                                    cell.Value = radiation.DirectionType.ToString();
-                                    cell.ApplyFormatting(cellFormatting);
-                                }
-                            }
-                            
-                        }
-
-                        sheet.AutoFilterRange = sheet.DataRange;
-                        
-                        XlCellFormatting totalRowFormatting = new XlCellFormatting();
-                        var maxAbsoluteRadiationValue = radiations.Max(radiation => Math.Abs(radiation.Value));
-                        var radiationWithMaxAbsoluteValue = radiations.First(radiation => Math.Abs(radiation.Value) == maxAbsoluteRadiationValue);
-                        totalRowFormatting.CopyFrom(cellFormatting);
-                        totalRowFormatting.Font.Bold = true;
-                        totalRowFormatting.Fill = XlFill.SolidFill(XlColor.FromTheme(XlThemeColor.Accent5, 0.6));
-                        
-                        using (IXlRow row = sheet.CreateRow()) {
-                            using (IXlCell cell = row.CreateCell()) {
-                                cell.ApplyFormatting(totalRowFormatting);
-                            }
-                            using (IXlCell cell = row.CreateCell()) {
-                                cell.Value = "Максимальное значение";
-                                cell.ApplyFormatting(totalRowFormatting);
-                                cell.ApplyFormatting(XlCellAlignment.FromHV(XlHorizontalAlignment.Right, XlVerticalAlignment.Bottom));
-                            }
-                            using (IXlCell cell = row.CreateCell()) {
-                                cell.ApplyFormatting(totalRowFormatting);
-                                cell.Value = radiationWithMaxAbsoluteValue.Value.ToString();
-                            }
-                        }
-                    }
-                }
-        }
-        Process.Start(new ProcessStartInfo("Document.xlsx"){UseShellExecute = true});
-        return new BaseResponse<bool>(
-            Result: true,
-            Messages: new List<string> { "Файл успешно создан" },
-            Success: true);
     }
 
     public async Task<BaseResponse<bool>> ReadExcel(string filePath,TranslatorSpecs translatorSpecs,DirectionType type)
@@ -185,13 +86,13 @@ public class FileService : IFileService
     
     
 
-    public async Task<BaseResponse<bool>> ProjectWord(string oid)
+    public async Task<BaseResponse<byte[]>> ProjectWord(string oid)
     {
         OfficeCharts.Instance.ActivateCrossPlatformCharts();
         var project = await  _repositoryWrapper.ProjectRepository.GetByCondition(x =>
             x.Id.ToString() == oid);
-        await _biohazardRadiusService.Create(project.Id.ToString());
-        await _energyFlowService.CreateAsync(project.Id.ToString(), project.CreatedBy);
+        // await _biohazardRadiusService.Create(project.Id.ToString());
+        // await _energyFlowService.CreateAsync(project.Id.ToString(), project.CreatedBy);
         var contrAgent = project.ContrAgent;
         var year = (project.SanPinDock?.DateOfIssue.Year) ?? DateTime.Now.Year;
         var executor = project.Executor;
@@ -252,7 +153,7 @@ public class FileService : IFileService
                 powerList.AddRange(antennaTranslators.Select(antennaTranslator => antennaTranslator.Power.ToString()));
                 gainList.AddRange(antennaTranslators.Select(antennaTranslator => antennaTranslator.Gain.ToString()));
                 frequencyList.AddRange(antennaTranslators.Select(antennaTranslator => antennaTranslator.TranslatorSpecs.Frequency.ToString()));
-                typeList.AddRange(antennaTranslators.Select(antennaTranslator => antennaTranslator.TranslatorType.Type));
+                typeList.AddRange(antennaTranslators.Select(antennaTranslator => antennaTranslator.TranslatorType?.Type ?? ""));
                 tiltList.AddRange(antennaTranslators.Select(antennaTranslator => antennaTranslator.Tilt.ToString()));
                 
 
@@ -264,23 +165,23 @@ public class FileService : IFileService
                         .GetByCondition(x => x.Id == antennaTranslator.TranslatorTypeId);
                     //Горизонтальное
                     var bioHorizontal = _repositoryWrapper.BiohazardRadiusRepository.GetAllByCondition(x =>
-                        x.AntennaTranslatorId == antennaTranslator.Id && x.DirectionType == DirectionType.Horizontal).OrderBy(x=>x.Degree).ToList();
+                        x.AntennaTranslatorId == antennaTranslator.Id && x.DirectionType == DirectionType.Horizontal.GetDescription()).OrderBy(x=>x.Degree).ToList();
                     var maxHorizontalZ = bioHorizontal.Max(radiation => Math.Abs(radiation.BiohazardRadiusZ));
                     var radiationMaxHorizontalZ = bioHorizontal.First(radiation => radiation.BiohazardRadiusZ == maxHorizontalZ);
                     var horizontalX = radiationMaxHorizontalZ.BiohazardRadiusX;
                     var horizontalBack = await _repositoryWrapper.BiohazardRadiusRepository
-                        .GetByCondition(x => x.Degree == 180 && x.DirectionType == DirectionType.Horizontal);
+                        .GetByCondition(x => x.Degree == 180 && x.DirectionType == DirectionType.Horizontal.GetDescription());
                     var maxMaximumHorizontal = bioHorizontal.Max(radiation => Math.Abs(radiation.MaximumBiohazardRadius));
                     var maxRadiationHorizontal = bioHorizontal.First(radiation => radiation.MaximumBiohazardRadius == maxMaximumHorizontal);
                     //Вертикальное
                     var bioVertical = _repositoryWrapper.BiohazardRadiusRepository.GetAllByCondition(x =>
-                        x.AntennaTranslatorId == antennaTranslator.Id && x.DirectionType == DirectionType.Vertical).OrderBy(x=>x.Degree).ToList();
+                        x.AntennaTranslatorId == antennaTranslator.Id && x.DirectionType == DirectionType.Vertical.GetDescription()).OrderBy(x=>x.Degree).ToList();
                     var minVerticalZ = bioVertical.Min(radiation => radiation.BiohazardRadiusZ);
                     var radiationMinVerticalZ = bioVertical
                         .FirstOrDefault(radiation => radiation.BiohazardRadiusZ == minVerticalZ);
                     var verticalX = radiationMinVerticalZ.BiohazardRadiusX;
                     var verticalBack = await _repositoryWrapper.BiohazardRadiusRepository
-                        .GetByCondition(x => x.Degree == 180 && x.DirectionType == DirectionType.Vertical);
+                        .GetByCondition(x => x.Degree == 180 && x.DirectionType == DirectionType.Vertical.GetDescription());
                     var maxMaximumVertical = bioVertical.Max(radiation => Math.Abs(radiation.MaximumBiohazardRadius));
                     var maxRadiationVertical = bioHorizontal
                         .First(radiation => radiation.MaximumBiohazardRadius == maxMaximumVertical);
@@ -492,7 +393,6 @@ public class FileService : IFileService
                     {
                         TableCell columnCellMax = maxTable[i, i];
                         columnCellMax.PreferredWidthType = WidthType.Auto;
-                        columnCellMax.PreferredWidth = Units.InchesToDocumentsF(0.66f);
                         for (int j = 0; j <= maxCountTable+1; j++)
                         {
                             columnCellMax = maxTable[j, i];
@@ -733,7 +633,7 @@ public class FileService : IFileService
                     CreateTableEnergyResult(document,tableFlow,energyResults,positionTableTranslator);
                 }
             }
-            await _totalFluxDensityService.CreateAsync(allEnergyResults, project.Id.ToString(), project.CreatedBy);
+            // await _totalFluxDensityService.CreateAsync(allEnergyResults, project.Id.ToString(), project.CreatedBy);
             var totalFluxDensities = _totalFluxDensityService.GetAllByOid(project.Id.ToString());
             CreateTableTotalFlux(document,tableFlow,totalFluxDensities.Result,positionTableTranslator+1);
             document.Unit = DevExpress.Office.DocumentUnit.Inch;
@@ -767,9 +667,18 @@ public class FileService : IFileService
             document.Delete(keywordsLast[0]);
             wordProcessor.SaveDocument($"TemporaryFiles/Project{project.Id}.docx", DocumentFormat.OpenXml);
         }
-        return new BaseResponse<bool>(
-            Result: true,
-            Messages: new List<string> { "Файл успешно создан" },
+        string filePathExport = @$"TemporaryFiles\Project{project.Id}.docx";
+        if (!File.Exists(filePathExport))
+            return new BaseResponse<byte[]>(
+                Result: null,
+                Messages: new List<string>() {"Файл проекта для экспорта не найден"},
+                Success: false);
+        
+        var fileBytes = await File.ReadAllBytesAsync(filePathExport);
+        
+        return new BaseResponse<byte[]>(
+            Result: fileBytes,
+            Messages: new List<string>() {"Файл проекта для экспорта получен"},
             Success: true);
     }
 
@@ -794,7 +703,7 @@ public class FileService : IFileService
         chart.Title.Visible = true;
         chart.Title.Font.Size = 8;
         var text = "Ширина БОЗ в вертикальной плоскости на расстоянии Rx от \nантенны вдоль линии горизонта по направлению излучения";
-        if (biohazardRadii.First().DirectionType == DirectionType.Horizontal)
+        if (biohazardRadii.First().DirectionType == DirectionType.Horizontal.GetDescription())
         {
             text = "Ширина БОЗ в горизонтальной плоскости на расстоянии Rx от \nантенны вдоль линии горизонта по направлению излучения";
         }
@@ -920,7 +829,7 @@ public class FileService : IFileService
             if (x == 0 || biohazardRadii[i] == radiationMaxRadius || biohazardRadii[i] == radiationZ 
                 || biohazardRadii[i].Degree == maxRadiusDegree || biohazardRadii[i].Degree == minDegreeZ) 
             {
-                if (biohazardRadii[i].DirectionType == DirectionType.Horizontal)
+                if (biohazardRadii[i].DirectionType == DirectionType.Horizontal.GetDescription())
                 {
                     document.InsertText(table[y, 0].Range.Start, biohazardRadii[i].Degree.ToString());
                     document.InsertText(table[y, 1].Range.Start, biohazardRadii[i].Db.ToString("F3"));
@@ -930,7 +839,7 @@ public class FileService : IFileService
                     document.InsertText(table[y, 5].Range.Start, biohazardRadii[i].BiohazardRadiusX.ToString("F3"));
                     y++;
                 }
-                if (biohazardRadii[i].DirectionType == DirectionType.Vertical)
+                if (biohazardRadii[i].DirectionType == DirectionType.Vertical.GetDescription())
                 {
                     document.InsertText(table[y, 7].Range.Start, biohazardRadii[i].Degree.ToString());
                     document.InsertText(table[y, 8].Range.Start, biohazardRadii[i].Db.ToString("F3"));
