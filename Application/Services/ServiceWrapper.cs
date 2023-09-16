@@ -27,6 +27,7 @@ public class ServiceWrapper : IServiceWrapper
     private readonly Lazy<IAntennaTranslatorService> _antennaTranslatorService;
     private readonly Lazy<IBiohazardRadiusService> _biohazardRadiusService;
     private readonly Lazy<IProjectImageService> _projectImageService;
+    private readonly Lazy<IExportProjectService> _exportProjectService;
 
     public ServiceWrapper(
         IRepositoryWrapper repository,
@@ -74,6 +75,7 @@ public class ServiceWrapper : IServiceWrapper
         _radiationZoneService =
             new Lazy<IRadiationZoneService>(() => new RadiationZoneService(repository, mapper, radiationZoneValidator));
         _projectImageService = new Lazy<IProjectImageService>(() => new ProjectImageService(repository, mapper));
+        _exportProjectService = new Lazy<IExportProjectService>(() => new ExportProjectService(repository));
         _radiationZoneExelFileService = new Lazy<IRadiationZoneExelFileService>(() => new RadiationZoneExelFileService(radiationZoneService));
     }
         
@@ -97,5 +99,6 @@ public class ServiceWrapper : IServiceWrapper
     public ITranslatorTypeService TranslatorTypeService => _translatorTypeService.Value;
     public IFileService FileService => _fileService.Value;
     public IBiohazardRadiusService BiohazardRadiusService => _biohazardRadiusService.Value;
+    public IExportProjectService ExportProjectService => _exportProjectService.Value;
     public IRadiationZoneExelFileService RadiationZoneExelFileService => _radiationZoneExelFileService.Value;
 }
