@@ -3,6 +3,7 @@ using System.Drawing;
 using Application.DataObjects;
 using Application.Interfaces;
 using Application.Interfaces.RepositoryContract.Common;
+using Application.Models.EnergyResult;
 using DevExpress.Export.Xl;
 using DevExpress.Office.Services;
 using DevExpress.Office.Utils;
@@ -27,13 +28,16 @@ public class FileService : IFileService
     private readonly IRepositoryWrapper _repositoryWrapper;
     private readonly IEnergyFlowService _energyFlowService;
     private readonly IBiohazardRadiusService _biohazardRadiusService;
+    private readonly ITotalFluxDensityService _totalFluxDensityService;
 
 
-    public FileService(IRepositoryWrapper repositoryWrapper, IEnergyFlowService energyFlowService, IBiohazardRadiusService biohazardRadiusService)
+    public FileService(IRepositoryWrapper repositoryWrapper, IEnergyFlowService energyFlowService, 
+        IBiohazardRadiusService biohazardRadiusService,ITotalFluxDensityService totalFluxDensityService)
     {
         _repositoryWrapper = repositoryWrapper;
         _energyFlowService = energyFlowService;
         _biohazardRadiusService = biohazardRadiusService;
+        _totalFluxDensityService = totalFluxDensityService;
     }
 
     public async Task<BaseResponse<bool>> GetLoadXlsx()
@@ -186,16 +190,15 @@ public class FileService : IFileService
         OfficeCharts.Instance.ActivateCrossPlatformCharts();
         var project = await  _repositoryWrapper.ProjectRepository.GetByCondition(x =>
             x.Id.ToString() == oid);
-        // await _biohazardRadiusService.Create(project.Id.ToString());
-        // await _energyFlowService.CreateAsync(project.Id.ToString(), project.CreatedBy);
+        await _biohazardRadiusService.Create(project.Id.ToString());
+        await _energyFlowService.CreateAsync(project.Id.ToString(), project.CreatedBy);
         var contrAgent = project.ContrAgent;
         var year = (project.SanPinDock?.DateOfIssue.Year) ?? DateTime.Now.Year;
         var executor = project.Executor;
         var executiveCompany = project.ExecutiveCompany;
-        var es = project.TotalFluxDensity;
         using (var wordProcessor = new RichEditDocumentServer()) 
         { 
-            wordProcessor.LoadDocument("Шаблон.docx");
+            wordProcessor.LoadDocument("Template/ProjectTemp.docx");
             Document document = wordProcessor.Document;
             document.ReplaceAll("[ContrAgent]", $"{contrAgent.CompanyName}", SearchOptions.WholeWord);
             document.ReplaceAll("[ExecutiveCompanyName]", $"{executiveCompany.CompanyName}", SearchOptions.WholeWord);
@@ -227,9 +230,11 @@ public class FileService : IFileService
                                                                $"{executiveCompany.DirectorName} {executiveCompany.DirectorPatronymic}", SearchOptions.WholeWord);
             var projectAntennae = _repositoryWrapper.ProjectAntennaRepository
                 .GetAllByCondition(x=> x.ProjectId == project.Id).ToList();
-            
+            var countTranslators = 0;
+            var countAntenna = 0;
             for (int l = 0; l < projectAntennae.Count; l++)
             {
+                countAntenna++;
                 var gain = "";
                 var power = "";
                 var frequency = "";
@@ -250,78 +255,11 @@ public class FileService : IFileService
                 typeList.AddRange(antennaTranslators.Select(antennaTranslator => antennaTranslator.TranslatorType.Type));
                 tiltList.AddRange(antennaTranslators.Select(antennaTranslator => antennaTranslator.Tilt.ToString()));
                 
-                
+
                 foreach (var antennaTranslator in antennaTranslators)
                 {
                     antennaTranslatorId = antennaTranslator.Id;
-                    // var energyFlows = _energyFlowService.GetAllByOid(antennaTranslatorId.ToString());
-                    // //Количество столбцов таблицы
-                //     
-                //     //Поиск и создание таблицы для транслятора
-                //     var flow = document.FindAll("[Flow]",SearchOptions.WholeWord);
-                //     DocumentPosition insertPosition = flow[0].Start;
-                //     ParagraphProperties titleParagraphProperties = document.BeginUpdateParagraphs(flow[0]);
-                //     titleParagraphProperties.Alignment = ParagraphAlignment.Center;
-                //     document.EndUpdateParagraphs(titleParagraphProperties);
-                //     document.InsertText(insertPosition, $"Владелец радиоэлектронных средств: {contrAgent.CompanyName}\n");
-                //     document.Delete(flow[0]);
-                //     Paragraph newAppendedParagraph = document.Paragraphs.Insert(insertPosition);
-                //     Table oldTable = document.Tables.Create(newAppendedParagraph.Range.Start, countTable, 12);
-                //     oldTable.Rows.InsertBefore(0);
-                //     oldTable.Rows.InsertAfter(0);
-                //     oldTable.Rows[0].Cells.Append();
-                //     //Формирование ячеек таблицы для транслятора
-                //     Table table = document.Tables.Last;
-                //     table.TableAlignment = TableRowAlignment.Center;
-                //     table.MergeCells(table[0, 6], table[countTable+1, 6]);
-                //     table.BeginUpdate();
-                //     for (int i = 0; i <= 12; i++)
-                //     {
-                //         TableCell columnCell = table[i, i];
-                //         columnCell.PreferredWidthType = WidthType.Auto;
-                //         columnCell.PreferredWidth = Units.InchesToDocumentsF(0.66f);
-                //         for (int j = 0; j <= countTable+1; j++)
-                //         {
-                //             columnCell = table[j, i];
-                //             columnCell.HeightType = HeightType.Auto;
-                //             columnCell.Height = 0.131f;
-                //             DocumentRange cellRange = columnCell.Range;
-                //             CharacterProperties cp = document.BeginUpdateCharacters(cellRange);
-                //             cp.FontSize = 8;
-                //             document.EndUpdateCharacters(cp);
-                //         }
-                //     }
-                //     //Заполнение шапки таблицы
-                //     document.InsertSingleLineText(table[0, 0].Range.Start, "v, град");
-                //     document.InsertSingleLineText(table[0, 1].Range.Start, "f(v), dBi");
-                //     document.InsertSingleLineText(table[0, 2].Range.Start, "f(v), раз");
-                //     document.InsertSingleLineText(table[0, 3].Range.Start, "Rб, м");
-                //     document.InsertSingleLineText(table[0, 4].Range.Start, "Rz, м");
-                //     document.InsertSingleLineText(table[0, 5].Range.Start, "Rx, м");
-                //     document.InsertSingleLineText(table[0, 7].Range.Start, "v, град");
-                //     document.InsertSingleLineText(table[0, 8].Range.Start, "f(v), dBi");
-                //     document.InsertSingleLineText(table[0, 9].Range.Start, "f(v), раз");
-                //     document.InsertSingleLineText(table[0, 10].Range.Start, "Rб, м");
-                //     document.InsertSingleLineText(table[0, 11].Range.Start, "Rz, м");
-                //     document.InsertSingleLineText(table[0, 12].Range.Start, "Rx, м");
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
+                    countTranslators++;
                     antennaTranslator.TranslatorType = await _repositoryWrapper.TranslatorTypeRepository
                         .GetByCondition(x => x.Id == antennaTranslator.TranslatorTypeId);
                     //Горизонтальное
@@ -371,7 +309,6 @@ public class FileService : IFileService
                     {
                         TableCell columnCell = table[i, i];
                         columnCell.PreferredWidthType = WidthType.Auto;
-                        columnCell.PreferredWidth = Units.InchesToDocumentsF(0.66f);
                         for (int j = 0; j <= countTable+1; j++)
                         {
                             columnCell = table[j, i];
@@ -502,176 +439,181 @@ public class FileService : IFileService
                     number++;
                     table.EndUpdate();
                 }
-                //Получение суммарных и максимальных данных по трансляторам
-                var summary = _repositoryWrapper.SummaryBiohazardRadiusRepository
-                    .GetAllByCondition(x => x.AntennaTranslatorId == antennaTranslatorId);
-                //Получение горизонтальных данных
-                var horizontalSummary =  summary.Where(x => x.DirectionType == DirectionType.Horizontal)
-                    .OrderBy(x=>x.Degree).ToList();
-                var maxHorizontalSummaryZ = horizontalSummary.Max(x => Math.Abs(x.BiohazardRadiusZ));
-                var radiationMaxHorizontalSummaryZ = horizontalSummary
-                    .Where(x => Math.Abs(x.BiohazardRadiusZ) == maxHorizontalSummaryZ).FirstOrDefault();
-                var horizontalSummaryX = radiationMaxHorizontalSummaryZ.BiohazardRadiusX;
-                var horizontalSummaryBack = await _repositoryWrapper.SummaryBiohazardRadiusRepository.GetByCondition
-                    (x => x.Degree == 180 && x.DirectionType == DirectionType.Horizontal && x.AntennaTranslatorId == antennaTranslatorId);
-                var maxMaximumHorizontalSummary = horizontalSummary.Max(x => Math.Abs(x.MaximumBiohazardRadius));
-                var maxRadiationHorizontalSummary = horizontalSummary
-                    .First(x => x.MaximumBiohazardRadius == maxMaximumHorizontalSummary);
-                //Получение вертикальных данных
-                var verticalSummary = summary.Where(x => x.DirectionType == DirectionType.Vertical)
-                    .OrderBy(x=>x.Degree).ToList();
-                var minVerticalSummaryZ = verticalSummary.Min(x => x.BiohazardRadiusZ);
-                var radiationMinVerticalSummaryZ = verticalSummary.First(x => x.BiohazardRadiusZ == minVerticalSummaryZ);
-                var verticalSummaryX = radiationMinVerticalSummaryZ.BiohazardRadiusX;
-                var verticalSummaryBack = await _repositoryWrapper.SummaryBiohazardRadiusRepository.GetByCondition
-                    (x => x.Degree == 180 && x.DirectionType == DirectionType.Vertical && x.AntennaTranslatorId == antennaTranslatorId);
-                var maxMaximumVerticalSummary = verticalSummary.Max(x => Math.Abs(x.MaximumBiohazardRadius));
-                var maxRadiationVerticalSummary = verticalSummary
-                    .First(x => x.MaximumBiohazardRadius == maxMaximumVerticalSummary);
-                var maxSummaryRadius = Math.Max(maxMaximumHorizontalSummary,maxMaximumVerticalSummary);
-                var maxCountTable = CheckMaxCountTable(verticalSummary, 
-                    maxRadiationHorizontalSummary.Degree, radiationMaxHorizontalSummaryZ.Degree,DirectionType.Vertical) - 1;
-                //Формирование таблицы для суммарных и максимальных данных
-                var keywordsMax = document.FindAll("[Table]",SearchOptions.WholeWord);
-                ParagraphProperties maxParagraphProperties = document.BeginUpdateParagraphs(keywordsMax[0]);
-                maxParagraphProperties.Alignment = ParagraphAlignment.Center;
-                document.EndUpdateParagraphs(maxParagraphProperties);
-                document.InsertText(keywordsMax[0].Start, $"Владелец радиоэлектронных средств: {contrAgent.CompanyName}\n");
-                document.Delete(keywordsMax[0]);
-                Paragraph maxAppendedParagraph = document.Paragraphs.Insert(keywordsMax[0].End);
-                Table newMaxTable = document.Tables.Create(maxAppendedParagraph.Range.Start, maxCountTable, 8);
-                newMaxTable.Rows.InsertBefore(0);
-                newMaxTable.Rows.InsertAfter(0);
-                newMaxTable.Rows[0].Cells.Append();
-                Table maxTable = document.Tables.Last;
-                maxTable.TableAlignment = TableRowAlignment.Center;
-                maxTable.MergeCells(maxTable[0, 4], maxTable[maxCountTable+1, 4]);
-                maxTable.BeginUpdate();
-                //Формирование ячеек для суммарных и максимальных данных
-                for (int i = 0; i <= 8; i++)
+                 //Получение суммарных и максимальных данных по трансляторам
+                    var summary = _repositoryWrapper.SummaryBiohazardRadiusRepository
+                        .GetAllByCondition(x => x.AntennaTranslatorId == antennaTranslatorId);
+                    //Получение горизонтальных данных
+                    var horizontalSummary =  summary.Where(x => x.DirectionType == DirectionType.Horizontal)
+                        .OrderBy(x=>x.Degree).ToList();
+                    var maxHorizontalSummaryZ = horizontalSummary.Max(x => Math.Abs(x.BiohazardRadiusZ));
+                    var radiationMaxHorizontalSummaryZ = horizontalSummary
+                        .Where(x => Math.Abs(x.BiohazardRadiusZ) == maxHorizontalSummaryZ).FirstOrDefault();
+                    var horizontalSummaryX = radiationMaxHorizontalSummaryZ.BiohazardRadiusX;
+                    var horizontalSummaryBack = await _repositoryWrapper.SummaryBiohazardRadiusRepository.GetByCondition
+                        (x => x.Degree == 180 && x.DirectionType == DirectionType.Horizontal && x.AntennaTranslatorId == antennaTranslatorId);
+                    var maxMaximumHorizontalSummary = horizontalSummary.Max(x => Math.Abs(x.MaximumBiohazardRadius));
+                    var maxRadiationHorizontalSummary = horizontalSummary
+                        .First(x => x.MaximumBiohazardRadius == maxMaximumHorizontalSummary);
+                    //Получение вертикальных данных
+                    var verticalSummary = summary.Where(x => x.DirectionType == DirectionType.Vertical)
+                        .OrderBy(x=>x.Degree).ToList();
+                    var minVerticalSummaryZ = verticalSummary.Min(x => x.BiohazardRadiusZ);
+                    var radiationMinVerticalSummaryZ = verticalSummary.First(x => x.BiohazardRadiusZ == minVerticalSummaryZ);
+                    var verticalSummaryX = radiationMinVerticalSummaryZ.BiohazardRadiusX;
+                    var verticalSummaryBack = await _repositoryWrapper.SummaryBiohazardRadiusRepository.GetByCondition
+                        (x => x.Degree == 180 && x.DirectionType == DirectionType.Vertical && x.AntennaTranslatorId == antennaTranslatorId);
+                    var maxMaximumVerticalSummary = verticalSummary.Max(x => Math.Abs(x.MaximumBiohazardRadius));
+                    var maxRadiationVerticalSummary = verticalSummary
+                        .First(x => x.MaximumBiohazardRadius == maxMaximumVerticalSummary);
+                    var maxSummaryRadius = Math.Max(maxMaximumHorizontalSummary,maxMaximumVerticalSummary);
+                    var maxCountTable = CheckMaxCountTable(verticalSummary, 
+                        maxRadiationHorizontalSummary.Degree, radiationMaxHorizontalSummaryZ.Degree,DirectionType.Vertical) - 1;
+
+                if (antennaTranslators.Count > 1)
                 {
-                    TableCell columnCellMax = maxTable[i, i];
-                    columnCellMax.PreferredWidthType = WidthType.Auto;
-                    columnCellMax.PreferredWidth = Units.InchesToDocumentsF(0.66f);
-                    for (int j = 0; j <= maxCountTable+1; j++)
+                    //Формирование таблицы для суммарных и максимальных данных
+                    var keywordsMax = document.FindAll("[Table]",SearchOptions.WholeWord);
+                    ParagraphProperties maxParagraphProperties = document.BeginUpdateParagraphs(keywordsMax[0]);
+                    maxParagraphProperties.Alignment = ParagraphAlignment.Center;
+                    document.EndUpdateParagraphs(maxParagraphProperties);
+                    document.InsertText(keywordsMax[0].Start, $"Владелец радиоэлектронных средств: {contrAgent.CompanyName}\n");
+                    document.Delete(keywordsMax[0]);
+                    Paragraph maxAppendedParagraph = document.Paragraphs.Insert(keywordsMax[0].End);
+                    Table newMaxTable = document.Tables.Create(maxAppendedParagraph.Range.Start, maxCountTable, 8);
+                    newMaxTable.Rows.InsertBefore(0);
+                    newMaxTable.Rows.InsertAfter(0);
+                    newMaxTable.Rows[0].Cells.Append();
+                    Table maxTable = document.Tables.Last;
+                    maxTable.TableAlignment = TableRowAlignment.Center;
+                    maxTable.MergeCells(maxTable[0, 4], maxTable[maxCountTable+1, 4]);
+                    maxTable.BeginUpdate();
+                    //Формирование ячеек для суммарных и максимальных данных
+                    for (int i = 0; i <= 8; i++)
                     {
-                        columnCellMax = maxTable[j, i];
-                        columnCellMax.HeightType = HeightType.Auto;
-                        columnCellMax.Height = 0.131f;
-                        CharacterProperties cpMax = document.BeginUpdateCharacters(columnCellMax.Range);
-                        cpMax.FontSize = 8;
-                        document.EndUpdateCharacters(cpMax);
+                        TableCell columnCellMax = maxTable[i, i];
+                        columnCellMax.PreferredWidthType = WidthType.Auto;
+                        columnCellMax.PreferredWidth = Units.InchesToDocumentsF(0.66f);
+                        for (int j = 0; j <= maxCountTable+1; j++)
+                        {
+                            columnCellMax = maxTable[j, i];
+                            columnCellMax.HeightType = HeightType.Auto;
+                            columnCellMax.Height = 0.131f;
+                            CharacterProperties cpMax = document.BeginUpdateCharacters(columnCellMax.Range);
+                            cpMax.FontSize = 8;
+                            document.EndUpdateCharacters(cpMax);
+                        }
                     }
-                }
-                //Заполнение шабки таблицы данными
-                document.InsertSingleLineText(maxTable[0, 0].Range.Start, "v, град");
-                document.InsertSingleLineText(maxTable[0, 1].Range.Start, "Rб, м");
-                document.InsertSingleLineText(maxTable[0, 2].Range.Start, "Rz, м");
-                document.InsertSingleLineText(maxTable[0, 3].Range.Start, "Rx, м");
-                document.InsertSingleLineText(maxTable[0, 5].Range.Start, "v, град");
-                document.InsertSingleLineText(maxTable[0, 6].Range.Start, "Rб, м");
-                document.InsertSingleLineText(maxTable[0, 7].Range.Start, "Rz, м");
-                document.InsertSingleLineText(maxTable[0, 8].Range.Start, "Rx, м");
-                //Вызов методов заполнения таблиц данными
-                CreateTableMaximum360(document, maxTable, verticalSummary,maxRadiationHorizontalSummary.Degree,
-                    radiationMaxHorizontalSummaryZ.Degree,DirectionType.Vertical);
-                CreateTableMaximum360(document, maxTable, horizontalSummary,maxRadiationVerticalSummary.Degree,
-                    radiationMinVerticalSummaryZ.Degree,DirectionType.Horizontal);
-                //Формирование текста под таблицами
-                Paragraph newAppendedParagraphText = document.Paragraphs.Insert(maxTable.Range.End);
-                document.BeginUpdateParagraphs(newAppendedParagraphText.Range);
-                CharacterProperties cpNew = document.BeginUpdateCharacters(newAppendedParagraphText.Range);
-                cpNew.FontSize = 8;
-                cpNew.FontName = "Cambria Math";
-                document.EndUpdateCharacters(cpNew);
-                document.InsertText(newAppendedParagraphText.Range.Start,"Максимальный радиус биологически-опасной зоны от секторных " +
-                                                                         $"антенн {projectAntennae[l].Antenna.Model} в направлении излучения равен " +
-                                                                         $"{maxSummaryRadius.ToString("F3")} м" +
-                                                                         $" (стандарт {type}; мощность передатчика {power} Вт; " +
-                                                                         $"частота на передачу {frequency} МГц;" +
-                                                                         $" коэффициент усиления антенн {gain} дБ, " +
-                                                                         $"направление антенны в вертикальной плоскости " +
-                                                                         $"{projectAntennae[l].Tilt}°).\n " +
-                                                                         "В вертикальном сечении БОЗ повторяет диаграмму направленности." +
-                                                                         " Максимальное отклонение от оси в вертикальном сечении составляет " +
-                                                                         $"{(Math.Abs(minVerticalSummaryZ)).ToString("F3")} м." +
-                                                                         $" на расстоянии {verticalSummaryX.ToString("F3")} м. от центра излучения. " +
-                                                                         "Максимальный радиус биологически-опасного излучения " +
-                                                                         "от заднего лепестка антенны составил " +
-                                                                         $"{verticalSummaryBack.MaximumBiohazardRadius.ToString("F3")} м.\n " +
-                                                                         "В горизонтальном сечении БОЗ повторяет диаграмму направленности. " +
-                                                                         "Максимальное отклонение от оси в горизонтальном сечении составляет " +
-                                                                         $"{maxHorizontalSummaryZ.ToString("F3")} м." +
-                                                                         $" на расстоянии {horizontalSummaryX.ToString("F3")} м. от центра излучения. " +
-                                                                         "Максимальный радиус биологически-опасного излучения от" +
-                                                                         $" заднего лепестка антенны составил " +
-                                                                         $"{horizontalSummaryBack.MaximumBiohazardRadius.ToString("F3")} м.");
-                maxTable.EndUpdate();
-                //Формирование страницы с таблицей и диаграммами направленности
-                var secondSectionMax = document.AppendSection();
-                Table oldTableSecondMax = document.Tables.Create(secondSectionMax.Range.Start, 5, 2);
-                oldTableSecondMax.Rows[0].Cells.Append();
-                Table tableSecondMax = document.Tables.Last;
-                tableSecondMax.TableAlignment = TableRowAlignment.Center;
-                tableSecondMax.BeginUpdate();
-                //Формирование ячеек
-                for (int i = 0; i <= 2; i++)
-                {
-                    TableCell columnCellMax = tableSecondMax[i, i];
-                    columnCellMax.PreferredWidthType = WidthType.Auto;
-                    for (int j = 0; j < 5; j++)
+                    //Заполнение шабки таблицы данными
+                    document.InsertSingleLineText(maxTable[0, 0].Range.Start, "v, град");
+                    document.InsertSingleLineText(maxTable[0, 1].Range.Start, "Rб, м");
+                    document.InsertSingleLineText(maxTable[0, 2].Range.Start, "Rz, м");
+                    document.InsertSingleLineText(maxTable[0, 3].Range.Start, "Rx, м");
+                    document.InsertSingleLineText(maxTable[0, 5].Range.Start, "v, град");
+                    document.InsertSingleLineText(maxTable[0, 6].Range.Start, "Rб, м");
+                    document.InsertSingleLineText(maxTable[0, 7].Range.Start, "Rz, м");
+                    document.InsertSingleLineText(maxTable[0, 8].Range.Start, "Rx, м");
+                    //Вызов методов заполнения таблиц данными
+                    CreateTableMaximum360(document, maxTable, verticalSummary,maxRadiationHorizontalSummary.Degree,
+                        radiationMaxHorizontalSummaryZ.Degree,DirectionType.Vertical);
+                    CreateTableMaximum360(document, maxTable, horizontalSummary,maxRadiationVerticalSummary.Degree,
+                        radiationMinVerticalSummaryZ.Degree,DirectionType.Horizontal);
+                    //Формирование текста под таблицами
+                    Paragraph newAppendedParagraphText = document.Paragraphs.Insert(maxTable.Range.End);
+                    document.BeginUpdateParagraphs(newAppendedParagraphText.Range);
+                    CharacterProperties cpNew = document.BeginUpdateCharacters(newAppendedParagraphText.Range);
+                    cpNew.FontSize = 8;
+                    cpNew.FontName = "Cambria Math";
+                    document.EndUpdateCharacters(cpNew);
+                    document.InsertText(newAppendedParagraphText.Range.Start,"Максимальный радиус биологически-опасной зоны от секторных " +
+                                                                             $"антенн {projectAntennae[l].Antenna.Model} в направлении излучения равен " +
+                                                                             $"{maxSummaryRadius.ToString("F3")} м" +
+                                                                             $" (стандарт {type}; мощность передатчика {power} Вт; " +
+                                                                             $"частота на передачу {frequency} МГц;" +
+                                                                             $" коэффициент усиления антенн {gain} дБ, " +
+                                                                             $"направление антенны в вертикальной плоскости " +
+                                                                             $"{projectAntennae[l].Tilt}°).\n " +
+                                                                             "В вертикальном сечении БОЗ повторяет диаграмму направленности." +
+                                                                             " Максимальное отклонение от оси в вертикальном сечении составляет " +
+                                                                             $"{(Math.Abs(minVerticalSummaryZ)).ToString("F3")} м." +
+                                                                             $" на расстоянии {verticalSummaryX.ToString("F3")} м. от центра излучения. " +
+                                                                             "Максимальный радиус биологически-опасного излучения " +
+                                                                             "от заднего лепестка антенны составил " +
+                                                                             $"{verticalSummaryBack.MaximumBiohazardRadius.ToString("F3")} м.\n " +
+                                                                             "В горизонтальном сечении БОЗ повторяет диаграмму направленности. " +
+                                                                             "Максимальное отклонение от оси в горизонтальном сечении составляет " +
+                                                                             $"{maxHorizontalSummaryZ.ToString("F3")} м." +
+                                                                             $" на расстоянии {horizontalSummaryX.ToString("F3")} м. от центра излучения. " +
+                                                                             "Максимальный радиус биологически-опасного излучения от" +
+                                                                             $" заднего лепестка антенны составил " +
+                                                                             $"{horizontalSummaryBack.MaximumBiohazardRadius.ToString("F3")} м.");
+                    maxTable.EndUpdate();
+                    //Формирование страницы с таблицей и диаграммами направленности
+                    var secondSectionMax = document.AppendSection();
+                    Table oldTableSecondMax = document.Tables.Create(secondSectionMax.Range.Start, 5, 2);
+                    oldTableSecondMax.Rows[0].Cells.Append();
+                    Table tableSecondMax = document.Tables.Last;
+                    tableSecondMax.TableAlignment = TableRowAlignment.Center;
+                    tableSecondMax.BeginUpdate();
+                    //Формирование ячеек
+                    for (int i = 0; i <= 2; i++)
                     {
-                        columnCellMax = tableSecondMax[j, i];
-                        columnCellMax.HeightType = HeightType.Auto;
-                        columnCellMax.Height = 0.250f;
-                        CharacterProperties cpMax = document.BeginUpdateCharacters(columnCellMax.Range);
-                        cpMax.FontSize = 12;
-                        cpMax.FontName = "Cambria Math";
-                        document.EndUpdateCharacters(cpMax);
+                        TableCell columnCellMax = tableSecondMax[i, i];
+                        columnCellMax.PreferredWidthType = WidthType.Auto;
+                        for (int j = 0; j < 5; j++)
+                        {
+                            columnCellMax = tableSecondMax[j, i];
+                            columnCellMax.HeightType = HeightType.Auto;
+                            columnCellMax.Height = 0.250f;
+                            CharacterProperties cpMax = document.BeginUpdateCharacters(columnCellMax.Range);
+                            cpMax.FontSize = 12;
+                            cpMax.FontName = "Cambria Math";
+                            document.EndUpdateCharacters(cpMax);
+                        }
                     }
+                    //Сбор всех данных по транслятором относящимся к антенне
+                    gain = string.Join(";", gainList);
+                    type = string.Join(";", typeList);
+                    power = string.Join(";", powerList);
+                    frequency = string.Join(";", frequencyList);
+                    tilt = string.Join(";", tiltList);
+                    //Заполнение таблицы данными
+                    document.InsertSingleLineText(tableSecondMax[0, 0].Range.Start, "Расчет биологически опасной зоны от секторной антенны:");
+                    document.InsertSingleLineText(tableSecondMax[1, 0].Range.Start, "Рабочая частота (диапазон частот) на передачу, МГц чу, Вт:");
+                    document.InsertSingleLineText(tableSecondMax[2, 0].Range.Start, "Мощность на передачу, Вт:");
+                    document.InsertSingleLineText(tableSecondMax[3, 0].Range.Start, "Коэффициент усиления антенн, дБ");
+                    document.InsertSingleLineText(tableSecondMax[4, 0].Range.Start, "Стандарт:");
+                    document.InsertSingleLineText(tableSecondMax[0, 1].Range.Start, $"{projectAntennae[l].Antenna.Model}");
+                    document.InsertSingleLineText(tableSecondMax[1, 1].Range.Start, $"{frequency}");
+                    document.InsertSingleLineText(tableSecondMax[2, 1].Range.Start, $"{power}");
+                    document.InsertSingleLineText(tableSecondMax[3, 1].Range.Start, $"{gain}");
+                    document.InsertSingleLineText(tableSecondMax[4, 1].Range.Start, $"{type}");
+                    document.InsertSingleLineText(tableSecondMax[0, 2].Range.Start, $"Владелец радиоэлектронных средств: {contrAgent.CompanyName}");
+                    document.InsertSingleLineText(tableSecondMax[1, 2].Range.Start, $"Угол наклона антенны и передатчиков {projectAntennae[l].Tilt}°({tilt}°)");
+                    tableSecondMax.MergeCells(tableSecondMax[0, 0], tableSecondMax[4, 0]);
+                    tableSecondMax.MergeCells(tableSecondMax[0, 1], tableSecondMax[4, 1]);
+                    tableSecondMax.MergeCells(tableSecondMax[0, 2], tableSecondMax[4, 2]);
+                    tableSecondMax.EndUpdate();
+                    //Формирование текста под таблицей
+                    ParagraphProperties paragraphPropertiesMax = document.BeginUpdateParagraphs(secondSectionMax.Range);
+                    paragraphPropertiesMax.Alignment = ParagraphAlignment.Center;
+                    CharacterProperties cpSecondMax = document.BeginUpdateCharacters(secondSectionMax.Range);
+                    cpSecondMax.FontSize = 11;
+                    cpSecondMax.FontName = "Cambria Math";
+                    document.EndUpdateCharacters(cpSecondMax);
+                    document.EndUpdateParagraphs(paragraphPropertiesMax);
+                    var formula = string.Join(" + ", Enumerable.Range(1, antennaTranslators.Count).Select(i => $"𝑅𝑅б{i}²"));
+                    document.InsertText(secondSectionMax.Range.End,"\nСуммируем результаты радиуса биологически-опасной зоны от передатчиков" +
+                                                                   " секторной антенны в вертикальной и горизонтальной плоскостях для определения" +
+                                                                   $" максимального радиус биологически-опасной зоны от секторной антенны: \nRб =√{formula}");
+                    //Вызов методов формирование диаграмм
+                    await CreateDiagramSummary(document,secondSectionMax.Range.End,horizontalSummary);
+                    await CreateDiagramSummary(document,secondSectionMax.Range.End,verticalSummary);
+                    //Создание новой страницы с ключем
+                    var thirdSectionMax = document.InsertSection(secondSectionMax.Range.End);
+                    document.InsertText(thirdSectionMax.Range.End,"[Table]");
+                    tableSecondMax.EndUpdate();
                 }
-                //Сбор всех данных по транслятором относящимся к антенне
-                gain = string.Join(";", gainList);
-                type = string.Join(";", typeList);
-                power = string.Join(";", powerList);
-                frequency = string.Join(";", frequencyList);
-                tilt = string.Join(";", tiltList);
-                //Заполнение таблицы данными
-                document.InsertSingleLineText(tableSecondMax[0, 0].Range.Start, "Расчет биологически опасной зоны от секторной антенны:");
-                document.InsertSingleLineText(tableSecondMax[1, 0].Range.Start, "Рабочая частота (диапазон частот) на передачу, МГц чу, Вт:");
-                document.InsertSingleLineText(tableSecondMax[2, 0].Range.Start, "Мощность на передачу, Вт:");
-                document.InsertSingleLineText(tableSecondMax[3, 0].Range.Start, "Коэффициент усиления антенн, дБ");
-                document.InsertSingleLineText(tableSecondMax[4, 0].Range.Start, "Стандарт:");
-                document.InsertSingleLineText(tableSecondMax[0, 1].Range.Start, $"{projectAntennae[l].Antenna.Model}");
-                document.InsertSingleLineText(tableSecondMax[1, 1].Range.Start, $"{frequency}");
-                document.InsertSingleLineText(tableSecondMax[2, 1].Range.Start, $"{power}");
-                document.InsertSingleLineText(tableSecondMax[3, 1].Range.Start, $"{gain}");
-                document.InsertSingleLineText(tableSecondMax[4, 1].Range.Start, $"{type}");
-                document.InsertSingleLineText(tableSecondMax[0, 2].Range.Start, $"Владелец радиоэлектронных средств: {contrAgent.CompanyName}");
-                document.InsertSingleLineText(tableSecondMax[1, 2].Range.Start, $"Угол наклона антенны и передатчиков {projectAntennae[l].Tilt}°({tilt}°)");
-                tableSecondMax.MergeCells(tableSecondMax[0, 0], tableSecondMax[4, 0]);
-                tableSecondMax.MergeCells(tableSecondMax[0, 1], tableSecondMax[4, 1]);
-                tableSecondMax.MergeCells(tableSecondMax[0, 2], tableSecondMax[4, 2]);
-                tableSecondMax.EndUpdate();
-                //Формирование текста под таблицей
-                ParagraphProperties paragraphPropertiesMax = document.BeginUpdateParagraphs(secondSectionMax.Range);
-                paragraphPropertiesMax.Alignment = ParagraphAlignment.Center;
-                CharacterProperties cpSecondMax = document.BeginUpdateCharacters(secondSectionMax.Range);
-                cpSecondMax.FontSize = 11;
-                cpSecondMax.FontName = "Cambria Math";
-                document.EndUpdateCharacters(cpSecondMax);
-                document.EndUpdateParagraphs(paragraphPropertiesMax);
-                var formula = string.Join(" + ", Enumerable.Range(1, antennaTranslators.Count).Select(i => $"𝑅𝑅б{i}²"));
-                document.InsertText(secondSectionMax.Range.End,"\nСуммируем результаты радиуса биологически-опасной зоны от передатчиков" +
-                                                               " секторной антенны в вертикальной и горизонтальной плоскостях для определения" +
-                                                               $" максимального радиус биологически-опасной зоны от секторной антенны: \nRб =√{formula}");
-                //Вызов методов формирование диаграмм
-                await CreateDiagramSummary(document,secondSectionMax.Range.End,horizontalSummary);
-                await CreateDiagramSummary(document,secondSectionMax.Range.End,verticalSummary);
-                //Создание новой страницы с ключем
-                var thirdSectionMax = document.InsertSection(secondSectionMax.Range.End);
-                document.InsertText(thirdSectionMax.Range.End,"[Table]");
-                tableSecondMax.EndUpdate();
+                
                 //Заполнение вывода данными по антеннам
                 var antennae = document.FindAll("[Antennae]",SearchOptions.WholeWord);
                 document.InsertText(antennae[0].Start, $"Антенна {projectAntennae[l].Antenna.Model} (сектор {l+1} – " +
@@ -707,11 +649,99 @@ public class FileService : IFileService
                 }
                 document.InsertText(azimut[0].Start, azimutText);
                 document.Delete(azimut[0]);
-                
             }
+            var flow = document.FindAll("[FlowTable]",SearchOptions.WholeWord);
+            DocumentPosition flowPosition = flow[0].Start;
+            ParagraphProperties flowParagraphProperties = document.BeginUpdateParagraphs(flow[0]);
+            flowParagraphProperties.Alignment = ParagraphAlignment.Center;
+            document.EndUpdateParagraphs(flowParagraphProperties);
+            document.Delete(flow[0]);
+            Paragraph newFlowAppendedParagraph = document.Paragraphs.Insert(flowPosition);
+            Table oldFlowTable = document.Tables.Create(newFlowAppendedParagraph.Range.Start, countTranslators, 9);
+            oldFlowTable.Rows.InsertBefore(0);
+            oldFlowTable.Rows.InsertAfter(0);
+            oldFlowTable.Rows[0].Cells.Append();
+            //Формирование ячеек таблицы для транслятора
+            Table tableFlow = document.Tables.Last;
+            tableFlow.TableAlignment = TableRowAlignment.Left;
+            tableFlow.HorizontalAlignment = TableHorizontalAlignment.Center;
+            tableFlow.BeginUpdate();
+            for (int i = 0; i < projectAntennae.Count; i++)
+            {
+                var antennaTranslators = _repositoryWrapper.AntennaTranslatorRepository.GetAllByCondition(x =>
+                        x.ProjectAntennaId == projectAntennae[i].Id).ToList();
+                tableFlow.MergeCells(tableFlow[i+1, 1], tableFlow[i+antennaTranslators.Count, 1]);
+                tableFlow.MergeCells(tableFlow[i+1, 0], tableFlow[i+antennaTranslators.Count, 0]);
+            }
+            tableFlow.BeginUpdate();
+            for (int i = 0; i <= 9; i++)
+            {
+                TableCell columnFlowCell = tableFlow[0, i];
+                columnFlowCell.PreferredWidthType = WidthType.Fixed;
+                if (i == 0)
+                {
+                    columnFlowCell.PreferredWidth = 0.35f;
+                }
+                else if (i == 1)
+                {
+                    columnFlowCell.PreferredWidth = 4.35f;
+                }
+                else
+                {
+                    columnFlowCell.PreferredWidth = 1.1f;
+                }
+                for (int j = 0; j <= countTranslators+1; j++)
+                {
+                    tableFlow.FirstRow.FirstCell.PreferredWidth = 0.5f;
+                    columnFlowCell = tableFlow[j, i];
+                    columnFlowCell.HeightType = HeightType.Exact;
+                    columnFlowCell.Height = 0.20f;
+                    columnFlowCell.VerticalAlignment = TableCellVerticalAlignment.Center;
+                    CharacterProperties cpFlow = document.BeginUpdateCharacters(columnFlowCell.Range);
+                    cpFlow.FontSize = 8;
+                    document.EndUpdateCharacters(cpFlow);
+                }
+            }
+            document.InsertSingleLineText(tableFlow[0, 0].Range.Start, "№");
+            document.InsertSingleLineText(tableFlow[0, 1].Range.Start, "Антенна");
+            document.InsertSingleLineText(tableFlow[0, 2].Range.Start, "5");
+            document.InsertSingleLineText(tableFlow[0, 3].Range.Start, "10");
+            document.InsertSingleLineText(tableFlow[0, 4].Range.Start, "20");
+            document.InsertSingleLineText(tableFlow[0, 5].Range.Start, "30");
+            document.InsertSingleLineText(tableFlow[0, 6].Range.Start, "40");
+            document.InsertSingleLineText(tableFlow[0, 7].Range.Start, "60");
+            document.InsertSingleLineText(tableFlow[0, 8].Range.Start, "80");
+            document.InsertSingleLineText(tableFlow[0, 9].Range.Start, "100");
+            document.InsertSingleLineText(tableFlow[countTranslators+1, 1].Range.Start, "∑ППЭ");
+            tableFlow.BeginUpdate();
+            var positionTableAntenna = 0;
+            var positionTableTranslator = 0;
+            var allEnergyResults = new List<EnergyResult>();
+            for (int i = 0; i < projectAntennae.Count; i++)
+            {
+                positionTableAntenna++;
+                var antennaTranslators = _repositoryWrapper.AntennaTranslatorRepository.GetAllByCondition(x =>
+                        x.ProjectAntennaId == projectAntennae[i].Id).ToList();
+                document.InsertSingleLineText(tableFlow[positionTableTranslator+1, 1].Range.Start, projectAntennae[i].Antenna.Model);
+                document.InsertSingleLineText(tableFlow[positionTableTranslator+1, 0].Range.Start, positionTableAntenna.ToString());
+                for (int j = 0; j < antennaTranslators.Count(); j++)
+                {
+                    var energyResults = _repositoryWrapper.EnergyFlowRepository
+                        .GetAllByCondition(x => x.AntennaTranslatorId == antennaTranslators[j].Id).OrderBy(x=>x.Distance).ToList();
+                    allEnergyResults.AddRange(energyResults);
+                    positionTableTranslator++;
+                    CreateTableEnergyResult(document,tableFlow,energyResults,positionTableTranslator);
+                }
+            }
+            await _totalFluxDensityService.CreateAsync(allEnergyResults, project.Id.ToString(), project.CreatedBy);
+            var totalFluxDensities = _totalFluxDensityService.GetAllByOid(project.Id.ToString());
+            CreateTableTotalFlux(document,tableFlow,totalFluxDensities.Result,positionTableTranslator+1);
             document.Unit = DevExpress.Office.DocumentUnit.Inch;
             var images = _repositoryWrapper.ProjectImageRepository
                 .GetAllByCondition(x => x.ProjectId == project.Id).ToList();
+            var folderPath = ("TemporaryFiles");
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
             if (images.Count != 0)
             {
                 foreach (var image in images)
@@ -724,7 +754,7 @@ public class FileService : IFileService
                         position = sect.Range.Start;
                     }
                     byte[] imageBytes = image.Image;
-                    string filePath = $"{project.Id}{image.Id}.jpg";
+                    string filePath = $"TemporaryFiles/{project.Id}{image.Id}.jpg";
                     File.WriteAllBytes(filePath, imageBytes);
                     Shape picture = document.Shapes.InsertPicture(position, DocumentImageSource.FromFile(filePath));
                     picture.Size = new SizeF(9f, 8f);
@@ -735,7 +765,7 @@ public class FileService : IFileService
             }
             var keywordsLast = document.FindAll("[Table]",SearchOptions.WholeWord);
             document.Delete(keywordsLast[0]);
-            wordProcessor.SaveDocument("Project.docx", DocumentFormat.OpenXml);
+            wordProcessor.SaveDocument($"TemporaryFiles/Project{project.Id}.docx", DocumentFormat.OpenXml);
         }
         return new BaseResponse<bool>(
             Result: true,
@@ -755,6 +785,8 @@ public class FileService : IFileService
         chartShape.Offset = new PointF(0.95f, 0.65f);
         ChartObject chart = (ChartObject)chartShape.ChartFormat.Chart;
         Worksheet worksheet = (Worksheet)chartShape.ChartFormat.Worksheet;
+        var maximumX = biohazardRadii.Max(x => x.BiohazardRadiusX);
+        var maximumZ = biohazardRadii.Max(x => x.BiohazardRadiusZ);
         
         await SpecifyChartData(worksheet,biohazardRadii);
         chart.SelectData(worksheet.Range.FromLTRB(0, 0, 1, 360));
@@ -770,9 +802,9 @@ public class FileService : IFileService
         Axis valueAxisX = chart.PrimaryAxes[1];
         Axis valueAxisY = chart.PrimaryAxes[0];
         valueAxisX.Scaling.AutoMax = false;
-        valueAxisX.Scaling.Max = 15;
+        valueAxisX.Scaling.Max = (int)maximumX;
         valueAxisX.Scaling.AutoMin = false;
-        valueAxisX.Scaling.Min = -15;
+        valueAxisX.Scaling.Min = -(int)maximumX;
         valueAxisY.Scaling.AutoMin = false;
         valueAxisY.Scaling.Min = -1;
         
@@ -847,6 +879,25 @@ public class FileService : IFileService
 
         return true;
     }
+    
+    private void CreateTableEnergyResult(Document document,Table table,List<EnergyResult> energyResults,int position)
+    {
+        var x = 2;
+        for (int i = 0; i < energyResults.Count; i++) 
+        {
+            document.InsertText(table[position, x+i].Range.Start, energyResults[i].Value.ToString("F8"));
+        }
+    }
+    
+    private void CreateTableTotalFlux(Document document,Table table,List<TotalFluxDensityDto> totalFluxDensities,int position)
+    {
+        var x = 2;
+        for (int i = 0; i < totalFluxDensities.Count; i++) 
+        {
+            document.InsertText(table[position, x+i].Range.Start, totalFluxDensities[i].Value.ToString("F8"));
+        }
+    }
+    
 
     private void CreateTable360(Document document,Table table,List<BiohazardRadius> biohazardRadii,int maxRadiusDegree, int minDegreeZ,DirectionType type)
     {

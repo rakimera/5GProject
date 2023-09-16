@@ -46,12 +46,27 @@ public class BiohazardRadiusService : IBiohazardRadiusService
             Messages: new List<string> { "Рассчеты произведены успешно успешно считан" },
             Success: true);
     }
-    public decimal GetRB(decimal power,decimal height,decimal lost,decimal multiplier) //Rb,m
+    public decimal GetRB(decimal power,decimal height,decimal lost,decimal multiplier,decimal frequency) //Rb,m
     {
+        var number = 10;
         var h = Multiplier(height);
         var l = Multiplier(-lost);
-        var m = Multiplier(multiplier);
-        double rB = Math.Sqrt(8 * (double)power * (double)h * (double)l / 10) * 1 * (double)multiplier;
+        double rB = 0;
+        if (frequency <= 300)
+        {
+            number = 3;
+            rB = Math.Sqrt(30 * (double)power * (double)h * (double)l / number) * 1 * (double)multiplier;
+
+        }
+        else if (frequency > 300 && frequency < 3000)
+        {
+            rB = Math.Sqrt(8 * (double)power * (double)h * (double)l / number) * 1 * (double)multiplier;
+        }
+        else if (frequency > 3000)
+        {
+            rB = Math.Sqrt((double)power * 1 * (double)multiplier / (4 * number * (double)l));
+        }
+        
         double result = Math.Round(rB, 3);
         return (decimal)result;
     }
@@ -82,6 +97,7 @@ public class BiohazardRadiusService : IBiohazardRadiusService
     private async Task<bool> BioHazardCreate(List<RadiationZone> radiationZones,ProjectAntenna projectAntenna, AntennaTranslator antennaTranslator )
     {
         var tilt = (int)projectAntenna.Tilt + (int)antennaTranslator.Tilt;
+        var frequency = antennaTranslator.TranslatorSpecs.Frequency;
         for (int i = 0; i < radiationZones.Count; i++)
         {
             int newIndex = (i + (radiationZones.Count - tilt)) % radiationZones.Count;
@@ -90,7 +106,7 @@ public class BiohazardRadiusService : IBiohazardRadiusService
                 newIndex = i;
             }
             var dbRaz = Multiplier(radiationZones[newIndex].Value);
-            var maxRadius = GetRB(antennaTranslator.Power, antennaTranslator.Gain, antennaTranslator.TransmitLossFactor, dbRaz);
+            var maxRadius = GetRB(antennaTranslator.Power, antennaTranslator.Gain, antennaTranslator.TransmitLossFactor, dbRaz,frequency);
             BiohazardRadius biohazardRadius = new BiohazardRadius()
             {
                 Degree = i,
