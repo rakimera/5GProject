@@ -9,7 +9,7 @@ namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/translatorTypes")]
-// [Authorize]
+[Authorize]
 public class TranslatorTypesController : Controller
 {
     private readonly IServiceWrapper _service;

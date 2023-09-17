@@ -47,7 +47,7 @@ public class BiohazardRadiusService : IBiohazardRadiusService
             Messages: new List<string> { "Рассчеты произведены успешно успешно считан" },
             Success: true);
     }
-    public decimal GetRB(decimal power,decimal height,decimal lost,decimal multiplier,decimal frequency) //Rb,m
+    private decimal GetRB(decimal power,decimal height,decimal lost,decimal multiplier,decimal frequency) //Rb,m
     {
         var number = 10;
         var h = Multiplier(height);
@@ -60,27 +60,23 @@ public class BiohazardRadiusService : IBiohazardRadiusService
 
         }
         else if (frequency > 300 && frequency < 3000)
-        {
             rB = Math.Sqrt(8 * (double)power * (double)h * (double)l / number) * 1 * (double)multiplier;
-        }
         else if (frequency > 3000)
-        {
             rB = Math.Sqrt((double)power * 1 * (double)multiplier / (4 * number * (double)l));
-        }
-        
+
         double result = Math.Round(rB, 3);
         return (decimal)result;
     }
     
     
-    public decimal GetRZ(decimal degree,decimal rB) //Rz,m
+    private decimal GetRZ(decimal degree,decimal rB) //Rz,m
     {
         double rZ = (double)rB * Math.Sin((double)-degree * Math.PI / 180);
         double result = Math.Round(rZ, 3);
         return (decimal)result;
     }
     
-    public decimal GetRX(decimal degree,decimal rB) //Rx,m
+    private decimal GetRX(decimal degree,decimal rB) //Rx,m
     {
         double rZ = (double)rB * Math.Cos((double)-degree * Math.PI / 180);
         double result = Math.Round(rZ, 3);
@@ -103,9 +99,7 @@ public class BiohazardRadiusService : IBiohazardRadiusService
         {
             int newIndex = (i + (radiationZones.Count - tilt)) % radiationZones.Count;
             if (radiationZones[i].DirectionType == DirectionType.Horizontal.GetDescription())
-            {
                 newIndex = i;
-            }
             var dbRaz = Multiplier(radiationZones[newIndex].Value);
             var maxRadius = GetRB(antennaTranslator.Power, antennaTranslator.Gain, antennaTranslator.TransmitLossFactor, dbRaz,frequency);
             BiohazardRadius biohazardRadius = new BiohazardRadius()
