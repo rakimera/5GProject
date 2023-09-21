@@ -1,5 +1,6 @@
 using Domain.Common;
 using Domain.Entities;
+using Infrastructure.Persistence.DataSeeding;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.DataContext;
@@ -62,6 +63,17 @@ public class Project5GDbContext : DbContext
         modelBuilder.Entity<BiohazardRadius>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<SummaryBiohazardRadius>().HasQueryFilter(x => x.IsDelete == false);
         modelBuilder.Entity<Role>().HasQueryFilter(x => x.IsDelete == false);
+        modelBuilder.CreateExecutiveCompany();
+        modelBuilder.CreateTranslatorType();
+        modelBuilder.CreateAdmin();
+        modelBuilder.CreateRoles();
+        modelBuilder.CreateUserRole();
+        modelBuilder.CreateAntenna();
+        modelBuilder.CreateTranslator();
+        modelBuilder.CreateProjectStatuses();
+        modelBuilder.CreateContrAgents();
+        modelBuilder.CreateDistricts();
+        modelBuilder.CreateTowns();
         base.OnModelCreating(modelBuilder);
     }
 

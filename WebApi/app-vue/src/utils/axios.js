@@ -3,7 +3,7 @@ import tokenService from '@/api/tokenService';
 import authorizationService from "@/api/AuthorizationService";
 
 const instance = axios.create({
-    baseURL: 'https://localhost:7015/',
+    baseURL: 'http://localhost:80/',
 });
 
 instance.interceptors.response.use(

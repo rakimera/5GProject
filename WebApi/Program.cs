@@ -1,6 +1,8 @@
 using Application;
 using Infrastructure;
+using Infrastructure.Persistence.DataContext;
 using Infrastructure.Persistence.DataSeeding;
+using Microsoft.EntityFrameworkCore;
 using NLog;
 using NLog.Web;
 using WebApi.Extensions;
@@ -22,7 +24,8 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
-    string connection = "server=localhost;port=5432;database=Project5G;username=postgres;password=123;";
+    //string connection = "Server=postgres_db;port=5432;database=Project5G;username=postgres;password=123;";
+    string connection = "host=host.docker.internal;port=5432;database=Test5GProject;username=postgres;password=123;";
 
     builder.Services.AddDbConfigure(connection!);
     builder.Services.AddInfrastructureServices();
@@ -42,26 +45,16 @@ try
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
+    //if (app.Environment.IsDevelopment())
+    //{
         app.UseSwagger();
         app.UseSwaggerUI();
         using (var scope = app.Services.CreateScope())
         {
-            var dataseed = scope.ServiceProvider.GetRequiredService<DataSeed>();
-            await dataseed.SeedExecutiveCompany();
-            await dataseed.SeedRoles();
-            await dataseed.SeedAdmin();
-            await dataseed.SeedAntenna();
-            await dataseed.SeedTranslator();
-            await dataseed.SeedContrAgents();
-            await dataseed.SeedDistricts();
-            await dataseed.SeedTowns();
-            await dataseed.ProjectStatus();
-            await dataseed.SeedRadiationZone();
-            await dataseed.SeedTranslatorType();
+            var context = scope.ServiceProvider.GetRequiredService<Project5GDbContext>();
+            await context.Database.MigrateAsync();
         }
-    }
+    //}
 
     app.ConfigureCustomExceptionMiddleware();
 

@@ -4,6 +4,8 @@
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <UserSecretsId>0c934fbe-6caa-4372-afdc-eeefb6d7f644</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -28,6 +30,12 @@
 
     <ItemGroup>
       <Folder Include="logs\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
 </Project>

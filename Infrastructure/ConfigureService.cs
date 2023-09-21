@@ -12,7 +12,6 @@ public static class ConfigureService
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
         services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
-        services.AddScoped<DataSeed>();
         return services;
     }
 
